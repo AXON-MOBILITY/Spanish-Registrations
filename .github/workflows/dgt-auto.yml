@@ -1,0 +1,66 @@
+name: DGT auto sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Reprocesar diarios ya descargados
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+  schedule:
+    # GitHub Actions usa UTC. Ejecutamos varias ventanas para cubrir CET/CEST
+    # y el retraso habitual de algunos lunes de la tercera semana.
+    - cron: "35 7 * * 1-5"
+    - cron: "35 8 * * 1-5"
+    - cron: "5 10 * * 1-5"
+    - cron: "5 11 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dgt-auto-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run DGT sync
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORCE="${{ inputs.force || 'true' }}"
+          if [ "$FORCE" = "true" ]; then
+            python process_month.py auto --force
+          else
+            python process_month.py auto
+          fi
+
+      - name: Commit generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dgt_canal_*.csv dgt_alerts_*.csv || true
+          if git diff --cached --quiet; then
+            echo "No hay cambios que commitear."
+            exit 0
+          fi
+          git commit -m "Update DGT matriculaciones outputs [skip ci]"
+          git push

@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+
+# Raw DGT downloads / vendor files
+*.zip
+*.ZIP
+export_mat_*.txt
+export_mensual_mat_*.txt
+MAS_VEHMAT_*.*
+
+# Large paid/source datasets kept local
+BBDD_*_PRODUCTO.csv
+
+# Local/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
