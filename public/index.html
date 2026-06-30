@@ -16,7 +16,6 @@
   --red:#ff4757;--green:#2ed573;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px}
-/* --- TOP BAR --- */
 #topbar{position:sticky;top:0;z-index:200;background:var(--bg2);border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:20px;padding:0 20px;height:52px}
 .logo{font-weight:700;font-size:15px;letter-spacing:.3px;white-space:nowrap}
@@ -27,14 +26,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .nb:hover{background:var(--bg3);color:var(--text)}
 .nb.on{background:var(--acc);color:#fff}
 .upd{font-size:11px;color:var(--text2);white-space:nowrap}
-/* --- LAYOUT --- */
 #shell{display:flex;height:calc(100vh - 52px)}
-/* --- SIDEBAR --- */
-#sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
-  overflow-y:auto;padding:12px 10px 20px;display:flex;flex-direction:column;gap:12px}
+#sidebar{width:230px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;padding:12px 10px 20px;display:flex;flex-direction:column;gap:10px}
 .fg{display:flex;flex-direction:column;gap:4px}
 .fl{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.9px;padding:0 2px}
-/* chips */
 .chips{display:flex;flex-wrap:wrap;gap:3px}
 .chip{padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;
   color:var(--text2);cursor:pointer;font-size:11px;font-weight:500;transition:.12s}
@@ -46,7 +42,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .chip.c-phev.on{border-color:var(--phev);background:var(--phev);color:#fff}
 .chip.c-ice.on{border-color:var(--ice);background:var(--ice);color:#0a0f1e}
 .chip.c-hp.on{border-color:var(--acc3);background:var(--acc3);color:#0a0f1e}
-/* search-select */
+.chip.c-fuel.on{border-color:#38bdf8;background:#38bdf8;color:#0a0f1e}
 .ss-wrap{position:relative}
 .ss-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;
   color:var(--text);padding:5px 8px;font-size:11px;outline:none}
@@ -58,19 +54,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .ss-opt:hover,.ss-opt.sel{background:var(--card2)}
 .ss-opt.sel{color:var(--acc)}
 .ss-badge{font-size:10px;color:var(--acc);margin-top:2px;padding:0 2px}
-/* month selects */
 .month-row{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .msel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;
   color:var(--text);padding:4px 6px;font-size:11px;outline:none}
 .msel:focus{border-color:var(--acc)}
-/* reset */
 .reset-btn{padding:6px;border-radius:6px;border:1px solid var(--border);background:transparent;
   color:var(--text2);cursor:pointer;font-size:11px;text-align:center;transition:.12s;margin-top:4px}
 .reset-btn:hover{border-color:var(--acc);color:var(--acc)}
 .divider{border-top:1px solid var(--border);margin:2px 0}
-/* --- CONTENT --- */
 #content{flex:1;overflow-y:auto;padding:16px 20px}
-/* KPI */
 .kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px}
 .kpi{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:13px 14px}
 .kpi-l{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
@@ -78,13 +70,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .kpi-s{font-size:11px;color:var(--text2)}
 .kpi-d{font-size:11px;font-weight:600}
 .kpi-d.pos{color:var(--green)} .kpi-d.neg{color:var(--red)}
-/* chart cards */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .grid31{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
 .cc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px}
 .cc-t{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:10px}
 .cw{position:relative} .cw canvas{max-height:260px}
-/* table */
 .tw{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px}
 .th{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
 .th-t{font-size:12px;font-weight:600;color:var(--text3)}
@@ -103,15 +93,12 @@ tr:hover td{background:var(--card2)}
 .bar-cell{display:flex;align-items:center;gap:6px}
 .bar-track{flex:1;max-width:80px;height:4px;background:var(--bg3);border-radius:2px}
 .bar-fill{height:4px;border-radius:2px;background:var(--acc)}
-/* loading */
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
   justify-content:center;font-size:14px;color:var(--text2);z-index:999}
 .spin{display:inline-block;width:24px;height:24px;border:2px solid var(--border);
   border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* empty */
 .empty{padding:40px;text-align:center;color:var(--text2);font-size:13px}
-/* segment badges */
 .seg-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid}
 .seg-UKL0{border-color:#6ca8ff;color:#6ca8ff}
 .seg-UKL1{border-color:#4f8ef7;color:#4f8ef7}
@@ -152,7 +139,7 @@ tr:hover td{background:var(--card2)}
     <div class="fl">Rango mes</div>
     <div class="month-row">
       <select class="msel" id="f-from" onchange="onFilterChange()"><option value="">Desde</option></select>
-      <select class="msel" id="f-to" onchange="onFilterChange()"><option value="">Hasta</option></select>
+      <select class="msel" id="f-to"   onchange="onFilterChange()"><option value="">Hasta</option></select>
     </div>
   </div>
 
@@ -166,6 +153,11 @@ tr:hover td{background:var(--card2)}
   <div class="fg">
     <div class="fl">Combustible</div>
     <div class="chips" id="f-fuels"></div>
+  </div>
+
+  <div class="fg">
+    <div class="fl">Tipo Combustible <span id="f-fuelDet-badge" class="ss-badge"></span></div>
+    <div class="chips" id="f-fuelDets"></div>
   </div>
 
   <div class="divider"></div>
@@ -215,48 +207,71 @@ tr:hover td{background:var(--card2)}
 
 <!-- CONTENT -->
 <div id="content">
-  <div id="page-mercado" class="page"></div>
-  <div id="page-marcas" class="page" style="display:none"></div>
+  <div id="page-mercado"   class="page"></div>
+  <div id="page-marcas"    class="page" style="display:none"></div>
   <div id="page-segmentos" class="page" style="display:none"></div>
-  <div id="page-modelos" class="page" style="display:none"></div>
-  <div id="page-provincias" class="page" style="display:none"></div>
-  <div id="page-diario" class="page" style="display:none"></div>
+  <div id="page-modelos"   class="page" style="display:none"></div>
+  <div id="page-provincias"class="page" style="display:none"></div>
+  <div id="page-diario"    class="page" style="display:none"></div>
 </div>
 </div>
 
 <script>
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 // DATA + STATE
-// ────────────────────────────────────────────────────
-let REC = null;          // records.json parsed
-let PROV = null;         // provinces.json
-let DAILY = null;        // daily_mtd.json
+// ─────────────────────────────────────────────────────
+let REC = null, PROV = null, DAILY = null;
 let currentPage = 'mercado';
 
 const CANAL_NAMES = ['Private','Corporate','RAC'];
 const FUEL_NAMES  = ['ICE','BEV','PHEV'];
-const COL = {Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,SEG:6,SUB:7,HP:8,BODY:9,N:10};
+
+// Índices de columna en rows de records.json
+const COL = {Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,N:11};
+
 const MONTHS_ES = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
                    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 const SEG_ORDER = ['UKL0','UKL1','UKL2','MKL','KKL','SKL','GKL','GKL+'];
 
-// Filter state — empty Set = all allowed
-const F = {
-  years:  new Set(), months: new Set(),
-  canales: new Set(), fuels: new Set(),
-  marcas: new Set(), modelos: new Set(),
-  segs: new Set(), subs: new Set(),
-  hps: new Set(), bodies: new Set(),
-  fromYM: null, toYM: null,  // 'YYYY-MM'
+// Etiquetas cortas para chips de Tipo Combustible
+const FUEL_DET_LABELS = {
+  'Gasolina':                          'Gasolina',
+  'Diesel':                            'Diesel',
+  'Gasolina Mild Hybrid':              'Gasol. MHEV',
+  'Diesel Mild Hybrid':                'Diesel MHEV',
+  'Gasolina/Electrico':                'HEV Gasolina',
+  'Gasolina/Electrico Enchufable':     'PHEV Gasolina',
+  'Diesel/Electrico Enchufable':       'PHEV Diesel',
+  'Electrico':                         'Eléctrico',
+  'Gas Licuado con petroleo (GLP)':    'GLP',
+  'Gas natural comprimido (GNC)':      'GNC',
+  'Hidrogeno':                         'Hidrógeno',
 };
 
-// Charts registry
+// Orden preferido para los chips de combustible detalle
+const FUEL_DET_ORDER = [
+  'Gasolina','Diesel','Gasolina Mild Hybrid','Diesel Mild Hybrid',
+  'Gasolina/Electrico','Gasolina/Electrico Enchufable','Diesel/Electrico Enchufable',
+  'Electrico','Gas Licuado con petroleo (GLP)','Gas natural comprimido (GNC)','Hidrogeno',
+];
+
+// Estado de filtros — Set vacío = todos permitidos
+const F = {
+  years:    new Set(), months: new Set(),
+  canales:  new Set(), fuels:  new Set(),
+  fuelDets: new Set(),
+  marcas:   new Set(), modelos: new Set(),
+  segs:     new Set(), subs:  new Set(),
+  hps:      new Set(), bodies: new Set(),
+  fromYM:   null, toYM: null,
+};
+
 const charts = {};
 
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 // LOAD
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 async function load() {
   const [rec, prov, daily, meta] = await Promise.all([
     fetch('data/records.json').then(r=>r.json()),
@@ -265,31 +280,29 @@ async function load() {
     fetch('data/meta.json').then(r=>r.json()),
   ]);
   REC = rec; PROV = prov; DAILY = daily;
-
   if (meta.updated) document.getElementById('upd-lbl').textContent = 'Act: ' + meta.updated;
-
   buildSidebar();
   document.getElementById('loading').style.display = 'none';
   render();
 }
 
-// ────────────────────────────────────────────────────
-// SIDEBAR BUILD
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
+// SIDEBAR
+// ─────────────────────────────────────────────────────
 function buildSidebar() {
   const E = REC.enums;
-  const allMonths = REC.months; // [{y,m,label}]
+  const allMonths = REC.months;
 
-  // Years
+  // ── Años ──
   const years = [...new Set(allMonths.map(m=>m.y))].sort();
   const yc = document.getElementById('f-years');
   years.forEach(y => {
     const b = btn(y, y, 'on', () => toggleChip('years', y, b, onFilterChange), false);
     yc.appendChild(b);
+    F.years.add(y);
   });
-  years.forEach(y => F.years.add(y)); // default: all selected
 
-  // Month range
+  // ── Rango mes ──
   const fs = document.getElementById('f-from'), ts = document.getElementById('f-to');
   allMonths.forEach(m => {
     const v = `${m.y}-${String(m.m).padStart(2,'0')}`;
@@ -298,17 +311,16 @@ function buildSidebar() {
     ts.append(new Option(lbl, v));
   });
 
-  // Canal
+  // ── Canal ──
   const cc = document.getElementById('f-canales');
   ['Private','Corporate','RAC'].forEach((c,i) => {
     const cls = i===1?'c-corp':i===2?'c-rac':'';
     const b = btn(c, c, 'on '+cls, () => toggleChip('canales', i, b, onFilterChange), false);
-    b.textContent = c;
     cc.appendChild(b);
     F.canales.add(i);
   });
 
-  // Fuel
+  // ── Combustible ICE/BEV/PHEV ──
   const fc = document.getElementById('f-fuels');
   ['ICE','BEV','PHEV'].forEach((f,i) => {
     const cls = i===0?'c-ice':i===1?'c-bev':'c-phev';
@@ -317,50 +329,76 @@ function buildSidebar() {
     F.fuels.add(i);
   });
 
-  // Segment
+  // ── Tipo Combustible (11 categorías Simmix) ──
+  const fdc = document.getElementById('f-fuelDets');
+  const availFuels = new Set(E.fuel_det);
+  FUEL_DET_ORDER.forEach(fd => {
+    if (!availFuels.has(fd)) return;
+    const fidx = E.fuel_det.indexOf(fd);
+    const lbl  = FUEL_DET_LABELS[fd] || fd;
+    const b = btn(lbl, fd, 'c-fuel', () => {
+      toggleChip('fuelDets', fidx, b, onFilterChange);
+      document.getElementById('f-fuelDet-badge').textContent =
+        F.fuelDets.size ? `(${F.fuelDets.size})` : '';
+    }, false);
+    fdc.appendChild(b);
+  });
+  // Empty rows (fuel_det='') chip
+  const emptyIdx = E.fuel_det.indexOf('');
+  if (emptyIdx >= 0) {
+    // Don't show chip for empty string — those are old-format rows without fuel detail
+  }
+
+  // ── Segmento ──
   const sc = document.getElementById('f-segs');
   const segs = SEG_ORDER.filter(s => E.seg.includes(s));
   segs.forEach(s => {
-    const idx = E.seg.indexOf(s);
-    const b = btn(s, s, '', () => toggleChip('segs', idx, b, onFilterChange), false);
+    const sidx = E.seg.indexOf(s);
+    const b = btn(s, s, '', () => toggleChip('segs', sidx, b, onFilterChange), false);
     sc.appendChild(b);
   });
 
-  // SubSegmento
+  // ── SubSegmento ──
   const subc = document.getElementById('f-subs');
-  ['REST','FOCUS SEGMENT'].forEach(s => {
-    const idx = E.sub.indexOf(s);
-    if (idx < 0) return;
-    const lbl = s === 'FOCUS SEGMENT' ? 'Focus' : 'REST';
-    const b = btn(lbl, s, '', () => toggleChip('subs', idx, b, onFilterChange), false);
+  [['FOCUS SEGMENT','Focus Seg.'],['REST','REST']].forEach(([s,lbl]) => {
+    const sidx = E.sub.indexOf(s);
+    if (sidx < 0) return;
+    const b = btn(lbl, s, '', () => toggleChip('subs', sidx, b, onFilterChange), false);
     subc.appendChild(b);
   });
 
-  // Body type
+  // ── Body Type ──
   const bc = document.getElementById('f-bodies');
-  const bodies = E.body.map((b,i)=>({b,i})).filter(x=>x.b).sort((a,b)=>a.b.localeCompare(b.b));
-  bodies.forEach(({b,i}) => {
-    const btn2 = btn(b, b, '', () => toggleChip('bodies', i, btn2, onFilterChange), false);
-    bc.appendChild(btn2);
+  E.body.map((b,i)=>({b,i})).filter(x=>x.b).sort((a,bx)=>a.b.localeCompare(bx.b)).forEach(({b,i}) => {
+    const b2 = btn(b, b, '', () => toggleChip('bodies', i, b2, onFilterChange), false);
+    bc.appendChild(b2);
   });
 
-  // High Performance
+  // ── High Performance ──
   const hc = document.getElementById('f-hps');
-  const hps = E.hp.map((h,i)=>({h,i})).filter(x=>x.h).sort((a,b)=>a.h.localeCompare(b.h));
-  hps.forEach(({h,i}) => {
-    const lbl = h === 'M Performance' ? 'M Perf' : h;
-    const b = btn(lbl, h, h!=='Standard'?'c-hp':'', () => toggleChip('hps', i, b, onFilterChange), false);
+  const HP_ORDER = ['Standard','M Performance','M','JCW'];
+  const availHPs = new Set(E.hp);
+  HP_ORDER.filter(h=>availHPs.has(h)).forEach(h => {
+    const hidx = E.hp.indexOf(h);
+    const lbl  = h==='M Performance'?'M Perf':h;
+    const b = btn(lbl, h, h!=='Standard'?'c-hp':'', () => toggleChip('hps', hidx, b, onFilterChange), false);
+    hc.appendChild(b);
+  });
+  // Any HP values not in the preferred order
+  E.hp.forEach((h,i) => {
+    if (!h || HP_ORDER.includes(h)) return;
+    const b = btn(h, h, 'c-hp', () => toggleChip('hps', i, b, onFilterChange), false);
     hc.appendChild(b);
   });
 
-  // Brand/Model search-select
-  buildSS('marca', E.marca, 'f-marca-q', 'ss-marca-list', 'marcas', 'f-marca-badge');
+  // ── Marca / Modelo search-select ──
+  buildSS('marca',  E.marca,  'f-marca-q',  'ss-marca-list',  'marcas',  'f-marca-badge');
   buildSS('modelo', E.modelo, 'f-modelo-q', 'ss-modelo-list', 'modelos', 'f-modelo-badge');
 }
 
-function btn(label, val, cls, cb, isOn) {
+function btn(label, val, cls, cb) {
   const el = document.createElement('button');
-  el.className = 'chip' + (cls ? ' '+cls : '') + (isOn?' on':'');
+  el.className = 'chip' + (cls ? ' '+cls : '');
   el.textContent = label;
   el.dataset.val = val;
   el.addEventListener('mousedown', e => { e.preventDefault(); cb(); });
@@ -373,90 +411,69 @@ function toggleChip(key, val, el, cb) {
   cb();
 }
 
-// Search-select component
+// ── Search-select ──
 const ssState = {};
 function buildSS(id, items, inputId, listId, fKey, badgeId) {
   ssState[id] = { items, inputId, listId, fKey, badgeId, open: false };
   renderSSList(id, '');
 }
-
-function openSS(id) {
-  ssState[id].open = true;
-  document.getElementById(ssState[id].listId).classList.add('open');
-}
-function blurSS(id) {
-  setTimeout(() => {
-    ssState[id].open = false;
-    document.getElementById(ssState[id].listId).classList.remove('open');
-  }, 200);
-}
-function filterSS(id) {
-  renderSSList(id, document.getElementById(ssState[id].inputId).value);
-}
+function openSS(id)  { ssState[id].open=true; document.getElementById(ssState[id].listId).classList.add('open'); }
+function blurSS(id)  { setTimeout(()=>{ ssState[id].open=false; document.getElementById(ssState[id].listId).classList.remove('open'); },200); }
+function filterSS(id){ renderSSList(id, document.getElementById(ssState[id].inputId).value); }
 function renderSSList(id, q) {
-  const { items, listId, fKey } = ssState[id];
+  const {items, listId, fKey} = ssState[id];
   const list = document.getElementById(listId);
   list.innerHTML = '';
   const ql = q.toLowerCase();
-
-  // For models: only show models that appear in selected brands
   let eligible = items;
-  if (id === 'modelo' && F.marcas.size > 0 && F.marcas.size < REC.enums.marca.length) {
-    const brandSet = F.marcas;
+  if (id==='modelo' && F.marcas.size>0 && F.marcas.size<REC.enums.marca.length) {
     const modelSet = new Set();
-    REC.rows.forEach(r => { if (brandSet.has(r[COL.MARCA])) modelSet.add(r[COL.MODELO]); });
+    REC.rows.forEach(r => { if (F.marcas.has(r[COL.MARCA])) modelSet.add(r[COL.MODELO]); });
     eligible = items.filter((_,i) => modelSet.has(i));
   }
-
   const filtered = eligible.map((item,i)=>({item,i}))
-    .filter(x => x.item && x.item.toLowerCase().includes(ql))
-    .slice(0, 80);
-
-  filtered.forEach(({item, i}) => {
+    .filter(x => x.item && x.item.toLowerCase().includes(ql)).slice(0,80);
+  filtered.forEach(({item,i}) => {
     const d = document.createElement('div');
-    d.className = 'ss-opt' + (F[fKey].has(i) ? ' sel' : '');
+    d.className = 'ss-opt'+(F[fKey].has(i)?' sel':'');
     d.textContent = item;
-    d.onmousedown = (e) => { e.preventDefault(); toggleSS(id, i); };
+    d.onmousedown = e => { e.preventDefault(); toggleSS(id,i); };
     list.appendChild(d);
   });
-
   if (!filtered.length) {
     const d = document.createElement('div');
-    d.className = 'ss-opt'; d.textContent = '(sin resultados)'; d.style.color='var(--text2)';
+    d.className='ss-opt'; d.textContent='(sin resultados)'; d.style.color='var(--text2)';
     list.appendChild(d);
   }
-  list.classList.toggle('open', ssState[id].open || q.length > 0);
+  list.classList.toggle('open', ssState[id].open||q.length>0);
 }
-
 function toggleSS(id, idx) {
-  const { fKey, badgeId } = ssState[id];
-  if (F[fKey].has(idx)) F[fKey].delete(idx);
-  else                   F[fKey].add(idx);
+  const {fKey, badgeId} = ssState[id];
+  if (F[fKey].has(idx)) F[fKey].delete(idx); else F[fKey].add(idx);
   renderSSList(id, document.getElementById(ssState[id].inputId).value);
   const n = F[fKey].size;
   document.getElementById(badgeId).textContent = n ? `(${n})` : '';
-  // When brand changes, refresh model list
-  if (id === 'marca') renderSSList('modelo', document.getElementById(ssState['modelo'].inputId).value);
+  if (id==='marca') renderSSList('modelo', document.getElementById(ssState['modelo'].inputId).value);
   onFilterChange();
 }
 
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 // FILTER ENGINE
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 function applyFilters() {
   if (!REC) return [];
   const from = F.fromYM, to = F.toYM;
   return REC.rows.filter(r => {
-    if (F.years.size  && !F.years.has(r[COL.Y]))    return false;
-    if (F.canales.size && !F.canales.has(r[COL.CANAL])) return false;
-    if (F.fuels.size   && !F.fuels.has(r[COL.FUEL]))    return false;
-    if (F.marcas.size  && !F.marcas.has(r[COL.MARCA]))  return false;
-    if (F.modelos.size && !F.modelos.has(r[COL.MODELO])) return false;
-    if (F.segs.size    && !F.segs.has(r[COL.SEG]))      return false;
-    if (F.subs.size    && !F.subs.has(r[COL.SUB]))      return false;
-    if (F.hps.size     && !F.hps.has(r[COL.HP]))        return false;
-    if (F.bodies.size  && !F.bodies.has(r[COL.BODY]))   return false;
-    // Month range
+    if (F.years.size    && !F.years.has(r[COL.Y]))         return false;
+    if (F.canales.size  && !F.canales.has(r[COL.CANAL]))   return false;
+    if (F.fuels.size    && !F.fuels.has(r[COL.FUEL]))      return false;
+    if (F.fuelDets.size && !F.fuelDets.has(r[COL.FUEL_DET])) return false;
+    if (F.marcas.size   && !F.marcas.has(r[COL.MARCA]))    return false;
+    if (F.modelos.size  && !F.modelos.has(r[COL.MODELO]))  return false;
+    if (F.segs.size     && !F.segs.has(r[COL.SEG]))        return false;
+    if (F.subs.size     && !F.subs.has(r[COL.SUB]))        return false;
+    if (F.hps.size      && !F.hps.has(r[COL.HP]))          return false;
+    if (F.bodies.size   && !F.bodies.has(r[COL.BODY]))     return false;
     if (from || to) {
       const ym = `${r[COL.Y]}-${String(r[COL.M]).padStart(2,'0')}`;
       if (from && ym < from) return false;
@@ -467,54 +484,39 @@ function applyFilters() {
 }
 
 function onFilterChange() {
-  // Sync month range from selects
   F.fromYM = document.getElementById('f-from').value || null;
   F.toYM   = document.getElementById('f-to').value   || null;
   render();
 }
 
 function resetFilters() {
-  // All years on
   F.years.clear();
-  document.querySelectorAll('#f-years .chip').forEach(b => {
-    b.classList.add('on'); F.years.add(Number(b.dataset.val));
-  });
-  // All canales on
+  document.querySelectorAll('#f-years .chip').forEach(b => { b.classList.add('on'); F.years.add(Number(b.dataset.val)); });
   F.canales.clear();
-  document.querySelectorAll('#f-canales .chip').forEach((b,i) => {
-    b.classList.add('on'); F.canales.add(i);
-  });
-  // All fuels on
+  document.querySelectorAll('#f-canales .chip').forEach((b,i) => { b.classList.add('on'); F.canales.add(i); });
   F.fuels.clear();
-  document.querySelectorAll('#f-fuels .chip').forEach((b,i) => {
-    b.classList.add('on'); F.fuels.add(i);
-  });
-  // All segs/subs/bodies/hps off (= all allowed)
-  ['f-segs','f-subs','f-bodies','f-hps'].forEach(id => {
+  document.querySelectorAll('#f-fuels .chip').forEach((b,i) => { b.classList.add('on'); F.fuels.add(i); });
+  // Dimension filters: off = all allowed
+  ['f-fuelDets','f-segs','f-subs','f-bodies','f-hps'].forEach(id => {
     document.querySelectorAll(`#${id} .chip`).forEach(b => b.classList.remove('on'));
   });
-  F.segs.clear(); F.subs.clear(); F.bodies.clear(); F.hps.clear();
-  // Brand/model clear
-  F.marcas.clear(); F.modelos.clear();
+  F.fuelDets.clear(); F.segs.clear(); F.subs.clear(); F.bodies.clear(); F.hps.clear();
+  document.getElementById('f-fuelDet-badge').textContent = '';
+  // Brand/model
+  F.marcas = new Set(); F.modelos = new Set();
   ['marca','modelo'].forEach(id => {
-    ssState[id]&&ssState[id].fKey&&(F[ssState[id].fKey]=new Set());
-    const bi = document.getElementById(ssState[id]?.inputId);
-    if(bi) bi.value='';
-    const ba = document.getElementById(ssState[id]?.badgeId);
-    if(ba) ba.textContent='';
+    const bi = document.getElementById(ssState[id]?.inputId); if(bi) bi.value='';
+    const ba = document.getElementById(ssState[id]?.badgeId); if(ba) ba.textContent='';
     renderSSList(id,'');
   });
-  F.marcas = new Set(); F.modelos = new Set();
-  // Month range
-  document.getElementById('f-from').value = '';
-  document.getElementById('f-to').value = '';
-  F.fromYM = null; F.toYM = null;
+  document.getElementById('f-from').value=''; document.getElementById('f-to').value='';
+  F.fromYM=null; F.toYM=null;
   onFilterChange();
 }
 
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 // CHARTS HELPERS
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 const PALETTE = ['#4f8ef7','#00d4aa','#f7934f','#c084fc','#ffd700','#ff6b6b','#2ed573','#a78bfa','#38bdf8','#fb923c'];
 
 function makeChart(id, type, data, opts={}) {
@@ -524,12 +526,11 @@ function makeChart(id, type, data, opts={}) {
   charts[id] = new Chart(ctx, {
     type, data,
     options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels:{ color:'#8892b0',font:{size:11} } } },
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{color:'#8892b0',font:{size:11}} } },
       scales: type==='bar'||type==='line' ? {
         x:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'} },
-        y:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'},
-            beginAtZero:true }
+        y:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'},beginAtZero:true }
       } : {},
       ...opts,
     }
@@ -537,28 +538,29 @@ function makeChart(id, type, data, opts={}) {
 }
 
 function fmt(n) {
-  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
-  if (n >= 1e3) return (n/1e3).toFixed(n>=1e5?0:1)+'k';
+  if (n>=1e6) return (n/1e6).toFixed(1)+'M';
+  if (n>=1e3) return (n/1e3).toFixed(n>=1e5?0:1)+'k';
   return n.toString();
 }
 function pct(n,d) { return d ? (100*n/d).toFixed(1)+'%' : '—'; }
 function num(n) { return n.toLocaleString('es-ES'); }
 
-// ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
 // PAGES
-// ────────────────────────────────────────────────────
-const PAGE_LABELS = {mercado:'Mercado',marcas:'Marcas',segmentos:'Segmentos',modelos:'Modelos',provincias:'Provincias',diario:'MTD Diario'};
+// ─────────────────────────────────────────────────────
+const PAGE_LABELS = {mercado:'Mercado',marcas:'Marcas',segmentos:'Segmentos',
+                     modelos:'Modelos',provincias:'Provincias',diario:'MTD Diario'};
 function setPage(name) {
   currentPage = name;
   document.querySelectorAll('.nb').forEach(b => b.classList.toggle('on', b.textContent===PAGE_LABELS[name]));
-  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-  document.getElementById('page-'+name).style.display = '';
+  document.querySelectorAll('.page').forEach(p => p.style.display='none');
+  document.getElementById('page-'+name).style.display='';
   render();
 }
 
 function render() {
   const rows = applyFilters();
-  if (currentPage==='mercado')    renderMercado(rows);
+  if      (currentPage==='mercado')    renderMercado(rows);
   else if (currentPage==='marcas')     renderMarcas(rows);
   else if (currentPage==='segmentos')  renderSegmentos(rows);
   else if (currentPage==='modelos')    renderModelos(rows);
@@ -570,23 +572,17 @@ function render() {
 function renderMercado(rows) {
   const el = document.getElementById('page-mercado');
   const total = rows.reduce((s,r)=>s+r[COL.N],0);
-
-  // Aggregations
-  let byCanalFuel = {}; // {canal_idx: {fuel_idx: n}}
-  const byYM = {}; // 'YYYY-MM' → {total, canals:[0,0,0], fuels:[0,0,0]}
+  const byYM = {};
   rows.forEach(r => {
     const ym = `${r[COL.Y]}-${String(r[COL.M]).padStart(2,'0')}`;
-    if (!byYM[ym]) byYM[ym] = {total:0,c:[0,0,0],f:[0,0,0]};
-    byYM[ym].total += r[COL.N];
-    byYM[ym].c[r[COL.CANAL]] += r[COL.N];
-    byYM[ym].f[r[COL.FUEL]]  += r[COL.N];
+    if (!byYM[ym]) byYM[ym]={total:0,c:[0,0,0],f:[0,0,0]};
+    byYM[ym].total+=r[COL.N];
+    byYM[ym].c[r[COL.CANAL]]+=r[COL.N];
+    byYM[ym].f[r[COL.FUEL]] +=r[COL.N];
   });
-
-  const totC = [0,0,0], totF = [0,0,0];
+  const totC=[0,0,0], totF=[0,0,0];
   rows.forEach(r => { totC[r[COL.CANAL]]+=r[COL.N]; totF[r[COL.FUEL]]+=r[COL.N]; });
-
   const sortedYM = Object.keys(byYM).sort();
-  const prevTotal = 0; // could compute YoY here if needed
 
   el.innerHTML = `
   <div class="kpis">
@@ -605,39 +601,26 @@ function renderMercado(rows) {
   <div class="grid2">
     <div class="cc"><div class="cc-t">Evolución mensual (combustible)</div><div class="cw" style="height:220px"><canvas id="ch-fuel-trend"></canvas></div></div>
     <div class="cc"><div class="cc-t">Mix Combustible</div><div class="cw" style="height:220px"><canvas id="ch-fuel-pie"></canvas></div></div>
-  </div>
-  `;
+  </div>`;
 
-  const labels = sortedYM.map(ym => {
-    const [y,m] = ym.split('-'); return MONTHS_ES[+m].slice(0,3)+' '+y.slice(2);
-  });
-
-  makeChart('ch-trend','bar',{
-    labels,
-    datasets: [
-      {label:'Private', data:sortedYM.map(ym=>byYM[ym].c[0]), backgroundColor:'#4f8ef7', stack:'s'},
-      {label:'Corporate', data:sortedYM.map(ym=>byYM[ym].c[1]), backgroundColor:'#00d4aa', stack:'s'},
-      {label:'RAC', data:sortedYM.map(ym=>byYM[ym].c[2]), backgroundColor:'#f7934f', stack:'s'},
-    ]
-  },{plugins:{legend:{position:'bottom'}}});
-
+  const labels = sortedYM.map(ym => { const [y,m]=ym.split('-'); return MONTHS_ES[+m].slice(0,3)+' '+y.slice(2); });
+  makeChart('ch-trend','bar',{labels,datasets:[
+    {label:'Private',   data:sortedYM.map(ym=>byYM[ym].c[0]),backgroundColor:'#4f8ef7',stack:'s'},
+    {label:'Corporate', data:sortedYM.map(ym=>byYM[ym].c[1]),backgroundColor:'#00d4aa',stack:'s'},
+    {label:'RAC',       data:sortedYM.map(ym=>byYM[ym].c[2]),backgroundColor:'#f7934f',stack:'s'},
+  ]},{plugins:{legend:{position:'bottom'}}});
   makeChart('ch-canal-pie','doughnut',{
     labels:['Private','Corporate','RAC'],
-    datasets:[{data:totC, backgroundColor:['#4f8ef7','#00d4aa','#f7934f'], borderWidth:0}]
+    datasets:[{data:totC,backgroundColor:['#4f8ef7','#00d4aa','#f7934f'],borderWidth:0}]
   },{plugins:{legend:{position:'bottom'}}});
-
-  makeChart('ch-fuel-trend','bar',{
-    labels,
-    datasets:[
-      {label:'ICE', data:sortedYM.map(ym=>byYM[ym].f[0]), backgroundColor:'#8892b0', stack:'s'},
-      {label:'BEV', data:sortedYM.map(ym=>byYM[ym].f[1]), backgroundColor:'#00d4aa', stack:'s'},
-      {label:'PHEV', data:sortedYM.map(ym=>byYM[ym].f[2]), backgroundColor:'#c084fc', stack:'s'},
-    ]
-  },{plugins:{legend:{position:'bottom'}}});
-
+  makeChart('ch-fuel-trend','bar',{labels,datasets:[
+    {label:'ICE', data:sortedYM.map(ym=>byYM[ym].f[0]),backgroundColor:'#8892b0',stack:'s'},
+    {label:'BEV', data:sortedYM.map(ym=>byYM[ym].f[1]),backgroundColor:'#00d4aa',stack:'s'},
+    {label:'PHEV',data:sortedYM.map(ym=>byYM[ym].f[2]),backgroundColor:'#c084fc',stack:'s'},
+  ]},{plugins:{legend:{position:'bottom'}}});
   makeChart('ch-fuel-pie','doughnut',{
     labels:['ICE','BEV','PHEV'],
-    datasets:[{data:totF, backgroundColor:['#8892b0','#00d4aa','#c084fc'], borderWidth:0}]
+    datasets:[{data:totF,backgroundColor:['#8892b0','#00d4aa','#c084fc'],borderWidth:0}]
   },{plugins:{legend:{position:'bottom'}}});
 }
 
@@ -647,25 +630,19 @@ let marcaSearch = '';
 function renderMarcas(rows) {
   const E = REC.enums;
   const el = document.getElementById('page-marcas');
-
-  // Aggregate by brand
   const bm = {};
   rows.forEach(r => {
     const b = r[COL.MARCA];
-    if (!bm[b]) bm[b] = {name:E.marca[b],total:0,c:[0,0,0],f:[0,0,0]};
-    bm[b].total += r[COL.N];
-    bm[b].c[r[COL.CANAL]] += r[COL.N];
-    bm[b].f[r[COL.FUEL]]  += r[COL.N];
+    if (!bm[b]) bm[b]={name:E.marca[b],total:0,c:[0,0,0],f:[0,0,0]};
+    bm[b].total+=r[COL.N]; bm[b].c[r[COL.CANAL]]+=r[COL.N]; bm[b].f[r[COL.FUEL]]+=r[COL.N];
   });
   const total = rows.reduce((s,r)=>s+r[COL.N],0);
   let brands = Object.values(bm);
   if (marcaSearch) brands = brands.filter(b=>b.name.toLowerCase().includes(marcaSearch.toLowerCase()));
-  const getV = (x,col) => col.startsWith('c') ? x.c[+col[1]]||0 : col.startsWith('f') ? x.f[+col[1]]||0 : x[col]||0;
-  brands.sort((a,b) => getV(a,marcaSort.col) < getV(b,marcaSort.col) ? marcaSort.dir : -marcaSort.dir);
-  const maxT = brands[0]?.total || 1;
-
-  const thH = (col, lbl) => `<th onclick="sortMarcas('${col}')">${lbl}</th>`;
-
+  const getV = (x,col) => col.startsWith('c')?x.c[+col[1]]||0:col.startsWith('f')?x.f[+col[1]]||0:x[col]||0;
+  brands.sort((a,b) => getV(a,marcaSort.col)<getV(b,marcaSort.col)?marcaSort.dir:-marcaSort.dir);
+  const maxT = brands[0]?.total||1;
+  const thH = (col,lbl) => `<th onclick="sortMarcas('${col}')">${lbl}</th>`;
   el.innerHTML = `
   <div class="tw">
     <div class="th">
@@ -673,32 +650,27 @@ function renderMarcas(rows) {
       <input class="ts" placeholder="Buscar…" value="${marcaSearch}"
         oninput="marcaSearch=this.value;renderMarcas(applyFilters())">
     </div>
-    <table>
-      <thead><tr>
-        <th>#</th>
-        ${thH('name','Marca')} ${thH('total','Total')} ${thH('c0','Private')} ${thH('c1','Corporativo')} ${thH('c2','RAC')}
-        ${thH('f0','ICE')} ${thH('f1','BEV')} ${thH('f2','PHEV')} <th>% Mkt</th>
-      </tr></thead>
-      <tbody>
-      ${brands.map((b,i)=>`<tr>
-        <td>${i+1}</td>
-        <td><b>${b.name}</b></td>
-        <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(b.total/maxT*100).toFixed(0)}%"></div></div>${num(b.total)}</div></td>
-        <td>${num(b.c[0])}</td><td>${num(b.c[1])}</td><td>${num(b.c[2])}</td>
-        <td>${num(b.f[0])}</td><td style="color:var(--bev)">${num(b.f[1])}</td><td style="color:var(--phev)">${num(b.f[2])}</td>
-        <td>${pct(b.total,total)}</td>
-      </tr>`).join('')}
-      </tbody>
-    </table>
+    <table><thead><tr>
+      <th>#</th>${thH('name','Marca')}${thH('total','Total')}
+      ${thH('c0','Private')}${thH('c1','Corporativo')}${thH('c2','RAC')}
+      ${thH('f0','ICE')}${thH('f1','BEV')}${thH('f2','PHEV')}<th>% Mkt</th>
+    </tr></thead><tbody>
+    ${brands.map((b,i)=>`<tr>
+      <td>${i+1}</td><td><b>${b.name}</b></td>
+      <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(b.total/maxT*100).toFixed(0)}%"></div></div>${num(b.total)}</div></td>
+      <td>${num(b.c[0])}</td><td>${num(b.c[1])}</td><td>${num(b.c[2])}</td>
+      <td>${num(b.f[0])}</td><td style="color:var(--bev)">${num(b.f[1])}</td><td style="color:var(--phev)">${num(b.f[2])}</td>
+      <td>${pct(b.total,total)}</td>
+    </tr>`).join('')}
+    </tbody></table>
   </div>`;
-
   el.querySelectorAll('th').forEach(th => {
     const col = th.getAttribute('onclick')?.match(/'(.+)'/)?.[1];
-    if (col === marcaSort.col) th.className = marcaSort.dir < 0 ? 'desc' : 'asc';
+    if (col===marcaSort.col) th.className = marcaSort.dir<0?'desc':'asc';
   });
 }
 function sortMarcas(col) {
-  if (marcaSort.col===col) marcaSort.dir *= -1; else { marcaSort.col=col; marcaSort.dir=-1; }
+  if (marcaSort.col===col) marcaSort.dir*=-1; else {marcaSort.col=col;marcaSort.dir=-1;}
   renderMarcas(applyFilters());
 }
 
@@ -707,24 +679,24 @@ function renderSegmentos(rows) {
   const E = REC.enums;
   const el = document.getElementById('page-segmentos');
   const total = rows.reduce((s,r)=>s+r[COL.N],0);
-
-  // By segment
-  const bySeg = {}, bySub = {}, byBody = {}, byHP = {};
+  const bySeg={}, bySub={}, byBody={}, byHP={}, byFuelDet={};
   rows.forEach(r => {
-    const seg = E.seg[r[COL.SEG]]||'Sin seg.';
-    const sub = E.sub[r[COL.SUB]]||'—';
-    const body = E.body[r[COL.BODY]]||'—';
-    const hp  = E.hp[r[COL.HP]]||'—';
-    bySeg[seg] = (bySeg[seg]||0)+r[COL.N];
-    bySub[sub] = (bySub[sub]||0)+r[COL.N];
-    byBody[body] = (byBody[body]||0)+r[COL.N];
-    byHP[hp] = (byHP[hp]||0)+r[COL.N];
+    const seg   = E.seg[r[COL.SEG]]||'Sin seg.';
+    const sub   = E.sub[r[COL.SUB]]||'—';
+    const body  = E.body[r[COL.BODY]]||'—';
+    const hp    = E.hp[r[COL.HP]]||'—';
+    const fd    = E.fuel_det[r[COL.FUEL_DET]]||'—';
+    bySeg[seg]  =(bySeg[seg]||0)+r[COL.N];
+    bySub[sub]  =(bySub[sub]||0)+r[COL.N];
+    byBody[body]=(byBody[body]||0)+r[COL.N];
+    byHP[hp]    =(byHP[hp]||0)+r[COL.N];
+    byFuelDet[fd]=(byFuelDet[fd]||0)+r[COL.N];
   });
-
-  const segs = Object.entries(bySeg).sort((a,b)=>SEG_ORDER.indexOf(a[0])-SEG_ORDER.indexOf(b[0]));
-  const bodies = Object.entries(byBody).sort((a,b)=>b[1]-a[1]);
-  const subs = Object.entries(bySub).sort((a,b)=>b[1]-a[1]);
-  const hps = Object.entries(byHP).sort((a,b)=>b[1]-a[1]);
+  const segs  = Object.entries(bySeg).sort((a,b)=>SEG_ORDER.indexOf(a[0])-SEG_ORDER.indexOf(b[0]));
+  const bodies= Object.entries(byBody).sort((a,b)=>b[1]-a[1]);
+  const subs  = Object.entries(bySub).sort((a,b)=>b[1]-a[1]);
+  const hps   = Object.entries(byHP).sort((a,b)=>b[1]-a[1]);
+  const fds   = Object.entries(byFuelDet).filter(([k])=>k!=='—').sort((a,b)=>b[1]-a[1]);
   const maxSeg = segs[0]?.[1]||1;
 
   el.innerHTML = `
@@ -733,39 +705,30 @@ function renderSegmentos(rows) {
     <div class="cc"><div class="cc-t">Por Body Type</div><div class="cw" style="height:220px"><canvas id="ch-body-bar"></canvas></div></div>
   </div>
   <div class="grid2">
-    <div class="cc"><div class="cc-t">SubSegmento</div><div class="cw" style="height:180px"><canvas id="ch-sub-pie"></canvas></div></div>
+    <div class="cc"><div class="cc-t">SubSegmento (Focus vs REST)</div><div class="cw" style="height:180px"><canvas id="ch-sub-pie"></canvas></div></div>
     <div class="cc"><div class="cc-t">High Performance</div><div class="cw" style="height:180px"><canvas id="ch-hp-pie"></canvas></div></div>
   </div>
-  <div class="tw">
-    <div class="th"><div class="th-t">Detalle Segmentos</div></div>
-    <table><thead><tr><th>Segmento</th><th>Total</th><th>% Total</th><th>Barras</th></tr></thead><tbody>
-    ${segs.map(([s,n])=>`<tr>
-      <td><span class="seg-badge seg-${s.replace('+','p')}">${s}</span></td>
-      <td>${num(n)}</td><td>${pct(n,total)}</td>
-      <td><div class="bar-track" style="max-width:120px"><div class="bar-fill" style="width:${(n/maxSeg*100).toFixed(0)}%"></div></div></td>
-    </tr>`).join('')}
-    </tbody></table>
+  <div class="grid2">
+    <div class="cc"><div class="cc-t">Mix Tipo Combustible</div><div class="cw" style="height:220px"><canvas id="ch-fueldet-bar"></canvas></div></div>
+    <div class="tw" style="margin-bottom:0">
+      <div class="th"><div class="th-t">Detalle Segmentos</div></div>
+      <table><thead><tr><th>Segmento</th><th>Total</th><th>% Total</th></tr></thead><tbody>
+      ${segs.map(([s,n])=>`<tr>
+        <td><span class="seg-badge seg-${s.replace('+','p')}">${s}</span></td>
+        <td>${num(n)}</td><td>${pct(n,total)}</td>
+      </tr>`).join('')}
+      </tbody></table>
+    </div>
   </div>`;
 
-  makeChart('ch-seg-bar','bar',{
-    labels: segs.map(x=>x[0]),
-    datasets:[{label:'Matriculas', data:segs.map(x=>x[1]), backgroundColor:PALETTE, borderWidth:0}]
-  },{plugins:{legend:{display:false}}});
-
-  makeChart('ch-body-bar','bar',{
-    labels: bodies.map(x=>x[0]),
-    datasets:[{label:'Matriculas', data:bodies.map(x=>x[1]), backgroundColor:PALETTE, borderWidth:0}]
+  makeChart('ch-seg-bar','bar',{labels:segs.map(x=>x[0]),datasets:[{label:'Matrículas',data:segs.map(x=>x[1]),backgroundColor:PALETTE,borderWidth:0}]},{plugins:{legend:{display:false}}});
+  makeChart('ch-body-bar','bar',{labels:bodies.map(x=>x[0]),datasets:[{label:'Matrículas',data:bodies.map(x=>x[1]),backgroundColor:PALETTE,borderWidth:0}]},{indexAxis:'y',plugins:{legend:{display:false}}});
+  makeChart('ch-sub-pie','doughnut',{labels:subs.map(x=>x[0]),datasets:[{data:subs.map(x=>x[1]),backgroundColor:PALETTE,borderWidth:0}]},{plugins:{legend:{position:'bottom'}}});
+  makeChart('ch-hp-pie','doughnut',{labels:hps.map(x=>x[0]),datasets:[{data:hps.map(x=>x[1]),backgroundColor:['#8892b0','#f7934f','#ffd700','#c084fc'],borderWidth:0}]},{plugins:{legend:{position:'bottom'}}});
+  makeChart('ch-fueldet-bar','bar',{
+    labels:fds.map(([k])=>FUEL_DET_LABELS[k]||k),
+    datasets:[{label:'Matrículas',data:fds.map(([,v])=>v),backgroundColor:PALETTE,borderWidth:0}]
   },{indexAxis:'y',plugins:{legend:{display:false}}});
-
-  makeChart('ch-sub-pie','doughnut',{
-    labels: subs.map(x=>x[0]),
-    datasets:[{data:subs.map(x=>x[1]), backgroundColor:PALETTE, borderWidth:0}]
-  },{plugins:{legend:{position:'bottom'}}});
-
-  makeChart('ch-hp-pie','doughnut',{
-    labels: hps.map(x=>x[0]),
-    datasets:[{data:hps.map(x=>x[1]), backgroundColor:['#8892b0','#f7934f','#ffd700'], borderWidth:0}]
-  },{plugins:{legend:{position:'bottom'}}});
 }
 
 // ─── MODELOS ─────────────────────────────────────────
@@ -775,34 +738,27 @@ function renderModelos(rows) {
   const E = REC.enums;
   const el = document.getElementById('page-modelos');
   const total = rows.reduce((s,r)=>s+r[COL.N],0);
-
   const mm = {};
   rows.forEach(r => {
     const key = r[COL.MARCA]+':'+r[COL.MODELO];
-    if (!mm[key]) mm[key] = {
+    if (!mm[key]) mm[key]={
       brand:E.marca[r[COL.MARCA]], model:E.modelo[r[COL.MODELO]]||'—',
-      total:0, c:[0,0,0], f:[0,0,0],
-      seg:E.seg[r[COL.SEG]]||'', body:E.body[r[COL.BODY]]||'', hp:E.hp[r[COL.HP]]||''
+      total:0,c:[0,0,0],f:[0,0,0],
+      seg:E.seg[r[COL.SEG]]||'', body:E.body[r[COL.BODY]]||'', hp:E.hp[r[COL.HP]]||'',
+      sub:E.sub[r[COL.SUB]]||''
     };
-    mm[key].total += r[COL.N];
-    mm[key].c[r[COL.CANAL]] += r[COL.N];
-    mm[key].f[r[COL.FUEL]]  += r[COL.N];
+    mm[key].total+=r[COL.N]; mm[key].c[r[COL.CANAL]]+=r[COL.N]; mm[key].f[r[COL.FUEL]]+=r[COL.N];
   });
-
   let models = Object.values(mm);
-  if (modeloSearch) models = models.filter(m =>
-    m.brand.toLowerCase().includes(modeloSearch.toLowerCase()) ||
+  if (modeloSearch) models = models.filter(m=>
+    m.brand.toLowerCase().includes(modeloSearch.toLowerCase())||
     m.model.toLowerCase().includes(modeloSearch.toLowerCase()));
-  const colMap = {total:'total',brand:'brand',model:'model',c0:'c[0]',c1:'c[1]',c2:'c[2]',f0:'f[0]',f1:'f[1]',f2:'f[2]'};
   models.sort((a,b) => {
-    const av = modeloSort.col.startsWith('c') ? a.c[+modeloSort.col[1]] :
-               modeloSort.col.startsWith('f') ? a.f[+modeloSort.col[1]] : a[modeloSort.col]||0;
-    const bv = modeloSort.col.startsWith('c') ? b.c[+modeloSort.col[1]] :
-               modeloSort.col.startsWith('f') ? b.f[+modeloSort.col[1]] : b[modeloSort.col]||0;
-    return av < bv ? modeloSort.dir : -modeloSort.dir;
+    const av = modeloSort.col.startsWith('c')?a.c[+modeloSort.col[1]]:modeloSort.col.startsWith('f')?a.f[+modeloSort.col[1]]:a[modeloSort.col]||0;
+    const bv = modeloSort.col.startsWith('c')?b.c[+modeloSort.col[1]]:modeloSort.col.startsWith('f')?b.f[+modeloSort.col[1]]:b[modeloSort.col]||0;
+    return av<bv?modeloSort.dir:-modeloSort.dir;
   });
   const maxT = models[0]?.total||1;
-
   const thH = (col,lbl) => `<th onclick="sortModelos('${col}')">${lbl}</th>`;
   el.innerHTML = `
   <div class="tw">
@@ -815,7 +771,7 @@ function renderModelos(rows) {
       <th>#</th>${thH('brand','Marca')}${thH('model','Modelo')}
       ${thH('total','Total')}${thH('c0','Private')}${thH('c1','Empresa')}${thH('c2','RAC')}
       ${thH('f0','ICE')}${thH('f1','BEV')}${thH('f2','PHEV')}
-      <th>Seg</th><th>Body</th><th>HP</th>
+      <th>Seg</th><th>Sub</th><th>Body</th><th>HP</th>
     </tr></thead><tbody>
     ${models.map((m,i)=>`<tr>
       <td>${i+1}</td><td>${m.brand}</td><td><b>${m.model}</b></td>
@@ -823,6 +779,7 @@ function renderModelos(rows) {
       <td>${num(m.c[0])}</td><td>${num(m.c[1])}</td><td>${num(m.c[2])}</td>
       <td>${num(m.f[0])}</td><td style="color:var(--bev)">${num(m.f[1])}</td><td style="color:var(--phev)">${num(m.f[2])}</td>
       <td><span class="seg-badge seg-${(m.seg||'').replace('+','p')}">${m.seg||'—'}</span></td>
+      <td style="font-size:10px;color:${m.sub==='FOCUS SEGMENT'?'var(--acc3)':'var(--text2)'}">${m.sub||'—'}</td>
       <td>${m.body||'—'}</td>
       <td style="${m.hp&&m.hp!=='Standard'?'color:var(--acc3)':''}">${m.hp||'—'}</td>
     </tr>`).join('')}
@@ -837,16 +794,16 @@ function sortModelos(col) {
 // ─── PROVINCIAS ─────────────────────────────────────
 function renderProvincias() {
   const el = document.getElementById('page-provincias');
-  if (!PROV || !PROV.provinces?.length) { el.innerHTML='<div class="empty">Sin datos de provincias</div>'; return; }
+  if (!PROV||!PROV.provinces?.length) { el.innerHTML='<div class="empty">Sin datos de provincias</div>'; return; }
   const provs = PROV.provinces;
   const maxT = provs[0]?.total||1;
   el.innerHTML = `
   <div class="tw">
     <div class="th"><div class="th-t">Ranking Provincias (${provs.length})</div></div>
     <table><thead><tr>
-      <th>Prov</th><th>Nombre</th><th>Total</th><th>Private</th><th>Empresa</th><th>RAC</th><th>ICE</th><th>BEV</th><th>PHEV</th>
+      <th>Cód</th><th>Provincia</th><th>Total</th><th>Private</th><th>Empresa</th><th>RAC</th><th>ICE</th><th>BEV</th><th>PHEV</th>
     </tr></thead><tbody>
-    ${provs.map((p,i)=>`<tr>
+    ${provs.map(p=>`<tr>
       <td>${p.cod}</td><td><b>${p.name}</b></td>
       <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(p.total/maxT*100).toFixed(0)}%"></div></div>${num(p.total)}</div></td>
       <td>${num(p.Private)}</td><td>${num(p.Corporate)}</td><td>${num(p.RAC)}</td>
@@ -859,16 +816,11 @@ function renderProvincias() {
 // ─── DIARIO MTD ─────────────────────────────────────
 function renderDiario() {
   const el = document.getElementById('page-diario');
-  if (!DAILY || !DAILY.days?.length) { el.innerHTML='<div class="empty">Sin datos diarios para el mes actual</div>'; return; }
+  if (!DAILY||!DAILY.days?.length) { el.innerHTML='<div class="empty">Sin datos diarios</div>'; return; }
   const days = DAILY.days;
-  const labels = days.map(d=>d.day);
-  const totPriv = days[days.length-1]?.cumul?.Private||0;
-  const totCorp = days[days.length-1]?.cumul?.Corporate||0;
-  const totRAC  = days[days.length-1]?.cumul?.RAC||0;
-  const totTotal = days[days.length-1]?.cumul?.total||0;
-  const totBEV  = days[days.length-1]?.cumul?.BEV||0;
-  const totPHEV = days[days.length-1]?.cumul?.PHEV||0;
-
+  const last = days[days.length-1]?.cumul;
+  const totTotal=last?.total||0, totPriv=last?.Private||0, totCorp=last?.Corporate||0,
+        totRAC=last?.RAC||0, totBEV=last?.BEV||0, totPHEV=last?.PHEV||0;
   el.innerHTML = `
   <div class="kpis">
     <div class="kpi"><div class="kpi-l">MTD Total</div><div class="kpi-v">${fmt(totTotal)}</div><div class="kpi-s">${DAILY.month_label} ${DAILY.year}</div></div>
@@ -882,30 +834,20 @@ function renderDiario() {
     <div class="cc"><div class="cc-t">Diario por canal</div><div class="cw" style="height:240px"><canvas id="ch-daily-canal"></canvas></div></div>
     <div class="cc"><div class="cc-t">Acumulado MTD</div><div class="cw" style="height:240px"><canvas id="ch-daily-cumul"></canvas></div></div>
   </div>`;
-
-  makeChart('ch-daily-canal','bar',{
-    labels,
-    datasets:[
-      {label:'Private', data:days.map(d=>d.daily.Private), backgroundColor:'#4f8ef7', stack:'s'},
-      {label:'Corporate', data:days.map(d=>d.daily.Corporate), backgroundColor:'#00d4aa', stack:'s'},
-      {label:'RAC', data:days.map(d=>d.daily.RAC), backgroundColor:'#f7934f', stack:'s'},
-    ]
-  },{plugins:{legend:{position:'bottom'}}});
-
-  makeChart('ch-daily-cumul','line',{
-    labels,
-    datasets:[
-      {label:'Total acum.', data:days.map(d=>d.cumul.total), borderColor:'#4f8ef7', tension:.3, fill:false, pointRadius:2},
-      {label:'BEV acum.', data:days.map(d=>d.cumul.BEV), borderColor:'#00d4aa', tension:.3, fill:false, pointRadius:2},
-    ]
-  },{plugins:{legend:{position:'bottom'}}});
+  const labels = days.map(d=>d.day);
+  makeChart('ch-daily-canal','bar',{labels,datasets:[
+    {label:'Private',  data:days.map(d=>d.daily.Private),  backgroundColor:'#4f8ef7',stack:'s'},
+    {label:'Corporate',data:days.map(d=>d.daily.Corporate),backgroundColor:'#00d4aa',stack:'s'},
+    {label:'RAC',      data:days.map(d=>d.daily.RAC),      backgroundColor:'#f7934f',stack:'s'},
+  ]},{plugins:{legend:{position:'bottom'}}});
+  makeChart('ch-daily-cumul','line',{labels,datasets:[
+    {label:'Total acum.',data:days.map(d=>d.cumul.total),borderColor:'#4f8ef7',tension:.3,fill:false,pointRadius:2},
+    {label:'BEV acum.', data:days.map(d=>d.cumul.BEV),  borderColor:'#00d4aa',tension:.3,fill:false,pointRadius:2},
+  ]},{plugins:{legend:{position:'bottom'}}});
 }
 
-// ────────────────────────────────────────────────────
-// BOOT
-// ────────────────────────────────────────────────────
+// ─── BOOT ───────────────────────────────────────────
 load();
 </script>
 </body>
 </html>
-                                                                                                                                                      
