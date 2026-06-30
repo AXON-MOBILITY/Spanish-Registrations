@@ -453,8 +453,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", default="public/data")
     parser.add_argument("--base",    default=str(BASE))
-    parser.add_argument("--scope", choices=("simmix", "dgt"), default="simmix",
-                        help="simmix filtra años con BBDD_YYYY_PRODUCTO al scope válido de Simmix; dgt usa mercado DGT completo.")
+    parser.add_argument("--scope", choices=("simmix", "dgt"), default="dgt",
+                        help="dgt usa mercado DGT completo tras la ETL; simmix filtra al scope de BBDD solo para auditoria/comparacion.")
     args    = parser.parse_args()
     base    = Path(args.base)
     out_dir = Path(args.out_dir)
@@ -466,7 +466,10 @@ def main():
     daily_data                   = load_daily(base)
     prov_data                    = load_provinces(base)
 
-    scope_info = {"mode": args.scope}
+    scope_info = {
+        "mode": args.scope,
+        "source": "DGT microdata processed with the Simmix-aligned ETL; no truncated BBDD brand-scope filter.",
+    }
     if args.scope == "simmix":
         scope_fallback = out_dir / "simmix_scope_brands.json"
         scopes, scope_diag = load_simmix_scope(base, scope_fallback)

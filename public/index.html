@@ -8,12 +8,12 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0f1e;--bg2:#0f1629;--bg3:#151d35;--card:#1a2340;--card2:#1f2a4a;
-  --border:#2a3a5c;--acc:#4f8ef7;--acc2:#00d4aa;--acc3:#f7934f;--acc4:#c084fc;
-  --text:#e8eaf6;--text2:#8892b0;--text3:#cdd3e8;
-  --priv:#4f8ef7;--corp:#00d4aa;--rac:#f7934f;
-  --ice:#8892b0;--bev:#00d4aa;--phev:#c084fc;
-  --red:#ff4757;--green:#2ed573;
+  --bg:#f4f6fb;--bg2:#ffffff;--bg3:#eef2f8;--card:#ffffff;--card2:#f7f9fd;
+  --border:#d9e0ec;--acc:#1c69d4;--acc2:#11975d;--acc3:#e07b24;--acc4:#7a4bd1;
+  --text:#142033;--text2:#657289;--text3:#26344d;
+  --priv:#1c69d4;--corp:#11975d;--rac:#e07b24;
+  --ice:#7a8598;--bev:#11975d;--phev:#7a4bd1;
+  --red:#c93434;--green:#168a4a;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px}
 #topbar{position:sticky;top:0;z-index:200;background:var(--bg2);border-bottom:1px solid var(--border);
@@ -36,13 +36,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
   color:var(--text2);cursor:pointer;font-size:11px;font-weight:500;transition:.12s}
 .chip:hover{border-color:var(--acc);color:var(--acc)}
 .chip.on{border-color:var(--acc);background:var(--acc);color:#fff}
-.chip.c-corp.on{border-color:var(--corp);background:var(--corp);color:#0a0f1e}
-.chip.c-rac.on{border-color:var(--rac);background:var(--rac);color:#0a0f1e}
-.chip.c-bev.on{border-color:var(--bev);background:var(--bev);color:#0a0f1e}
+.chip.c-corp.on{border-color:var(--corp);background:var(--corp);color:#fff}
+.chip.c-rac.on{border-color:var(--rac);background:var(--rac);color:#fff}
+.chip.c-bev.on{border-color:var(--bev);background:var(--bev);color:#fff}
 .chip.c-phev.on{border-color:var(--phev);background:var(--phev);color:#fff}
-.chip.c-ice.on{border-color:var(--ice);background:var(--ice);color:#0a0f1e}
-.chip.c-hp.on{border-color:var(--acc3);background:var(--acc3);color:#0a0f1e}
-.chip.c-fuel.on{border-color:#38bdf8;background:#38bdf8;color:#0a0f1e}
+.chip.c-ice.on{border-color:var(--ice);background:var(--ice);color:#fff}
+.chip.c-hp.on{border-color:var(--acc3);background:var(--acc3);color:#fff}
+.chip.c-fuel.on{border-color:#38bdf8;background:#38bdf8;color:#fff}
 .ss-wrap{position:relative}
 .ss-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;
   color:var(--text);padding:5px 8px;font-size:11px;outline:none}
@@ -64,7 +64,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .divider{border-top:1px solid var(--border);margin:2px 0}
 #content{flex:1;overflow-y:auto;padding:16px 20px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:13px 14px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:13px 14px}
 .kpi-l{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
 .kpi-v{font-size:24px;font-weight:700;color:var(--text);margin:3px 0 1px;line-height:1}
 .kpi-s{font-size:11px;color:var(--text2)}
@@ -72,10 +72,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .kpi-d.pos{color:var(--green)} .kpi-d.neg{color:var(--red)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .grid31{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
-.cc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:14px}
 .cc-t{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:10px}
 .cw{position:relative} .cw canvas{max-height:260px}
-.tw{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.tw{background:var(--card);border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:14px}
 .th{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
 .th-t{font-size:12px;font-weight:600;color:var(--text3)}
 .ts{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);
@@ -527,10 +527,10 @@ function makeChart(id, type, data, opts={}) {
     type, data,
     options: {
       responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ labels:{color:'#8892b0',font:{size:11}} } },
+      plugins:{ legend:{ labels:{color:'#657289',font:{size:11}} } },
       scales: type==='bar'||type==='line' ? {
-        x:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'} },
-        y:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'},beginAtZero:true }
+        x:{ ticks:{color:'#657289',font:{size:10}}, grid:{color:'#e5eaf2'} },
+        y:{ ticks:{color:'#657289',font:{size:10}}, grid:{color:'#e5eaf2'},beginAtZero:true }
       } : {},
       ...opts,
     }
@@ -560,7 +560,7 @@ function setPage(name) {
 
 function render() {
   const rows = applyFilters();
-  if      (currentPage==='mercado')    renderMercado(rows);
+  if      (currentPage==='mercado')    renderMercadoPowerBI(rows);
   else if (currentPage==='marcas')     renderMarcas(rows);
   else if (currentPage==='segmentos')  renderSegmentos(rows);
   else if (currentPage==='modelos')    renderModelos(rows);
@@ -627,6 +627,104 @@ function renderMercado(rows) {
 // ─── MARCAS ─────────────────────────────────────────
 let marcaSort = {col:'total', dir:-1};
 let marcaSearch = '';
+function renderMercadoPowerBI(rows) {
+  const el = document.getElementById('page-mercado');
+  const total = rows.reduce((s,r)=>s+r[COL.N],0);
+  const byYM = {};
+  rows.forEach(r => {
+    const ym = `${r[COL.Y]}-${String(r[COL.M]).padStart(2,'0')}`;
+    if (!byYM[ym]) byYM[ym]={total:0,c:[0,0,0],f:[0,0,0]};
+    byYM[ym].total += r[COL.N];
+    byYM[ym].c[r[COL.CANAL]] += r[COL.N];
+    byYM[ym].f[r[COL.FUEL]] += r[COL.N];
+  });
+  const totC=[0,0,0], totF=[0,0,0];
+  rows.forEach(r => { totC[r[COL.CANAL]]+=r[COL.N]; totF[r[COL.FUEL]]+=r[COL.N]; });
+  const sortedYM = Object.keys(byYM).sort();
+  const labels = sortedYM.map(ym => { const [y,m]=ym.split('-'); return MONTHS_ES[+m].slice(0,3)+' '+y.slice(2); });
+  const monthRows = sortedYM.map((ym,idx)=>({label:labels[idx],total:byYM[ym].total,c:byYM[ym].c,f:byYM[ym].f})).reverse();
+  const share = (n,d) => d ? +(n/d*100).toFixed(2) : 0;
+  const mixTable = (title, items) => `
+    <div class="tw" style="margin-bottom:0">
+      <div class="th"><div class="th-t">${title}</div></div>
+      <table><thead><tr><th>Grupo</th><th>Unidades</th><th>Mix</th></tr></thead><tbody>
+        ${items.map(x=>`<tr>
+          <td><b>${x.label}</b></td>
+          <td>${num(x.value)}</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${share(x.value,total)}%;background:${x.color}"></div></div>${pct(x.value,total)}</div></td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>`;
+
+  el.innerHTML = `
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">Total</div><div class="kpi-v">${fmt(total)}</div><div class="kpi-s">${num(total)} unidades</div></div>
+    <div class="kpi"><div class="kpi-l">Private</div><div class="kpi-v">${fmt(totC[0])}</div><div class="kpi-s">${pct(totC[0],total)} del total</div></div>
+    <div class="kpi"><div class="kpi-l">Corporate</div><div class="kpi-v">${fmt(totC[1])}</div><div class="kpi-s">${pct(totC[1],total)} del total</div></div>
+    <div class="kpi"><div class="kpi-l">RAC</div><div class="kpi-v">${fmt(totC[2])}</div><div class="kpi-s">${pct(totC[2],total)} del total</div></div>
+    <div class="kpi"><div class="kpi-l">BEV</div><div class="kpi-v">${fmt(totF[1])}</div><div class="kpi-s">${pct(totF[1],total)}</div></div>
+    <div class="kpi"><div class="kpi-l">PHEV</div><div class="kpi-v">${fmt(totF[2])}</div><div class="kpi-s">${pct(totF[2],total)}</div></div>
+  </div>
+  <div class="grid31">
+    <div class="cc"><div class="cc-t">Registrations by Month</div><div class="cw" style="height:300px"><canvas id="ch-reg-month"></canvas></div></div>
+    <div class="tw" style="margin-bottom:0;max-height:342px;overflow:auto">
+      <div class="th"><div class="th-t">Registrations by Month</div></div>
+      <table><thead><tr><th>Mes</th><th>Total</th><th>Private</th><th>Corporate</th><th>RAC</th></tr></thead><tbody>
+        ${monthRows.map(x=>`<tr><td><b>${x.label}</b></td><td>${num(x.total)}</td><td>${num(x.c[0])}</td><td>${num(x.c[1])}</td><td>${num(x.c[2])}</td></tr>`).join('')}
+      </tbody></table>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="cc"><div class="cc-t">Fuel Mix</div><div class="cw" style="height:260px"><canvas id="ch-fuel-100"></canvas></div></div>
+    <div class="cc"><div class="cc-t">Channel Mix</div><div class="cw" style="height:260px"><canvas id="ch-channel-100"></canvas></div></div>
+  </div>
+  <div class="grid2">
+    ${mixTable('MS by Fuel', [
+      {label:'ICE', value:totF[0], color:'#7a8598'},
+      {label:'BEV', value:totF[1], color:'#11975d'},
+      {label:'PHEV', value:totF[2], color:'#7a4bd1'},
+    ])}
+    ${mixTable('MS by Channel', [
+      {label:'Private', value:totC[0], color:'#1c69d4'},
+      {label:'Corporate', value:totC[1], color:'#11975d'},
+      {label:'RAC', value:totC[2], color:'#e07b24'},
+    ])}
+  </div>`;
+
+  makeChart('ch-reg-month','bar',{labels,datasets:[
+    {label:'Private',   data:sortedYM.map(ym=>byYM[ym].c[0]),backgroundColor:'#1c69d4',stack:'s',order:2},
+    {label:'Corporate', data:sortedYM.map(ym=>byYM[ym].c[1]),backgroundColor:'#11975d',stack:'s',order:2},
+    {label:'RAC',       data:sortedYM.map(ym=>byYM[ym].c[2]),backgroundColor:'#e07b24',stack:'s',order:2},
+    {label:'Total', type:'line', data:sortedYM.map(ym=>byYM[ym].total),borderColor:'#142033',backgroundColor:'#142033',tension:.25,pointRadius:1.5,yAxisID:'y1',order:1}
+  ]},{
+    plugins:{legend:{position:'bottom'}},
+    scales:{
+      x:{stacked:true,ticks:{color:'#657289',font:{size:10},maxRotation:0,autoSkip:true},grid:{display:false}},
+      y:{stacked:true,beginAtZero:true,ticks:{color:'#657289',font:{size:10}},grid:{color:'#e5eaf2'}},
+      y1:{position:'right',beginAtZero:true,ticks:{color:'#657289',font:{size:10}},grid:{drawOnChartArea:false}}
+    }
+  });
+  const pctTooltip = {callbacks:{label:(ctx)=>`${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%`}};
+  makeChart('ch-fuel-100','bar',{labels,datasets:[
+    {label:'ICE', data:sortedYM.map(ym=>share(byYM[ym].f[0],byYM[ym].total)),backgroundColor:'#7a8598',stack:'s'},
+    {label:'BEV', data:sortedYM.map(ym=>share(byYM[ym].f[1],byYM[ym].total)),backgroundColor:'#11975d',stack:'s'},
+    {label:'PHEV',data:sortedYM.map(ym=>share(byYM[ym].f[2],byYM[ym].total)),backgroundColor:'#7a4bd1',stack:'s'},
+  ]},{
+    plugins:{legend:{position:'bottom'},tooltip:pctTooltip},
+    scales:{x:{stacked:true,ticks:{color:'#657289',font:{size:10},maxRotation:0,autoSkip:true},grid:{display:false}},
+            y:{stacked:true,max:100,ticks:{color:'#657289',callback:v=>v+'%'},grid:{color:'#e5eaf2'}}}
+  });
+  makeChart('ch-channel-100','bar',{labels,datasets:[
+    {label:'Private',  data:sortedYM.map(ym=>share(byYM[ym].c[0],byYM[ym].total)),backgroundColor:'#1c69d4',stack:'s'},
+    {label:'Corporate',data:sortedYM.map(ym=>share(byYM[ym].c[1],byYM[ym].total)),backgroundColor:'#11975d',stack:'s'},
+    {label:'RAC',      data:sortedYM.map(ym=>share(byYM[ym].c[2],byYM[ym].total)),backgroundColor:'#e07b24',stack:'s'},
+  ]},{
+    plugins:{legend:{position:'bottom'},tooltip:pctTooltip},
+    scales:{x:{stacked:true,ticks:{color:'#657289',font:{size:10},maxRotation:0,autoSkip:true},grid:{display:false}},
+            y:{stacked:true,max:100,ticks:{color:'#657289',callback:v=>v+'%'},grid:{color:'#e5eaf2'}}}
+  });
+}
+
 function renderMarcas(rows) {
   const E = REC.enums;
   const el = document.getElementById('page-marcas');

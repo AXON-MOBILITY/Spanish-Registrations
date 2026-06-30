@@ -8,92 +8,10 @@
     "label": "Junio 2026"
   },
   "completed_months": 41,
-  "total_registrations_historical": 2238543,
+  "total_registrations_historical": 4289208,
   "has_provinces": true,
   "scope": {
-    "mode": "simmix",
-    "source": "DGT microdata filtered with Simmix-derived scope; DGT for 2026 and MTD",
-    "reference_years": [
-      2023,
-      2024,
-      2025
-    ],
-    "diagnostics": {
-      "2023": {
-        "file": "BBDD_2023_PRODUCTO.csv",
-        "rows": 624738,
-        "valid_brands": 82,
-        "truncated_brand": null,
-        "malformed_rows": 0,
-        "reference_total": 1094845
-      },
-      "2024": {
-        "file": "BBDD_2024_PRODUCTO.csv",
-        "rows": 300022,
-        "valid_brands": 53,
-        "truncated_brand": "MERCEDES",
-        "malformed_rows": 0,
-        "reference_total": 489161
-      },
-      "2025": {
-        "file": "BBDD_2025_PRODUCTO.csv",
-        "rows": 36596,
-        "valid_brands": 9,
-        "truncated_brand": "BMW",
-        "malformed_rows": 4,
-        "reference_total": 45306
-      }
-    },
-    "monthly_stats": {
-      "2023": {
-        "kept": 1097675,
-        "excluded": 21019,
-        "scope_brands": 82
-      },
-      "2024": {
-        "kept": 485362,
-        "excluded": 718825,
-        "scope_brands": 53
-      },
-      "2025": {
-        "kept": 45186,
-        "excluded": 1310821,
-        "scope_brands": 9
-      },
-      "2026": {
-        "kept": 610320,
-        "excluded": 0,
-        "scope_brands": 0
-      }
-    },
-    "mtd_stats": {
-      "2026": {
-        "kept": 129540,
-        "excluded": 0,
-        "scope_brands": 0
-      }
-    },
-    "province_stats": {
-      "2023": {
-        "kept": 1080565,
-        "excluded": 21019,
-        "scope_brands": 82
-      },
-      "2024": {
-        "kept": 475943,
-        "excluded": 713895,
-        "scope_brands": 53
-      },
-      "2025": {
-        "kept": 45230,
-        "excluded": 1295704,
-        "scope_brands": 9
-      },
-      "2026": {
-        "kept": 604962,
-        "excluded": 0,
-        "scope_brands": 0
-      }
-    }
+    "mode": "dgt",
+    "source": "DGT microdata processed with the Simmix-aligned ETL; no truncated BBDD brand-scope filter."
   }
 }
