@@ -3,813 +3,909 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DGT Matriculaciones Dashboard</title>
+<title>DGT Matriculaciones</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0a0f1e;--bg2:#0f1629;--bg3:#151d35;--card:#1a2340;--card2:#1f2a4a;
-  --border:#2a3a5c;--accent:#4f8ef7;--accent2:#00d4aa;--accent3:#f7934f;--accent4:#c084fc;
+  --border:#2a3a5c;--acc:#4f8ef7;--acc2:#00d4aa;--acc3:#f7934f;--acc4:#c084fc;
   --text:#e8eaf6;--text2:#8892b0;--text3:#cdd3e8;
-  --private:#4f8ef7;--corporate:#00d4aa;--rac:#f7934f;
+  --priv:#4f8ef7;--corp:#00d4aa;--rac:#f7934f;
   --ice:#8892b0;--bev:#00d4aa;--phev:#c084fc;
   --red:#ff4757;--green:#2ed573;
 }
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;min-height:100vh}
-a{color:inherit;text-decoration:none}
-
-/* Layout */
-#app{display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:100}
-.logo{font-weight:700;font-size:16px;color:var(--text);white-space:nowrap;letter-spacing:.5px}
-.logo span{color:var(--accent)}
-.nav{display:flex;gap:4px;flex:1;overflow-x:auto}
-.nav-btn{padding:6px 14px;border-radius:6px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;transition:.15s}
-.nav-btn:hover{background:var(--bg3);color:var(--text)}
-.nav-btn.active{background:var(--accent);color:#fff}
-.last-update{font-size:11px;color:var(--text2);white-space:nowrap}
-
-.main{display:flex;flex:1}
-.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);padding:16px;overflow-y:auto;flex-shrink:0}
-.content{flex:1;padding:20px;overflow-y:auto;min-width:0}
-
-/* Filters */
-.filter-group{margin-bottom:16px}
-.filter-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.filter-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 8px;font-size:12px;outline:none}
-.filter-select:focus{border-color:var(--accent)}
-.filter-btns{display:flex;flex-wrap:wrap;gap:4px}
-.filter-chip{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:11px;font-weight:500;transition:.15s}
-.filter-chip:hover{border-color:var(--accent);color:var(--accent)}
-.filter-chip.on{border-color:var(--accent);background:var(--accent);color:#fff}
-.filter-chip.on.corp{border-color:var(--corporate);background:var(--corporate);color:#0a0f1e}
-.filter-chip.on.rac{border-color:var(--rac);background:var(--rac);color:#0a0f1e}
-.filter-chip.on.bev{border-color:var(--bev);background:var(--bev);color:#0a0f1e}
-.filter-chip.on.phev{border-color:var(--phev);background:var(--phev);color:#fff}
-.filter-chip.on.ice{border-color:var(--text2);background:var(--text2);color:#0a0f1e}
-.sidebar-reset{width:100%;margin-top:12px;padding:7px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:12px}
-.sidebar-reset:hover{border-color:var(--accent);color:var(--accent)}
-
-/* KPI Cards */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:20px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-.kpi-label{font-size:11px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
-.kpi-val{font-size:26px;font-weight:700;color:var(--text);margin:4px 0 2px}
-.kpi-sub{font-size:11px;color:var(--text2)}
-.kpi-delta{font-size:12px;font-weight:600}
-.kpi-delta.pos{color:var(--green)}
-.kpi-delta.neg{color:var(--red)}
-
-/* Charts */
-.chart-grid{display:grid;gap:16px;margin-bottom:16px}
-.chart-grid-2{grid-template-columns:1fr 1fr}
-.chart-grid-3{grid-template-columns:2fr 1fr}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
-.chart-title{font-size:13px;font-weight:600;color:var(--text3);margin-bottom:12px}
-.chart-wrap{position:relative}
-.chart-wrap canvas{max-height:280px}
-
-/* Table */
-.tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.tbl-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-.tbl-title{font-size:13px;font-weight:600;color:var(--text3)}
-.tbl-search{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:5px 10px;font-size:12px;outline:none;width:180px}
-.tbl-search:focus{border-color:var(--accent)}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:8px 12px;text-align:left;color:var(--text2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap;user-select:none}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px}
+/* --- TOP BAR --- */
+#topbar{position:sticky;top:0;z-index:200;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:20px;padding:0 20px;height:52px}
+.logo{font-weight:700;font-size:15px;letter-spacing:.3px;white-space:nowrap}
+.logo span{color:var(--acc)}
+.navs{display:flex;gap:3px;flex:1;overflow-x:auto}
+.nb{padding:5px 13px;border-radius:6px;border:none;background:transparent;color:var(--text2);
+  cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap;transition:.12s}
+.nb:hover{background:var(--bg3);color:var(--text)}
+.nb.on{background:var(--acc);color:#fff}
+.upd{font-size:11px;color:var(--text2);white-space:nowrap}
+/* --- LAYOUT --- */
+#shell{display:flex;height:calc(100vh - 52px)}
+/* --- SIDEBAR --- */
+#sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;padding:12px 10px 20px;display:flex;flex-direction:column;gap:12px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.9px;padding:0 2px}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:3px}
+.chip{padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;
+  color:var(--text2);cursor:pointer;font-size:11px;font-weight:500;transition:.12s}
+.chip:hover{border-color:var(--acc);color:var(--acc)}
+.chip.on{border-color:var(--acc);background:var(--acc);color:#fff}
+.chip.c-corp.on{border-color:var(--corp);background:var(--corp);color:#0a0f1e}
+.chip.c-rac.on{border-color:var(--rac);background:var(--rac);color:#0a0f1e}
+.chip.c-bev.on{border-color:var(--bev);background:var(--bev);color:#0a0f1e}
+.chip.c-phev.on{border-color:var(--phev);background:var(--phev);color:#fff}
+.chip.c-ice.on{border-color:var(--ice);background:var(--ice);color:#0a0f1e}
+.chip.c-hp.on{border-color:var(--acc3);background:var(--acc3);color:#0a0f1e}
+/* search-select */
+.ss-wrap{position:relative}
+.ss-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);padding:5px 8px;font-size:11px;outline:none}
+.ss-input:focus{border-color:var(--acc)}
+.ss-list{max-height:120px;overflow-y:auto;border:1px solid var(--border);border-top:none;
+  border-radius:0 0 6px 6px;background:var(--bg3);display:none}
+.ss-list.open{display:block}
+.ss-opt{padding:4px 8px;cursor:pointer;font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ss-opt:hover,.ss-opt.sel{background:var(--card2)}
+.ss-opt.sel{color:var(--acc)}
+.ss-badge{font-size:10px;color:var(--acc);margin-top:2px;padding:0 2px}
+/* month selects */
+.month-row{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.msel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);padding:4px 6px;font-size:11px;outline:none}
+.msel:focus{border-color:var(--acc)}
+/* reset */
+.reset-btn{padding:6px;border-radius:6px;border:1px solid var(--border);background:transparent;
+  color:var(--text2);cursor:pointer;font-size:11px;text-align:center;transition:.12s;margin-top:4px}
+.reset-btn:hover{border-color:var(--acc);color:var(--acc)}
+.divider{border-top:1px solid var(--border);margin:2px 0}
+/* --- CONTENT --- */
+#content{flex:1;overflow-y:auto;padding:16px 20px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:13px 14px}
+.kpi-l{font-size:10px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.kpi-v{font-size:24px;font-weight:700;color:var(--text);margin:3px 0 1px;line-height:1}
+.kpi-s{font-size:11px;color:var(--text2)}
+.kpi-d{font-size:11px;font-weight:600}
+.kpi-d.pos{color:var(--green)} .kpi-d.neg{color:var(--red)}
+/* chart cards */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid31{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px}
+.cc-t{font-size:12px;font-weight:600;color:var(--text3);margin-bottom:10px}
+.cw{position:relative} .cw canvas{max-height:260px}
+/* table */
+.tw{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.th{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.th-t{font-size:12px;font-weight:600;color:var(--text3)}
+.ts{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);
+  padding:4px 9px;font-size:11px;outline:none;width:160px}
+.ts:focus{border-color:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:7px 10px;text-align:left;color:var(--text2);font-weight:600;font-size:10px;
+  text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);
+  cursor:pointer;white-space:nowrap;user-select:none}
 th:hover{color:var(--text)}
-th .sort-icon{margin-left:4px;opacity:.4}
-th.sorted .sort-icon{opacity:1;color:var(--accent)}
-td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text3)}
+th.asc::after{content:" ▲"} th.desc::after{content:" ▼"}
+td{padding:6px 10px;border-bottom:1px solid rgba(42,58,92,.4);color:var(--text3);white-space:nowrap}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--bg3)}
-.bar-bg{height:4px;background:var(--bg3);border-radius:2px;margin-top:3px}
-.bar-fill{height:4px;border-radius:2px}
-.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600}
-.badge-private{background:rgba(79,142,247,.15);color:var(--private)}
-.badge-corp{background:rgba(0,212,170,.15);color:var(--corporate)}
-.badge-rac{background:rgba(247,147,79,.15);color:var(--rac)}
-
-/* Page sections */
-.page{display:none}
-.page.active{display:block}
-.page-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:16px}
-
-/* MTD Timeline */
-.mtd-info{font-size:12px;color:var(--text2);margin-bottom:12px}
-
-/* Legend */
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
-.legend-dot{width:10px;height:10px;border-radius:50%}
-
-/* Responsive */
-@media(max-width:900px){.sidebar{display:none}.chart-grid-2,.chart-grid-3{grid-template-columns:1fr}}
+tr:hover td{background:var(--card2)}
+.bar-cell{display:flex;align-items:center;gap:6px}
+.bar-track{flex:1;max-width:80px;height:4px;background:var(--bg3);border-radius:2px}
+.bar-fill{height:4px;border-radius:2px;background:var(--acc)}
+/* loading */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;font-size:14px;color:var(--text2);z-index:999}
+.spin{display:inline-block;width:24px;height:24px;border:2px solid var(--border);
+  border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* empty */
+.empty{padding:40px;text-align:center;color:var(--text2);font-size:13px}
+/* segment badges */
+.seg-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid}
+.seg-UKL0{border-color:#6ca8ff;color:#6ca8ff}
+.seg-UKL1{border-color:#4f8ef7;color:#4f8ef7}
+.seg-UKL2{border-color:#a5c4ff;color:#a5c4ff}
+.seg-MKL{border-color:#00d4aa;color:#00d4aa}
+.seg-KKL{border-color:#f7934f;color:#f7934f}
+.seg-SKL{border-color:#c084fc;color:#c084fc}
+.seg-GKL{border-color:#ff6b6b;color:#ff6b6b}
+.seg-GKLp{border-color:#ffd700;color:#ffd700}
 </style>
 </head>
 <body>
-<div id="app">
-  <div class="topbar">
-    <div class="logo">DGT <span>Matriculaciones</span></div>
-    <nav class="nav">
-      <button class="nav-btn active" onclick="goPage('general')">📊 Mercado General</button>
-      <button class="nav-btn" onclick="goPage('marcas')">🏷️ Por Marca</button>
-      <button class="nav-btn" onclick="goPage('competidores')">📈 Competidores</button>
-      <button class="nav-btn" onclick="goPage('provincias')">🗺️ Provincias</button>
-      <button class="nav-btn" onclick="goPage('mtd')">📅 MTD Diario</button>
-    </nav>
-    <div class="last-update" id="last-update">Cargando...</div>
+<div id="loading"><span class="spin"></span>Cargando datos DGT…</div>
+
+<div id="topbar">
+  <div class="logo">DGT <span>Matriculaciones</span></div>
+  <div class="navs">
+    <button class="nb on" onclick="setPage('mercado')">Mercado</button>
+    <button class="nb" onclick="setPage('marcas')">Marcas</button>
+    <button class="nb" onclick="setPage('segmentos')">Segmentos</button>
+    <button class="nb" onclick="setPage('modelos')">Modelos</button>
+    <button class="nb" onclick="setPage('provincias')">Provincias</button>
+    <button class="nb" onclick="setPage('diario')">MTD Diario</button>
+  </div>
+  <div class="upd" id="upd-lbl"></div>
+</div>
+
+<div id="shell">
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+  <div class="fg">
+    <div class="fl">Año</div>
+    <div class="chips" id="f-years"></div>
   </div>
 
-  <div class="main">
-    <!-- SIDEBAR FILTERS -->
-    <div class="sidebar">
-      <div class="filter-group">
-        <div class="filter-label">Año</div>
-        <div class="filter-btns" id="f-year"></div>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Mes desde</div>
-        <select class="filter-select" id="f-mfrom" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Mes hasta</div>
-        <select class="filter-select" id="f-mto" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Canal</div>
-        <div class="filter-btns">
-          <button class="filter-chip on" data-group="canal" data-val="Private" onclick="toggleChip(this)">Private</button>
-          <button class="filter-chip on corp" data-group="canal" data-val="Corporate" onclick="toggleChip(this)">Corporate</button>
-          <button class="filter-chip on rac" data-group="canal" data-val="RAC" onclick="toggleChip(this)">RAC</button>
-        </div>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label">Fuel Type</div>
-        <div class="filter-btns">
-          <button class="filter-chip on ice" data-group="fuel" data-val="ICE" onclick="toggleChip(this)">ICE</button>
-          <button class="filter-chip on bev" data-group="fuel" data-val="BEV" onclick="toggleChip(this)">BEV</button>
-          <button class="filter-chip on phev" data-group="fuel" data-val="PHEV" onclick="toggleChip(this)">PHEV</button>
-        </div>
-      </div>
-      <div class="filter-group" id="fg-marca" style="display:none">
-        <div class="filter-label">Marca (comparar)</div>
-        <select class="filter-select" id="f-brand1" onchange="applyFilters()"><option value="">Todas</option></select>
-        <select class="filter-select" id="f-brand2" style="margin-top:4px" onchange="applyFilters()"><option value="">—</option></select>
-        <select class="filter-select" id="f-brand3" style="margin-top:4px" onchange="applyFilters()"><option value="">—</option></select>
-      </div>
-      <button class="sidebar-reset" onclick="resetFilters()">↺ Resetear filtros</button>
+  <div class="fg">
+    <div class="fl">Rango mes</div>
+    <div class="month-row">
+      <select class="msel" id="f-from" onchange="onFilterChange()"><option value="">Desde</option></select>
+      <select class="msel" id="f-to" onchange="onFilterChange()"><option value="">Hasta</option></select>
     </div>
+  </div>
 
-    <!-- CONTENT -->
-    <div class="content">
+  <div class="divider"></div>
 
-      <!-- PAGE: GENERAL -->
-      <div class="page active" id="page-general">
-        <div class="page-title">Mercado General</div>
-        <div class="kpi-grid" id="kpi-general"></div>
-        <div class="chart-grid chart-grid-3" style="margin-bottom:16px">
-          <div class="chart-card">
-            <div class="chart-title">Evolución mensual por canal</div>
-            <div class="chart-wrap"><canvas id="ch-trend"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Mix canal (período)</div>
-            <div class="chart-wrap"><canvas id="ch-donut-canal"></canvas></div>
-          </div>
-        </div>
-        <div class="chart-grid chart-grid-2" style="margin-bottom:16px">
-          <div class="chart-card">
-            <div class="chart-title">Mix Fuel Type (período)</div>
-            <div class="chart-wrap"><canvas id="ch-donut-fuel"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Evolución BEV + PHEV</div>
-            <div class="chart-wrap"><canvas id="ch-electro"></canvas></div>
-          </div>
-        </div>
-        <div class="chart-card" style="margin-bottom:16px">
-          <div class="chart-title">Top 15 Marcas — Ranking volumen total</div>
-          <div class="chart-wrap"><canvas id="ch-brand-bar" style="max-height:340px"></canvas></div>
-        </div>
-      </div>
+  <div class="fg">
+    <div class="fl">Canal</div>
+    <div class="chips" id="f-canales"></div>
+  </div>
 
-      <!-- PAGE: MARCAS -->
-      <div class="page" id="page-marcas">
-        <div class="page-title">Ranking por Marca</div>
-        <div class="kpi-grid" id="kpi-marcas"></div>
-        <div class="tbl-wrap">
-          <div class="tbl-header">
-            <span class="tbl-title">Marcas</span>
-            <input class="tbl-search" id="search-marcas" placeholder="Buscar marca..." oninput="renderMarcasTable()">
-          </div>
-          <table id="tbl-marcas">
-            <thead><tr>
-              <th onclick="sortTable('tbl-marcas',0)" data-col="0">Marca <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',1)" data-col="1">Total <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',2)" data-col="2">Private <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',3)" data-col="3">Corporate <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',4)" data-col="4">RAC <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',5)" data-col="5">ICE <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',6)" data-col="6">BEV <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',7)" data-col="7">PHEV <span class="sort-icon">↕</span></th>
-              <th onclick="sortTable('tbl-marcas',8)" data-col="8">Cuota <span class="sort-icon">↕</span></th>
-            </tr></thead>
-            <tbody id="tbody-marcas"></tbody>
-          </table>
-        </div>
-      </div>
+  <div class="fg">
+    <div class="fl">Combustible</div>
+    <div class="chips" id="f-fuels"></div>
+  </div>
 
-      <!-- PAGE: COMPETIDORES -->
-      <div class="page" id="page-competidores">
-        <div class="page-title">Análisis Competidores</div>
-        <div class="filter-group" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
-          <div class="filter-label" style="margin-bottom:8px">Seleccionar marcas a comparar</div>
-          <div id="comp-brand-checks" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-        </div>
-        <div class="chart-grid chart-grid-2" style="margin-bottom:16px">
-          <div class="chart-card">
-            <div class="chart-title">Evolución mensual — Total</div>
-            <div class="chart-wrap"><canvas id="ch-comp-trend"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Cuota de mercado mensual (%)</div>
-            <div class="chart-wrap"><canvas id="ch-comp-share"></canvas></div>
-          </div>
-        </div>
-        <div class="chart-card" style="margin-bottom:16px">
-          <div class="chart-title">Comparativa canal — período seleccionado</div>
-          <div class="chart-wrap"><canvas id="ch-comp-canal" style="max-height:240px"></canvas></div>
-        </div>
-      </div>
+  <div class="divider"></div>
 
-      <!-- PAGE: PROVINCIAS -->
-      <div class="page" id="page-provincias">
-        <div class="page-title">Distribución por Provincia</div>
-        <div id="prov-no-data" style="display:none;padding:40px;text-align:center;color:var(--text2)">
-          Los datos de provincia estarán disponibles tras reprocesar los meses con <code>python process_month.py all --force</code>
-        </div>
-        <div id="prov-content">
-          <div class="kpi-grid" id="kpi-prov"></div>
-          <div class="chart-grid chart-grid-2" style="margin-bottom:16px">
-            <div class="chart-card">
-              <div class="chart-title">Top 15 provincias por volumen</div>
-              <div class="chart-wrap"><canvas id="ch-prov-bar" style="max-height:320px"></canvas></div>
-            </div>
-            <div class="chart-card">
-              <div class="chart-title">Mix canal por provincia (top 10)</div>
-              <div class="chart-wrap"><canvas id="ch-prov-canal" style="max-height:320px"></canvas></div>
-            </div>
-          </div>
-          <div class="tbl-wrap">
-            <div class="tbl-header">
-              <span class="tbl-title">Provincias</span>
-              <input class="tbl-search" id="search-prov" placeholder="Buscar provincia..." oninput="renderProvTable()">
-            </div>
-            <table id="tbl-prov">
-              <thead><tr>
-                <th onclick="sortTable('tbl-prov',0)" data-col="0">Provincia <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',1)" data-col="1">Total <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',2)" data-col="2">Private <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',3)" data-col="3">Corporate <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',4)" data-col="4">RAC <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',5)" data-col="5">BEV <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',6)" data-col="6">PHEV <span class="sort-icon">↕</span></th>
-                <th onclick="sortTable('tbl-prov',7)" data-col="7">Cuota <span class="sort-icon">↕</span></th>
-              </tr></thead>
-              <tbody id="tbody-prov"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+  <div class="fg">
+    <div class="fl">Marca <span id="f-marca-badge" class="ss-badge"></span></div>
+    <div class="ss-wrap">
+      <input class="ss-input" id="f-marca-q" placeholder="Buscar marca…" autocomplete="off"
+        oninput="filterSS('marca')" onfocus="openSS('marca')" onblur="blurSS('marca')">
+      <div class="ss-list" id="ss-marca-list"></div>
+    </div>
+  </div>
 
-      <!-- PAGE: MTD DIARIO -->
-      <div class="page" id="page-mtd">
-        <div class="page-title">MTD Diario</div>
-        <div class="kpi-grid" id="kpi-mtd"></div>
-        <div class="chart-grid chart-grid-2" style="margin-bottom:16px">
-          <div class="chart-card">
-            <div class="chart-title">Acumulado mensual por canal</div>
-            <div class="chart-wrap"><canvas id="ch-mtd-cumul"></canvas></div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title">Diario por canal</div>
-            <div class="chart-wrap"><canvas id="ch-mtd-daily"></canvas></div>
-          </div>
-        </div>
-        <div class="chart-card" style="margin-bottom:16px">
-          <div class="chart-title">Acumulado Fuel Type</div>
-          <div class="chart-wrap"><canvas id="ch-mtd-fuel"></canvas></div>
-        </div>
-        <div class="tbl-wrap">
-          <div class="tbl-header"><span class="tbl-title" id="mtd-top-title">Top 10 marcas MTD</span></div>
-          <table><thead><tr>
-            <th>Marca</th><th>Total</th><th>Private</th><th>Corporate</th><th>RAC</th><th>ICE</th><th>BEV</th><th>PHEV</th>
-          </tr></thead>
-          <tbody id="tbody-mtd-brands"></tbody></table>
-        </div>
-      </div>
+  <div class="fg">
+    <div class="fl">Modelo <span id="f-modelo-badge" class="ss-badge"></span></div>
+    <div class="ss-wrap">
+      <input class="ss-input" id="f-modelo-q" placeholder="Buscar modelo…" autocomplete="off"
+        oninput="filterSS('modelo')" onfocus="openSS('modelo')" onblur="blurSS('modelo')">
+      <div class="ss-list" id="ss-modelo-list"></div>
+    </div>
+  </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
+  <div class="divider"></div>
+
+  <div class="fg">
+    <div class="fl">Segmento</div>
+    <div class="chips" id="f-segs"></div>
+  </div>
+
+  <div class="fg">
+    <div class="fl">SubSegmento</div>
+    <div class="chips" id="f-subs"></div>
+  </div>
+
+  <div class="fg">
+    <div class="fl">Body Type</div>
+    <div class="chips" id="f-bodies"></div>
+  </div>
+
+  <div class="fg">
+    <div class="fl">High Performance</div>
+    <div class="chips" id="f-hps"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetFilters()">↺ Limpiar filtros</button>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+  <div id="page-mercado" class="page"></div>
+  <div id="page-marcas" class="page" style="display:none"></div>
+  <div id="page-segmentos" class="page" style="display:none"></div>
+  <div id="page-modelos" class="page" style="display:none"></div>
+  <div id="page-provincias" class="page" style="display:none"></div>
+  <div id="page-diario" class="page" style="display:none"></div>
+</div>
+</div>
 
 <script>
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let DATA = {monthly:null, daily:null, meta:null, prov:null};
-let FILTER = {years:new Set(), canales:new Set(['Private','Corporate','RAC']),
-               fuels:new Set(['ICE','BEV','PHEV']), mfrom:'', mto:''};
-let CURRENT_PAGE = 'general';
-let CHARTS = {};
-let SORT = {};
-let COMP_BRANDS = new Set();
+// ────────────────────────────────────────────────────
+// DATA + STATE
+// ────────────────────────────────────────────────────
+let REC = null;          // records.json parsed
+let PROV = null;         // provinces.json
+let DAILY = null;        // daily_mtd.json
+let currentPage = 'mercado';
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-async function init() {
-  try {
-    const [monthly, daily, meta, prov] = await Promise.all([
-      fetch('data/monthly.json').then(r=>r.json()),
-      fetch('data/daily_mtd.json').then(r=>r.json()),
-      fetch('data/meta.json').then(r=>r.json()),
-      fetch('data/provinces.json').then(r=>r.json()),
-    ]);
-    DATA = {monthly, daily, meta, prov};
-    document.getElementById('last-update').textContent = 'Act: ' + meta.updated;
-    buildFilters();
-    applyFilters();
-  } catch(e) {
-    document.getElementById('last-update').textContent = 'Error cargando datos';
-    console.error(e);
+const CANAL_NAMES = ['Private','Corporate','RAC'];
+const FUEL_NAMES  = ['ICE','BEV','PHEV'];
+const COL = {Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,SEG:6,SUB:7,HP:8,BODY:9,N:10};
+const MONTHS_ES = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                   'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const SEG_ORDER = ['UKL0','UKL1','UKL2','MKL','KKL','SKL','GKL','GKL+'];
+
+// Filter state — empty Set = all allowed
+const F = {
+  years:  new Set(), months: new Set(),
+  canales: new Set(), fuels: new Set(),
+  marcas: new Set(), modelos: new Set(),
+  segs: new Set(), subs: new Set(),
+  hps: new Set(), bodies: new Set(),
+  fromYM: null, toYM: null,  // 'YYYY-MM'
+};
+
+// Charts registry
+const charts = {};
+
+// ────────────────────────────────────────────────────
+// LOAD
+// ────────────────────────────────────────────────────
+async function load() {
+  const [rec, prov, daily, meta] = await Promise.all([
+    fetch('data/records.json').then(r=>r.json()),
+    fetch('data/provinces.json').then(r=>r.json()),
+    fetch('data/daily_mtd.json').then(r=>r.json()),
+    fetch('data/meta.json').then(r=>r.json()),
+  ]);
+  REC = rec; PROV = prov; DAILY = daily;
+
+  if (meta.updated) document.getElementById('upd-lbl').textContent = 'Act: ' + meta.updated;
+
+  buildSidebar();
+  document.getElementById('loading').style.display = 'none';
+  render();
+}
+
+// ────────────────────────────────────────────────────
+// SIDEBAR BUILD
+// ────────────────────────────────────────────────────
+function buildSidebar() {
+  const E = REC.enums;
+  const allMonths = REC.months; // [{y,m,label}]
+
+  // Years
+  const years = [...new Set(allMonths.map(m=>m.y))].sort();
+  const yc = document.getElementById('f-years');
+  years.forEach(y => {
+    const b = btn(y, y, 'on', () => toggleChip('years', y, b, onFilterChange), false);
+    yc.appendChild(b);
+  });
+  years.forEach(y => F.years.add(y)); // default: all selected
+
+  // Month range
+  const fs = document.getElementById('f-from'), ts = document.getElementById('f-to');
+  allMonths.forEach(m => {
+    const v = `${m.y}-${String(m.m).padStart(2,'0')}`;
+    const lbl = `${MONTHS_ES[m.m].slice(0,3)} ${m.y}`;
+    fs.append(new Option(lbl, v));
+    ts.append(new Option(lbl, v));
+  });
+
+  // Canal
+  const cc = document.getElementById('f-canales');
+  ['Private','Corporate','RAC'].forEach((c,i) => {
+    const cls = i===1?'c-corp':i===2?'c-rac':'';
+    const b = btn(c, c, 'on '+cls, () => toggleChip('canales', i, b, onFilterChange), false);
+    b.textContent = c;
+    cc.appendChild(b);
+    F.canales.add(i);
+  });
+
+  // Fuel
+  const fc = document.getElementById('f-fuels');
+  ['ICE','BEV','PHEV'].forEach((f,i) => {
+    const cls = i===0?'c-ice':i===1?'c-bev':'c-phev';
+    const b = btn(f, f, 'on '+cls, () => toggleChip('fuels', i, b, onFilterChange), false);
+    fc.appendChild(b);
+    F.fuels.add(i);
+  });
+
+  // Segment
+  const sc = document.getElementById('f-segs');
+  const segs = SEG_ORDER.filter(s => E.seg.includes(s));
+  segs.forEach(s => {
+    const idx = E.seg.indexOf(s);
+    const b = btn(s, s, '', () => toggleChip('segs', idx, b, onFilterChange), false);
+    sc.appendChild(b);
+  });
+
+  // SubSegmento
+  const subc = document.getElementById('f-subs');
+  ['REST','FOCUS SEGMENT'].forEach(s => {
+    const idx = E.sub.indexOf(s);
+    if (idx < 0) return;
+    const lbl = s === 'FOCUS SEGMENT' ? 'Focus' : 'REST';
+    const b = btn(lbl, s, '', () => toggleChip('subs', idx, b, onFilterChange), false);
+    subc.appendChild(b);
+  });
+
+  // Body type
+  const bc = document.getElementById('f-bodies');
+  const bodies = E.body.map((b,i)=>({b,i})).filter(x=>x.b).sort((a,b)=>a.b.localeCompare(b.b));
+  bodies.forEach(({b,i}) => {
+    const btn2 = btn(b, b, '', () => toggleChip('bodies', i, btn2, onFilterChange), false);
+    bc.appendChild(btn2);
+  });
+
+  // High Performance
+  const hc = document.getElementById('f-hps');
+  const hps = E.hp.map((h,i)=>({h,i})).filter(x=>x.h).sort((a,b)=>a.h.localeCompare(b.h));
+  hps.forEach(({h,i}) => {
+    const lbl = h === 'M Performance' ? 'M Perf' : h;
+    const b = btn(lbl, h, h!=='Standard'?'c-hp':'', () => toggleChip('hps', i, b, onFilterChange), false);
+    hc.appendChild(b);
+  });
+
+  // Brand/Model search-select
+  buildSS('marca', E.marca, 'f-marca-q', 'ss-marca-list', 'marcas', 'f-marca-badge');
+  buildSS('modelo', E.modelo, 'f-modelo-q', 'ss-modelo-list', 'modelos', 'f-modelo-badge');
+}
+
+function btn(label, val, cls, cb, isOn) {
+  const el = document.createElement('button');
+  el.className = 'chip' + (cls ? ' '+cls : '') + (isOn?' on':'');
+  el.textContent = label;
+  el.dataset.val = val;
+  el.addEventListener('mousedown', e => { e.preventDefault(); cb(); });
+  return el;
+}
+
+function toggleChip(key, val, el, cb) {
+  if (F[key].has(val)) { F[key].delete(val); el.classList.remove('on'); }
+  else                  { F[key].add(val);    el.classList.add('on'); }
+  cb();
+}
+
+// Search-select component
+const ssState = {};
+function buildSS(id, items, inputId, listId, fKey, badgeId) {
+  ssState[id] = { items, inputId, listId, fKey, badgeId, open: false };
+  renderSSList(id, '');
+}
+
+function openSS(id) {
+  ssState[id].open = true;
+  document.getElementById(ssState[id].listId).classList.add('open');
+}
+function blurSS(id) {
+  setTimeout(() => {
+    ssState[id].open = false;
+    document.getElementById(ssState[id].listId).classList.remove('open');
+  }, 200);
+}
+function filterSS(id) {
+  renderSSList(id, document.getElementById(ssState[id].inputId).value);
+}
+function renderSSList(id, q) {
+  const { items, listId, fKey } = ssState[id];
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+  const ql = q.toLowerCase();
+
+  // For models: only show models that appear in selected brands
+  let eligible = items;
+  if (id === 'modelo' && F.marcas.size > 0 && F.marcas.size < REC.enums.marca.length) {
+    const brandSet = F.marcas;
+    const modelSet = new Set();
+    REC.rows.forEach(r => { if (brandSet.has(r[COL.MARCA])) modelSet.add(r[COL.MODELO]); });
+    eligible = items.filter((_,i) => modelSet.has(i));
   }
-}
 
-function buildFilters() {
-  const years = [...new Set(DATA.monthly.months.map(m=>m.y))].sort();
-  FILTER.years = new Set(years);
-  const yc = document.getElementById('f-year');
-  years.forEach(y=>{
-    const b = document.createElement('button');
-    b.className='filter-chip on'; b.dataset.group='year'; b.dataset.val=y;
-    b.textContent=y; b.onclick=()=>toggleChip(b); yc.appendChild(b);
+  const filtered = eligible.map((item,i)=>({item,i}))
+    .filter(x => x.item && x.item.toLowerCase().includes(ql))
+    .slice(0, 80);
+
+  filtered.forEach(({item, i}) => {
+    const d = document.createElement('div');
+    d.className = 'ss-opt' + (F[fKey].has(i) ? ' sel' : '');
+    d.textContent = item;
+    d.onmousedown = (e) => { e.preventDefault(); toggleSS(id, i); };
+    list.appendChild(d);
   });
-  const msel = (id) => {
-    const sel = document.getElementById(id);
-    DATA.monthly.months.forEach(({y,m,label})=>{
-      const opt = document.createElement('option');
-      opt.value=`${y}-${String(m).padStart(2,'0')}`; opt.textContent=label;
-      sel.appendChild(opt);
-    });
-  };
-  msel('f-mfrom'); msel('f-mto');
-  // Marca selects
-  const bs = [document.getElementById('f-brand1'), document.getElementById('f-brand2'), document.getElementById('f-brand3')];
-  DATA.monthly.brands.forEach(b=>{
-    bs.forEach(sel=>{
-      const opt=document.createElement('option'); opt.value=b.brand; opt.textContent=b.brand;
-      sel.appendChild(opt.cloneNode(true));
-    });
-  });
-  // Competidores checkboxes (top 15)
-  const cc = document.getElementById('comp-brand-checks');
-  const top = DATA.monthly.brands.slice(0,15);
-  top.forEach((b,i)=>{
-    const btn=document.createElement('button');
-    btn.className='filter-chip'+(i<5?' on':'');
-    btn.textContent=b.brand; btn.dataset.brand=b.brand;
-    if(i<5) COMP_BRANDS.add(b.brand);
-    btn.onclick=()=>{
-      btn.classList.toggle('on');
-      if(btn.classList.contains('on')) COMP_BRANDS.add(b.brand);
-      else COMP_BRANDS.delete(b.brand);
-      renderCompetidores();
-    };
-    cc.appendChild(btn);
-  });
+
+  if (!filtered.length) {
+    const d = document.createElement('div');
+    d.className = 'ss-opt'; d.textContent = '(sin resultados)'; d.style.color='var(--text2)';
+    list.appendChild(d);
+  }
+  list.classList.toggle('open', ssState[id].open || q.length > 0);
 }
 
-function toggleChip(el) {
-  el.classList.toggle('on');
-  const g=el.dataset.group, v=el.dataset.val;
-  const s = g==='year'?FILTER.years : g==='canal'?FILTER.canales : FILTER.fuels;
-  if(el.classList.contains('on')) s.add(v==='year'?parseInt(v):v);
-  else s.delete(g==='year'?parseInt(v):v);
-  applyFilters();
+function toggleSS(id, idx) {
+  const { fKey, badgeId } = ssState[id];
+  if (F[fKey].has(idx)) F[fKey].delete(idx);
+  else                   F[fKey].add(idx);
+  renderSSList(id, document.getElementById(ssState[id].inputId).value);
+  const n = F[fKey].size;
+  document.getElementById(badgeId).textContent = n ? `(${n})` : '';
+  // When brand changes, refresh model list
+  if (id === 'marca') renderSSList('modelo', document.getElementById(ssState['modelo'].inputId).value);
+  onFilterChange();
 }
 
-function resetFilters() {
-  FILTER.years = new Set(DATA.monthly.months.map(m=>m.y));
-  FILTER.canales = new Set(['Private','Corporate','RAC']);
-  FILTER.fuels = new Set(['ICE','BEV','PHEV']);
-  FILTER.mfrom=''; FILTER.mto='';
-  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.add('on'));
-  document.getElementById('f-mfrom').value='';
-  document.getElementById('f-mto').value='';
-  applyFilters();
-}
-
-// ─── FILTERED DATA ────────────────────────────────────────────────────────────
-function filteredMonths() {
-  return DATA.monthly.months.filter(m=>{
-    if(!FILTER.years.has(m.y)) return false;
-    const ym=`${m.y}-${String(m.m).padStart(2,'0')}`;
-    if(FILTER.mfrom && ym<FILTER.mfrom) return false;
-    if(FILTER.mto   && ym>FILTER.mto)   return false;
+// ────────────────────────────────────────────────────
+// FILTER ENGINE
+// ────────────────────────────────────────────────────
+function applyFilters() {
+  if (!REC) return [];
+  const from = F.fromYM, to = F.toYM;
+  return REC.rows.filter(r => {
+    if (F.years.size  && !F.years.has(r[COL.Y]))    return false;
+    if (F.canales.size && !F.canales.has(r[COL.CANAL])) return false;
+    if (F.fuels.size   && !F.fuels.has(r[COL.FUEL]))    return false;
+    if (F.marcas.size  && !F.marcas.has(r[COL.MARCA]))  return false;
+    if (F.modelos.size && !F.modelos.has(r[COL.MODELO])) return false;
+    if (F.segs.size    && !F.segs.has(r[COL.SEG]))      return false;
+    if (F.subs.size    && !F.subs.has(r[COL.SUB]))      return false;
+    if (F.hps.size     && !F.hps.has(r[COL.HP]))        return false;
+    if (F.bodies.size  && !F.bodies.has(r[COL.BODY]))   return false;
+    // Month range
+    if (from || to) {
+      const ym = `${r[COL.Y]}-${String(r[COL.M]).padStart(2,'0')}`;
+      if (from && ym < from) return false;
+      if (to   && ym > to)   return false;
+    }
     return true;
   });
 }
 
-function filteredTotal(month) {
-  let t=0;
-  FILTER.canales.forEach(c=>FILTER.fuels.forEach(f=>{
-    // We have canal totals and fuel totals but not canal×fuel
-    // Approximate: use proportional split
-  }));
-  // Simpler: sum canales
-  FILTER.canales.forEach(c=>{ t+=month[c]||0; });
-  return t;
+function onFilterChange() {
+  // Sync month range from selects
+  F.fromYM = document.getElementById('f-from').value || null;
+  F.toYM   = document.getElementById('f-to').value   || null;
+  render();
 }
 
-function fmtN(n) { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'k':n; }
-function fmtPct(n,d) { return d>0?((n/d)*100).toFixed(1)+'%':'—'; }
-function color(c,a=1) {
-  const map={Private:`rgba(79,142,247,${a})`,Corporate:`rgba(0,212,170,${a})`,RAC:`rgba(247,147,79,${a})`,
-             ICE:`rgba(136,146,176,${a})`,BEV:`rgba(0,212,170,${a})`,PHEV:`rgba(192,132,252,${a})`};
-  return map[c]||`rgba(255,255,255,${a})`;
+function resetFilters() {
+  // All years on
+  F.years.clear();
+  document.querySelectorAll('#f-years .chip').forEach(b => {
+    b.classList.add('on'); F.years.add(Number(b.dataset.val));
+  });
+  // All canales on
+  F.canales.clear();
+  document.querySelectorAll('#f-canales .chip').forEach((b,i) => {
+    b.classList.add('on'); F.canales.add(i);
+  });
+  // All fuels on
+  F.fuels.clear();
+  document.querySelectorAll('#f-fuels .chip').forEach((b,i) => {
+    b.classList.add('on'); F.fuels.add(i);
+  });
+  // All segs/subs/bodies/hps off (= all allowed)
+  ['f-segs','f-subs','f-bodies','f-hps'].forEach(id => {
+    document.querySelectorAll(`#${id} .chip`).forEach(b => b.classList.remove('on'));
+  });
+  F.segs.clear(); F.subs.clear(); F.bodies.clear(); F.hps.clear();
+  // Brand/model clear
+  F.marcas.clear(); F.modelos.clear();
+  ['marca','modelo'].forEach(id => {
+    ssState[id]&&ssState[id].fKey&&(F[ssState[id].fKey]=new Set());
+    const bi = document.getElementById(ssState[id]?.inputId);
+    if(bi) bi.value='';
+    const ba = document.getElementById(ssState[id]?.badgeId);
+    if(ba) ba.textContent='';
+    renderSSList(id,'');
+  });
+  F.marcas = new Set(); F.modelos = new Set();
+  // Month range
+  document.getElementById('f-from').value = '';
+  document.getElementById('f-to').value = '';
+  F.fromYM = null; F.toYM = null;
+  onFilterChange();
 }
 
-// ─── CHARTS HELPER ───────────────────────────────────────────────────────────
-const CHART_DEFAULTS = {
-  plugins:{legend:{labels:{color:'#8892b0',font:{size:11},boxWidth:10,padding:12}}},
-  scales:{x:{ticks:{color:'#8892b0',font:{size:10}},grid:{color:'rgba(42,58,92,.4)'}},
-          y:{ticks:{color:'#8892b0',font:{size:10}},grid:{color:'rgba(42,58,92,.4)'}}},
-  animation:{duration:300},
-  responsive:true,maintainAspectRatio:true,
-};
+// ────────────────────────────────────────────────────
+// CHARTS HELPERS
+// ────────────────────────────────────────────────────
+const PALETTE = ['#4f8ef7','#00d4aa','#f7934f','#c084fc','#ffd700','#ff6b6b','#2ed573','#a78bfa','#38bdf8','#fb923c'];
 
-function makeChart(id, type, data, options={}) {
-  if(CHARTS[id]) CHARTS[id].destroy();
-  const ctx = document.getElementById(id).getContext('2d');
-  CHARTS[id] = new Chart(ctx, {
+function makeChart(id, type, data, opts={}) {
+  if (charts[id]) { charts[id].destroy(); }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  charts[id] = new Chart(ctx, {
     type, data,
-    options: mergeDeep({...CHART_DEFAULTS}, options)
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels:{ color:'#8892b0',font:{size:11} } } },
+      scales: type==='bar'||type==='line' ? {
+        x:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'} },
+        y:{ ticks:{color:'#8892b0',font:{size:10}}, grid:{color:'rgba(42,58,92,.4)'},
+            beginAtZero:true }
+      } : {},
+      ...opts,
+    }
   });
-  return CHARTS[id];
 }
 
-function mergeDeep(t,...s){s.forEach(s=>{if(s&&typeof s==='object')Object.keys(s).forEach(k=>{if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k])){t[k]=t[k]||{};mergeDeep(t[k],s[k])}else t[k]=s[k]})});return t}
+function fmt(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(n>=1e5?0:1)+'k';
+  return n.toString();
+}
+function pct(n,d) { return d ? (100*n/d).toFixed(1)+'%' : '—'; }
+function num(n) { return n.toLocaleString('es-ES'); }
 
-// ─── APPLY FILTERS (main) ────────────────────────────────────────────────────
-function applyFilters() {
-  FILTER.mfrom = document.getElementById('f-mfrom').value;
-  FILTER.mto   = document.getElementById('f-mto').value;
-  if(CURRENT_PAGE==='general')       renderGeneral();
-  if(CURRENT_PAGE==='marcas')        renderMarcas();
-  if(CURRENT_PAGE==='competidores')  renderCompetidores();
-  if(CURRENT_PAGE==='provincias')    renderProvincias();
-  if(CURRENT_PAGE==='mtd')           renderMTD();
+// ────────────────────────────────────────────────────
+// PAGES
+// ────────────────────────────────────────────────────
+const PAGE_LABELS = {mercado:'Mercado',marcas:'Marcas',segmentos:'Segmentos',modelos:'Modelos',provincias:'Provincias',diario:'MTD Diario'};
+function setPage(name) {
+  currentPage = name;
+  document.querySelectorAll('.nb').forEach(b => b.classList.toggle('on', b.textContent===PAGE_LABELS[name]));
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById('page-'+name).style.display = '';
+  render();
 }
 
-function goPage(p) {
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  document.querySelectorAll('.nav-btn')[['general','marcas','competidores','provincias','mtd'].indexOf(p)].classList.add('active');
-  const fg = document.getElementById('fg-marca');
-  fg.style.display = (p==='competidores')?'block':'none';
-  CURRENT_PAGE = p;
-  applyFilters();
+function render() {
+  const rows = applyFilters();
+  if (currentPage==='mercado')    renderMercado(rows);
+  else if (currentPage==='marcas')     renderMarcas(rows);
+  else if (currentPage==='segmentos')  renderSegmentos(rows);
+  else if (currentPage==='modelos')    renderModelos(rows);
+  else if (currentPage==='provincias') renderProvincias();
+  else if (currentPage==='diario')     renderDiario();
 }
 
-// ─── PAGE: GENERAL ───────────────────────────────────────────────────────────
-function renderGeneral() {
-  const mos = filteredMonths();
-  // Canal sums (filtered)
-  let totals={Private:0,Corporate:0,RAC:0,ICE:0,BEV:0,PHEV:0,total:0};
-  mos.forEach(m=>{
-    FILTER.canales.forEach(c=>{totals[c]+=(m[c]||0); totals.total+=(m[c]||0);});
-    FILTER.fuels.forEach(f=>{totals[f]+=(m[f]||0);});
+// ─── MERCADO ────────────────────────────────────────
+function renderMercado(rows) {
+  const el = document.getElementById('page-mercado');
+  const total = rows.reduce((s,r)=>s+r[COL.N],0);
+
+  // Aggregations
+  let byCanalFuel = {}; // {canal_idx: {fuel_idx: n}}
+  const byYM = {}; // 'YYYY-MM' → {total, canals:[0,0,0], fuels:[0,0,0]}
+  rows.forEach(r => {
+    const ym = `${r[COL.Y]}-${String(r[COL.M]).padStart(2,'0')}`;
+    if (!byYM[ym]) byYM[ym] = {total:0,c:[0,0,0],f:[0,0,0]};
+    byYM[ym].total += r[COL.N];
+    byYM[ym].c[r[COL.CANAL]] += r[COL.N];
+    byYM[ym].f[r[COL.FUEL]]  += r[COL.N];
   });
-  // YoY: compare last 12m vs previous 12m
-  const lastYM = mos.length?mos[mos.length-1]:null;
-  let yoyTotal=null;
-  if(lastYM) {
-    const curr12 = mos.slice(-12), prev12 = DATA.monthly.months.filter(m=>{
-      const ym=`${m.y}-${String(m.m).padStart(2,'0')}`;
-      const cy=`${lastYM.y}-${String(lastYM.m).padStart(2,'0')}`;
-      return ym < `${lastYM.y-1}-${String(lastYM.m).padStart(2,'0')}` && ym >= `${lastYM.y-2}-${String(lastYM.m).padStart(2,'0')}`;
-    });
-    const s1=curr12.reduce((a,m)=>a+m.total,0), s2=prev12.reduce((a,m)=>a+m.total,0);
-    if(s2>0) yoyTotal=((s1-s2)/s2*100).toFixed(1);
-  }
-  // KPIs
-  document.getElementById('kpi-general').innerHTML = `
-    <div class="kpi"><div class="kpi-label">Total matrículas</div><div class="kpi-val">${fmtN(totals.total)}</div>
-      <div class="kpi-sub">${mos.length} meses${yoyTotal?` · <span class="kpi-delta ${yoyTotal>0?'pos':'neg'}">${yoyTotal>0?'+':''}${yoyTotal}% YoY</span>`:''}</div></div>
-    <div class="kpi"><div class="kpi-label">Private</div><div class="kpi-val">${fmtN(totals.Private)}</div>
-      <div class="kpi-sub">${fmtPct(totals.Private,totals.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">Corporate</div><div class="kpi-val">${fmtN(totals.Corporate)}</div>
-      <div class="kpi-sub">${fmtPct(totals.Corporate,totals.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">RAC</div><div class="kpi-val">${fmtN(totals.RAC)}</div>
-      <div class="kpi-sub">${fmtPct(totals.RAC,totals.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">BEV</div><div class="kpi-val">${fmtN(totals.BEV)}</div>
-      <div class="kpi-sub">${fmtPct(totals.BEV,totals.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">PHEV</div><div class="kpi-val">${fmtN(totals.PHEV)}</div>
-      <div class="kpi-sub">${fmtPct(totals.PHEV,totals.total)}</div></div>
+
+  const totC = [0,0,0], totF = [0,0,0];
+  rows.forEach(r => { totC[r[COL.CANAL]]+=r[COL.N]; totF[r[COL.FUEL]]+=r[COL.N]; });
+
+  const sortedYM = Object.keys(byYM).sort();
+  const prevTotal = 0; // could compute YoY here if needed
+
+  el.innerHTML = `
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">Total</div><div class="kpi-v">${fmt(total)}</div><div class="kpi-s">${num(total)} unidades</div></div>
+    <div class="kpi"><div class="kpi-l">Privado</div><div class="kpi-v">${fmt(totC[0])}</div><div class="kpi-s">${pct(totC[0],total)} del total</div></div>
+    <div class="kpi"><div class="kpi-l">Empresa</div><div class="kpi-v">${fmt(totC[1])}</div><div class="kpi-s">${pct(totC[1],total)} del total</div></div>
+    <div class="kpi"><div class="kpi-l">RAC</div><div class="kpi-v">${fmt(totC[2])}</div><div class="kpi-s">${pct(totC[2],total)} del total</div></div>
+    <div class="kpi"><div class="kpi-l">ICE</div><div class="kpi-v">${fmt(totF[0])}</div><div class="kpi-s">${pct(totF[0],total)}</div></div>
+    <div class="kpi"><div class="kpi-l">BEV</div><div class="kpi-v">${fmt(totF[1])}</div><div class="kpi-s">${pct(totF[1],total)}</div></div>
+    <div class="kpi"><div class="kpi-l">PHEV</div><div class="kpi-v">${fmt(totF[2])}</div><div class="kpi-s">${pct(totF[2],total)}</div></div>
+  </div>
+  <div class="grid31">
+    <div class="cc"><div class="cc-t">Evolución mensual (canal)</div><div class="cw" style="height:240px"><canvas id="ch-trend"></canvas></div></div>
+    <div class="cc"><div class="cc-t">Mix Canal</div><div class="cw" style="height:240px"><canvas id="ch-canal-pie"></canvas></div></div>
+  </div>
+  <div class="grid2">
+    <div class="cc"><div class="cc-t">Evolución mensual (combustible)</div><div class="cw" style="height:220px"><canvas id="ch-fuel-trend"></canvas></div></div>
+    <div class="cc"><div class="cc-t">Mix Combustible</div><div class="cw" style="height:220px"><canvas id="ch-fuel-pie"></canvas></div></div>
+  </div>
   `;
-  const labels = mos.map(m=>`${m.m}/${m.y}`);
-  // Trend chart
-  const canalesArr = [...FILTER.canales];
+
+  const labels = sortedYM.map(ym => {
+    const [y,m] = ym.split('-'); return MONTHS_ES[+m].slice(0,3)+' '+y.slice(2);
+  });
+
   makeChart('ch-trend','bar',{
     labels,
-    datasets: canalesArr.map(c=>({
-      label:c, data:mos.map(m=>m[c]||0),
-      backgroundColor:color(c,.7), borderColor:color(c,1), borderWidth:1,
-    }))
-  },{scales:{x:{stacked:true,ticks:{maxTicksLimit:12}},y:{stacked:true}},plugins:{legend:{position:'bottom'}}});
+    datasets: [
+      {label:'Private', data:sortedYM.map(ym=>byYM[ym].c[0]), backgroundColor:'#4f8ef7', stack:'s'},
+      {label:'Corporate', data:sortedYM.map(ym=>byYM[ym].c[1]), backgroundColor:'#00d4aa', stack:'s'},
+      {label:'RAC', data:sortedYM.map(ym=>byYM[ym].c[2]), backgroundColor:'#f7934f', stack:'s'},
+    ]
+  },{plugins:{legend:{position:'bottom'}}});
 
-  // Donut canal
-  const dCanal = canalesArr.map(c=>totals[c]);
-  makeChart('ch-donut-canal','doughnut',{
-    labels:canalesArr, datasets:[{data:dCanal, backgroundColor:canalesArr.map(c=>color(c,.85)), borderWidth:2, borderColor:'#1a2340'}]
-  },{plugins:{legend:{position:'bottom'}},scales:{x:{display:false,grid:{display:false}},y:{display:false,grid:{display:false}}}});
+  makeChart('ch-canal-pie','doughnut',{
+    labels:['Private','Corporate','RAC'],
+    datasets:[{data:totC, backgroundColor:['#4f8ef7','#00d4aa','#f7934f'], borderWidth:0}]
+  },{plugins:{legend:{position:'bottom'}}});
 
-  // Donut fuel
-  const fuelsArr=[...FILTER.fuels];
-  const dFuel=fuelsArr.map(f=>totals[f]);
-  makeChart('ch-donut-fuel','doughnut',{
-    labels:fuelsArr, datasets:[{data:dFuel, backgroundColor:fuelsArr.map(f=>color(f,.85)), borderWidth:2, borderColor:'#1a2340'}]
-  },{plugins:{legend:{position:'bottom'}},scales:{x:{display:false,grid:{display:false}},y:{display:false,grid:{display:false}}}});
-
-  // Electro trend
-  makeChart('ch-electro','line',{
+  makeChart('ch-fuel-trend','bar',{
     labels,
     datasets:[
-      {label:'BEV',data:mos.map(m=>m.BEV||0),borderColor:color('BEV'),backgroundColor:color('BEV',.1),tension:.3,fill:true},
-      {label:'PHEV',data:mos.map(m=>m.PHEV||0),borderColor:color('PHEV'),backgroundColor:color('PHEV',.1),tension:.3,fill:true},
+      {label:'ICE', data:sortedYM.map(ym=>byYM[ym].f[0]), backgroundColor:'#8892b0', stack:'s'},
+      {label:'BEV', data:sortedYM.map(ym=>byYM[ym].f[1]), backgroundColor:'#00d4aa', stack:'s'},
+      {label:'PHEV', data:sortedYM.map(ym=>byYM[ym].f[2]), backgroundColor:'#c084fc', stack:'s'},
     ]
-  },{scales:{x:{ticks:{maxTicksLimit:12}}},plugins:{legend:{position:'bottom'}}});
+  },{plugins:{legend:{position:'bottom'}}});
 
-  // Brand bar
-  const filtBrands = getFilteredBrandTotals();
-  const top15 = filtBrands.slice(0,15);
-  makeChart('ch-brand-bar','bar',{
-    labels:top15.map(b=>b.brand),
-    datasets:[
-      {label:'Private',data:top15.map(b=>b.Private),backgroundColor:color('Private',.8)},
-      {label:'Corporate',data:top15.map(b=>b.Corporate),backgroundColor:color('Corporate',.8)},
-      {label:'RAC',data:top15.map(b=>b.RAC),backgroundColor:color('RAC',.8)},
-    ]
-  },{indexAxis:'y',scales:{x:{stacked:true},y:{stacked:true,ticks:{font:{size:11}}}},plugins:{legend:{position:'bottom'}}});
+  makeChart('ch-fuel-pie','doughnut',{
+    labels:['ICE','BEV','PHEV'],
+    datasets:[{data:totF, backgroundColor:['#8892b0','#00d4aa','#c084fc'], borderWidth:0}]
+  },{plugins:{legend:{position:'bottom'}}});
 }
 
-// ─── HELPERS: brand totals filtered ──────────────────────────────────────────
-function getFilteredBrandTotals() {
-  const mos = filteredMonths();
-  const ymSet = new Set(mos.map(m=>`${m.y}-${String(m.m).padStart(2,'0')}`));
-  return DATA.monthly.brands.map(b=>{
-    let P=0,C=0,R=0,ICE=0,BEV=0,PHEV=0;
-    Object.entries(b.by_month).forEach(([ym,d])=>{
-      if(!ymSet.has(ym)) return;
-      if(FILTER.canales.has('Private'))   P   += d.Private||0;
-      if(FILTER.canales.has('Corporate')) C   += d.Corporate||0;
-      if(FILTER.canales.has('RAC'))       R   += d.RAC||0;
-      if(FILTER.fuels.has('ICE'))         ICE += d.ICE||0;
-      if(FILTER.fuels.has('BEV'))         BEV += d.BEV||0;
-      if(FILTER.fuels.has('PHEV'))        PHEV+= d.PHEV||0;
-    });
-    return {brand:b.brand,Private:P,Corporate:C,RAC:R,total:P+C+R,ICE,BEV,PHEV};
-  }).sort((a,b)=>b.total-a.total);
+// ─── MARCAS ─────────────────────────────────────────
+let marcaSort = {col:'total', dir:-1};
+let marcaSearch = '';
+function renderMarcas(rows) {
+  const E = REC.enums;
+  const el = document.getElementById('page-marcas');
+
+  // Aggregate by brand
+  const bm = {};
+  rows.forEach(r => {
+    const b = r[COL.MARCA];
+    if (!bm[b]) bm[b] = {name:E.marca[b],total:0,c:[0,0,0],f:[0,0,0]};
+    bm[b].total += r[COL.N];
+    bm[b].c[r[COL.CANAL]] += r[COL.N];
+    bm[b].f[r[COL.FUEL]]  += r[COL.N];
+  });
+  const total = rows.reduce((s,r)=>s+r[COL.N],0);
+  let brands = Object.values(bm);
+  if (marcaSearch) brands = brands.filter(b=>b.name.toLowerCase().includes(marcaSearch.toLowerCase()));
+  const getV = (x,col) => col.startsWith('c') ? x.c[+col[1]]||0 : col.startsWith('f') ? x.f[+col[1]]||0 : x[col]||0;
+  brands.sort((a,b) => getV(a,marcaSort.col) < getV(b,marcaSort.col) ? marcaSort.dir : -marcaSort.dir);
+  const maxT = brands[0]?.total || 1;
+
+  const thH = (col, lbl) => `<th onclick="sortMarcas('${col}')">${lbl}</th>`;
+
+  el.innerHTML = `
+  <div class="tw">
+    <div class="th">
+      <div class="th-t">Ranking Marcas (${brands.length})</div>
+      <input class="ts" placeholder="Buscar…" value="${marcaSearch}"
+        oninput="marcaSearch=this.value;renderMarcas(applyFilters())">
+    </div>
+    <table>
+      <thead><tr>
+        <th>#</th>
+        ${thH('name','Marca')} ${thH('total','Total')} ${thH('c0','Private')} ${thH('c1','Corporativo')} ${thH('c2','RAC')}
+        ${thH('f0','ICE')} ${thH('f1','BEV')} ${thH('f2','PHEV')} <th>% Mkt</th>
+      </tr></thead>
+      <tbody>
+      ${brands.map((b,i)=>`<tr>
+        <td>${i+1}</td>
+        <td><b>${b.name}</b></td>
+        <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(b.total/maxT*100).toFixed(0)}%"></div></div>${num(b.total)}</div></td>
+        <td>${num(b.c[0])}</td><td>${num(b.c[1])}</td><td>${num(b.c[2])}</td>
+        <td>${num(b.f[0])}</td><td style="color:var(--bev)">${num(b.f[1])}</td><td style="color:var(--phev)">${num(b.f[2])}</td>
+        <td>${pct(b.total,total)}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  el.querySelectorAll('th').forEach(th => {
+    const col = th.getAttribute('onclick')?.match(/'(.+)'/)?.[1];
+    if (col === marcaSort.col) th.className = marcaSort.dir < 0 ? 'desc' : 'asc';
+  });
+}
+function sortMarcas(col) {
+  if (marcaSort.col===col) marcaSort.dir *= -1; else { marcaSort.col=col; marcaSort.dir=-1; }
+  renderMarcas(applyFilters());
 }
 
-// ─── PAGE: MARCAS ─────────────────────────────────────────────────────────────
-let MARCAS_DATA = [];
-let MARCAS_SORT = {col:1,asc:false};
+// ─── SEGMENTOS ──────────────────────────────────────
+function renderSegmentos(rows) {
+  const E = REC.enums;
+  const el = document.getElementById('page-segmentos');
+  const total = rows.reduce((s,r)=>s+r[COL.N],0);
 
-function renderMarcas() {
-  MARCAS_DATA = getFilteredBrandTotals();
-  const tot = MARCAS_DATA.reduce((a,b)=>a+b.total,0);
-  document.getElementById('kpi-marcas').innerHTML = `
-    <div class="kpi"><div class="kpi-label">Marcas</div><div class="kpi-val">${MARCAS_DATA.filter(b=>b.total>0).length}</div><div class="kpi-sub">con matrículas</div></div>
-    <div class="kpi"><div class="kpi-label">Top marca</div><div class="kpi-val">${MARCAS_DATA[0]?.brand||'—'}</div><div class="kpi-sub">${fmtN(MARCAS_DATA[0]?.total||0)} · ${fmtPct(MARCAS_DATA[0]?.total||0,tot)}</div></div>
-  `;
-  renderMarcasTable();
+  // By segment
+  const bySeg = {}, bySub = {}, byBody = {}, byHP = {};
+  rows.forEach(r => {
+    const seg = E.seg[r[COL.SEG]]||'Sin seg.';
+    const sub = E.sub[r[COL.SUB]]||'—';
+    const body = E.body[r[COL.BODY]]||'—';
+    const hp  = E.hp[r[COL.HP]]||'—';
+    bySeg[seg] = (bySeg[seg]||0)+r[COL.N];
+    bySub[sub] = (bySub[sub]||0)+r[COL.N];
+    byBody[body] = (byBody[body]||0)+r[COL.N];
+    byHP[hp] = (byHP[hp]||0)+r[COL.N];
+  });
+
+  const segs = Object.entries(bySeg).sort((a,b)=>SEG_ORDER.indexOf(a[0])-SEG_ORDER.indexOf(b[0]));
+  const bodies = Object.entries(byBody).sort((a,b)=>b[1]-a[1]);
+  const subs = Object.entries(bySub).sort((a,b)=>b[1]-a[1]);
+  const hps = Object.entries(byHP).sort((a,b)=>b[1]-a[1]);
+  const maxSeg = segs[0]?.[1]||1;
+
+  el.innerHTML = `
+  <div class="grid2">
+    <div class="cc"><div class="cc-t">Por Segmento</div><div class="cw" style="height:220px"><canvas id="ch-seg-bar"></canvas></div></div>
+    <div class="cc"><div class="cc-t">Por Body Type</div><div class="cw" style="height:220px"><canvas id="ch-body-bar"></canvas></div></div>
+  </div>
+  <div class="grid2">
+    <div class="cc"><div class="cc-t">SubSegmento</div><div class="cw" style="height:180px"><canvas id="ch-sub-pie"></canvas></div></div>
+    <div class="cc"><div class="cc-t">High Performance</div><div class="cw" style="height:180px"><canvas id="ch-hp-pie"></canvas></div></div>
+  </div>
+  <div class="tw">
+    <div class="th"><div class="th-t">Detalle Segmentos</div></div>
+    <table><thead><tr><th>Segmento</th><th>Total</th><th>% Total</th><th>Barras</th></tr></thead><tbody>
+    ${segs.map(([s,n])=>`<tr>
+      <td><span class="seg-badge seg-${s.replace('+','p')}">${s}</span></td>
+      <td>${num(n)}</td><td>${pct(n,total)}</td>
+      <td><div class="bar-track" style="max-width:120px"><div class="bar-fill" style="width:${(n/maxSeg*100).toFixed(0)}%"></div></div></td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+
+  makeChart('ch-seg-bar','bar',{
+    labels: segs.map(x=>x[0]),
+    datasets:[{label:'Matriculas', data:segs.map(x=>x[1]), backgroundColor:PALETTE, borderWidth:0}]
+  },{plugins:{legend:{display:false}}});
+
+  makeChart('ch-body-bar','bar',{
+    labels: bodies.map(x=>x[0]),
+    datasets:[{label:'Matriculas', data:bodies.map(x=>x[1]), backgroundColor:PALETTE, borderWidth:0}]
+  },{indexAxis:'y',plugins:{legend:{display:false}}});
+
+  makeChart('ch-sub-pie','doughnut',{
+    labels: subs.map(x=>x[0]),
+    datasets:[{data:subs.map(x=>x[1]), backgroundColor:PALETTE, borderWidth:0}]
+  },{plugins:{legend:{position:'bottom'}}});
+
+  makeChart('ch-hp-pie','doughnut',{
+    labels: hps.map(x=>x[0]),
+    datasets:[{data:hps.map(x=>x[1]), backgroundColor:['#8892b0','#f7934f','#ffd700'], borderWidth:0}]
+  },{plugins:{legend:{position:'bottom'}}});
 }
 
-function renderMarcasTable() {
-  const q = document.getElementById('search-marcas').value.toLowerCase();
-  const rows = MARCAS_DATA.filter(b=>b.total>0 && (!q||b.brand.toLowerCase().includes(q)));
-  const tot = MARCAS_DATA.reduce((a,b)=>a+b.total,0);
-  document.getElementById('tbody-marcas').innerHTML = rows.map(b=>{
-    const pct=fmtPct(b.total,tot);
-    const bw=b.total/tot*100;
-    return `<tr>
-      <td><b>${b.brand}</b></td>
-      <td>${b.total.toLocaleString()}<div class="bar-bg"><div class="bar-fill" style="width:${bw}%;background:var(--accent)"></div></div></td>
-      <td>${b.Private.toLocaleString()}</td><td>${b.Corporate.toLocaleString()}</td><td>${b.RAC.toLocaleString()}</td>
-      <td>${b.ICE.toLocaleString()}</td><td>${b.BEV.toLocaleString()}</td><td>${b.PHEV.toLocaleString()}</td>
-      <td>${pct}</td>
-    </tr>`;
-  }).join('');
+// ─── MODELOS ─────────────────────────────────────────
+let modeloSort = {col:'total', dir:-1};
+let modeloSearch = '';
+function renderModelos(rows) {
+  const E = REC.enums;
+  const el = document.getElementById('page-modelos');
+  const total = rows.reduce((s,r)=>s+r[COL.N],0);
+
+  const mm = {};
+  rows.forEach(r => {
+    const key = r[COL.MARCA]+':'+r[COL.MODELO];
+    if (!mm[key]) mm[key] = {
+      brand:E.marca[r[COL.MARCA]], model:E.modelo[r[COL.MODELO]]||'—',
+      total:0, c:[0,0,0], f:[0,0,0],
+      seg:E.seg[r[COL.SEG]]||'', body:E.body[r[COL.BODY]]||'', hp:E.hp[r[COL.HP]]||''
+    };
+    mm[key].total += r[COL.N];
+    mm[key].c[r[COL.CANAL]] += r[COL.N];
+    mm[key].f[r[COL.FUEL]]  += r[COL.N];
+  });
+
+  let models = Object.values(mm);
+  if (modeloSearch) models = models.filter(m =>
+    m.brand.toLowerCase().includes(modeloSearch.toLowerCase()) ||
+    m.model.toLowerCase().includes(modeloSearch.toLowerCase()));
+  const colMap = {total:'total',brand:'brand',model:'model',c0:'c[0]',c1:'c[1]',c2:'c[2]',f0:'f[0]',f1:'f[1]',f2:'f[2]'};
+  models.sort((a,b) => {
+    const av = modeloSort.col.startsWith('c') ? a.c[+modeloSort.col[1]] :
+               modeloSort.col.startsWith('f') ? a.f[+modeloSort.col[1]] : a[modeloSort.col]||0;
+    const bv = modeloSort.col.startsWith('c') ? b.c[+modeloSort.col[1]] :
+               modeloSort.col.startsWith('f') ? b.f[+modeloSort.col[1]] : b[modeloSort.col]||0;
+    return av < bv ? modeloSort.dir : -modeloSort.dir;
+  });
+  const maxT = models[0]?.total||1;
+
+  const thH = (col,lbl) => `<th onclick="sortModelos('${col}')">${lbl}</th>`;
+  el.innerHTML = `
+  <div class="tw">
+    <div class="th">
+      <div class="th-t">Ranking Modelos (${models.length})</div>
+      <input class="ts" placeholder="Buscar…" value="${modeloSearch}"
+        oninput="modeloSearch=this.value;renderModelos(applyFilters())">
+    </div>
+    <table><thead><tr>
+      <th>#</th>${thH('brand','Marca')}${thH('model','Modelo')}
+      ${thH('total','Total')}${thH('c0','Private')}${thH('c1','Empresa')}${thH('c2','RAC')}
+      ${thH('f0','ICE')}${thH('f1','BEV')}${thH('f2','PHEV')}
+      <th>Seg</th><th>Body</th><th>HP</th>
+    </tr></thead><tbody>
+    ${models.map((m,i)=>`<tr>
+      <td>${i+1}</td><td>${m.brand}</td><td><b>${m.model}</b></td>
+      <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(m.total/maxT*100).toFixed(0)}%"></div></div>${num(m.total)}</div></td>
+      <td>${num(m.c[0])}</td><td>${num(m.c[1])}</td><td>${num(m.c[2])}</td>
+      <td>${num(m.f[0])}</td><td style="color:var(--bev)">${num(m.f[1])}</td><td style="color:var(--phev)">${num(m.f[2])}</td>
+      <td><span class="seg-badge seg-${(m.seg||'').replace('+','p')}">${m.seg||'—'}</span></td>
+      <td>${m.body||'—'}</td>
+      <td style="${m.hp&&m.hp!=='Standard'?'color:var(--acc3)':''}">${m.hp||'—'}</td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+function sortModelos(col) {
+  if (modeloSort.col===col) modeloSort.dir*=-1; else {modeloSort.col=col;modeloSort.dir=-1;}
+  renderModelos(applyFilters());
 }
 
-// ─── PAGE: COMPETIDORES ───────────────────────────────────────────────────────
-function renderCompetidores() {
-  const mos = filteredMonths();
-  const labels = mos.map(m=>`${m.m}/${m.y}`);
-  const ymSet = new Set(mos.map(m=>`${m.y}-${String(m.m).padStart(2,'0')}`));
-  const COLORS=['#4f8ef7','#00d4aa','#f7934f','#c084fc','#ff4757','#ffd700','#2ed573','#ff6b9d','#a29bfe','#00b894'];
-  const brands = [...COMP_BRANDS];
-
-  const datasets = brands.map((brand,i)=>{
-    const b = DATA.monthly.brands.find(x=>x.brand===brand);
-    const data = mos.map(m=>{
-      const ym=`${m.y}-${String(m.m).padStart(2,'0')}`;
-      const d=b?.by_month[ym]||{Private:0,Corporate:0,RAC:0};
-      let t=0;
-      if(FILTER.canales.has('Private'))   t+=d.Private||0;
-      if(FILTER.canales.has('Corporate')) t+=d.Corporate||0;
-      if(FILTER.canales.has('RAC'))       t+=d.RAC||0;
-      return t;
-    });
-    return {label:brand,data,borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+'22',tension:.3,fill:false,pointRadius:2};
-  });
-
-  makeChart('ch-comp-trend','line',{labels,datasets},{scales:{x:{ticks:{maxTicksLimit:12}}},plugins:{legend:{position:'bottom'}}});
-
-  // Market share %
-  const mktByYm = {};
-  mos.forEach(m=>{
-    const ym=`${m.y}-${String(m.m).padStart(2,'0')}`;
-    let tot=0;
-    FILTER.canales.forEach(c=>tot+=m[c]||0);
-    mktByYm[ym]=tot;
-  });
-  const shareDs = brands.map((brand,i)=>{
-    const b=DATA.monthly.brands.find(x=>x.brand===brand);
-    const data=mos.map(m=>{
-      const ym=`${m.y}-${String(m.m).padStart(2,'0')}`;
-      const d=b?.by_month[ym]||{};
-      let t=0;
-      if(FILTER.canales.has('Private'))   t+=d.Private||0;
-      if(FILTER.canales.has('Corporate')) t+=d.Corporate||0;
-      if(FILTER.canales.has('RAC'))       t+=d.RAC||0;
-      const mkt=mktByYm[ym]||1;
-      return +(t/mkt*100).toFixed(2);
-    });
-    return {label:brand,data,borderColor:COLORS[i%COLORS.length],tension:.3,fill:false,pointRadius:2};
-  });
-  makeChart('ch-comp-share','line',{labels,datasets:shareDs},{
-    scales:{x:{ticks:{maxTicksLimit:12}},y:{ticks:{callback:v=>v+'%'}}},
-    plugins:{legend:{position:'bottom'}}
-  });
-
-  // Canal grouped bar
-  const canalData = brands.map(brand=>{
-    const b=DATA.monthly.brands.find(x=>x.brand===brand);
-    let P=0,C=0,R=0;
-    Object.entries(b?.by_month||{}).forEach(([ym,d])=>{
-      if(!ymSet.has(ym)) return;
-      if(FILTER.canales.has('Private'))   P+=d.Private||0;
-      if(FILTER.canales.has('Corporate')) C+=d.Corporate||0;
-      if(FILTER.canales.has('RAC'))       R+=d.RAC||0;
-    });
-    return {brand,Private:P,Corporate:C,RAC:R};
-  });
-  makeChart('ch-comp-canal','bar',{
-    labels:brands,
-    datasets:[
-      {label:'Private',data:canalData.map(b=>b.Private),backgroundColor:color('Private',.8)},
-      {label:'Corporate',data:canalData.map(b=>b.Corporate),backgroundColor:color('Corporate',.8)},
-      {label:'RAC',data:canalData.map(b=>b.RAC),backgroundColor:color('RAC',.8)},
-    ]
-  },{scales:{x:{stacked:true},y:{stacked:true}},plugins:{legend:{position:'bottom'}}});
-}
-
-// ─── PAGE: PROVINCIAS ─────────────────────────────────────────────────────────
-let PROV_DATA=[];
+// ─── PROVINCIAS ─────────────────────────────────────
 function renderProvincias() {
-  if(!DATA.prov||!DATA.prov.provinces||DATA.prov.provinces.length===0) {
-    document.getElementById('prov-no-data').style.display='block';
-    document.getElementById('prov-content').style.display='none';
-    return;
-  }
-  document.getElementById('prov-no-data').style.display='none';
-  document.getElementById('prov-content').style.display='block';
-  const mos=filteredMonths();
-  const ymSet=new Set(mos.map(m=>`${m.y}-${String(m.m).padStart(2,'0')}`));
-  PROV_DATA = DATA.prov.provinces.map(p=>{
-    let P=0,C=0,R=0,ICE=0,BEV=0,PHEV=0;
-    Object.entries(p.by_month||{}).forEach(([ym,d])=>{
-      if(!ymSet.has(ym)) return;
-      if(FILTER.canales.has('Private'))   P   +=d.Private||0;
-      if(FILTER.canales.has('Corporate')) C   +=d.Corporate||0;
-      if(FILTER.canales.has('RAC'))       R   +=d.RAC||0;
-      if(FILTER.fuels.has('ICE'))         ICE +=d.ICE||0;
-      if(FILTER.fuels.has('BEV'))         BEV +=d.BEV||0;
-      if(FILTER.fuels.has('PHEV'))        PHEV+=d.PHEV||0;
-    });
-    return {...p,Private:P,Corporate:C,RAC:R,total:P+C+R,ICE,BEV,PHEV};
-  }).filter(p=>p.total>0).sort((a,b)=>b.total-a.total);
-  const tot=PROV_DATA.reduce((a,p)=>a+p.total,0);
-  document.getElementById('kpi-prov').innerHTML=`
-    <div class="kpi"><div class="kpi-label">Provincias con datos</div><div class="kpi-val">${PROV_DATA.length}</div></div>
-    <div class="kpi"><div class="kpi-label">Top provincia</div><div class="kpi-val">${PROV_DATA[0]?.name||'—'}</div><div class="kpi-sub">${fmtN(PROV_DATA[0]?.total||0)} · ${fmtPct(PROV_DATA[0]?.total||0,tot)}</div></div>
-  `;
-  const top15=PROV_DATA.slice(0,15);
-  makeChart('ch-prov-bar','bar',{
-    labels:top15.map(p=>p.name),
-    datasets:[{label:'Total',data:top15.map(p=>p.total),backgroundColor:color('Private',.7)}]
-  },{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{},y:{ticks:{font:{size:10}}}}});
-  const top10=PROV_DATA.slice(0,10);
-  makeChart('ch-prov-canal','bar',{
-    labels:top10.map(p=>p.name),
+  const el = document.getElementById('page-provincias');
+  if (!PROV || !PROV.provinces?.length) { el.innerHTML='<div class="empty">Sin datos de provincias</div>'; return; }
+  const provs = PROV.provinces;
+  const maxT = provs[0]?.total||1;
+  el.innerHTML = `
+  <div class="tw">
+    <div class="th"><div class="th-t">Ranking Provincias (${provs.length})</div></div>
+    <table><thead><tr>
+      <th>Prov</th><th>Nombre</th><th>Total</th><th>Private</th><th>Empresa</th><th>RAC</th><th>ICE</th><th>BEV</th><th>PHEV</th>
+    </tr></thead><tbody>
+    ${provs.map((p,i)=>`<tr>
+      <td>${p.cod}</td><td><b>${p.name}</b></td>
+      <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(p.total/maxT*100).toFixed(0)}%"></div></div>${num(p.total)}</div></td>
+      <td>${num(p.Private)}</td><td>${num(p.Corporate)}</td><td>${num(p.RAC)}</td>
+      <td>${num(p.ICE)}</td><td style="color:var(--bev)">${num(p.BEV)}</td><td style="color:var(--phev)">${num(p.PHEV)}</td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+// ─── DIARIO MTD ─────────────────────────────────────
+function renderDiario() {
+  const el = document.getElementById('page-diario');
+  if (!DAILY || !DAILY.days?.length) { el.innerHTML='<div class="empty">Sin datos diarios para el mes actual</div>'; return; }
+  const days = DAILY.days;
+  const labels = days.map(d=>d.day);
+  const totPriv = days[days.length-1]?.cumul?.Private||0;
+  const totCorp = days[days.length-1]?.cumul?.Corporate||0;
+  const totRAC  = days[days.length-1]?.cumul?.RAC||0;
+  const totTotal = days[days.length-1]?.cumul?.total||0;
+  const totBEV  = days[days.length-1]?.cumul?.BEV||0;
+  const totPHEV = days[days.length-1]?.cumul?.PHEV||0;
+
+  el.innerHTML = `
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">MTD Total</div><div class="kpi-v">${fmt(totTotal)}</div><div class="kpi-s">${DAILY.month_label} ${DAILY.year}</div></div>
+    <div class="kpi"><div class="kpi-l">Private</div><div class="kpi-v">${fmt(totPriv)}</div><div class="kpi-s">${pct(totPriv,totTotal)}</div></div>
+    <div class="kpi"><div class="kpi-l">Empresa</div><div class="kpi-v">${fmt(totCorp)}</div><div class="kpi-s">${pct(totCorp,totTotal)}</div></div>
+    <div class="kpi"><div class="kpi-l">RAC</div><div class="kpi-v">${fmt(totRAC)}</div><div class="kpi-s">${pct(totRAC,totTotal)}</div></div>
+    <div class="kpi"><div class="kpi-l">BEV</div><div class="kpi-v">${fmt(totBEV)}</div><div class="kpi-s">${pct(totBEV,totTotal)}</div></div>
+    <div class="kpi"><div class="kpi-l">PHEV</div><div class="kpi-v">${fmt(totPHEV)}</div><div class="kpi-s">${pct(totPHEV,totTotal)}</div></div>
+  </div>
+  <div class="grid2">
+    <div class="cc"><div class="cc-t">Diario por canal</div><div class="cw" style="height:240px"><canvas id="ch-daily-canal"></canvas></div></div>
+    <div class="cc"><div class="cc-t">Acumulado MTD</div><div class="cw" style="height:240px"><canvas id="ch-daily-cumul"></canvas></div></div>
+  </div>`;
+
+  makeChart('ch-daily-canal','bar',{
+    labels,
     datasets:[
-      {label:'Private',data:top10.map(p=>p.Private),backgroundColor:color('Private',.8)},
-      {label:'Corporate',data:top10.map(p=>p.Corporate),backgroundColor:color('Corporate',.8)},
-      {label:'RAC',data:top10.map(p=>p.RAC),backgroundColor:color('RAC',.8)},
+      {label:'Private', data:days.map(d=>d.daily.Private), backgroundColor:'#4f8ef7', stack:'s'},
+      {label:'Corporate', data:days.map(d=>d.daily.Corporate), backgroundColor:'#00d4aa', stack:'s'},
+      {label:'RAC', data:days.map(d=>d.daily.RAC), backgroundColor:'#f7934f', stack:'s'},
     ]
-  },{indexAxis:'y',scales:{x:{stacked:true},y:{stacked:true,ticks:{font:{size:10}}}},plugins:{legend:{position:'bottom'}}});
-  renderProvTable();
+  },{plugins:{legend:{position:'bottom'}}});
+
+  makeChart('ch-daily-cumul','line',{
+    labels,
+    datasets:[
+      {label:'Total acum.', data:days.map(d=>d.cumul.total), borderColor:'#4f8ef7', tension:.3, fill:false, pointRadius:2},
+      {label:'BEV acum.', data:days.map(d=>d.cumul.BEV), borderColor:'#00d4aa', tension:.3, fill:false, pointRadius:2},
+    ]
+  },{plugins:{legend:{position:'bottom'}}});
 }
 
-function renderProvTable() {
-  const q=document.getElementById('search-prov').value.toLowerCase();
-  const rows=PROV_DATA.filter(p=>!q||p.name.toLowerCase().includes(q));
-  const tot=PROV_DATA.reduce((a,p)=>a+p.total,0);
-  document.getElementById('tbody-prov').innerHTML=rows.map(p=>`<tr>
-    <td><b>${p.name}</b></td>
-    <td>${p.total.toLocaleString()}<div class="bar-bg"><div class="bar-fill" style="width:${p.total/tot*100}%;background:var(--accent)"></div></div></td>
-    <td>${p.Private.toLocaleString()}</td><td>${p.Corporate.toLocaleString()}</td><td>${p.RAC.toLocaleString()}</td>
-    <td>${p.BEV.toLocaleString()}</td><td>${p.PHEV.toLocaleString()}</td>
-    <td>${fmtPct(p.total,tot)}</td>
-  </tr>`).join('');
-}
-
-// ─── PAGE: MTD ────────────────────────────────────────────────────────────────
-function renderMTD() {
-  const d=DATA.daily;
-  if(!d) return;
-  document.getElementById('mtd-top-title').textContent=`Top 10 marcas — ${d.month_label} ${d.year}`;
-  const labels=d.days.map(x=>`${x.day}`);
-  const lastDay=d.days[d.days.length-1];
-  const cumul=lastDay?.cumul||{Private:0,Corporate:0,RAC:0,ICE:0,BEV:0,PHEV:0,total:0};
-  document.getElementById('kpi-mtd').innerHTML=`
-    <div class="kpi"><div class="kpi-label">MTD Total</div><div class="kpi-val">${fmtN(cumul.total)}</div><div class="kpi-sub">${d.month_label} ${d.year} · ${d.days.length} días</div></div>
-    <div class="kpi"><div class="kpi-label">Private</div><div class="kpi-val">${fmtN(cumul.Private)}</div><div class="kpi-sub">${fmtPct(cumul.Private,cumul.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">Corporate</div><div class="kpi-val">${fmtN(cumul.Corporate)}</div><div class="kpi-sub">${fmtPct(cumul.Corporate,cumul.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">RAC</div><div class="kpi-val">${fmtN(cumul.RAC)}</div><div class="kpi-sub">${fmtPct(cumul.RAC,cumul.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">BEV</div><div class="kpi-val">${fmtN(cumul.BEV)}</div><div class="kpi-sub">${fmtPct(cumul.BEV,cumul.total)}</div></div>
-    <div class="kpi"><div class="kpi-label">PHEV</div><div class="kpi-val">${fmtN(cumul.PHEV)}</div><div class="kpi-sub">${fmtPct(cumul.PHEV,cumul.total)}</div></div>
-  `;
-  const canalesArr=[...FILTER.canales];
-  makeChart('ch-mtd-cumul','line',{labels,
-    datasets:canalesArr.map(c=>({label:c,data:d.days.map(x=>x.cumul[c]||0),borderColor:color(c),backgroundColor:color(c,.1),tension:.3,fill:true}))
-  },{plugins:{legend:{position:'bottom'}},scales:{x:{ticks:{maxTicksLimit:10}}}});
-  makeChart('ch-mtd-daily','bar',{labels,
-    datasets:canalesArr.map(c=>({label:c,data:d.days.map(x=>x.daily[c]||0),backgroundColor:color(c,.8)}))
-  },{scales:{x:{stacked:true,ticks:{maxTicksLimit:10}},y:{stacked:true}},plugins:{legend:{position:'bottom'}}});
-  const fuelsArr=[...FILTER.fuels];
-  makeChart('ch-mtd-fuel','line',{labels,
-    datasets:fuelsArr.map(f=>({label:f,data:d.days.map(x=>x.cumul[f]||0),borderColor:color(f),tension:.3,fill:false}))
-  },{plugins:{legend:{position:'bottom'}},scales:{x:{ticks:{maxTicksLimit:10}}}});
-  const tot2=cumul.total;
-  document.getElementById('tbody-mtd-brands').innerHTML=d.top_brands.map(b=>`<tr>
-    <td><b>${b.brand}</b></td>
-    <td>${b.total.toLocaleString()}<div class="bar-bg"><div class="bar-fill" style="width:${b.total/tot2*100}%;background:var(--accent)"></div></div></td>
-    <td>${b.Private.toLocaleString()}</td><td>${b.Corporate.toLocaleString()}</td><td>${b.RAC.toLocaleString()}</td>
-    <td>${(b.ICE||0).toLocaleString()}</td><td>${(b.BEV||0).toLocaleString()}</td><td>${(b.PHEV||0).toLocaleString()}</td>
-  </tr>`).join('');
-}
-
-// ─── TABLE SORT ───────────────────────────────────────────────────────────────
-const TABLE_SORTS={};
-function sortTable(tblId,col) {
-  if(!TABLE_SORTS[tblId]) TABLE_SORTS[tblId]={col,asc:false};
-  const s=TABLE_SORTS[tblId];
-  s.asc = s.col===col ? !s.asc : false;
-  s.col=col;
-  const tbody=document.getElementById('tbody-'+tblId.replace('tbl-',''));
-  const rows=[...tbody.querySelectorAll('tr')];
-  rows.sort((a,b)=>{
-    const av=a.cells[col].textContent.replace(/[%,k\s]/g,'');
-    const bv=b.cells[col].textContent.replace(/[%,k\s]/g,'');
-    const an=parseFloat(av), bn=parseFloat(bv);
-    const cmp=isNaN(an)||isNaN(bn)?av.localeCompare(bv):an-bn;
-    return s.asc?cmp:-cmp;
-  });
-  rows.forEach(r=>tbody.appendChild(r));
-  document.querySelectorAll(`#${tblId} th`).forEach((th,i)=>{
-    th.classList.toggle('sorted',i===col);
-    th.querySelector('.sort-icon').textContent=i===col?(s.asc?'↑':'↓'):'↕';
-  });
-}
-
-// ─── BOOT ─────────────────────────────────────────────────────────────────────
-init();
+// ────────────────────────────────────────────────────
+// BOOT
+// ────────────────────────────────────────────────────
+load();
 </script>
 </body>
 </html>
+                                                                                                                                                      

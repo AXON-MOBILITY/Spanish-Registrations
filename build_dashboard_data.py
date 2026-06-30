@@ -1,5 +1,11 @@
 """
-build_dashboard_data.py — Genera los JSON estáticos para el dashboard Vercel.
+build_dashboard_data.py — Genera JSON estáticos para el dashboard Vercel.
+
+Salida principal:
+  public/data/records.json   — registros planos con todas las dimensiones
+  public/data/meta.json      — listas de valores únicos, meses disponibles
+  public/data/provinces.json — datos por provincia
+  public/data/daily_mtd.json — acumulado MTD diario del mes actual
 """
 import argparse, csv, glob, json, re
 from collections import defaultdict
@@ -17,18 +23,60 @@ def _read_csv(path):
         for row in csv.DictReader(fh):
             yield {k:(v.strip() if v is not None else "") for k,v in row.items()}
 
+# ── Carga datos ──────────────────────────────────────────────────────────────
+
 def load_monthly(base):
-    data = defaultdict(int)
+    """Carga dgt_canal_YYYYMM.csv → lista de dicts con todas las dimensiones."""
+    records = []
     for f in sorted(glob.glob(str(base/"dgt_canal_[0-9][0-9][0-9][0-9][0-9][0-9].csv"))):
         m = re.match(r"dgt_canal_(\d{4})(\d{2})$", Path(f).stem)
         if not m: continue
-        yr,mo = int(m.group(1)),int(m.group(2))
+        yr, mo = int(m.group(1)), int(m.group(2))
         for row in _read_csv(f):
             try:
-                fuel = row.get("fuel_type","ICE") or "ICE"
-                data[(yr,mo,row["marca"],row["canal"],fuel)] += int(row["count"])
-            except (ValueError,KeyError): pass
-    return data
+                n = int(row.get("count", 0) or 0)
+                if n <= 0: continue
+                records.append({
+                    "y": yr, "m": mo,
+                    "marca":   row.get("marca","").strip().upper(),
+                    "modelo":  row.get("modelo","").strip().upper(),
+                    "canal":   row.get("canal",""),
+                    "fuel":    row.get("fuel_type","ICE") or "ICE",
+                    "seg":     row.get("segmento",""),
+                    "sub":     row.get("subseg",""),
+                    "hp":      row.get("hp",""),
+                    "body":    row.get("body_type",""),
+                    "n":       n,
+                })
+            except (ValueError, KeyError): pass
+    return records
+
+def load_mtd(base):
+    """Carga el último dgt_canal_*_mtd.csv → lista de dicts."""
+    records = []
+    files = sorted(glob.glob(str(base/"dgt_canal_*_mtd.csv")))
+    if not files: return records, None, None
+    m = re.match(r"dgt_canal_(\d{4})(\d{2})_mtd$", Path(files[-1]).stem)
+    if not m: return records, None, None
+    yr, mo = int(m.group(1)), int(m.group(2))
+    for row in _read_csv(files[-1]):
+        try:
+            n = int(row.get("count", 0) or 0)
+            if n <= 0: continue
+            records.append({
+                "y": yr, "m": mo,
+                "marca":  row.get("marca","").strip().upper(),
+                "modelo": row.get("modelo","").strip().upper(),
+                "canal":  row.get("canal",""),
+                "fuel":   row.get("fuel_type","ICE") or "ICE",
+                "seg":    row.get("segmento",""),
+                "sub":    row.get("subseg",""),
+                "hp":     row.get("hp",""),
+                "body":   row.get("body_type",""),
+                "n":      n,
+            })
+        except (ValueError, KeyError): pass
+    return records, yr, mo
 
 def load_daily(base):
     data = defaultdict(int)
@@ -39,22 +87,10 @@ def load_daily(base):
         for row in _read_csv(f):
             try:
                 fuel = row.get("fuel_type","ICE") or "ICE"
-                data[(yr,mo,dy,row["marca"],row["canal"],fuel)] += int(row["count"])
+                canal = row.get("canal","")
+                if canal not in CANALES: continue
+                data[(yr,mo,dy,canal,fuel)] += int(row.get("count",0) or 0)
             except (ValueError,KeyError): pass
-    return data
-
-def load_mtd(base):
-    data = defaultdict(int)
-    files = sorted(glob.glob(str(base/"dgt_canal_*_mtd.csv")))
-    if not files: return data
-    m = re.match(r"dgt_canal_(\d{4})(\d{2})_mtd$", Path(files[-1]).stem)
-    if not m: return data
-    yr,mo = int(m.group(1)),int(m.group(2))
-    for row in _read_csv(files[-1]):
-        try:
-            fuel = row.get("fuel_type","ICE") or "ICE"
-            data[(yr,mo,row["marca"],row["canal"],fuel)] += int(row["count"])
-        except (ValueError,KeyError): pass
     return data
 
 def load_provinces(base):
@@ -66,65 +102,90 @@ def load_provinces(base):
         for row in _read_csv(f):
             try:
                 fuel = row.get("fuel_type","ICE") or "ICE"
-                data[(yr,mo,row["cod_prov"],row["provincia"],row["canal"],fuel)] += int(row["count"])
+                data[(yr,mo,row["cod_prov"],row["provincia"],row["canal"],fuel)] += int(row.get("count",0) or 0)
             except (ValueError,KeyError): pass
     return data
+
+# ── Construcción JSONs ────────────────────────────────────────────────────────
+
+def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo):
+    """
+    Genera JSON compacto con registros planos + índices para filtrado rápido.
+    Formato: {cols:[...], rows:[[...],...]}
+    """
+    # Combinar monthly + MTD (sin duplicar el mes MTD si ya está completo)
+    completed = {(r["y"],r["m"]) for r in monthly_records}
+    all_records = list(monthly_records)
+    if mtd_yr and (mtd_yr, mtd_mo) not in completed:
+        all_records.extend(mtd_records)
+
+    if not all_records:
+        return {"cols":[], "rows":[], "meta":{}}
+
+    # Compresión: codificar strings repetidas como índices
+    marca_idx  = {}; marcas  = []
+    modelo_idx = {}; modelos = []
+    seg_idx    = {}; segs    = []
+    body_idx   = {}; bodies  = []
+    sub_idx    = {}; subs    = []
+    hp_idx     = {}; hps     = []
+    canal_map  = {"Private":0,"Corporate":1,"RAC":2}
+    fuel_map   = {"ICE":0,"BEV":1,"PHEV":2}
+
+    def idx(val, d, lst):
+        if val not in d:
+            d[val] = len(lst)
+            lst.append(val)
+        return d[val]
+
+    rows = []
+    for r in all_records:
+        rows.append([
+            r["y"], r["m"],
+            idx(r["marca"],  marca_idx,  marcas),
+            idx(r["modelo"], modelo_idx, modelos),
+            canal_map.get(r["canal"], 0),
+            fuel_map.get(r["fuel"], 0),
+            idx(r["seg"],  seg_idx,  segs),
+            idx(r["sub"],  sub_idx,  subs),
+            idx(r["hp"],   hp_idx,   hps),
+            idx(r["body"], body_idx, bodies),
+            r["n"],
+        ])
+
+    # Estadísticas
+    total = sum(r[-1] for r in rows)
+    months_present = sorted({(r[0],r[1]) for r in rows})
+
+    return {
+        "cols": ["y","m","marca","modelo","canal","fuel","seg","sub","hp","body","n"],
+        "enums": {
+            "canal": ["Private","Corporate","RAC"],
+            "fuel":  ["ICE","BEV","PHEV"],
+            "marca": marcas,
+            "modelo": modelos,
+            "seg":    segs,
+            "sub":    subs,
+            "hp":     hps,
+            "body":   bodies,
+        },
+        "rows": rows,
+        "total": total,
+        "months": [{"y":y,"m":mo,"label":f"{MONTHS_ES[mo]} {y}"} for y,mo in months_present],
+        "mtd": {"y":mtd_yr,"m":mtd_mo} if mtd_yr else None,
+    }
 
 def _zero():
     return {c:0 for c in CANALES+FUELS}
 
-def build_monthly_json(monthly_data, mtd_data):
-    completed = {(y,mo) for (y,mo,_,_,_) in monthly_data}
-    mtd_mos   = {(y,mo) for (y,mo,_,_,_) in mtd_data}
-    combined  = dict(monthly_data)
-    if any(m not in completed for m in mtd_mos):
-        for k,v in mtd_data.items():
-            combined[k] = combined.get(k,0)+v
-
-    market       = defaultdict(_zero)
-    brand_totals = defaultdict(_zero)
-    brand_bm     = defaultdict(lambda: defaultdict(_zero))
-
-    for (yr,mo,brand,canal,fuel),cnt in combined.items():
-        if canal not in CANALES: continue
-        fuel = fuel if fuel in FUELS else "ICE"
-        market[(yr,mo)][canal] += cnt
-        market[(yr,mo)][fuel]  += cnt
-        brand_totals[brand][canal] += cnt
-        brand_totals[brand][fuel]  += cnt
-        brand_bm[brand][(yr,mo)][canal] += cnt
-        brand_bm[brand][(yr,mo)][fuel]  += cnt
-
-    months_out = []
-    for (y,mo) in sorted(market):
-        d = market[(y,mo)]
-        months_out.append({"y":y,"m":mo,"label":f"{MONTHS_ES[mo]} {y}",
-            "is_mtd":(y,mo) in mtd_mos and (y,mo) not in completed,
-            "Private":d["Private"],"Corporate":d["Corporate"],"RAC":d["RAC"],
-            "total":d["Private"]+d["Corporate"]+d["RAC"],
-            "ICE":d["ICE"],"BEV":d["BEV"],"PHEV":d["PHEV"]})
-
-    brands_out = []
-    for brand,t in sorted(brand_totals.items(), key=lambda x:-(x[1]["Private"]+x[1]["Corporate"]+x[1]["RAC"]))[:30]:
-        bm = {}
-        for (y,mo),cv in brand_bm[brand].items():
-            bm[f"{y}-{mo:02d}"] = {"Private":cv["Private"],"Corporate":cv["Corporate"],"RAC":cv["RAC"],
-                "total":cv["Private"]+cv["Corporate"]+cv["RAC"],
-                "ICE":cv["ICE"],"BEV":cv["BEV"],"PHEV":cv["PHEV"]}
-        brands_out.append({"brand":brand,"Private":t["Private"],"Corporate":t["Corporate"],"RAC":t["RAC"],
-            "total":t["Private"]+t["Corporate"]+t["RAC"],
-            "ICE":t["ICE"],"BEV":t["BEV"],"PHEV":t["PHEV"],"by_month":bm})
-
-    return {"months":months_out,"brands":brands_out}
-
 def build_daily_mtd_json(daily_data, cy, cm):
     dm = defaultdict(_zero)
     db = defaultdict(lambda: defaultdict(_zero))
-    for (y,mo,day,brand,canal,fuel),cnt in daily_data.items():
+    for (y,mo,day,canal,fuel),cnt in daily_data.items():
         if y!=cy or mo!=cm or canal not in CANALES: continue
-        fuel = fuel if fuel in FUELS else "ICE"
-        dm[day][canal]+=cnt; dm[day][fuel]+=cnt
-        db[brand][day][canal]+=cnt; db[brand][day][fuel]+=cnt
+        fuel2 = fuel if fuel in FUELS else "ICE"
+        dm[day][canal]+=cnt; dm[day][fuel2]+=cnt
+        # We don't have brand in this aggregation anymore (daily doesn't expand brand by default)
 
     days_sorted = sorted(dm)
     cumul = _zero()
@@ -139,19 +200,7 @@ def build_daily_mtd_json(daily_data, cy, cm):
             "cumul":{"Private":cumul["Private"],"Corporate":cumul["Corporate"],"RAC":cumul["RAC"],
                      "total":cumul["Private"]+cumul["Corporate"]+cumul["RAC"],
                      "ICE":cumul["ICE"],"BEV":cumul["BEV"],"PHEV":cumul["PHEV"]}})
-
-    brand_sums = {b:sum(sum(cv[c] for c in CANALES) for cv in dv.values()) for b,dv in db.items()}
-    top10 = sorted(brand_sums, key=lambda x:-brand_sums[x])[:10]
-    brands_out = []
-    for b in top10:
-        bt = _zero()
-        for day in days_sorted:
-            for c in CANALES+FUELS: bt[c]+=db[b][day][c]
-        brands_out.append({"brand":b,"total":bt["Private"]+bt["Corporate"]+bt["RAC"],
-            "Private":bt["Private"],"Corporate":bt["Corporate"],"RAC":bt["RAC"],
-            "ICE":bt["ICE"],"BEV":bt["BEV"],"PHEV":bt["PHEV"]})
-
-    return {"year":cy,"month":cm,"month_label":MONTHS_ES[cm],"days":days_out,"top_brands":brands_out}
+    return {"year":cy,"month":cm,"month_label":MONTHS_ES[cm],"days":days_out}
 
 def build_provinces_json(prov_data):
     if not prov_data:
@@ -160,10 +209,10 @@ def build_provinces_json(prov_data):
     pbm = defaultdict(lambda:defaultdict(_zero))
     for (yr,mo,cod,nombre,canal,fuel),cnt in prov_data.items():
         if canal not in CANALES: continue
-        fuel = fuel if fuel in FUELS else "ICE"
+        fuel2 = fuel if fuel in FUELS else "ICE"
         pt[cod]["name"]=nombre
-        pt[cod][canal]+=cnt; pt[cod][fuel]+=cnt
-        pbm[cod][f"{yr}-{mo:02d}"][canal]+=cnt; pbm[cod][f"{yr}-{mo:02d}"][fuel]+=cnt
+        pt[cod][canal]+=cnt; pt[cod][fuel2]+=cnt
+        pbm[cod][f"{yr}-{mo:02d}"][canal]+=cnt; pbm[cod][f"{yr}-{mo:02d}"][fuel2]+=cnt
 
     provs = []
     for cod,d in sorted(pt.items()):
@@ -192,66 +241,57 @@ def build_provinces_json(prov_data):
         by_month[ym]=sorted(rows,key=lambda x:-x["total"])
     return {"provinces":provs,"by_month":by_month}
 
-def build_meta_json(monthly_data, daily_data, mtd_data, prov_data):
-    all_m = sorted({(y,mo) for (y,mo,_,_,_) in monthly_data})
-    all_d = sorted({(y,mo,d) for (y,mo,d,_,_,_) in daily_data})
-    mtd_m = sorted({(y,mo) for (y,mo,_,_,_) in mtd_data})
-    current = None
-    if mtd_m:
-        cy,cm = mtd_m[-1]
-        current = {"year":cy,"month":cm,"label":f"{MONTHS_ES[cm]} {cy}"}
+def build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data):
+    months = sorted({(r["y"],r["m"]) for r in monthly_records})
+    total = sum(r["n"] for r in monthly_records)
     return {
         "updated": date.today().isoformat(),
-        "first_month": f"{all_m[0][0]}-{all_m[0][1]:02d}" if all_m else None,
-        "last_completed_month": f"{all_m[-1][0]}-{all_m[-1][1]:02d}" if all_m else None,
-        "last_daily": (f"{all_d[-1][0]}-{all_d[-1][1]:02d}-{all_d[-1][2]:02d}" if all_d else None),
-        "current_mtd": current,
-        "completed_months": len(all_m),
-        "total_registrations_historical": sum(monthly_data.values()),
-        "mtd_registrations": sum(mtd_data.values()),
-        "has_provinces": len(prov_data)>0,
+        "first_month": f"{months[0][0]}-{months[0][1]:02d}" if months else None,
+        "last_completed_month": f"{months[-1][0]}-{months[-1][1]:02d}" if months else None,
+        "current_mtd": {"year":mtd_yr,"month":mtd_mo,"label":f"{MONTHS_ES[mtd_mo]} {mtd_yr}"} if mtd_yr else None,
+        "completed_months": len(months),
+        "total_registrations_historical": total,
+        "has_provinces": len(prov_data) > 0,
     }
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", default="public/data")
-    parser.add_argument("--base",    default=str(BASE))
+    parser.add_argument("--base", default=str(BASE))
     args = parser.parse_args()
     base    = Path(args.base)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     print("Leyendo CSV...")
-    monthly_data = load_monthly(base)
-    daily_data   = load_daily(base)
-    mtd_data     = load_mtd(base)
-    prov_data    = load_provinces(base)
-    mtd_m = sorted({(y,mo) for (y,mo,_,_,_) in mtd_data})
-    print(f"  Meses: {len({(y,mo) for (y,mo,_,_,_) in monthly_data})}  MTD: {mtd_m[-1] if mtd_m else '-'}  Prov combos: {len(prov_data)}")
+    monthly_records           = load_monthly(base)
+    mtd_records, mtd_yr, mtd_mo = load_mtd(base)
+    daily_data                = load_daily(base)
+    prov_data                 = load_provinces(base)
 
-    if mtd_m:
-        cy,cm = mtd_m[-1]
-    elif daily_data:
-        last = max((y,mo,d) for (y,mo,d,_,_,_) in daily_data)
-        cy,cm = last[0],last[1]
-    else:
-        t = date.today(); cy,cm = t.year,t.month
+    months_done = len({(r["y"],r["m"]) for r in monthly_records})
+    print(f"  Meses completos: {months_done}  MTD: {mtd_yr}-{mtd_mo:02d} if mtd_yr else '-'")
+    print(f"  Registros mensuales: {len(monthly_records):,}  Prov combos: {len(prov_data):,}")
+
+    cy = mtd_yr or date.today().year
+    cm = mtd_mo or date.today().month
 
     print("Generando JSONs...")
+    records_obj = build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo)
     for fname, obj in [
-        ("monthly.json",   build_monthly_json(monthly_data, mtd_data)),
+        ("records.json",   records_obj),
         ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
         ("provinces.json", build_provinces_json(prov_data)),
     ]:
-        p = out_dir/fname
+        p = out_dir / fname
         p.write_text(json.dumps(obj, ensure_ascii=False, separators=(",",":")))
-        print(f"  {p}  ({p.stat().st_size/1024:.1f} KB)")
+        print(f"  {fname}: {p.stat().st_size/1024:.0f} KB  ({len(records_obj.get('rows', obj.get('days', obj.get('provinces', []))))} rows/items)")
 
-    meta = build_meta_json(monthly_data, daily_data, mtd_data, prov_data)
-    p = out_dir/"meta.json"
+    meta = build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data)
+    p = out_dir / "meta.json"
     p.write_text(json.dumps(meta, ensure_ascii=False, indent=2))
-    print(f"  {p}")
-    print(f"\nOK — {meta['total_registrations_historical']:,} matriculas")
+    print(f"  meta.json")
+    print(f"\nOK — {meta['total_registrations_historical']:,} matriculas en {meta['completed_months']} meses")
 
 if __name__ == "__main__":
     main()

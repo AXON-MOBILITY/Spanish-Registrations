@@ -17,7 +17,7 @@ Uso:
 Tambien genera dgt_alerts_YYYYMM.csv con avisos no bloqueantes de drift.
 """
 
-import sys, os, zipfile, urllib.request, collections, tempfile, re
+import sys, os, zipfile, urllib.request, collections, tempfile, re, csv, unicodedata
 
 TMP_DIR = tempfile.gettempdir()
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -116,6 +116,146 @@ PROV_NAMES = {
 
 # Modelos excluidos del scope (no estan en Simmix)
 EXCLUIR_MARCA_MODELO = {}
+
+# ── Enriquecimiento modelo → segmento/body_type (desde Simmix) ────────────
+_APPROVAL_RE   = re.compile(r'\s+[A-Z0-9]{6,}\s*$')
+_BMW_SERIE_RE  = re.compile(r'^([1-9])\d{2}[A-Z]')
+_LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
+
+_BRAND_NORM = {
+    'MERCEDES-BENZ': 'MERCEDES', 'MERCEDES BENZ': 'MERCEDES',
+    'LYNK&CO': 'LYNK & CO',
+}
+_MERC_CLASS = {
+    'A':'CLASE A','B':'CLASE B','C':'CLASE C','E':'CLASE E','G':'CLASE G',
+    'S':'CLASE S','T':'CLASE T','V':'CLASE V','SL':'CLASE SL',
+    'GLA':'CLASE GLA','GLB':'CLASE GLB','GLC':'CLASE GLC','GLE':'CLASE GLE',
+    'GLS':'CLASE GLS','CLA':'CLASE CLA','CLE':'CLASE CLE','CLS':'CLASE CLS',
+    'GLC COUPE':'CLASE GLC COUPE','GLE COUPE':'CLASE GLE COUPE',
+    'EQA':'EQA','EQB':'EQB','EQC':'EQC','EQE':'EQE',
+    'EQS':'EQS','EQT':'EQT','EQV':'EQV','AMG GT':'AMG GT',
+}
+
+def _strip_accents(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', s)
+                   if unicodedata.category(c) != 'Mn')
+
+def _model_candidates(sbrand, s):
+    """Genera lista de candidatos (sbrand, model_name) para buscar en el lookup."""
+    # Quitar código de homologación (6+ alfanum al final) y acentos
+    s = _APPROVAL_RE.sub('', s).strip()
+    s = _strip_accents(s)
+    # Quitar prefijo marca si está repetido en el modelo
+    bwords = sbrand.split(); swords = s.split()
+    if swords[:len(bwords)] == bwords:
+        swords = swords[len(bwords):]
+        s = ' '.join(swords)
+    for pfx in ('NUEVO ', 'NEW ', 'E-'):
+        if s.startswith(pfx): s = s[len(pfx):].strip()
+    s_nd = re.sub(r'([A-Z]+)-([\d])', r'\1\2', s)  # CX-5→CX5
+    cands = []
+    if sbrand == 'MERCEDES':
+        for code, name in sorted(_MERC_CLASS.items(), key=lambda x: -len(x[0])):
+            if s == code or s.startswith(code + ' '):
+                cands.append((sbrand, name)); break
+    if sbrand == 'BMW':
+        m = _BMW_SERIE_RE.match(s)
+        if m: cands.append((sbrand, f'SERIE {m.group(1)}'))
+    if sbrand == 'LEXUS':
+        m = _LEXUS_PFX_RE.match(s_nd)
+        if m: cands.append((sbrand, m.group(1)))
+    if sbrand == 'MG':
+        first = s_nd.split()[0] if s_nd.split() else s_nd
+        cands += [(sbrand, 'MG ' + first), (sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', first))]
+    if sbrand == 'MINI':
+        if 'CABRIO' in s or 'CONVERTIBLE' in s: cands.append((sbrand, 'CABRIO'))
+        elif 'COUNTRYMAN' in s: cands.append((sbrand, 'COUNTRYMAN'))
+        elif 'CLUBMAN' in s: cands.append((sbrand, 'CLUBMAN'))
+        else: cands.append((sbrand, 'HATCHBACK'))
+    if sbrand == 'CUPRA':
+        first1 = s.split()[0] if s.split() else s
+        cands += [(sbrand, 'CUPRA ' + first1)]
+    if sbrand == 'TOYOTA':
+        s2 = re.sub(r'([A-Z]{2,})(\d)', r'\1 \2', s)
+        cands += [(sbrand, s2), (sbrand, s2.split()[0] if s2.split() else s2)]
+    if sbrand == 'MAZDA':
+        cands += [(sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', s)), (sbrand, s_nd)]
+    if sbrand == 'LYNK & CO':
+        cands.append((sbrand, 'LYNK&CO ' + s))
+    if sbrand == 'DR':
+        nm = re.search(r'^(\d+)', s)
+        if nm: cands.append((sbrand, f'DR{nm.group(1)}'))
+    words = s.split()
+    cands += [(sbrand, s), (sbrand, s_nd),
+              (sbrand, re.sub(r'\bI (\d)', r'I\1', s))]
+    if len(words) >= 2: cands.append((sbrand, ' '.join(words[:2])))
+    if words: cands.append((sbrand, words[0]))
+    return cands
+
+# Cargado una vez al inicio del proceso
+_ENRICHMENT = {}   # (simmix_brand, simmix_model) → {modelo, seg, sub, hp, body}
+
+def _load_enrichment():
+    global _ENRICHMENT
+    fname = os.path.join(OUT_DIR, 'master_version_enrichment.csv')
+    if not os.path.exists(fname):
+        return
+    with open(fname, encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            key = (row['brand'].strip().upper(), row['version_dgt'].strip().upper())
+            if key not in _ENRICHMENT:
+                _ENRICHMENT[key] = {
+                    'modelo': row.get('model','').strip().upper(),
+                    'seg'   : row.get('segment','').strip(),
+                    'sub'   : row.get('subsegment','').strip(),
+                    'hp'    : row.get('high_perf','').strip(),
+                    'body'  : row.get('body_type','').strip(),
+                }
+    # También cargar brand+model lookup si existe (master_model_segment.csv)
+    fname2 = os.path.join(OUT_DIR, 'master_model_segment.csv')
+    _load_simmix_bbdd()
+    print(f'  -> Enrichment: {len(_ENRICHMENT):,} combos cargados')
+
+# Carga lookup brand+model desde Simmix BBDD directamente
+_MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
+
+def _load_simmix_bbdd():
+    global _MODEL_LOOKUP
+    for yr in (2023, 2024, 2025):
+        fname = os.path.join(OUT_DIR, f'BBDD_{yr}_PRODUCTO.csv')
+        if not os.path.exists(fname):
+            continue
+        try:
+            with open(fname, encoding='latin-1', newline='') as f:
+                reader = csv.reader(f)
+                header = [h.replace(f'_{yr}','').strip() for h in next(reader)]
+                for raw in reader:
+                    if len(raw) < len(header): continue
+                    row = dict(zip(header, raw))
+                    brand = (row.get('Brand') or '').strip().upper()
+                    model = (row.get('Model') or '').strip().upper()
+                    if not brand or not model: continue
+                    key = (brand, model)
+                    if key not in _MODEL_LOOKUP:
+                        _MODEL_LOOKUP[key] = {
+                            'modelo': model,
+                            'seg'  : (row.get('Segment') or '').strip(),
+                            'sub'  : (row.get('SubSegmento') or '').strip(),
+                            'hp'   : (row.get('High Performance') or '').strip(),
+                            'body' : (row.get('Body Type') or '').strip(),
+                        }
+        except Exception:
+            pass
+
+def lookup_enrichment(marca_raw, raw_modelo_field):
+    """Devuelve (modelo_canon, seg, sub, hp, body) o ('','','','','')."""
+    sbrand = _BRAND_NORM.get(marca_raw, marca_raw)
+    for cand in _model_candidates(sbrand, raw_modelo_field):
+        r = _MODEL_LOOKUP.get(cand)
+        if r:
+            return r['modelo'], r['seg'], r['sub'], r['hp'], r['body']
+    return '', '', '', '', ''
+
 
 # Reglas de campa
 # 28169 Venturada = campa fabricante (Corporate) excepto Toyota/Lexus que van a alquiler (RAC)
@@ -582,8 +722,17 @@ def es_turismo_o_furgoneta(line_s):
 
 
 def fuel_to_canal_counts(fuel_counts):
+    """Agrega fuel_counts (clave extendida) → {(marca, canal): n}."""
     agg = collections.Counter()
-    for (marca, canal, _), n in fuel_counts.items():
+    for key, n in fuel_counts.items():
+        # key puede ser (marca, modelo, canal, fuel, seg, sub, hp, body)
+        #            o  (marca, canal, fuel)  (formato antiguo)
+        if len(key) == 8:
+            marca, modelo, canal = key[0], key[1], key[2]
+        elif len(key) == 3:
+            marca, canal = key[0], key[1]
+        else:
+            marca, canal = key[0], key[1]
         agg[(marca, canal)] += n
     return agg
 
@@ -619,8 +768,10 @@ def process_lines(lines_iter):
         canal     = classify(servicio, persona, renting, mun, marca)
         fuel_code = get_fuel_type_code(line_s)
         cod_prov  = mun[:2].strip()
+        # Enriquecimiento: obtener modelo canónico y dimensiones de segmento
+        modelo_canon, seg, sub, hp, body = lookup_enrichment(marca, modelo)
         counts[(marca, canal)] += 1
-        fuel_counts[(marca, canal, fuel_code)] += 1
+        fuel_counts[(marca, modelo_canon, canal, fuel_code, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
             prov_counts[(cod_prov, canal, fuel_code)] += 1
         if canal == 'Private' and servicio.strip() == 'B00' and persona.strip() == 'D':
@@ -649,14 +800,19 @@ def process_lines(lines_iter):
     LAST_PROCESS_ALERTS = alerts
     calibrated = apply_scope_calibration(counts)
     raw_totals = {}
-    for (marca, canal, _), n in fuel_counts.items():
+    for key, n in fuel_counts.items():
+        marca, canal = key[0], key[2] if len(key) == 8 else key[1]
         raw_totals[(marca, canal)] = raw_totals.get((marca, canal), 0) + n
     calibrated_fuel = collections.Counter()
-    for (marca, canal, fuel_code), n in fuel_counts.items():
+    for key, n in fuel_counts.items():
+        if len(key) == 8:
+            marca, canal = key[0], key[2]
+        else:
+            marca, canal = key[0], key[1]
         raw = raw_totals.get((marca, canal), 0)
         cal = calibrated.get((marca, canal), 0)
         ratio = cal / raw if raw > 0 else 1.0
-        calibrated_fuel[(marca, canal, fuel_code)] += max(0, int(round(n * ratio)))
+        calibrated_fuel[key] += max(0, int(round(n * ratio)))
     return calibrated_fuel, prov_counts
 
 
@@ -676,15 +832,19 @@ def process_raw_txt(txt_path):
 
 
 def save_csv(counts, yyyymm):
-    """counts: {(marca, canal, fuel_type): n}"""
-    import csv as csv_mod
+    """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
     year, month = yyyymm[:4], yyyymm[4:]
     path = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
-        w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","canal","fuel_type","count"])
-        for (marca, canal, fuel_type), n in sorted(counts.items()):
-            w.writerow([year, month, marca, canal, fuel_type, n])
+        w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
+        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","segmento","subseg","hp","body_type","count"])
+        for key, n in sorted(counts.items()):
+            if len(key) == 8:
+                marca, modelo, canal, fuel_type, seg, sub, hp, body = key
+            else:
+                marca, canal, fuel_type = key[0], key[1], key[2]
+                modelo = seg = sub = hp = body = ''
+            w.writerow([year, month, marca, modelo, canal, fuel_type, seg, sub, hp, body, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
@@ -704,15 +864,19 @@ def save_prov_csv(prov_counts, yyyymm):
     return path
 
 def save_daily_csv(counts, yyyymmdd):
-    """counts: {(marca, canal, fuel_type): n}"""
-    import csv as csv_mod
+    """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
     year, month, day = yyyymmdd[:4], yyyymmdd[4:6], yyyymmdd[6:]
     path = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
     with open(path, 'w', encoding='utf-8', newline='') as f:
-        w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","dia","marca","canal","fuel_type","count"])
-        for (marca, canal, fuel_type), n in sorted(counts.items()):
-            w.writerow([year, month, day, marca, canal, fuel_type, n])
+        w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
+        w.writerow(["anyo","mes","dia","marca","modelo","canal","fuel_type","segmento","subseg","hp","body_type","count"])
+        for key, n in sorted(counts.items()):
+            if len(key) == 8:
+                marca, modelo, canal, fuel_type, seg, sub, hp, body = key
+            else:
+                marca, canal, fuel_type = key[0], key[1], key[2]
+                modelo = seg = sub = hp = body = ''
+            w.writerow([year, month, day, marca, modelo, canal, fuel_type, seg, sub, hp, body, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
@@ -730,21 +894,25 @@ def save_prov_daily_csv(prov_counts, yyyymmdd):
     return path
 
 def read_channel_counts(path):
-    """Lee CSV daily → {(marca, canal, fuel_type): n}"""
-    import csv as csv_mod
+    """Lee CSV daily → {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
     counts = collections.Counter()
     with open(path, 'r', encoding='utf-8-sig', newline='') as f:
-        for row in csv_mod.DictReader(f):
-            marca     = row.get('marca', '').strip().upper()
-            canal     = row.get('canal', '').strip()
-            fuel_type = row.get('fuel_type', 'ICE').strip() or 'ICE'
+        for row in csv.DictReader(f):
+            marca     = (row.get('marca') or '').strip().upper()
+            modelo    = (row.get('modelo') or '').strip().upper()
+            canal     = (row.get('canal') or '').strip()
+            fuel_type = (row.get('fuel_type') or 'ICE').strip() or 'ICE'
+            seg       = (row.get('segmento') or '').strip()
+            sub       = (row.get('subseg') or '').strip()
+            hp        = (row.get('hp') or '').strip()
+            body      = (row.get('body_type') or '').strip()
             if not marca or not canal:
                 continue
             try:
                 n = int(float(row.get('count', 0)))
             except (TypeError, ValueError):
                 continue
-            counts[(marca, canal, fuel_type)] += n
+            counts[(marca, modelo, canal, fuel_type, seg, sub, hp, body)] += n
     return counts
 
 def save_mtd_from_daily(yyyymm):
@@ -760,9 +928,14 @@ def save_mtd_from_daily(yyyymm):
     path = os.path.join(OUT_DIR, "dgt_canal_{}_mtd.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","canal","fuel_type","count"])
-        for (marca, canal, fuel_type), n in sorted(counts.items()):
-            w.writerow([year, month, marca, canal, fuel_type, n])
+        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","segmento","subseg","hp","body_type","count"])
+        for key, n in sorted(counts.items()):
+            if len(key) == 8:
+                marca, modelo, canal, fuel_type, seg, sub, hp, body = key
+            else:
+                marca, canal, fuel_type = key[0], key[1], key[2]
+                modelo = seg = sub = hp = body = ''
+            w.writerow([year, month, marca, modelo, canal, fuel_type, seg, sub, hp, body, n])
     print("  -> {}  ({:,} registros MTD)".format(path, sum(counts.values())))
     return path
 
@@ -933,13 +1106,20 @@ def all_months(start='202301', end='202512'):
 
 
 if __name__ == '__main__':
+    # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
+    _load_simmix_bbdd()
+    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
+
     arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
     keep  = '--keep'  in sys.argv
     force = '--force' in sys.argv
 
     if arg == 'all':
-        months = all_months('202301', '202512')
-        print("Procesando {} meses (2023-2025)...".format(len(months)))
+        import datetime as _dt
+        _now = _dt.date.today()
+        _end = '{:04d}{:02d}'.format(_now.year, _now.month)
+        months = all_months('202301', _end)
+        print("Procesando {} meses (2023-01 → {})...".format(len(months), _end))
         for mm in months:
             download_and_process(mm, keep_raw=keep, force=force)
     elif arg == 'monthly-2026':
