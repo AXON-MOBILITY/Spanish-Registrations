@@ -72,7 +72,7 @@ def _read_csv(path):
         for row in csv.DictReader(fh):
             yield {k:(v.strip() if v is not None else "") for k,v in row.items()}
 
-def load_simmix_scope(base):
+def load_simmix_scope(base, fallback_path=None):
     """Infer the valid Simmix export scope by year from BBDD_YYYY_PRODUCTO.csv.
 
     Some available Simmix exports are cut mid-brand (for example 2024 ends inside
@@ -81,6 +81,7 @@ def load_simmix_scope(base):
     """
     scopes = {}
     diagnostics = {}
+    fallback_path = Path(fallback_path) if fallback_path else None
     for path in sorted(base.glob("BBDD_*_PRODUCTO.csv")):
         m = re.match(r"BBDD_(\d{4})_PRODUCTO$", path.stem)
         if not m:
@@ -126,7 +127,39 @@ def load_simmix_scope(base):
             "malformed_rows": malformed,
             "reference_total": sum(totals[b] for b in brands),
         }
+    if scopes:
+        return scopes, diagnostics
+
+    if fallback_path and fallback_path.exists():
+        try:
+            payload = json.loads(fallback_path.read_text(encoding="utf-8"))
+            brands_by_year = payload.get("brands_by_year", {})
+            scopes = {
+                int(yr): {str(brand).upper() for brand in brands}
+                for yr, brands in brands_by_year.items()
+            }
+            diagnostics = {
+                int(yr): diag
+                for yr, diag in payload.get("diagnostics", {}).items()
+            }
+            return scopes, diagnostics
+        except Exception as exc:
+            print(f"  Scope Simmix: no se pudo leer fallback {fallback_path}: {exc}")
+
     return scopes, diagnostics
+
+def save_simmix_scope(scope_path, scopes, diagnostics):
+    if not scopes:
+        return
+    payload = {
+        "source": "Derived from local Simmix BBDD exports; used by GitHub Actions when BBDD files are absent.",
+        "brands_by_year": {
+            str(yr): sorted(scopes[yr])
+            for yr in sorted(scopes)
+        },
+        "diagnostics": {str(k): v for k, v in sorted(diagnostics.items())},
+    }
+    scope_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def apply_simmix_scope(records, scopes):
     if not scopes:
@@ -435,7 +468,9 @@ def main():
 
     scope_info = {"mode": args.scope}
     if args.scope == "simmix":
-        scopes, scope_diag = load_simmix_scope(base)
+        scope_fallback = out_dir / "simmix_scope_brands.json"
+        scopes, scope_diag = load_simmix_scope(base, scope_fallback)
+        save_simmix_scope(scope_fallback, scopes, scope_diag)
         monthly_records, monthly_scope_stats = apply_simmix_scope(monthly_records, scopes)
         mtd_records, mtd_scope_stats = apply_simmix_scope(mtd_records, scopes)
         prov_data, prov_scope_stats = apply_simmix_scope_provinces(prov_data, scopes)

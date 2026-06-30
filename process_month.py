@@ -149,6 +149,7 @@ def _model_candidates(sbrand, s):
     """Genera lista de candidatos (sbrand, model_name) para buscar en el lookup."""
     # Quitar código de homologación (6+ alfanum al final) y acentos
     s = _APPROVAL_RE.sub('', s).strip()
+    s = s.replace('\xa0', ' ')
     s = _strip_accents(s)
     # Quitar prefijo marca si está repetido en el modelo
     bwords = sbrand.split(); swords = s.split()
@@ -166,12 +167,73 @@ def _model_candidates(sbrand, s):
     if sbrand == 'BMW':
         m = _BMW_SERIE_RE.match(s)
         if m: cands.append((sbrand, f'SERIE {m.group(1)}'))
+        if re.match(r'^(?:116|118|120|128|M135)', s): cands.append((sbrand, 'SERIE 1'))
+        if re.match(r'^(?:220|230|M2|M240)', s): cands.append((sbrand, 'SERIE 2'))
+        if re.match(r'^(?:M3|M340)', s): cands.append((sbrand, 'SERIE 3'))
+        if re.match(r'^(?:M4|M440)', s): cands.append((sbrand, 'SERIE 4'))
+        if re.match(r'^(?:M5|M550)', s): cands.append((sbrand, 'SERIE 5'))
+        if re.match(r'^(?:M760)', s): cands.append((sbrand, 'SERIE 7'))
     if sbrand == 'LEXUS':
         m = _LEXUS_PFX_RE.match(s_nd)
         if m: cands.append((sbrand, m.group(1)))
     if sbrand == 'MG':
         first = s_nd.split()[0] if s_nd.split() else s_nd
         cands += [(sbrand, 'MG ' + first), (sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', first))]
+    if sbrand == 'AUDI':
+        sx = s.replace(' ', '')
+        if sx.startswith('Q5SPORTBACK'): cands.append((sbrand, 'Q5 SPORTBACK'))
+        if sx.startswith('Q4SPORTBACK'): cands.append((sbrand, 'Q4 SPORTBACK E-TRON'))
+        elif sx.startswith('Q4'): cands.append((sbrand, 'Q4 E-TRON'))
+        if sx.startswith('Q6') or sx.startswith('SQ6'): cands.append((sbrand, 'Q6 E-TRON'))
+        for prefix, model in (
+            ('RSQ3SPORTBACK', 'Q3 SPORTBACK'), ('RSQ3', 'Q3'), ('SQ5SPORTBACK', 'Q5 SPORTBACK'),
+            ('SQ5', 'Q5'), ('RSQ8', 'Q8'), ('SQ8', 'Q8'), ('RS3', 'A3'), ('S3', 'A3'),
+            ('RS4', 'A4'), ('RS5', 'A5'), ('RS6', 'A6'), ('S6', 'A6'), ('S5', 'A5'),
+        ):
+            if sx.startswith(prefix):
+                cands.append((sbrand, model)); break
+    if sbrand == 'DS':
+        if re.match(r'^(?:DS\s*)?7\s*CROSSBACK\b', s):
+            cands.append((sbrand, 'DS7 CROSSBACK'))
+        m = re.match(r'^(?:DS\s*)?([3479])\b', s)
+        if m:
+            cands.append((sbrand, {'3':'DS3 CROSSBACK','4':'DS4','7':'DS7 CROSSBACK','9':'DS9'}[m.group(1)]))
+    if sbrand == 'IVECO':
+        if re.match(r'^(?:IVECO\s*)?(?:\d{2}[SC]|DAILY|50C|70C|SOCAGE|MULTITEL|WING)', s):
+            cands.append((sbrand, 'DAILY'))
+    if sbrand == 'PEUGEOT':
+        sp = s.replace(' ', '')
+        for code in ('2008','208','3008','308','408','5008','508'):
+            if sp.startswith('N' + code) or sp.startswith(code):
+                cands.append((sbrand, code)); break
+        for code in ('BOXER','EXPERT','PARTNER','RIFTER','TRAVELLER'):
+            if code in s:
+                cands.append((sbrand, code)); break
+    if sbrand == 'CITROEN':
+        s3 = s.replace('CITROEN ', '')
+        if re.match(r'^(?:NUEVO\s+)?C5\s*X\b', s3):
+            cands.append((sbrand, 'C5X'))
+        for code in ('C3 AIRCROSS','C5 AIRCROSS','BERLINGO','JUMPER','JUMPY','SPACETOURER','C4X','C3','C4'):
+            if code in s3:
+                cands.append((sbrand, code)); break
+    if sbrand == 'FIAT':
+        if re.match(r'^(?:FIAT\s*)?DOBLO\b|^E-DOBLO\b', s): cands.append((sbrand, 'DOBLO CARGO'))
+        if re.match(r'^(?:FIAT\s*)?DUCATO\b', s): cands.append((sbrand, 'DUCATO'))
+        if re.match(r'^(?:FIAT\s*)?SCUDO\b', s): cands.append((sbrand, 'SCUDO'))
+        if re.match(r'^(?:FIAT\s*)?FIORINO\b', s): cands.append((sbrand, 'FIORINO'))
+        if re.match(r'^(?:FIAT\s*)?PANDA\b', s): cands.append((sbrand, 'PANDA'))
+        if re.match(r'^(?:FIAT\s*)?TIPO\b', s): cands.append((sbrand, 'TIPO'))
+        if re.match(r'^(?:FIAT\s*)?600\b', s): cands.append((sbrand, '600'))
+        if re.match(r'^(?:FIAT\s*)?500\b', s): cands.append((sbrand, '500'))
+        if 'ULYSSE' in s: cands.append((sbrand, 'E-ULYSSE'))
+    if sbrand == 'OPEL':
+        for code, model in (
+            ('GRANDLAND', 'GRANDLAND X'), ('CORSA', 'CORSA'), ('MOKKA', 'MOKKA'),
+            ('COMBO', 'COMBO'), ('VIVARO', 'VIVARO'), ('MOVANO', 'MOVANO'),
+            ('ZAFIRA', 'ZAFIRA LIFE'), ('ASTRA', 'ASTRA'), ('CROSSLAND', 'CROSSLAND'),
+        ):
+            if code in s:
+                cands.append((sbrand, model)); break
     if sbrand == 'MINI':
         if 'CABRIO' in s or 'CONVERTIBLE' in s: cands.append((sbrand, 'CABRIO'))
         elif 'COUNTRYMAN' in s: cands.append((sbrand, 'COUNTRYMAN'))
@@ -182,9 +244,58 @@ def _model_candidates(sbrand, s):
         cands += [(sbrand, 'CUPRA ' + first1)]
     if sbrand == 'TOYOTA':
         s2 = re.sub(r'([A-Z]{2,})(\d)', r'\1 \2', s)
+        if 'HILUX' in s2: cands.append((sbrand, 'HI LUX'))
+        if 'GR 86' in s2 or 'GR86' in s2: cands.append((sbrand, 'GR86'))
+        if 'YARIS CROSS' in s2: cands.append((sbrand, 'YARIS CROSS'))
+        if 'C-HR' in s2 or 'CHR' in s2: cands.append((sbrand, 'C-HR'))
+        if 'RAV4' in s2: cands.append((sbrand, 'RAV 4'))
+        if 'AYGO X' in s2: cands.append((sbrand, 'AYGO X'))
+        if 'PROACE CITY VERSO' in s2: cands.append((sbrand, 'PROACE VERSO'))
+        elif 'PROACE CITY' in s2: cands.append((sbrand, 'PROACE CITY'))
+        elif 'PROACE VERSO' in s2: cands.append((sbrand, 'PROACE VERSO'))
+        elif 'PROACE' in s2: cands.append((sbrand, 'PROACE'))
         cands += [(sbrand, s2), (sbrand, s2.split()[0] if s2.split() else s2)]
+    if sbrand == 'OMODA':
+        if s.replace(' ', '').startswith('OMODA5'): cands.append((sbrand, 'OMODA 5'))
+    if sbrand == 'JAECOO':
+        if s.replace(' ', '').startswith('JAECOO7'): cands.append((sbrand, 'JAECOO 7'))
+    if sbrand == 'EVO':
+        sx = s.replace(' ', '')
+        if sx.startswith('EVOCROSS4') or sx.startswith('CROSS4'): cands.append((sbrand, 'CROSS 4'))
+        for n in ('3','4','5','6','7'):
+            if sx.startswith('EVO' + n):
+                cands.append((sbrand, 'EVO ' + n)); break
+    if sbrand == 'MERCEDES':
+        if s.startswith('SPRINTER'): cands.append((sbrand, 'SPRINTER 300'))
+        if 'GLC COUPE' in s: cands.append((sbrand, 'CLASE GLC COUPE'))
+        if 'GLE COUPE' in s: cands.append((sbrand, 'CLASE GLE COUPE'))
+        if s.startswith('AMG '):
+            amg = s[4:]
+            for code, name in sorted(_MERC_CLASS.items(), key=lambda x: -len(x[0])):
+                if amg == code or amg.startswith(code + ' '):
+                    if 'COUPE' in amg and code in ('GLC', 'GLE'):
+                        cands.append((sbrand, name + ' COUPE'))
+                    cands.append((sbrand, name)); break
     if sbrand == 'MAZDA':
+        if s.startswith('MAZDA2 HYBRID'): cands.append((sbrand, 'MAZDA 2'))
         cands += [(sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', s)), (sbrand, s_nd)]
+    if sbrand == 'VOLKSWAGEN':
+        sx = s.replace(' ', '')
+        if sx.startswith('ID.BUZZ') or sx.startswith('IDBUZZ'): cands.append((sbrand, 'ID.BUZZ'))
+        if sx.startswith('KOMBI'): cands.append((sbrand, 'CARAVELLE'))
+    if sbrand == 'SUZUKI':
+        if s.startswith('S-CROSS'): cands.append((sbrand, 'SX4'))
+    if sbrand == 'HYUNDAI':
+        sx = s.replace(' ', '')
+        if s.startswith('TUCSON') or s.startswith('TUCSON,IX35'): cands.append((sbrand, 'TUCSON'))
+        if s.startswith('KONA') or s.startswith('KONA, KAUAI'): cands.append((sbrand, 'KONA'))
+        if sx.startswith('IONIQ5'): cands.append((sbrand, 'IONIQ 5'))
+        if sx.startswith('IONIQ6'): cands.append((sbrand, 'IONIQ 6'))
+        if sx.startswith('I30') or sx.startswith('I30N'): cands.append((sbrand, 'I30'))
+    if sbrand == 'SSANGYONG':
+        if s.startswith('KORANDO'): cands.append((sbrand, 'KORANDO K4'))
+    if sbrand == 'SUBARU':
+        if s.startswith('CROSSTREK'): cands.append((sbrand, 'XV'))
     if sbrand == 'LYNK & CO':
         cands.append((sbrand, 'LYNK&CO ' + s))
     if sbrand == 'DR':
