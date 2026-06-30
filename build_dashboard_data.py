@@ -24,13 +24,14 @@ FUELS   = ["ICE","BEV","PHEV"]
 # ── Normalización de marcas DGT → nombres canónicos Simmix ───────────────────
 _BRAND_NORM = {
     'ABARTH': 'Abarth', 'AIWAYS': 'Aiways', 'ALFA ROMEO': 'Alfa Romeo',
+    "ALKE'": 'Alke', 'ALKE': 'Alke',
     'ALPINE': 'Alpine', 'ALPINA': 'Alpina', 'ASTON MARTIN': 'Aston Martin',
     'AUDI': 'Audi', 'BENTLEY': 'Bentley', 'BMW': 'BMW',
     'CADILLAC': 'Cadillac', 'CENNTRO': 'Cenntro', 'CITROEN': 'Citroen',
     'CUPRA': 'Cupra', 'DACIA': 'Dacia', 'DR': 'DR',
     'DS': 'DS', 'ESAGONO ENERGIA': 'Esagono Energia', 'ETESIA': 'Etesia',
     'EVUM MOTORS': 'Evum Motors', 'FERRARI': 'Ferrari', 'FIAT': 'Fiat',
-    'FORD': 'Ford', 'GOUPIL': 'Goupil', 'HONDA': 'Honda',
+    'FORD': 'Ford', 'FUSO': 'Mitsubishi-Fuso', 'GOUPIL': 'Goupil', 'HONDA': 'Honda',
     'HYUNDAI': 'Hyundai', 'INEOS': 'Ineos', 'ISUZU': 'Isuzu',
     'IVECO': 'Iveco', 'JAGUAR': 'Jaguar', 'JEEP': 'Jeep',
     'KARMA': 'Karma', 'KIA': 'Kia', 'LAMBORGHINI': 'Lamborghini',
@@ -46,10 +47,11 @@ _BRAND_NORM = {
     'OMODA': 'Omoda', 'OPEL': 'Opel', 'PEUGEOT': 'Peugeot',
     'PIAGGIO': 'Piaggio', 'POLESTAR': 'Polestar', 'PORSCHE': 'Porsche',
     'RENAULT': 'Renault', 'RENAULT TRUCKS': 'Renault Trucks',
+    'RENAULT TRUCKS SAS': 'Renault Trucks',
     'ROLLS-ROYCE': 'Rolls-Royce', 'SEAT': 'SEAT', 'SERES': 'Seres',
     'SHINERAY': 'Shineray', 'SKODA': 'Skoda', 'SKYWELL': 'Skywell',
     'SMART': 'Smart', 'SSANGYONG': 'Ssangyong', 'SUBARU': 'Subaru',
-    'SUZUKI': 'Suzuki', 'TESLA': 'Tesla', 'TOYOTA': 'Toyota',
+    'SUZUKI': 'Suzuki', 'SWM': 'Shineray', 'TESLA': 'Tesla', 'TOYOTA': 'Toyota',
     'VOLKSWAGEN': 'Volkswagen', 'VOLVO': 'Volvo', 'VOYAH': 'Voyah',
     'YUDO': 'Yudo',
     # Abreviaciones que .title() rompería

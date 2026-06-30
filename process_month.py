@@ -125,6 +125,11 @@ _LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
 _BRAND_NORM = {
     'MERCEDES-BENZ': 'MERCEDES', 'MERCEDES BENZ': 'MERCEDES',
     'LYNK&CO': 'LYNK & CO',
+    "ALKE'": 'ALKE',
+    'DS AUTOMOBILES': 'DS',
+    'FUSO': 'MITSUBISHI FUSO',
+    'RENAULT TRUCKS SAS': 'RENAULT TRUCKS',
+    'SWM': 'SHINERAY',
 }
 _MERC_CLASS = {
     'A':'CLASE A','B':'CLASE B','C':'CLASE C','E':'CLASE E','G':'CLASE G',
@@ -668,10 +673,9 @@ def add_drift_alerts(yyyymm, counts, alerts):
 def normalize_marca(marca, modelo=''):
     m = marca.strip().upper()
     mo = modelo.strip().upper()
+    m = _BRAND_NORM.get(m, m)
     if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG') and 'VITO' in mo:
         return 'MERCEDES-V'
-    if m == 'LYNK&CO':
-        return 'LYNK & CO'
     return m
 
 def get_fuel_type_code(line_s):
