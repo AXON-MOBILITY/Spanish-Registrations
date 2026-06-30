@@ -96,6 +96,23 @@ F_MODELO      = (47,   77)   # modelo del vehiculo
 F_PLAZAS      = (119, 120)   # numero de plazas (asientos)
 F_MMA         = (111, 117)   # Masa Maxima Autorizada en kg  ej: "  1615" = 1615 kg
                               # motos: <700, turismos: 700-3500, camiones: >3500
+F_PROPULSION    = (93,   94)   # 0=gasolina, 1=diesel, 2=electrico, 6=GLP, 7=GNC
+F_CAT_ELECTRICO = (453, 457)   # BEV, HEV, PHEV, REEV o vacio
+
+# Mapa código INE provincia (2 dígitos) → nombre
+PROV_NAMES = {
+    '01':'Álava','02':'Albacete','03':'Alicante','04':'Almería','05':'Ávila',
+    '06':'Badajoz','07':'Baleares','08':'Barcelona','09':'Burgos','10':'Cáceres',
+    '11':'Cádiz','12':'Castellón','13':'Ciudad Real','14':'Córdoba','15':'A Coruña',
+    '16':'Cuenca','17':'Girona','18':'Granada','19':'Guadalajara','20':'Gipuzkoa',
+    '21':'Huelva','22':'Huesca','23':'Jaén','24':'León','25':'Lleida',
+    '26':'La Rioja','27':'Lugo','28':'Madrid','29':'Málaga','30':'Murcia',
+    '31':'Navarra','32':'Ourense','33':'Asturias','34':'Palencia','35':'Las Palmas',
+    '36':'Pontevedra','37':'Salamanca','38':'S.C. Tenerife','39':'Cantabria','40':'Segovia',
+    '41':'Sevilla','42':'Soria','43':'Tarragona','44':'Teruel','45':'Toledo',
+    '46':'Valencia','47':'Valladolid','48':'Bizkaia','49':'Zamora','50':'Zaragoza',
+    '51':'Ceuta','52':'Melilla',
+}
 
 # Modelos excluidos del scope (no estan en Simmix)
 EXCLUIR_MARCA_MODELO = {}
@@ -417,13 +434,16 @@ def iter_output_rows(before_year=None, same_month=None, exclude_yyyymm=None):
             continue
         path = os.path.join(OUT_DIR, name)
         try:
+            agg = collections.Counter()
             with open(path, 'r', encoding='utf-8-sig', newline='') as f:
                 for row in csv_mod.DictReader(f):
                     try:
                         n = int(float(row.get('count', 0)))
                     except (TypeError, ValueError):
                         continue
-                    yield yyyymm, row.get('marca', '').strip().upper(), row.get('canal', '').strip(), n
+                    agg[(row.get('marca','').strip().upper(), row.get('canal','').strip())] += n
+            for (marca, canal), n in agg.items():
+                yield yyyymm, marca, canal, n
         except OSError:
             continue
 
@@ -497,6 +517,15 @@ def normalize_marca(marca, modelo=''):
         return 'LYNK & CO'
     return m
 
+def get_fuel_type_code(line_s):
+    prop = line_s[F_PROPULSION[0]:F_PROPULSION[1]].strip()
+    cat  = line_s[F_CAT_ELECTRICO[0]:F_CAT_ELECTRICO[1]].strip().upper()
+    if cat in ('BEV', 'REEV') or prop == '2':
+        return 'BEV'
+    if cat == 'PHEV':
+        return 'PHEV'
+    return 'ICE'
+
 def classify(servicio, persona, renting, mun, marca):
     s  = servicio.strip()
     m  = marca.strip().upper()
@@ -552,9 +581,17 @@ def es_turismo_o_furgoneta(line_s):
     return False  # plazas=0 (trailer), plazas=1 (moto solo-seat)
 
 
+def fuel_to_canal_counts(fuel_counts):
+    agg = collections.Counter()
+    for (marca, canal, _), n in fuel_counts.items():
+        agg[(marca, canal)] += n
+    return agg
+
 def process_lines(lines_iter):
     global LAST_PROCESS_ALERTS
-    counts = collections.Counter()
+    counts      = collections.Counter()
+    fuel_counts = collections.Counter()
+    prov_counts = collections.Counter()
     km0_fallback_pool = collections.Counter()
     alerts = []
     for raw in lines_iter:
@@ -572,17 +609,20 @@ def process_lines(lines_iter):
         marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
         modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
         marca  = normalize_marca(marca_raw, modelo)
-        # Excluir modelos fuera del scope de Simmix
-        # Simmix no tiene Vito (ni cargo ni tourer). La Clase V de Simmix = V-Class puro (V xxx).
         excl = EXCLUIR_MARCA_MODELO.get(marca)
         if excl and any(m in modelo for m in excl):
             continue
-        servicio = line_s[F_SERVICIO[0]:F_SERVICIO[1]]
-        persona  = line_s[F_PERSONA_FJ[0]:F_PERSONA_FJ[1]]
-        renting  = line_s[F_RENTING[0]:F_RENTING[1]]
-        mun      = line_s[F_MUNICIPIO[0]:F_MUNICIPIO[1]]
-        canal = classify(servicio, persona, renting, mun, marca)
+        servicio  = line_s[F_SERVICIO[0]:F_SERVICIO[1]]
+        persona   = line_s[F_PERSONA_FJ[0]:F_PERSONA_FJ[1]]
+        renting   = line_s[F_RENTING[0]:F_RENTING[1]]
+        mun       = line_s[F_MUNICIPIO[0]:F_MUNICIPIO[1]]
+        canal     = classify(servicio, persona, renting, mun, marca)
+        fuel_code = get_fuel_type_code(line_s)
+        cod_prov  = mun[:2].strip()
         counts[(marca, canal)] += 1
+        fuel_counts[(marca, canal, fuel_code)] += 1
+        if cod_prov.isdigit():
+            prov_counts[(cod_prov, canal, fuel_code)] += 1
         if canal == 'Private' and servicio.strip() == 'B00' and persona.strip() == 'D':
             rate_brand = km0_rate_brand(marca)
             if rate_brand in KM0_BRAND_FALLBACK_RATE:
@@ -607,7 +647,17 @@ def process_lines(lines_iter):
                 detail='pool_b00d_private={}; rate={:.4f}'.format(n, rate),
             ))
     LAST_PROCESS_ALERTS = alerts
-    return apply_scope_calibration(counts)
+    calibrated = apply_scope_calibration(counts)
+    raw_totals = {}
+    for (marca, canal, _), n in fuel_counts.items():
+        raw_totals[(marca, canal)] = raw_totals.get((marca, canal), 0) + n
+    calibrated_fuel = collections.Counter()
+    for (marca, canal, fuel_code), n in fuel_counts.items():
+        raw = raw_totals.get((marca, canal), 0)
+        cal = calibrated.get((marca, canal), 0)
+        ratio = cal / raw if raw > 0 else 1.0
+        calibrated_fuel[(marca, canal, fuel_code)] += max(0, int(round(n * ratio)))
+    return calibrated_fuel, prov_counts
 
 
 def process_zip(zip_path):
@@ -626,48 +676,75 @@ def process_raw_txt(txt_path):
 
 
 def save_csv(counts, yyyymm):
+    """counts: {(marca, canal, fuel_type): n}"""
     import csv as csv_mod
-    year  = yyyymm[:4]
-    month = yyyymm[4:]
-    path  = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
+    year, month = yyyymm[:4], yyyymm[4:]
+    path = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","canal","count"])
-        for (marca, canal), n in sorted(counts.items()):
-            w.writerow([year, month, marca, canal, n])
+        w.writerow(["anyo","mes","marca","canal","fuel_type","count"])
+        for (marca, canal, fuel_type), n in sorted(counts.items()):
+            w.writerow([year, month, marca, canal, fuel_type, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
+    return path
+
+def save_prov_csv(prov_counts, yyyymm):
+    """prov_counts: {(cod_prov, canal, fuel_type): n}"""
+    import csv as csv_mod
+    year, month = yyyymm[:4], yyyymm[4:]
+    path = os.path.join(OUT_DIR, "dgt_prov_{}.csv".format(yyyymm))
+    with open(path, 'w', encoding='utf-8', newline='') as f:
+        w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
+        w.writerow(["anyo","mes","cod_prov","provincia","canal","fuel_type","count"])
+        for (cod_prov, canal, fuel_type), n in sorted(prov_counts.items()):
+            nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
+            w.writerow([year, month, cod_prov, nombre, canal, fuel_type, n])
+    print("  -> {}  ({} combos provincia)".format(path, len(prov_counts)))
     return path
 
 def save_daily_csv(counts, yyyymmdd):
+    """counts: {(marca, canal, fuel_type): n}"""
     import csv as csv_mod
-    year  = yyyymmdd[:4]
-    month = yyyymmdd[4:6]
-    day   = yyyymmdd[6:]
-    path  = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
+    year, month, day = yyyymmdd[:4], yyyymmdd[4:6], yyyymmdd[6:]
+    path = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","dia","marca","canal","count"])
-        for (marca, canal), n in sorted(counts.items()):
-            w.writerow([year, month, day, marca, canal, n])
+        w.writerow(["anyo","mes","dia","marca","canal","fuel_type","count"])
+        for (marca, canal, fuel_type), n in sorted(counts.items()):
+            w.writerow([year, month, day, marca, canal, fuel_type, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
 
+def save_prov_daily_csv(prov_counts, yyyymmdd):
+    import csv as csv_mod
+    year, month, day = yyyymmdd[:4], yyyymmdd[4:6], yyyymmdd[6:]
+    path = os.path.join(OUT_DIR, "dgt_prov_daily_{}.csv".format(yyyymmdd))
+    with open(path, 'w', encoding='utf-8', newline='') as f:
+        w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
+        w.writerow(["anyo","mes","dia","cod_prov","provincia","canal","fuel_type","count"])
+        for (cod_prov, canal, fuel_type), n in sorted(prov_counts.items()):
+            nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
+            w.writerow([year, month, day, cod_prov, nombre, canal, fuel_type, n])
+    return path
+
 def read_channel_counts(path):
+    """Lee CSV daily → {(marca, canal, fuel_type): n}"""
     import csv as csv_mod
     counts = collections.Counter()
     with open(path, 'r', encoding='utf-8-sig', newline='') as f:
         for row in csv_mod.DictReader(f):
-            marca = row.get('marca', '').strip().upper()
-            canal = row.get('canal', '').strip()
+            marca     = row.get('marca', '').strip().upper()
+            canal     = row.get('canal', '').strip()
+            fuel_type = row.get('fuel_type', 'ICE').strip() or 'ICE'
             if not marca or not canal:
                 continue
             try:
                 n = int(float(row.get('count', 0)))
             except (TypeError, ValueError):
                 continue
-            counts[(marca, canal)] += n
+            counts[(marca, canal, fuel_type)] += n
     return counts
 
 def save_mtd_from_daily(yyyymm):
@@ -683,9 +760,9 @@ def save_mtd_from_daily(yyyymm):
     path = os.path.join(OUT_DIR, "dgt_canal_{}_mtd.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","canal","count"])
-        for (marca, canal), n in sorted(counts.items()):
-            w.writerow([year, month, marca, canal, n])
+        w.writerow(["anyo","mes","marca","canal","fuel_type","count"])
+        for (marca, canal, fuel_type), n in sorted(counts.items()):
+            w.writerow([year, month, marca, canal, fuel_type, n])
     print("  -> {}  ({:,} registros MTD)".format(path, sum(counts.values())))
     return path
 
@@ -708,15 +785,20 @@ def save_alerts(alerts, yyyymm):
         print("  -> alertas {}: 0".format(yyyymm))
     return path
 
-def finalize_month(counts, yyyymm):
-    save_csv(counts, yyyymm)
+def finalize_month(result, yyyymm):
+    fuel_counts, prov_counts = result
+    save_csv(fuel_counts, yyyymm)
+    save_prov_csv(prov_counts, yyyymm)
+    canal_counts = fuel_to_canal_counts(fuel_counts)
     alerts = list(LAST_PROCESS_ALERTS)
-    add_unknown_brand_alerts(yyyymm, counts, alerts)
-    add_drift_alerts(yyyymm, counts, alerts)
+    add_unknown_brand_alerts(yyyymm, canal_counts, alerts)
+    add_drift_alerts(yyyymm, canal_counts, alerts)
     save_alerts(alerts, yyyymm)
 
-def finalize_day(counts, yyyymmdd):
-    save_daily_csv(counts, yyyymmdd)
+def finalize_day(result, yyyymmdd):
+    fuel_counts, prov_counts = result
+    save_daily_csv(fuel_counts, yyyymmdd)
+    save_prov_daily_csv(prov_counts, yyyymmdd)
     save_alerts(list(LAST_PROCESS_ALERTS), yyyymmdd)
 
 def download_and_process(yyyymm, keep_raw=False, force=False):

@@ -11,6 +11,10 @@ MAS_VEHMAT_*.*
 # Large paid/source datasets kept local
 BBDD_*_PRODUCTO.csv
 
+# Record-level output (demasiado grande para git — generar localmente)
+BBDD_DGT.csv
+.checkpoint.json
+
 # Local/editor noise
 .DS_Store
 Thumbs.db
