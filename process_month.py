@@ -17,10 +17,11 @@ Uso:
 Tambien genera dgt_alerts_YYYYMM.csv con avisos no bloqueantes de drift.
 """
 
-import sys, os, zipfile, urllib.request, collections, tempfile, re, csv, unicodedata
+import sys, os, zipfile, urllib.request, collections, tempfile, re, csv, unicodedata, json
 
 TMP_DIR = tempfile.gettempdir()
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_LOOKUP_FALLBACK = os.path.join(OUT_DIR, 'public', 'data', 'simmix_model_lookup.json')
 LAST_PROCESS_ALERTS = []
 DGT_MONTHLY_PAGE = 'https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-mensual.html'
 DGT_DAILY_PAGE = 'https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-diario.html'
@@ -335,8 +336,54 @@ def _load_enrichment():
 # Carga lookup brand+model desde Simmix BBDD directamente
 _MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
 
+def _load_model_lookup_fallback():
+    if not os.path.exists(MODEL_LOOKUP_FALLBACK):
+        return False
+    try:
+        with open(MODEL_LOOKUP_FALLBACK, encoding='utf-8') as f:
+            payload = json.load(f)
+        for row in payload.get('rows', []):
+            brand = (row.get('brand') or '').strip().upper()
+            model = (row.get('model') or '').strip().upper()
+            if not brand or not model:
+                continue
+            _MODEL_LOOKUP[(brand, model)] = {
+                'modelo'      : model,
+                'seg'         : (row.get('seg') or '').strip(),
+                'sub'         : (row.get('sub') or '').strip(),
+                'hp'          : (row.get('hp') or '').strip(),
+                'body'        : (row.get('body') or '').strip(),
+                'fuel_detail' : (row.get('fuel_detail') or '').strip(),
+            }
+        return bool(_MODEL_LOOKUP)
+    except Exception as exc:
+        print(f'  WARN: no se pudo cargar fallback de modelos Simmix: {exc}')
+        return False
+
+def _save_model_lookup_fallback():
+    if not _MODEL_LOOKUP:
+        return
+    rows = []
+    for (brand, model), data in sorted(_MODEL_LOOKUP.items()):
+        rows.append({
+            'brand': brand,
+            'model': model,
+            'seg': data.get('seg', ''),
+            'sub': data.get('sub', ''),
+            'hp': data.get('hp', ''),
+            'body': data.get('body', ''),
+            'fuel_detail': data.get('fuel_detail', ''),
+        })
+    os.makedirs(os.path.dirname(MODEL_LOOKUP_FALLBACK), exist_ok=True)
+    with open(MODEL_LOOKUP_FALLBACK, 'w', encoding='utf-8') as f:
+        json.dump({
+            'source': 'Derived from local Simmix BBDD exports; used by GitHub Actions when BBDD files are absent.',
+            'rows': rows,
+        }, f, ensure_ascii=False, indent=2)
+
 def _load_simmix_bbdd():
     global _MODEL_LOOKUP
+    loaded_from_bbdd = False
     for yr in (2023, 2024, 2025):
         fname = os.path.join(OUT_DIR, f'BBDD_{yr}_PRODUCTO.csv')
         if not os.path.exists(fname):
@@ -351,6 +398,7 @@ def _load_simmix_bbdd():
                     brand = (row.get('Brand') or '').strip().upper()
                     model = (row.get('Model') or '').strip().upper()
                     if not brand or not model: continue
+                    loaded_from_bbdd = True
                     key = (brand, model)
                     if key not in _MODEL_LOOKUP:
                         _MODEL_LOOKUP[key] = {
@@ -363,6 +411,10 @@ def _load_simmix_bbdd():
                         }
         except Exception:
             pass
+    if loaded_from_bbdd:
+        _save_model_lookup_fallback()
+    elif not _MODEL_LOOKUP:
+        _load_model_lookup_fallback()
 
 _PROP_FUEL_NAME = {
     '0': 'Gasolina', '1': 'Diesel', '2': 'Electrico',
