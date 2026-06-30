@@ -238,23 +238,40 @@ def _load_simmix_bbdd():
                     key = (brand, model)
                     if key not in _MODEL_LOOKUP:
                         _MODEL_LOOKUP[key] = {
-                            'modelo': model,
-                            'seg'  : (row.get('Segment') or '').strip(),
-                            'sub'  : (row.get('SubSegmento') or '').strip(),
-                            'hp'   : (row.get('High Performance') or '').strip(),
-                            'body' : (row.get('Body Type') or '').strip(),
+                            'modelo'      : model,
+                            'seg'         : (row.get('Segment') or '').strip(),
+                            'sub'         : (row.get('SubSegmento') or '').strip(),
+                            'hp'          : (row.get('High Performance') or '').strip(),
+                            'body'        : (row.get('Body Type') or '').strip(),
+                            'fuel_detail' : (row.get('Fuel') or '').strip(),
                         }
         except Exception:
             pass
 
+_PROP_FUEL_NAME = {
+    '0': 'Gasolina', '1': 'Diesel', '2': 'Electrico',
+    '3': 'Hidrogeno', '4': 'Hidrogeno',
+    '6': 'Gas Licuado con petroleo (GLP)',
+    '7': 'Gas natural comprimido (GNC)',
+}
+
+def get_fuel_detail_from_dgt(line_s):
+    prop = line_s[F_PROPULSION[0]:F_PROPULSION[1]].strip()
+    cat  = line_s[F_CAT_ELECTRICO[0]:F_CAT_ELECTRICO[1]].strip().upper()
+    if cat in ('BEV', 'REEV') or prop == '2':
+        return 'Electrico'
+    if cat == 'PHEV':
+        return 'Diesel/Electrico Enchufable' if prop == '1' else 'Gasolina/Electrico Enchufable'
+    return _PROP_FUEL_NAME.get(prop, 'Gasolina')
+
 def lookup_enrichment(marca_raw, raw_modelo_field):
-    """Devuelve (modelo_canon, seg, sub, hp, body) o ('','','','','')."""
+    """Devuelve (modelo_canon, seg, sub, hp, body, fuel_detail) o 6x ''."""
     sbrand = _BRAND_NORM.get(marca_raw, marca_raw)
     for cand in _model_candidates(sbrand, raw_modelo_field):
         r = _MODEL_LOOKUP.get(cand)
         if r:
-            return r['modelo'], r['seg'], r['sub'], r['hp'], r['body']
-    return '', '', '', '', ''
+            return r['modelo'], r['seg'], r['sub'], r['hp'], r['body'], r.get('fuel_detail','')
+    return '', '', '', '', '', ''
 
 
 # Reglas de campa
@@ -727,8 +744,10 @@ def fuel_to_canal_counts(fuel_counts):
     for key, n in fuel_counts.items():
         # key puede ser (marca, modelo, canal, fuel, seg, sub, hp, body)
         #            o  (marca, canal, fuel)  (formato antiguo)
-        if len(key) == 8:
-            marca, modelo, canal = key[0], key[1], key[2]
+        if len(key) == 9:
+            marca, canal = key[0], key[2]
+        elif len(key) == 8:
+            marca, canal = key[0], key[2]
         elif len(key) == 3:
             marca, canal = key[0], key[1]
         else:
@@ -769,11 +788,13 @@ def process_lines(lines_iter):
         fuel_code = get_fuel_type_code(line_s)
         cod_prov  = mun[:2].strip()
         # Enriquecimiento: obtener modelo canónico y dimensiones de segmento
-        modelo_canon, seg, sub, hp, body = lookup_enrichment(marca, modelo)
+        modelo_canon, seg, sub, hp, body, fuel_detail = lookup_enrichment(marca, modelo)
+        if not fuel_detail:
+            fuel_detail = get_fuel_detail_from_dgt(line_s)
         counts[(marca, canal)] += 1
-        fuel_counts[(marca, modelo_canon, canal, fuel_code, seg, sub, hp, body)] += 1
+        fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
-            prov_counts[(cod_prov, canal, fuel_code)] += 1
+            prov_counts[(cod_prov, marca, canal, fuel_code)] += 1
         if canal == 'Private' and servicio.strip() == 'B00' and persona.strip() == 'D':
             rate_brand = km0_rate_brand(marca)
             if rate_brand in KM0_BRAND_FALLBACK_RATE:
@@ -801,14 +822,13 @@ def process_lines(lines_iter):
     calibrated = apply_scope_calibration(counts)
     raw_totals = {}
     for key, n in fuel_counts.items():
-        marca, canal = key[0], key[2] if len(key) == 8 else key[1]
+        marca = key[0]
+        canal = key[2] if len(key) in (8, 9) else key[1]
         raw_totals[(marca, canal)] = raw_totals.get((marca, canal), 0) + n
     calibrated_fuel = collections.Counter()
     for key, n in fuel_counts.items():
-        if len(key) == 8:
-            marca, canal = key[0], key[2]
-        else:
-            marca, canal = key[0], key[1]
+        marca = key[0]
+        canal = key[2] if len(key) in (8, 9) else key[1]
         raw = raw_totals.get((marca, canal), 0)
         cal = calibrated.get((marca, canal), 0)
         ratio = cal / raw if raw > 0 else 1.0
@@ -837,29 +857,37 @@ def save_csv(counts, yyyymm):
     path = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","segmento","subseg","hp","body_type","count"])
+        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","count"])
         for key, n in sorted(counts.items()):
-            if len(key) == 8:
+            if len(key) == 9:
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body = key
+            elif len(key) == 8:
                 marca, modelo, canal, fuel_type, seg, sub, hp, body = key
+                fuel_det = ''
             else:
                 marca, canal, fuel_type = key[0], key[1], key[2]
-                modelo = seg = sub = hp = body = ''
-            w.writerow([year, month, marca, modelo, canal, fuel_type, seg, sub, hp, body, n])
+                modelo = seg = sub = hp = body = fuel_det = ''
+            w.writerow([year, month, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
 
 def save_prov_csv(prov_counts, yyyymm):
-    """prov_counts: {(cod_prov, canal, fuel_type): n}"""
+    """prov_counts: {(cod_prov, marca, canal, fuel_type): n}"""
     import csv as csv_mod
     year, month = yyyymm[:4], yyyymm[4:]
     path = os.path.join(OUT_DIR, "dgt_prov_{}.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","cod_prov","provincia","canal","fuel_type","count"])
-        for (cod_prov, canal, fuel_type), n in sorted(prov_counts.items()):
+        w.writerow(["anyo","mes","marca","cod_prov","provincia","canal","fuel_type","count"])
+        for key, n in sorted(prov_counts.items()):
+            if len(key) == 4:
+                cod_prov, marca, canal, fuel_type = key
+            else:
+                cod_prov, canal, fuel_type = key
+                marca = ""
             nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
-            w.writerow([year, month, cod_prov, nombre, canal, fuel_type, n])
+            w.writerow([year, month, marca, cod_prov, nombre, canal, fuel_type, n])
     print("  -> {}  ({} combos provincia)".format(path, len(prov_counts)))
     return path
 
@@ -869,14 +897,17 @@ def save_daily_csv(counts, yyyymmdd):
     path = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","dia","marca","modelo","canal","fuel_type","segmento","subseg","hp","body_type","count"])
+        w.writerow(["anyo","mes","dia","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","count"])
         for key, n in sorted(counts.items()):
-            if len(key) == 8:
+            if len(key) == 9:
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body = key
+            elif len(key) == 8:
                 marca, modelo, canal, fuel_type, seg, sub, hp, body = key
+                fuel_det = ''
             else:
                 marca, canal, fuel_type = key[0], key[1], key[2]
-                modelo = seg = sub = hp = body = ''
-            w.writerow([year, month, day, marca, modelo, canal, fuel_type, seg, sub, hp, body, n])
+                modelo = seg = sub = hp = body = fuel_det = ''
+            w.writerow([year, month, day, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
@@ -887,10 +918,15 @@ def save_prov_daily_csv(prov_counts, yyyymmdd):
     path = os.path.join(OUT_DIR, "dgt_prov_daily_{}.csv".format(yyyymmdd))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","dia","cod_prov","provincia","canal","fuel_type","count"])
-        for (cod_prov, canal, fuel_type), n in sorted(prov_counts.items()):
+        w.writerow(["anyo","mes","dia","marca","cod_prov","provincia","canal","fuel_type","count"])
+        for key, n in sorted(prov_counts.items()):
+            if len(key) == 4:
+                cod_prov, marca, canal, fuel_type = key
+            else:
+                cod_prov, canal, fuel_type = key
+                marca = ""
             nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
-            w.writerow([year, month, day, cod_prov, nombre, canal, fuel_type, n])
+            w.writerow([year, month, day, marca, cod_prov, nombre, canal, fuel_type, n])
     return path
 
 def read_channel_counts(path):
@@ -902,6 +938,7 @@ def read_channel_counts(path):
             modelo    = (row.get('modelo') or '').strip().upper()
             canal     = (row.get('canal') or '').strip()
             fuel_type = (row.get('fuel_type') or 'ICE').strip() or 'ICE'
+            fuel_det  = (row.get('fuel') or '').strip()
             seg       = (row.get('segmento') or '').strip()
             sub       = (row.get('subseg') or '').strip()
             hp        = (row.get('hp') or '').strip()
@@ -912,7 +949,7 @@ def read_channel_counts(path):
                 n = int(float(row.get('count', 0)))
             except (TypeError, ValueError):
                 continue
-            counts[(marca, modelo, canal, fuel_type, seg, sub, hp, body)] += n
+            counts[(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body)] += n
     return counts
 
 def save_mtd_from_daily(yyyymm):
@@ -928,14 +965,17 @@ def save_mtd_from_daily(yyyymm):
     path = os.path.join(OUT_DIR, "dgt_canal_{}_mtd.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","segmento","subseg","hp","body_type","count"])
+        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","count"])
         for key, n in sorted(counts.items()):
-            if len(key) == 8:
+            if len(key) == 9:
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body = key
+            elif len(key) == 8:
                 marca, modelo, canal, fuel_type, seg, sub, hp, body = key
+                fuel_det = ''
             else:
                 marca, canal, fuel_type = key[0], key[1], key[2]
-                modelo = seg = sub = hp = body = ''
-            w.writerow([year, month, marca, modelo, canal, fuel_type, seg, sub, hp, body, n])
+                modelo = seg = sub = hp = body = fuel_det = ''
+            w.writerow([year, month, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, n])
     print("  -> {}  ({:,} registros MTD)".format(path, sum(counts.values())))
     return path
 
@@ -1119,7 +1159,7 @@ if __name__ == '__main__':
         _now = _dt.date.today()
         _end = '{:04d}{:02d}'.format(_now.year, _now.month)
         months = all_months('202301', _end)
-        print("Procesando {} meses (2023-01 → {})...".format(len(months), _end))
+        print("Procesando {} meses (2023-01 -> {})...".format(len(months), _end))
         for mm in months:
             download_and_process(mm, keep_raw=keep, force=force)
     elif arg == 'monthly-2026':

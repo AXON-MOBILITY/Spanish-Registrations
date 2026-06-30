@@ -65,4 +65,23 @@ jobs:
             python process_month.py all $FORCE_FLAG
           else
             echo "Modo: auto (diario + mensual 2026)"
-  
+            python process_month.py auto $FORCE_FLAG
+          fi
+
+      - name: Build dashboard data
+        shell: bash
+        run: python build_dashboard_data.py
+
+      - name: Commit generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dgt_canal_*.csv dgt_prov_*.csv dgt_alerts_*.csv public/ || true
+          if git diff --cached --quiet; then
+            echo "No hay cambios que commitear."
+            exit 0
+          fi
+          git commit -m "Update DGT matriculaciones outputs [skip ci]"
+          git push

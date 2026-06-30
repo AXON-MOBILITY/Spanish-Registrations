@@ -1,265 +1,1368 @@
-anyo,mes,dia,cod_prov,provincia,canal,fuel_type,count
-2026,06,09,01,Álava,Corporate,BEV,2
-2026,06,09,01,Álava,Corporate,ICE,5
-2026,06,09,01,Álava,Corporate,PHEV,2
-2026,06,09,01,Álava,Private,BEV,2
-2026,06,09,01,Álava,Private,ICE,10
-2026,06,09,01,Álava,Private,PHEV,2
-2026,06,09,01,Álava,RAC,BEV,5
-2026,06,09,02,Albacete,Corporate,BEV,1
-2026,06,09,02,Albacete,Corporate,ICE,2
-2026,06,09,02,Albacete,Corporate,PHEV,1
-2026,06,09,02,Albacete,Private,BEV,1
-2026,06,09,02,Albacete,Private,ICE,10
-2026,06,09,02,Albacete,Private,PHEV,1
-2026,06,09,03,Alicante,Corporate,BEV,2
-2026,06,09,03,Alicante,Corporate,ICE,15
-2026,06,09,03,Alicante,Corporate,PHEV,4
-2026,06,09,03,Alicante,Private,BEV,22
-2026,06,09,03,Alicante,Private,ICE,69
-2026,06,09,03,Alicante,Private,PHEV,5
-2026,06,09,03,Alicante,RAC,ICE,213
-2026,06,09,03,Alicante,RAC,PHEV,386
-2026,06,09,04,Almería,Corporate,BEV,1
-2026,06,09,04,Almería,Corporate,ICE,4
-2026,06,09,04,Almería,Corporate,PHEV,3
-2026,06,09,04,Almería,Private,BEV,6
-2026,06,09,04,Almería,Private,ICE,20
-2026,06,09,04,Almería,Private,PHEV,3
-2026,06,09,05,Ávila,Corporate,ICE,1
-2026,06,09,05,Ávila,Corporate,PHEV,1
-2026,06,09,05,Ávila,Private,BEV,1
-2026,06,09,05,Ávila,Private,ICE,3
-2026,06,09,06,Badajoz,Corporate,BEV,1
-2026,06,09,06,Badajoz,Corporate,ICE,3
-2026,06,09,06,Badajoz,Private,BEV,3
-2026,06,09,06,Badajoz,Private,ICE,16
-2026,06,09,06,Badajoz,Private,PHEV,1
-2026,06,09,07,Baleares,Corporate,BEV,3
-2026,06,09,07,Baleares,Corporate,ICE,13
-2026,06,09,07,Baleares,Corporate,PHEV,5
-2026,06,09,07,Baleares,Private,BEV,18
-2026,06,09,07,Baleares,Private,ICE,43
-2026,06,09,07,Baleares,Private,PHEV,3
-2026,06,09,07,Baleares,RAC,ICE,11
-2026,06,09,07,Baleares,RAC,PHEV,90
-2026,06,09,08,Barcelona,Corporate,BEV,68
-2026,06,09,08,Barcelona,Corporate,ICE,77
-2026,06,09,08,Barcelona,Corporate,PHEV,16
-2026,06,09,08,Barcelona,Private,BEV,41
-2026,06,09,08,Barcelona,Private,ICE,164
-2026,06,09,08,Barcelona,Private,PHEV,25
-2026,06,09,08,Barcelona,RAC,ICE,2
-2026,06,09,08,Barcelona,RAC,PHEV,1
-2026,06,09,09,Burgos,Corporate,ICE,3
-2026,06,09,09,Burgos,Corporate,PHEV,1
-2026,06,09,09,Burgos,Private,BEV,2
-2026,06,09,09,Burgos,Private,ICE,12
-2026,06,09,09,Burgos,Private,PHEV,2
-2026,06,09,10,Cáceres,Corporate,ICE,4
-2026,06,09,10,Cáceres,Private,BEV,3
-2026,06,09,10,Cáceres,Private,ICE,11
-2026,06,09,10,Cáceres,Private,PHEV,1
-2026,06,09,11,Cádiz,Corporate,ICE,6
-2026,06,09,11,Cádiz,Corporate,PHEV,3
-2026,06,09,11,Cádiz,Private,BEV,4
-2026,06,09,11,Cádiz,Private,ICE,45
-2026,06,09,11,Cádiz,Private,PHEV,5
-2026,06,09,12,Castellón,Corporate,ICE,3
-2026,06,09,12,Castellón,Private,BEV,5
-2026,06,09,12,Castellón,Private,ICE,16
-2026,06,09,12,Castellón,Private,PHEV,3
-2026,06,09,12,Castellón,RAC,ICE,6
-2026,06,09,12,Castellón,RAC,PHEV,11
-2026,06,09,13,Ciudad Real,Corporate,ICE,2
-2026,06,09,13,Ciudad Real,Corporate,PHEV,1
-2026,06,09,13,Ciudad Real,Private,BEV,5
-2026,06,09,13,Ciudad Real,Private,ICE,11
-2026,06,09,13,Ciudad Real,Private,PHEV,1
-2026,06,09,13,Ciudad Real,RAC,ICE,1
-2026,06,09,14,Córdoba,Corporate,ICE,3
-2026,06,09,14,Córdoba,Private,BEV,3
-2026,06,09,14,Córdoba,Private,ICE,18
-2026,06,09,14,Córdoba,Private,PHEV,1
-2026,06,09,15,A Coruña,Corporate,BEV,1
-2026,06,09,15,A Coruña,Corporate,ICE,4
-2026,06,09,15,A Coruña,Corporate,PHEV,1
-2026,06,09,15,A Coruña,Private,BEV,9
-2026,06,09,15,A Coruña,Private,ICE,26
-2026,06,09,15,A Coruña,Private,PHEV,3
-2026,06,09,16,Cuenca,Private,BEV,2
-2026,06,09,16,Cuenca,Private,ICE,3
-2026,06,09,16,Cuenca,Private,PHEV,1
-2026,06,09,17,Girona,Corporate,BEV,1
-2026,06,09,17,Girona,Corporate,ICE,8
-2026,06,09,17,Girona,Corporate,PHEV,2
-2026,06,09,17,Girona,Private,BEV,6
-2026,06,09,17,Girona,Private,ICE,31
-2026,06,09,17,Girona,Private,PHEV,4
-2026,06,09,18,Granada,Corporate,BEV,3
-2026,06,09,18,Granada,Corporate,ICE,2
-2026,06,09,18,Granada,Private,BEV,3
-2026,06,09,18,Granada,Private,ICE,32
-2026,06,09,18,Granada,Private,PHEV,3
-2026,06,09,19,Guadalajara,Private,BEV,4
-2026,06,09,19,Guadalajara,Private,ICE,11
-2026,06,09,19,Guadalajara,Private,PHEV,1
-2026,06,09,20,Gipuzkoa,Corporate,ICE,9
-2026,06,09,20,Gipuzkoa,Corporate,PHEV,2
-2026,06,09,20,Gipuzkoa,Private,BEV,4
-2026,06,09,20,Gipuzkoa,Private,ICE,11
-2026,06,09,20,Gipuzkoa,Private,PHEV,3
-2026,06,09,20,Gipuzkoa,RAC,ICE,1
-2026,06,09,21,Huelva,Corporate,ICE,1
-2026,06,09,21,Huelva,Private,BEV,1
-2026,06,09,21,Huelva,Private,ICE,12
-2026,06,09,22,Huesca,Corporate,ICE,2
-2026,06,09,22,Huesca,Private,BEV,1
-2026,06,09,22,Huesca,Private,ICE,11
-2026,06,09,23,Jaén,Corporate,ICE,6
-2026,06,09,23,Jaén,Private,BEV,5
-2026,06,09,23,Jaén,Private,ICE,18
-2026,06,09,23,Jaén,Private,PHEV,3
-2026,06,09,24,León,Corporate,ICE,3
-2026,06,09,24,León,Private,BEV,3
-2026,06,09,24,León,Private,ICE,9
-2026,06,09,24,León,Private,PHEV,2
-2026,06,09,25,Lleida,Corporate,ICE,5
-2026,06,09,25,Lleida,Corporate,PHEV,2
-2026,06,09,25,Lleida,Private,BEV,2
-2026,06,09,25,Lleida,Private,ICE,7
-2026,06,09,25,Lleida,Private,PHEV,1
-2026,06,09,27,Lugo,Corporate,ICE,34
-2026,06,09,27,Lugo,Corporate,PHEV,2
-2026,06,09,27,Lugo,Private,BEV,2
-2026,06,09,27,Lugo,Private,ICE,7
-2026,06,09,27,Lugo,Private,PHEV,1
-2026,06,09,27,Lugo,RAC,ICE,2
-2026,06,09,28,Madrid,Corporate,BEV,57
-2026,06,09,28,Madrid,Corporate,ICE,882
-2026,06,09,28,Madrid,Corporate,PHEV,95
-2026,06,09,28,Madrid,Private,BEV,84
-2026,06,09,28,Madrid,Private,ICE,314
-2026,06,09,28,Madrid,Private,PHEV,58
-2026,06,09,28,Madrid,RAC,BEV,23
-2026,06,09,28,Madrid,RAC,ICE,650
-2026,06,09,28,Madrid,RAC,PHEV,29
-2026,06,09,29,Málaga,Corporate,BEV,2
-2026,06,09,29,Málaga,Corporate,ICE,50
-2026,06,09,29,Málaga,Corporate,PHEV,3
-2026,06,09,29,Málaga,Private,BEV,16
-2026,06,09,29,Málaga,Private,ICE,64
-2026,06,09,29,Málaga,Private,PHEV,5
-2026,06,09,29,Málaga,RAC,ICE,20
-2026,06,09,30,Murcia,Corporate,ICE,2
-2026,06,09,30,Murcia,Corporate,PHEV,2
-2026,06,09,30,Murcia,Private,BEV,10
-2026,06,09,30,Murcia,Private,ICE,2
-2026,06,09,30,Murcia,Private,PHEV,1
-2026,06,09,31,Navarra,Corporate,BEV,3
-2026,06,09,31,Navarra,Corporate,ICE,1
-2026,06,09,31,Navarra,Corporate,PHEV,1
-2026,06,09,31,Navarra,Private,BEV,14
-2026,06,09,31,Navarra,Private,ICE,8
-2026,06,09,32,Ourense,Private,ICE,10
-2026,06,09,33,Asturias,Corporate,ICE,12
-2026,06,09,33,Asturias,Corporate,PHEV,4
-2026,06,09,33,Asturias,Private,BEV,6
-2026,06,09,33,Asturias,Private,ICE,15
-2026,06,09,33,Asturias,Private,PHEV,2
-2026,06,09,33,Asturias,RAC,ICE,2
-2026,06,09,34,Palencia,Private,BEV,1
-2026,06,09,34,Palencia,Private,ICE,4
-2026,06,09,35,Las Palmas,Corporate,BEV,2
-2026,06,09,35,Las Palmas,Corporate,ICE,28
-2026,06,09,35,Las Palmas,Corporate,PHEV,1
-2026,06,09,35,Las Palmas,Private,BEV,9
-2026,06,09,35,Las Palmas,Private,ICE,13
-2026,06,09,35,Las Palmas,Private,PHEV,4
-2026,06,09,35,Las Palmas,RAC,BEV,4
-2026,06,09,35,Las Palmas,RAC,ICE,2
-2026,06,09,36,Pontevedra,Corporate,BEV,1
-2026,06,09,36,Pontevedra,Corporate,ICE,2
-2026,06,09,36,Pontevedra,Corporate,PHEV,3
-2026,06,09,36,Pontevedra,Private,BEV,9
-2026,06,09,36,Pontevedra,Private,ICE,15
-2026,06,09,36,Pontevedra,Private,PHEV,1
-2026,06,09,37,Salamanca,Corporate,ICE,6
-2026,06,09,37,Salamanca,Corporate,PHEV,1
-2026,06,09,37,Salamanca,Private,BEV,3
-2026,06,09,37,Salamanca,Private,ICE,11
-2026,06,09,37,Salamanca,Private,PHEV,2
-2026,06,09,37,Salamanca,RAC,ICE,1
-2026,06,09,38,S.C. Tenerife,Corporate,BEV,1
-2026,06,09,38,S.C. Tenerife,Corporate,ICE,9
-2026,06,09,38,S.C. Tenerife,Corporate,PHEV,3
-2026,06,09,38,S.C. Tenerife,Private,BEV,8
-2026,06,09,38,S.C. Tenerife,Private,ICE,25
-2026,06,09,38,S.C. Tenerife,Private,PHEV,3
-2026,06,09,39,Cantabria,Corporate,BEV,1
-2026,06,09,39,Cantabria,Corporate,PHEV,1
-2026,06,09,39,Cantabria,Private,BEV,10
-2026,06,09,39,Cantabria,Private,ICE,22
-2026,06,09,39,Cantabria,RAC,ICE,1
-2026,06,09,40,Segovia,Corporate,ICE,1
-2026,06,09,40,Segovia,Private,BEV,1
-2026,06,09,40,Segovia,Private,ICE,5
-2026,06,09,41,Sevilla,Corporate,BEV,3
-2026,06,09,41,Sevilla,Corporate,ICE,8
-2026,06,09,41,Sevilla,Corporate,PHEV,1
-2026,06,09,41,Sevilla,Private,BEV,10
-2026,06,09,41,Sevilla,Private,ICE,58
-2026,06,09,41,Sevilla,Private,PHEV,4
-2026,06,09,41,Sevilla,RAC,ICE,5
-2026,06,09,42,Soria,Corporate,ICE,2
-2026,06,09,42,Soria,Private,BEV,13
-2026,06,09,42,Soria,Private,ICE,14
-2026,06,09,43,Tarragona,Corporate,ICE,9
-2026,06,09,43,Tarragona,Corporate,PHEV,2
-2026,06,09,43,Tarragona,Private,BEV,12
-2026,06,09,43,Tarragona,Private,ICE,26
-2026,06,09,43,Tarragona,Private,PHEV,6
-2026,06,09,43,Tarragona,RAC,ICE,1
-2026,06,09,44,Teruel,Corporate,ICE,3
-2026,06,09,44,Teruel,Private,ICE,4
-2026,06,09,45,Toledo,Corporate,BEV,1
-2026,06,09,45,Toledo,Corporate,ICE,5
-2026,06,09,45,Toledo,Private,BEV,7
-2026,06,09,45,Toledo,Private,ICE,14
-2026,06,09,45,Toledo,Private,PHEV,3
-2026,06,09,46,Valencia,Corporate,BEV,8
-2026,06,09,46,Valencia,Corporate,ICE,32
-2026,06,09,46,Valencia,Corporate,PHEV,10
-2026,06,09,46,Valencia,Private,BEV,42
-2026,06,09,46,Valencia,Private,ICE,81
-2026,06,09,46,Valencia,Private,PHEV,11
-2026,06,09,46,Valencia,RAC,ICE,2
-2026,06,09,47,Valladolid,Corporate,BEV,1
-2026,06,09,47,Valladolid,Corporate,ICE,1
-2026,06,09,47,Valladolid,Private,BEV,6
-2026,06,09,47,Valladolid,Private,ICE,12
-2026,06,09,47,Valladolid,Private,PHEV,2
-2026,06,09,47,Valladolid,RAC,ICE,2
-2026,06,09,48,Bizkaia,Corporate,BEV,4
-2026,06,09,48,Bizkaia,Corporate,ICE,9
-2026,06,09,48,Bizkaia,Private,BEV,2
-2026,06,09,48,Bizkaia,Private,ICE,22
-2026,06,09,48,Bizkaia,Private,PHEV,3
-2026,06,09,48,Bizkaia,RAC,BEV,3
-2026,06,09,48,Bizkaia,RAC,ICE,1
-2026,06,09,49,Zamora,Corporate,ICE,2
-2026,06,09,49,Zamora,Corporate,PHEV,1
-2026,06,09,49,Zamora,Private,BEV,1
-2026,06,09,49,Zamora,Private,ICE,3
-2026,06,09,49,Zamora,Private,PHEV,1
-2026,06,09,50,Zaragoza,Corporate,BEV,1
-2026,06,09,50,Zaragoza,Corporate,ICE,3
-2026,06,09,50,Zaragoza,Corporate,PHEV,3
-2026,06,09,50,Zaragoza,Private,BEV,7
-2026,06,09,50,Zaragoza,Private,ICE,34
-2026,06,09,50,Zaragoza,Private,PHEV,5
-2026,06,09,51,Ceuta,Corporate,ICE,1
-2026,06,09,51,Ceuta,Private,ICE,4
-2026,06,09,52,Melilla,Corporate,ICE,3
-2026,06,09,52,Melilla,Private,BEV,1
-2026,06,09,52,Melilla,Private,ICE,4
+anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
+2026,06,09,CITROEN,01,Álava,Private,ICE,1
+2026,06,09,DACIA,01,Álava,Private,BEV,1
+2026,06,09,DACIA,01,Álava,Private,ICE,2
+2026,06,09,EVO,01,Álava,Private,ICE,1
+2026,06,09,FORD,01,Álava,Corporate,PHEV,2
+2026,06,09,JAECOO,01,Álava,Private,ICE,1
+2026,06,09,KIA,01,Álava,Corporate,BEV,1
+2026,06,09,MERCEDES-BENZ,01,Álava,Corporate,BEV,1
+2026,06,09,MERCEDES-V,01,Álava,Private,ICE,1
+2026,06,09,OMODA,01,Álava,Private,BEV,1
+2026,06,09,OMODA,01,Álava,Private,ICE,1
+2026,06,09,OMODA,01,Álava,Private,PHEV,1
+2026,06,09,SUZUKI,01,Álava,Private,ICE,1
+2026,06,09,TOYOTA,01,Álava,Corporate,ICE,5
+2026,06,09,TOYOTA,01,Álava,Private,ICE,1
+2026,06,09,TOYOTA,01,Álava,RAC,BEV,5
+2026,06,09,VOLKSWAGEN,01,Álava,Private,ICE,1
+2026,06,09,VOLKSWAGEN,01,Álava,Private,PHEV,1
+2026,06,09,DACIA,02,Albacete,Private,ICE,4
+2026,06,09,EBRO,02,Albacete,Private,ICE,1
+2026,06,09,KIA,02,Albacete,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,02,Albacete,Corporate,BEV,1
+2026,06,09,MERCEDES-BENZ,02,Albacete,Corporate,ICE,1
+2026,06,09,MG,02,Albacete,Private,ICE,1
+2026,06,09,RENAULT,02,Albacete,Corporate,ICE,1
+2026,06,09,SKODA,02,Albacete,Private,BEV,1
+2026,06,09,TOYOTA,02,Albacete,Corporate,PHEV,1
+2026,06,09,TOYOTA,02,Albacete,Private,ICE,1
+2026,06,09,VOLKSWAGEN,02,Albacete,Private,ICE,2
+2026,06,09,VOLKSWAGEN,02,Albacete,Private,PHEV,1
+2026,06,09,AUDI,03,Alicante,Private,BEV,1
+2026,06,09,AUDI,03,Alicante,Private,ICE,1
+2026,06,09,AUDI,03,Alicante,Private,PHEV,1
+2026,06,09,BMW,03,Alicante,Corporate,ICE,1
+2026,06,09,BMW,03,Alicante,Private,BEV,1
+2026,06,09,BMW,03,Alicante,Private,ICE,2
+2026,06,09,BYD,03,Alicante,RAC,PHEV,385
+2026,06,09,CITROEN,03,Alicante,Private,BEV,2
+2026,06,09,CITROEN,03,Alicante,Private,ICE,5
+2026,06,09,CUPRA,03,Alicante,Private,PHEV,1
+2026,06,09,DACIA,03,Alicante,Private,ICE,12
+2026,06,09,EBRO,03,Alicante,Private,PHEV,1
+2026,06,09,FIAT,03,Alicante,Corporate,ICE,1
+2026,06,09,FORD,03,Alicante,Corporate,PHEV,1
+2026,06,09,HONDA,03,Alicante,Corporate,ICE,1
+2026,06,09,HYUNDAI,03,Alicante,Private,ICE,4
+2026,06,09,IVECO,03,Alicante,Corporate,ICE,2
+2026,06,09,JAECOO,03,Alicante,Private,ICE,1
+2026,06,09,KIA,03,Alicante,Private,ICE,5
+2026,06,09,LEXUS,03,Alicante,Corporate,PHEV,1
+2026,06,09,LEXUS,03,Alicante,Private,ICE,1
+2026,06,09,LIGIER,03,Alicante,Private,ICE,1
+2026,06,09,LYNK & CO,03,Alicante,Private,PHEV,1
+2026,06,09,MAZDA,03,Alicante,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,03,Alicante,Corporate,ICE,6
+2026,06,09,MERCEDES-BENZ,03,Alicante,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,03,Alicante,Private,BEV,1
+2026,06,09,MERCEDES-BENZ,03,Alicante,Private,ICE,3
+2026,06,09,MG,03,Alicante,Private,ICE,1
+2026,06,09,MINI,03,Alicante,Private,BEV,1
+2026,06,09,NISSAN,03,Alicante,Private,ICE,2
+2026,06,09,OMODA,03,Alicante,Corporate,PHEV,1
+2026,06,09,OMODA,03,Alicante,Private,ICE,1
+2026,06,09,OMODA,03,Alicante,RAC,PHEV,1
+2026,06,09,OPEL,03,Alicante,RAC,ICE,1
+2026,06,09,PEUGEOT,03,Alicante,Corporate,ICE,1
+2026,06,09,PEUGEOT,03,Alicante,Private,ICE,3
+2026,06,09,PEUGEOT,03,Alicante,RAC,ICE,212
+2026,06,09,RENAULT,03,Alicante,Corporate,BEV,1
+2026,06,09,RENAULT,03,Alicante,Corporate,ICE,2
+2026,06,09,RENAULT,03,Alicante,Private,BEV,1
+2026,06,09,RENAULT,03,Alicante,Private,ICE,4
+2026,06,09,SEAT,03,Alicante,Private,ICE,3
+2026,06,09,SILENCE,03,Alicante,Private,BEV,1
+2026,06,09,SKODA,03,Alicante,Private,PHEV,1
+2026,06,09,TESLA,03,Alicante,Corporate,BEV,1
+2026,06,09,TESLA,03,Alicante,Private,BEV,13
+2026,06,09,TOYOTA,03,Alicante,Private,BEV,1
+2026,06,09,TOYOTA,03,Alicante,Private,ICE,11
+2026,06,09,VOLKSWAGEN,03,Alicante,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,03,Alicante,Private,ICE,8
+2026,06,09,AUDI,04,Almería,Private,ICE,2
+2026,06,09,BMW,04,Almería,Corporate,PHEV,1
+2026,06,09,BMW,04,Almería,Private,ICE,2
+2026,06,09,BYD,04,Almería,Corporate,PHEV,2
+2026,06,09,BYD,04,Almería,Private,BEV,1
+2026,06,09,BYD,04,Almería,Private,PHEV,1
+2026,06,09,CITROEN,04,Almería,Corporate,ICE,1
+2026,06,09,DACIA,04,Almería,Private,ICE,2
+2026,06,09,DEEPAL,04,Almería,Private,BEV,1
+2026,06,09,DFSK,04,Almería,Corporate,ICE,2
+2026,06,09,FORD,04,Almería,Corporate,ICE,1
+2026,06,09,KIA,04,Almería,Private,BEV,1
+2026,06,09,KIA,04,Almería,Private,ICE,1
+2026,06,09,LEXUS,04,Almería,Private,ICE,1
+2026,06,09,NISSAN,04,Almería,Private,ICE,1
+2026,06,09,OMODA,04,Almería,Private,ICE,1
+2026,06,09,OMODA,04,Almería,Private,PHEV,1
+2026,06,09,RENAULT,04,Almería,Private,ICE,4
+2026,06,09,SEAT,04,Almería,Private,ICE,1
+2026,06,09,SKODA,04,Almería,Private,BEV,1
+2026,06,09,SKODA,04,Almería,Private,PHEV,1
+2026,06,09,SUZUKI,04,Almería,Private,ICE,2
+2026,06,09,TESLA,04,Almería,Private,BEV,2
+2026,06,09,TOYOTA,04,Almería,Corporate,BEV,1
+2026,06,09,TOYOTA,04,Almería,Private,ICE,2
+2026,06,09,VOLKSWAGEN,04,Almería,Private,ICE,1
+2026,06,09,AUDI,05,Ávila,Corporate,PHEV,1
+2026,06,09,FOTON,05,Ávila,Corporate,ICE,1
+2026,06,09,FOTON,05,Ávila,Private,ICE,1
+2026,06,09,KIA,05,Ávila,Private,BEV,1
+2026,06,09,MG,05,Ávila,Private,ICE,1
+2026,06,09,TOYOTA,05,Ávila,Private,ICE,1
+2026,06,09,BYD,06,Badajoz,Private,PHEV,1
+2026,06,09,CFMOTO,06,Badajoz,Corporate,ICE,1
+2026,06,09,CFMOTO,06,Badajoz,Private,ICE,1
+2026,06,09,CITROEN,06,Badajoz,Private,ICE,1
+2026,06,09,DACIA,06,Badajoz,Private,ICE,1
+2026,06,09,FORD,06,Badajoz,Corporate,ICE,1
+2026,06,09,FORD,06,Badajoz,Private,ICE,1
+2026,06,09,HONDA,06,Badajoz,Private,ICE,1
+2026,06,09,HYUNDAI,06,Badajoz,Private,ICE,2
+2026,06,09,MERCEDES-BENZ,06,Badajoz,Corporate,ICE,1
+2026,06,09,OPEL,06,Badajoz,Private,ICE,2
+2026,06,09,SKODA,06,Badajoz,Private,ICE,2
+2026,06,09,TESLA,06,Badajoz,Corporate,BEV,1
+2026,06,09,TESLA,06,Badajoz,Private,BEV,3
+2026,06,09,TOYOTA,06,Badajoz,Private,ICE,1
+2026,06,09,VOLKSWAGEN,06,Badajoz,Private,ICE,3
+2026,06,09,VOLVO,06,Badajoz,Private,ICE,1
+2026,06,09,ALPINE,07,Baleares,Private,BEV,2
+2026,06,09,AUDI,07,Baleares,Corporate,PHEV,1
+2026,06,09,AUDI,07,Baleares,Private,ICE,1
+2026,06,09,BALEAR DE CARROSSERIES,07,Baleares,Corporate,ICE,1
+2026,06,09,BYD,07,Baleares,Private,BEV,2
+2026,06,09,BYD,07,Baleares,RAC,PHEV,90
+2026,06,09,CITROEN,07,Baleares,Private,ICE,1
+2026,06,09,CUPRA,07,Baleares,Private,ICE,1
+2026,06,09,DACIA,07,Baleares,Private,ICE,6
+2026,06,09,DEEPAL,07,Baleares,Private,BEV,1
+2026,06,09,EBRO,07,Baleares,Private,PHEV,1
+2026,06,09,FORD,07,Baleares,Corporate,PHEV,2
+2026,06,09,FORD,07,Baleares,Private,ICE,2
+2026,06,09,FORD,07,Baleares,RAC,ICE,3
+2026,06,09,HYUNDAI,07,Baleares,Private,BEV,1
+2026,06,09,HYUNDAI,07,Baleares,Private,ICE,3
+2026,06,09,JEEP,07,Baleares,Private,ICE,1
+2026,06,09,KG MOBILITY,07,Baleares,Private,ICE,1
+2026,06,09,KIA,07,Baleares,Private,BEV,1
+2026,06,09,KIA,07,Baleares,Private,ICE,2
+2026,06,09,KIA,07,Baleares,RAC,ICE,3
+2026,06,09,LEAPMOTOR,07,Baleares,Private,BEV,2
+2026,06,09,LEXUS,07,Baleares,Private,BEV,1
+2026,06,09,LIDERKIT,07,Baleares,Corporate,ICE,1
+2026,06,09,LYNK & CO,07,Baleares,Corporate,BEV,1
+2026,06,09,LYNK & CO,07,Baleares,Corporate,PHEV,1
+2026,06,09,MAZDA,07,Baleares,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,07,Baleares,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,07,Baleares,Private,PHEV,1
+2026,06,09,MG,07,Baleares,Corporate,ICE,1
+2026,06,09,MG,07,Baleares,Private,ICE,4
+2026,06,09,MINI,07,Baleares,Corporate,BEV,1
+2026,06,09,MITSUBISHI,07,Baleares,Corporate,PHEV,1
+2026,06,09,MITSUBISHI FUSO,07,Baleares,Corporate,ICE,1
+2026,06,09,NISSAN,07,Baleares,Corporate,ICE,1
+2026,06,09,NISSAN,07,Baleares,Private,BEV,1
+2026,06,09,NISSAN,07,Baleares,Private,ICE,1
+2026,06,09,OMODA,07,Baleares,Corporate,ICE,1
+2026,06,09,OPEL,07,Baleares,Corporate,ICE,1
+2026,06,09,OPEL,07,Baleares,Private,BEV,1
+2026,06,09,OPEL,07,Baleares,Private,ICE,1
+2026,06,09,PEUGEOT,07,Baleares,Private,BEV,1
+2026,06,09,PEUGEOT,07,Baleares,Private,ICE,2
+2026,06,09,RENAULT,07,Baleares,Corporate,ICE,4
+2026,06,09,RENAULT,07,Baleares,Private,ICE,3
+2026,06,09,SEAT,07,Baleares,Private,ICE,2
+2026,06,09,SKODA,07,Baleares,Private,ICE,1
+2026,06,09,SKODA,07,Baleares,RAC,ICE,3
+2026,06,09,SMART,07,Baleares,Private,BEV,1
+2026,06,09,TESLA,07,Baleares,Private,BEV,2
+2026,06,09,TOYOTA,07,Baleares,Corporate,BEV,1
+2026,06,09,TOYOTA,07,Baleares,Corporate,ICE,2
+2026,06,09,TOYOTA,07,Baleares,Private,BEV,1
+2026,06,09,TOYOTA,07,Baleares,Private,ICE,6
+2026,06,09,TOYOTA,07,Baleares,Private,PHEV,1
+2026,06,09,VOLKSWAGEN,07,Baleares,Private,ICE,3
+2026,06,09,VOLKSWAGEN,07,Baleares,RAC,ICE,2
+2026,06,09,XPENG,07,Baleares,Private,BEV,1
+2026,06,09,AUDI,08,Barcelona,Corporate,ICE,13
+2026,06,09,AUDI,08,Barcelona,Corporate,PHEV,2
+2026,06,09,AUDI,08,Barcelona,Private,ICE,1
+2026,06,09,BENIMAR,08,Barcelona,Private,ICE,1
+2026,06,09,BMW,08,Barcelona,Corporate,ICE,2
+2026,06,09,BMW,08,Barcelona,Corporate,PHEV,1
+2026,06,09,BMW,08,Barcelona,Private,BEV,2
+2026,06,09,BMW,08,Barcelona,Private,PHEV,1
+2026,06,09,BYD,08,Barcelona,Corporate,PHEV,2
+2026,06,09,BYD,08,Barcelona,Private,BEV,1
+2026,06,09,C.I.,08,Barcelona,Private,ICE,1
+2026,06,09,CAPRON,08,Barcelona,Private,ICE,1
+2026,06,09,"CARROCERIAS SANCA, S.A.",08,Barcelona,Corporate,ICE,2
+2026,06,09,CFMOTO,08,Barcelona,Private,ICE,1
+2026,06,09,CHALLENGER,08,Barcelona,Private,ICE,1
+2026,06,09,CITROEN,08,Barcelona,Corporate,ICE,1
+2026,06,09,CITROEN,08,Barcelona,Private,BEV,2
+2026,06,09,CITROEN,08,Barcelona,Private,ICE,3
+2026,06,09,CUPRA,08,Barcelona,Corporate,BEV,24
+2026,06,09,CUPRA,08,Barcelona,Corporate,ICE,3
+2026,06,09,CUPRA,08,Barcelona,Corporate,PHEV,2
+2026,06,09,CUPRA,08,Barcelona,Private,BEV,5
+2026,06,09,CUPRA,08,Barcelona,Private,ICE,5
+2026,06,09,CUPRA,08,Barcelona,Private,PHEV,1
+2026,06,09,DACIA,08,Barcelona,Private,ICE,16
+2026,06,09,DEEPAL,08,Barcelona,Corporate,BEV,1
+2026,06,09,EBRO,08,Barcelona,Private,ICE,6
+2026,06,09,EBRO,08,Barcelona,Private,PHEV,2
+2026,06,09,EQUIPFRED,08,Barcelona,Private,ICE,1
+2026,06,09,FIAT,08,Barcelona,Private,BEV,2
+2026,06,09,FIAT,08,Barcelona,Private,ICE,1
+2026,06,09,FOIMA,08,Barcelona,Corporate,ICE,1
+2026,06,09,FORD,08,Barcelona,Corporate,BEV,1
+2026,06,09,FORD,08,Barcelona,Corporate,ICE,9
+2026,06,09,FORD,08,Barcelona,Corporate,PHEV,3
+2026,06,09,FORD,08,Barcelona,Private,PHEV,2
+2026,06,09,FORD,08,Barcelona,RAC,PHEV,1
+2026,06,09,GEELY,08,Barcelona,Corporate,PHEV,1
+2026,06,09,GEELY,08,Barcelona,Private,PHEV,4
+2026,06,09,GRAU,08,Barcelona,Corporate,BEV,1
+2026,06,09,HONDA,08,Barcelona,Corporate,ICE,1
+2026,06,09,HONDA,08,Barcelona,Corporate,PHEV,1
+2026,06,09,HONDA,08,Barcelona,Private,ICE,1
+2026,06,09,HYUNDAI,08,Barcelona,Corporate,PHEV,1
+2026,06,09,HYUNDAI,08,Barcelona,Private,ICE,4
+2026,06,09,ILUSION,08,Barcelona,Private,ICE,1
+2026,06,09,ISUZU,08,Barcelona,Corporate,ICE,1
+2026,06,09,JAECOO,08,Barcelona,Corporate,BEV,1
+2026,06,09,JAECOO,08,Barcelona,Private,ICE,3
+2026,06,09,KIA,08,Barcelona,Corporate,BEV,4
+2026,06,09,KIA,08,Barcelona,Corporate,ICE,1
+2026,06,09,KIA,08,Barcelona,Private,BEV,5
+2026,06,09,KIA,08,Barcelona,Private,ICE,12
+2026,06,09,LEAPMOTOR,08,Barcelona,Private,BEV,2
+2026,06,09,LEXUS,08,Barcelona,Corporate,BEV,1
+2026,06,09,LEXUS,08,Barcelona,Corporate,ICE,1
+2026,06,09,LEXUS,08,Barcelona,Private,ICE,6
+2026,06,09,LEXUS,08,Barcelona,Private,PHEV,1
+2026,06,09,LIGIER,08,Barcelona,Corporate,BEV,12
+2026,06,09,LYNK & CO,08,Barcelona,Private,PHEV,1
+2026,06,09,MAZDA,08,Barcelona,Corporate,ICE,1
+2026,06,09,MAZDA,08,Barcelona,Private,ICE,5
+2026,06,09,MCLOUIS,08,Barcelona,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,08,Barcelona,Corporate,BEV,2
+2026,06,09,MERCEDES-BENZ,08,Barcelona,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,08,Barcelona,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,08,Barcelona,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,08,Barcelona,RAC,ICE,1
+2026,06,09,MG,08,Barcelona,Corporate,BEV,1
+2026,06,09,MG,08,Barcelona,Corporate,ICE,1
+2026,06,09,MG,08,Barcelona,Private,ICE,3
+2026,06,09,MG,08,Barcelona,Private,PHEV,1
+2026,06,09,MINGHONG-POWER,08,Barcelona,Corporate,BEV,5
+2026,06,09,MINI,08,Barcelona,Private,ICE,5
+2026,06,09,MITSUBISHI,08,Barcelona,Private,ICE,2
+2026,06,09,NISSAN,08,Barcelona,Corporate,BEV,1
+2026,06,09,NISSAN,08,Barcelona,Private,BEV,1
+2026,06,09,NISSAN,08,Barcelona,Private,ICE,8
+2026,06,09,OMODA,08,Barcelona,Private,ICE,2
+2026,06,09,OMODA,08,Barcelona,Private,PHEV,2
+2026,06,09,OPEL,08,Barcelona,Private,BEV,1
+2026,06,09,OPEL,08,Barcelona,Private,ICE,4
+2026,06,09,PEUGEOT,08,Barcelona,Corporate,BEV,4
+2026,06,09,PEUGEOT,08,Barcelona,Corporate,ICE,1
+2026,06,09,PORSCHE,08,Barcelona,Private,ICE,2
+2026,06,09,PORSCHE,08,Barcelona,Private,PHEV,1
+2026,06,09,PUJOL,08,Barcelona,Corporate,ICE,4
+2026,06,09,RENAULT,08,Barcelona,Corporate,ICE,4
+2026,06,09,RENAULT,08,Barcelona,Private,BEV,1
+2026,06,09,RENAULT,08,Barcelona,Private,ICE,6
+2026,06,09,RUNHORSE,08,Barcelona,Corporate,BEV,1
+2026,06,09,SEAT,08,Barcelona,Corporate,ICE,21
+2026,06,09,SEAT,08,Barcelona,Corporate,PHEV,2
+2026,06,09,SEAT,08,Barcelona,Private,ICE,17
+2026,06,09,SEGWAY,08,Barcelona,Corporate,ICE,1
+2026,06,09,SEGWAY,08,Barcelona,Private,ICE,1
+2026,06,09,SIN MARCA,08,Barcelona,Corporate,ICE,1
+2026,06,09,SKODA,08,Barcelona,Private,ICE,2
+2026,06,09,SKODA,08,Barcelona,Private,PHEV,3
+2026,06,09,SMART,08,Barcelona,Corporate,BEV,1
+2026,06,09,SMART,08,Barcelona,Private,BEV,2
+2026,06,09,SUZUKI,08,Barcelona,Private,ICE,1
+2026,06,09,TALLERES PRAT RUSIÑOL,08,Barcelona,Corporate,ICE,1
+2026,06,09,TALLERES PRAT-RUSIÑOL,08,Barcelona,Corporate,ICE,1
+2026,06,09,TESLA,08,Barcelona,Corporate,BEV,6
+2026,06,09,TESLA,08,Barcelona,Private,BEV,11
+2026,06,09,TOYOTA,08,Barcelona,Corporate,ICE,2
+2026,06,09,TOYOTA,08,Barcelona,Private,BEV,3
+2026,06,09,TOYOTA,08,Barcelona,Private,ICE,29
+2026,06,09,TOYOTA,08,Barcelona,Private,PHEV,6
+2026,06,09,TOYOTA,08,Barcelona,RAC,ICE,1
+2026,06,09,VOLKSWAGEN,08,Barcelona,Corporate,BEV,2
+2026,06,09,VOLKSWAGEN,08,Barcelona,Corporate,ICE,2
+2026,06,09,VOLKSWAGEN,08,Barcelona,Private,BEV,1
+2026,06,09,VOLKSWAGEN,08,Barcelona,Private,ICE,11
+2026,06,09,VOLVO,08,Barcelona,Private,BEV,1
+2026,06,09,XPENG,08,Barcelona,Private,BEV,1
+2026,06,09,BYD,09,Burgos,Corporate,PHEV,1
+2026,06,09,CITROEN,09,Burgos,Private,ICE,2
+2026,06,09,GEELY,09,Burgos,Private,PHEV,1
+2026,06,09,MAZDA,09,Burgos,Private,ICE,1
+2026,06,09,MERCEDES-V,09,Burgos,Private,ICE,1
+2026,06,09,MG,09,Burgos,Private,ICE,1
+2026,06,09,MINI,09,Burgos,Private,ICE,1
+2026,06,09,MITSUBISHI,09,Burgos,Private,PHEV,1
+2026,06,09,NISSAN,09,Burgos,Private,ICE,1
+2026,06,09,RENAULT,09,Burgos,Corporate,ICE,2
+2026,06,09,SEAT,09,Burgos,Private,ICE,1
+2026,06,09,SUZUKI,09,Burgos,Private,ICE,1
+2026,06,09,TESLA,09,Burgos,Private,BEV,2
+2026,06,09,TOYOTA,09,Burgos,Corporate,ICE,1
+2026,06,09,TOYOTA,09,Burgos,Private,ICE,3
+2026,06,09,BMW,10,Cáceres,Corporate,ICE,1
+2026,06,09,DACIA,10,Cáceres,Private,ICE,1
+2026,06,09,KIA,10,Cáceres,Private,ICE,1
+2026,06,09,MAN,10,Cáceres,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,10,Cáceres,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,10,Cáceres,Private,ICE,2
+2026,06,09,MINI,10,Cáceres,Private,BEV,1
+2026,06,09,OPEL,10,Cáceres,Private,ICE,1
+2026,06,09,RENAULT,10,Cáceres,Corporate,ICE,1
+2026,06,09,RENAULT,10,Cáceres,Private,ICE,1
+2026,06,09,SANTANA,10,Cáceres,Private,PHEV,1
+2026,06,09,SKODA,10,Cáceres,Private,ICE,1
+2026,06,09,TESLA,10,Cáceres,Private,BEV,2
+2026,06,09,TOYOTA,10,Cáceres,Private,ICE,2
+2026,06,09,VOLKSWAGEN,10,Cáceres,Private,ICE,2
+2026,06,09,AUDI,11,Cádiz,Private,ICE,1
+2026,06,09,BYD,11,Cádiz,Private,BEV,1
+2026,06,09,BYD,11,Cádiz,Private,PHEV,1
+2026,06,09,CITROEN,11,Cádiz,Private,ICE,2
+2026,06,09,DACIA,11,Cádiz,Private,ICE,6
+2026,06,09,EBRO,11,Cádiz,Private,ICE,5
+2026,06,09,EBRO,11,Cádiz,Private,PHEV,1
+2026,06,09,HONDA,11,Cádiz,Corporate,ICE,1
+2026,06,09,HYUNDAI,11,Cádiz,Private,ICE,3
+2026,06,09,ISUZU,11,Cádiz,Private,ICE,1
+2026,06,09,KIA,11,Cádiz,Corporate,ICE,2
+2026,06,09,KIA,11,Cádiz,Private,BEV,1
+2026,06,09,KIA,11,Cádiz,Private,ICE,1
+2026,06,09,LEXUS,11,Cádiz,Private,PHEV,1
+2026,06,09,MC LOUIS,11,Cádiz,Private,ICE,1
+2026,06,09,MCLOUIS,11,Cádiz,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,11,Cádiz,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,11,Cádiz,Corporate,PHEV,3
+2026,06,09,MERCEDES-BENZ,11,Cádiz,Private,ICE,2
+2026,06,09,MG,11,Cádiz,Private,ICE,1
+2026,06,09,MG,11,Cádiz,Private,PHEV,1
+2026,06,09,MITSUBISHI,11,Cádiz,Private,ICE,1
+2026,06,09,NISSAN,11,Cádiz,Private,ICE,1
+2026,06,09,PEUGEOT,11,Cádiz,Corporate,ICE,1
+2026,06,09,PEUGEOT,11,Cádiz,Private,BEV,1
+2026,06,09,PEUGEOT,11,Cádiz,Private,ICE,3
+2026,06,09,RENAULT,11,Cádiz,Private,ICE,3
+2026,06,09,SEAT,11,Cádiz,Private,ICE,1
+2026,06,09,SKODA,11,Cádiz,Private,ICE,1
+2026,06,09,TESLA,11,Cádiz,Private,BEV,1
+2026,06,09,TOYOTA,11,Cádiz,Corporate,ICE,1
+2026,06,09,TOYOTA,11,Cádiz,Private,ICE,6
+2026,06,09,VOLKSWAGEN,11,Cádiz,Private,ICE,5
+2026,06,09,VOLKSWAGEN,11,Cádiz,Private,PHEV,1
+2026,06,09,BMW,12,Castellón,Corporate,ICE,1
+2026,06,09,BMW,12,Castellón,Private,ICE,1
+2026,06,09,BYD,12,Castellón,Private,PHEV,1
+2026,06,09,DACIA,12,Castellón,Private,ICE,1
+2026,06,09,EBRO,12,Castellón,Private,ICE,1
+2026,06,09,EVO,12,Castellón,Private,ICE,1
+2026,06,09,HYUNDAI,12,Castellón,Private,ICE,1
+2026,06,09,JAECOO,12,Castellón,Private,ICE,2
+2026,06,09,JAECOO,12,Castellón,RAC,PHEV,11
+2026,06,09,KIA,12,Castellón,Corporate,ICE,1
+2026,06,09,KIA,12,Castellón,Private,ICE,2
+2026,06,09,MAZDA,12,Castellón,Private,ICE,1
+2026,06,09,MG,12,Castellón,Corporate,ICE,1
+2026,06,09,MG,12,Castellón,Private,ICE,1
+2026,06,09,OMODA,12,Castellón,Private,PHEV,1
+2026,06,09,SPORTEQUIPE,12,Castellón,Private,ICE,1
+2026,06,09,SUZUKI,12,Castellón,Private,ICE,1
+2026,06,09,TESLA,12,Castellón,Private,BEV,4
+2026,06,09,TOYOTA,12,Castellón,Private,BEV,1
+2026,06,09,TOYOTA,12,Castellón,Private,ICE,2
+2026,06,09,VOLKSWAGEN,12,Castellón,Private,ICE,1
+2026,06,09,VOLKSWAGEN,12,Castellón,Private,PHEV,1
+2026,06,09,VOLKSWAGEN,12,Castellón,RAC,ICE,6
+2026,06,09,AUDI,13,Ciudad Real,Corporate,PHEV,1
+2026,06,09,BYD,13,Ciudad Real,Private,BEV,2
+2026,06,09,CITROEN,13,Ciudad Real,Private,ICE,1
+2026,06,09,CUPRA,13,Ciudad Real,Private,ICE,2
+2026,06,09,DACIA,13,Ciudad Real,Private,ICE,2
+2026,06,09,HONDA,13,Ciudad Real,Private,ICE,1
+2026,06,09,JAECOO,13,Ciudad Real,Private,PHEV,1
+2026,06,09,KG MOBILITY,13,Ciudad Real,Private,BEV,1
+2026,06,09,KIA,13,Ciudad Real,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,13,Ciudad Real,RAC,ICE,1
+2026,06,09,MG,13,Ciudad Real,Corporate,ICE,2
+2026,06,09,SEAT,13,Ciudad Real,Private,ICE,1
+2026,06,09,TESLA,13,Ciudad Real,Private,BEV,1
+2026,06,09,VOLKSWAGEN,13,Ciudad Real,Private,ICE,1
+2026,06,09,VOLVO,13,Ciudad Real,Private,ICE,2
+2026,06,09,XPENG,13,Ciudad Real,Private,BEV,1
+2026,06,09,BYD,14,Córdoba,Private,BEV,1
+2026,06,09,CARROCERIAS MINDA,14,Córdoba,Corporate,ICE,1
+2026,06,09,CHAPISTERIA V.I.,14,Córdoba,Corporate,ICE,1
+2026,06,09,CITROEN,14,Córdoba,Private,ICE,1
+2026,06,09,EBRO,14,Córdoba,Private,ICE,2
+2026,06,09,EBRO,14,Córdoba,Private,PHEV,1
+2026,06,09,HYUNDAI,14,Córdoba,Private,ICE,1
+2026,06,09,JAECOO,14,Córdoba,Private,ICE,1
+2026,06,09,KIA,14,Córdoba,Private,ICE,2
+2026,06,09,MAZDA,14,Córdoba,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,14,Córdoba,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,14,Córdoba,Private,ICE,1
+2026,06,09,MG,14,Córdoba,Private,ICE,1
+2026,06,09,NISSAN,14,Córdoba,Private,ICE,1
+2026,06,09,OMODA,14,Córdoba,Private,ICE,1
+2026,06,09,PEUGEOT,14,Córdoba,Private,ICE,1
+2026,06,09,RENAULT,14,Córdoba,Private,ICE,1
+2026,06,09,SEAT,14,Córdoba,Private,ICE,1
+2026,06,09,SKODA,14,Córdoba,Private,ICE,1
+2026,06,09,TESLA,14,Córdoba,Private,BEV,1
+2026,06,09,TOYOTA,14,Córdoba,Private,ICE,1
+2026,06,09,VOLKSWAGEN,14,Córdoba,Private,BEV,1
+2026,06,09,VOLKSWAGEN,14,Córdoba,Private,ICE,1
+2026,06,09,ADRIA,15,A Coruña,Private,ICE,2
+2026,06,09,AUDI,15,A Coruña,Private,ICE,2
+2026,06,09,BYD,15,A Coruña,Private,BEV,1
+2026,06,09,BYD,15,A Coruña,Private,PHEV,2
+2026,06,09,DACIA,15,A Coruña,Private,ICE,2
+2026,06,09,FORD,15,A Coruña,Private,PHEV,1
+2026,06,09,JEEP,15,A Coruña,Private,ICE,1
+2026,06,09,KIA,15,A Coruña,Corporate,ICE,1
+2026,06,09,KIA,15,A Coruña,Private,BEV,2
+2026,06,09,KIA,15,A Coruña,Private,ICE,5
+2026,06,09,MERCEDES-BENZ,15,A Coruña,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,15,A Coruña,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,15,A Coruña,Private,ICE,2
+2026,06,09,MG,15,A Coruña,Private,BEV,1
+2026,06,09,MG,15,A Coruña,Private,ICE,4
+2026,06,09,MINI,15,A Coruña,Private,BEV,1
+2026,06,09,NOROESTE,15,A Coruña,Corporate,ICE,1
+2026,06,09,NOROESTE,15,A Coruña,Private,ICE,1
+2026,06,09,RENAULT,15,A Coruña,Corporate,ICE,1
+2026,06,09,SEAT,15,A Coruña,Private,ICE,2
+2026,06,09,SKODA,15,A Coruña,Private,ICE,1
+2026,06,09,TESLA,15,A Coruña,Private,BEV,4
+2026,06,09,TOYOTA,15,A Coruña,Private,ICE,4
+2026,06,09,VOLKSWAGEN,15,A Coruña,Corporate,BEV,1
+2026,06,09,DACIA,16,Cuenca,Private,ICE,2
+2026,06,09,HYUNDAI,16,Cuenca,Private,ICE,1
+2026,06,09,OMODA,16,Cuenca,Private,BEV,1
+2026,06,09,OMODA,16,Cuenca,Private,PHEV,1
+2026,06,09,RENAULT,16,Cuenca,Private,BEV,1
+2026,06,09,AUDI,17,Girona,Corporate,ICE,1
+2026,06,09,AUDI,17,Girona,Private,ICE,2
+2026,06,09,BMW,17,Girona,Corporate,ICE,1
+2026,06,09,CHALLENGER,17,Girona,Private,ICE,1
+2026,06,09,CITROEN,17,Girona,Private,ICE,2
+2026,06,09,CUPRA,17,Girona,Private,ICE,1
+2026,06,09,DACIA,17,Girona,Private,ICE,2
+2026,06,09,ESMI,17,Girona,Corporate,ICE,2
+2026,06,09,FIAT,17,Girona,Private,ICE,1
+2026,06,09,GEELY,17,Girona,Private,PHEV,1
+2026,06,09,HYUNDAI,17,Girona,Corporate,ICE,3
+2026,06,09,HYUNDAI,17,Girona,Private,BEV,1
+2026,06,09,HYUNDAI,17,Girona,Private,ICE,5
+2026,06,09,KIA,17,Girona,Private,BEV,1
+2026,06,09,KIA,17,Girona,Private,ICE,1
+2026,06,09,MAXUS,17,Girona,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,17,Girona,Private,BEV,1
+2026,06,09,MG,17,Girona,Private,ICE,1
+2026,06,09,MITSUBISHI,17,Girona,Private,ICE,1
+2026,06,09,NISSAN,17,Girona,Private,ICE,2
+2026,06,09,RENAULT,17,Girona,Private,ICE,4
+2026,06,09,SARTRUCK,17,Girona,Corporate,ICE,1
+2026,06,09,SKODA,17,Girona,Corporate,PHEV,1
+2026,06,09,SKODA,17,Girona,Private,ICE,1
+2026,06,09,SUBARU,17,Girona,Private,ICE,1
+2026,06,09,TESLA,17,Girona,Private,BEV,2
+2026,06,09,TOYOTA,17,Girona,Corporate,BEV,1
+2026,06,09,TOYOTA,17,Girona,Corporate,PHEV,1
+2026,06,09,TOYOTA,17,Girona,Private,BEV,1
+2026,06,09,TOYOTA,17,Girona,Private,ICE,5
+2026,06,09,TOYOTA,17,Girona,Private,PHEV,2
+2026,06,09,VOLKSWAGEN,17,Girona,Private,PHEV,1
+2026,06,09,AUDI,18,Granada,Private,ICE,1
+2026,06,09,BMW,18,Granada,Private,ICE,1
+2026,06,09,BYD,18,Granada,Corporate,BEV,2
+2026,06,09,BYD,18,Granada,Private,PHEV,1
+2026,06,09,CF MOTO,18,Granada,Private,ICE,1
+2026,06,09,CUPRA,18,Granada,Private,ICE,2
+2026,06,09,DACIA,18,Granada,Private,ICE,4
+2026,06,09,EBRO,18,Granada,Private,PHEV,1
+2026,06,09,HYUNDAI,18,Granada,Private,ICE,1
+2026,06,09,KIA,18,Granada,Private,ICE,3
+2026,06,09,MAZDA,18,Granada,Private,ICE,1
+2026,06,09,MG,18,Granada,Private,ICE,1
+2026,06,09,NISSAN,18,Granada,Private,ICE,2
+2026,06,09,OPEL,18,Granada,Private,ICE,1
+2026,06,09,PEUGEOT,18,Granada,Private,ICE,2
+2026,06,09,RANDGER,18,Granada,Private,ICE,1
+2026,06,09,RENAULT,18,Granada,Private,BEV,1
+2026,06,09,RENAULT,18,Granada,Private,ICE,2
+2026,06,09,SEAT,18,Granada,Private,ICE,1
+2026,06,09,SUBARU,18,Granada,Private,ICE,1
+2026,06,09,TESLA,18,Granada,Corporate,BEV,1
+2026,06,09,TESLA,18,Granada,Private,BEV,2
+2026,06,09,TOYOTA,18,Granada,Corporate,ICE,2
+2026,06,09,TOYOTA,18,Granada,Private,ICE,6
+2026,06,09,TOYOTA,18,Granada,Private,PHEV,1
+2026,06,09,VOLKSWAGEN,18,Granada,Private,ICE,1
+2026,06,09,BYD,19,Guadalajara,Private,BEV,1
+2026,06,09,BYD,19,Guadalajara,Private,PHEV,1
+2026,06,09,DACIA,19,Guadalajara,Private,ICE,2
+2026,06,09,FORD,19,Guadalajara,Private,BEV,1
+2026,06,09,KIA,19,Guadalajara,Private,ICE,4
+2026,06,09,MG,19,Guadalajara,Private,ICE,2
+2026,06,09,SEAT,19,Guadalajara,Private,ICE,1
+2026,06,09,TESLA,19,Guadalajara,Private,BEV,2
+2026,06,09,TOYOTA,19,Guadalajara,Private,ICE,1
+2026,06,09,VOLKSWAGEN,19,Guadalajara,Private,ICE,1
+2026,06,09,DACIA,20,Gipuzkoa,Corporate,ICE,1
+2026,06,09,DACIA,20,Gipuzkoa,Private,ICE,4
+2026,06,09,DETHLEFFS,20,Gipuzkoa,Corporate,ICE,1
+2026,06,09,EBRO,20,Gipuzkoa,Private,ICE,1
+2026,06,09,FORD,20,Gipuzkoa,Private,PHEV,1
+2026,06,09,KIA,20,Gipuzkoa,Private,BEV,1
+2026,06,09,LEXUS,20,Gipuzkoa,Corporate,PHEV,1
+2026,06,09,MAN,20,Gipuzkoa,Corporate,ICE,1
+2026,06,09,MAXUS,20,Gipuzkoa,RAC,ICE,1
+2026,06,09,MERCEDES-BENZ,20,Gipuzkoa,Corporate,ICE,5
+2026,06,09,MERCEDES-BENZ,20,Gipuzkoa,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,20,Gipuzkoa,Private,ICE,1
+2026,06,09,MITSUBISHI,20,Gipuzkoa,Private,ICE,1
+2026,06,09,SKODA,20,Gipuzkoa,Private,ICE,1
+2026,06,09,TESLA,20,Gipuzkoa,Private,BEV,2
+2026,06,09,TOYOTA,20,Gipuzkoa,Corporate,ICE,1
+2026,06,09,TOYOTA,20,Gipuzkoa,Private,BEV,1
+2026,06,09,TOYOTA,20,Gipuzkoa,Private,PHEV,1
+2026,06,09,VOLKSWAGEN,20,Gipuzkoa,Private,ICE,3
+2026,06,09,VOLKSWAGEN,20,Gipuzkoa,Private,PHEV,1
+2026,06,09,EBRO,21,Huelva,Private,ICE,1
+2026,06,09,HYUNDAI,21,Huelva,Private,ICE,1
+2026,06,09,KG MOBILITY,21,Huelva,Private,ICE,1
+2026,06,09,KIA,21,Huelva,Private,ICE,6
+2026,06,09,MERCEDES-BENZ,21,Huelva,Corporate,ICE,1
+2026,06,09,NISSAN,21,Huelva,Private,ICE,1
+2026,06,09,TESLA,21,Huelva,Private,BEV,1
+2026,06,09,TOYOTA,21,Huelva,Private,ICE,2
+2026,06,09,212,22,Huesca,Private,ICE,1
+2026,06,09,BYD,22,Huesca,Private,BEV,1
+2026,06,09,DACIA,22,Huesca,Private,ICE,3
+2026,06,09,HYUNDAI,22,Huesca,Private,ICE,1
+2026,06,09,KIA,22,Huesca,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,22,Huesca,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,22,Huesca,Private,ICE,1
+2026,06,09,OMODA,22,Huesca,Private,ICE,1
+2026,06,09,PEUGEOT,22,Huesca,Private,ICE,1
+2026,06,09,SEAT,22,Huesca,Private,ICE,1
+2026,06,09,TOYOTA,22,Huesca,Private,ICE,1
+2026,06,09,VOLKSWAGEN,22,Huesca,Corporate,ICE,1
+2026,06,09,BMW,23,Jaén,Private,ICE,1
+2026,06,09,BYD,23,Jaén,Private,BEV,2
+2026,06,09,BYD,23,Jaén,Private,PHEV,1
+2026,06,09,CUPRA,23,Jaén,Private,ICE,1
+2026,06,09,DACIA,23,Jaén,Corporate,ICE,1
+2026,06,09,DACIA,23,Jaén,Private,ICE,3
+2026,06,09,FORD,23,Jaén,Private,ICE,1
+2026,06,09,HYUNDAI,23,Jaén,Private,ICE,1
+2026,06,09,KIA,23,Jaén,Private,ICE,5
+2026,06,09,LEAPMOTOR,23,Jaén,Private,BEV,1
+2026,06,09,LEXUS,23,Jaén,Private,PHEV,1
+2026,06,09,MG,23,Jaén,Private,PHEV,1
+2026,06,09,NISSAN,23,Jaén,Private,ICE,1
+2026,06,09,OMODA,23,Jaén,Corporate,ICE,3
+2026,06,09,PEUGEOT,23,Jaén,Private,ICE,1
+2026,06,09,SKODA,23,Jaén,Private,ICE,1
+2026,06,09,SUBARU,23,Jaén,Private,ICE,1
+2026,06,09,TESLA,23,Jaén,Private,BEV,2
+2026,06,09,TOYOTA,23,Jaén,Corporate,ICE,1
+2026,06,09,ULTRAND,23,Jaén,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,23,Jaén,Private,ICE,1
+2026,06,09,VOLVO,23,Jaén,Private,ICE,1
+2026,06,09,AUDI,24,León,Private,PHEV,1
+2026,06,09,BMW,24,León,Private,ICE,1
+2026,06,09,BYD,24,León,Private,BEV,1
+2026,06,09,EBRO,24,León,Private,PHEV,1
+2026,06,09,FORD,24,León,Corporate,ICE,1
+2026,06,09,HYMER,24,León,Private,ICE,1
+2026,06,09,JAECOO,24,León,Private,ICE,2
+2026,06,09,KIA,24,León,Private,BEV,1
+2026,06,09,MAZDA,24,León,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,24,León,Corporate,ICE,1
+2026,06,09,MG,24,León,Private,ICE,1
+2026,06,09,RENAULT,24,León,Private,ICE,2
+2026,06,09,TESLA,24,León,Private,BEV,1
+2026,06,09,TOYOTA,24,León,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,24,León,Private,ICE,1
+2026,06,09,BYD,25,Lleida,Private,BEV,1
+2026,06,09,EBRO,25,Lleida,Private,ICE,2
+2026,06,09,EBRO,25,Lleida,Private,PHEV,1
+2026,06,09,FIAT,25,Lleida,Corporate,ICE,1
+2026,06,09,FORD,25,Lleida,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,25,Lleida,Corporate,PHEV,1
+2026,06,09,MG,25,Lleida,Corporate,ICE,1
+2026,06,09,MINI,25,Lleida,Private,BEV,1
+2026,06,09,PANAMA,25,Lleida,Private,ICE,1
+2026,06,09,PORSCHE,25,Lleida,Corporate,PHEV,1
+2026,06,09,SEAT,25,Lleida,Private,ICE,1
+2026,06,09,TOYOTA,25,Lleida,Corporate,ICE,2
+2026,06,09,TOYOTA,25,Lleida,Private,ICE,2
+2026,06,09,VOLKSWAGEN,25,Lleida,Private,ICE,1
+2026,06,09,AUDI,27,Lugo,Private,ICE,1
+2026,06,09,CAPRON,27,Lugo,RAC,ICE,1
+2026,06,09,CITROEN,27,Lugo,Corporate,ICE,8
+2026,06,09,FORD,27,Lugo,Corporate,PHEV,1
+2026,06,09,FORD,27,Lugo,Private,PHEV,1
+2026,06,09,JOA CAMP,27,Lugo,RAC,ICE,1
+2026,06,09,KIA,27,Lugo,Private,ICE,1
+2026,06,09,LEXUS,27,Lugo,Private,ICE,1
+2026,06,09,MG,27,Lugo,Private,ICE,1
+2026,06,09,NISSAN,27,Lugo,Corporate,ICE,2
+2026,06,09,OPEL,27,Lugo,Corporate,ICE,2
+2026,06,09,RENAULT,27,Lugo,Corporate,ICE,20
+2026,06,09,RENAULT,27,Lugo,Private,ICE,1
+2026,06,09,SKODA,27,Lugo,Corporate,PHEV,1
+2026,06,09,SKODA,27,Lugo,Private,ICE,1
+2026,06,09,TESLA,27,Lugo,Private,BEV,1
+2026,06,09,TOYOTA,27,Lugo,Corporate,ICE,1
+2026,06,09,TOYOTA,27,Lugo,Private,BEV,1
+2026,06,09,TOYOTA,27,Lugo,Private,ICE,1
+2026,06,09,VOLKSWAGEN,27,Lugo,Corporate,ICE,1
+2026,06,09,3 CARROCEROS,28,Madrid,Corporate,ICE,1
+2026,06,09,A.A. AIRBUS,28,Madrid,Corporate,ICE,1
+2026,06,09,ALFA ROMEO,28,Madrid,Corporate,ICE,2
+2026,06,09,ALLIED VEHICLES LTD,28,Madrid,Private,ICE,1
+2026,06,09,ALPINE,28,Madrid,Corporate,BEV,1
+2026,06,09,AUDI,28,Madrid,Corporate,BEV,1
+2026,06,09,AUDI,28,Madrid,Corporate,ICE,20
+2026,06,09,AUDI,28,Madrid,Corporate,PHEV,9
+2026,06,09,AUDI,28,Madrid,Private,ICE,2
+2026,06,09,AUDI,28,Madrid,Private,PHEV,2
+2026,06,09,AUDI,28,Madrid,RAC,BEV,7
+2026,06,09,AUDI,28,Madrid,RAC,PHEV,1
+2026,06,09,BENIMAR,28,Madrid,Private,ICE,1
+2026,06,09,BMW,28,Madrid,Corporate,BEV,2
+2026,06,09,BMW,28,Madrid,Corporate,ICE,20
+2026,06,09,BMW,28,Madrid,Corporate,PHEV,15
+2026,06,09,BMW,28,Madrid,Private,ICE,7
+2026,06,09,BMW,28,Madrid,Private,PHEV,3
+2026,06,09,BMW,28,Madrid,RAC,BEV,11
+2026,06,09,BMW,28,Madrid,RAC,ICE,208
+2026,06,09,BMW,28,Madrid,RAC,PHEV,12
+2026,06,09,BYD,28,Madrid,Corporate,BEV,2
+2026,06,09,BYD,28,Madrid,Corporate,PHEV,10
+2026,06,09,BYD,28,Madrid,Private,BEV,15
+2026,06,09,BYD,28,Madrid,Private,PHEV,23
+2026,06,09,CAPRON,28,Madrid,Private,ICE,1
+2026,06,09,"CARROCERIAS SANCA, S.A.",28,Madrid,Corporate,ICE,1
+2026,06,09,"CARROCERIAS SANCA, S.A.",28,Madrid,Private,ICE,1
+2026,06,09,CARROZADOS TECAI,28,Madrid,Corporate,ICE,1
+2026,06,09,CARROZADOS TECAI,28,Madrid,Private,ICE,1
+2026,06,09,CFMOTO,28,Madrid,Private,ICE,2
+2026,06,09,CHALLENGER,28,Madrid,Corporate,ICE,1
+2026,06,09,CITROEN,28,Madrid,Corporate,BEV,4
+2026,06,09,CITROEN,28,Madrid,Corporate,ICE,52
+2026,06,09,CITROEN,28,Madrid,Private,BEV,3
+2026,06,09,CITROEN,28,Madrid,Private,ICE,11
+2026,06,09,CITROEN,28,Madrid,RAC,ICE,32
+2026,06,09,CUPRA,28,Madrid,Corporate,BEV,1
+2026,06,09,CUPRA,28,Madrid,Corporate,ICE,6
+2026,06,09,CUPRA,28,Madrid,Corporate,PHEV,1
+2026,06,09,CUPRA,28,Madrid,Private,BEV,2
+2026,06,09,CUPRA,28,Madrid,Private,ICE,5
+2026,06,09,CUPRA,28,Madrid,Private,PHEV,2
+2026,06,09,CUPRA,28,Madrid,RAC,ICE,31
+2026,06,09,DACIA,28,Madrid,Corporate,ICE,16
+2026,06,09,DACIA,28,Madrid,Private,ICE,54
+2026,06,09,DEEPAL,28,Madrid,Corporate,BEV,1
+2026,06,09,DEEPAL,28,Madrid,Private,BEV,5
+2026,06,09,DFSK,28,Madrid,Private,ICE,1
+2026,06,09,DS,28,Madrid,Corporate,ICE,3
+2026,06,09,DS AUTOMOBILES,28,Madrid,Corporate,BEV,1
+2026,06,09,EBRO,28,Madrid,Corporate,ICE,1
+2026,06,09,EBRO,28,Madrid,Corporate,PHEV,1
+2026,06,09,EBRO,28,Madrid,Private,ICE,11
+2026,06,09,EBRO,28,Madrid,Private,PHEV,4
+2026,06,09,ERKE,28,Madrid,Corporate,BEV,1
+2026,06,09,ERKE,28,Madrid,Corporate,ICE,8
+2026,06,09,EUROCARROCERA,28,Madrid,Corporate,ICE,1
+2026,06,09,EVO,28,Madrid,RAC,ICE,1
+2026,06,09,FERRARI,28,Madrid,Private,ICE,1
+2026,06,09,FIAT,28,Madrid,Corporate,ICE,17
+2026,06,09,FIAT,28,Madrid,Private,ICE,1
+2026,06,09,FIAT,28,Madrid,RAC,ICE,2
+2026,06,09,FORD,28,Madrid,Corporate,BEV,1
+2026,06,09,FORD,28,Madrid,Corporate,ICE,101
+2026,06,09,FORD,28,Madrid,Corporate,PHEV,6
+2026,06,09,FORD,28,Madrid,Private,ICE,1
+2026,06,09,FORD,28,Madrid,Private,PHEV,2
+2026,06,09,FORD,28,Madrid,RAC,ICE,5
+2026,06,09,HONDA,28,Madrid,Corporate,ICE,1
+2026,06,09,HONDA,28,Madrid,Private,ICE,3
+2026,06,09,HYUNDAI,28,Madrid,Corporate,BEV,1
+2026,06,09,HYUNDAI,28,Madrid,Corporate,ICE,9
+2026,06,09,HYUNDAI,28,Madrid,Corporate,PHEV,1
+2026,06,09,HYUNDAI,28,Madrid,Private,ICE,9
+2026,06,09,HYUNDAI,28,Madrid,Private,PHEV,3
+2026,06,09,ILUSION,28,Madrid,Private,ICE,2
+2026,06,09,IVECO,28,Madrid,Corporate,ICE,1
+2026,06,09,IVECO,28,Madrid,RAC,ICE,6
+2026,06,09,JAECOO,28,Madrid,Corporate,ICE,3
+2026,06,09,JAECOO,28,Madrid,Corporate,PHEV,3
+2026,06,09,JAECOO,28,Madrid,Private,BEV,1
+2026,06,09,JAECOO,28,Madrid,Private,ICE,2
+2026,06,09,JEEP,28,Madrid,Corporate,ICE,1
+2026,06,09,JEEP,28,Madrid,Private,ICE,2
+2026,06,09,KG MOBILITY,28,Madrid,Corporate,ICE,4
+2026,06,09,KG MOBILITY,28,Madrid,Private,BEV,1
+2026,06,09,KG MOBILITY,28,Madrid,Private,ICE,1
+2026,06,09,KIA,28,Madrid,Corporate,BEV,3
+2026,06,09,KIA,28,Madrid,Corporate,ICE,34
+2026,06,09,KIA,28,Madrid,Private,BEV,6
+2026,06,09,KIA,28,Madrid,Private,ICE,18
+2026,06,09,LAND ROVER,28,Madrid,Corporate,ICE,1
+2026,06,09,LAND ROVER,28,Madrid,Corporate,PHEV,1
+2026,06,09,LAND ROVER,28,Madrid,Private,ICE,1
+2026,06,09,LEAPMOTOR,28,Madrid,Corporate,BEV,1
+2026,06,09,LEAPMOTOR,28,Madrid,Private,BEV,1
+2026,06,09,LEXUS,28,Madrid,Corporate,ICE,9
+2026,06,09,LEXUS,28,Madrid,Private,BEV,1
+2026,06,09,LEXUS,28,Madrid,Private,ICE,1
+2026,06,09,LEXUS,28,Madrid,Private,PHEV,3
+2026,06,09,LEXUS,28,Madrid,RAC,ICE,6
+2026,06,09,LIGIER,28,Madrid,Private,ICE,3
+2026,06,09,LYNK & CO,28,Madrid,Corporate,BEV,1
+2026,06,09,LYNK & CO,28,Madrid,Corporate,PHEV,5
+2026,06,09,LYNK & CO,28,Madrid,Private,BEV,1
+2026,06,09,MAN,28,Madrid,Private,ICE,1
+2026,06,09,MAN,28,Madrid,RAC,ICE,1
+2026,06,09,MAXUS,28,Madrid,Corporate,ICE,1
+2026,06,09,MAZDA,28,Madrid,Corporate,ICE,10
+2026,06,09,MAZDA,28,Madrid,Private,ICE,12
+2026,06,09,MEBAUTO,28,Madrid,Corporate,ICE,1
+2026,06,09,MERCEDES-AMG,28,Madrid,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,28,Madrid,Corporate,BEV,7
+2026,06,09,MERCEDES-BENZ,28,Madrid,Corporate,ICE,37
+2026,06,09,MERCEDES-BENZ,28,Madrid,Corporate,PHEV,15
+2026,06,09,MERCEDES-BENZ,28,Madrid,Private,BEV,3
+2026,06,09,MERCEDES-BENZ,28,Madrid,Private,ICE,3
+2026,06,09,MERCEDES-BENZ,28,Madrid,Private,PHEV,4
+2026,06,09,MERCEDES-BENZ,28,Madrid,RAC,ICE,50
+2026,06,09,MERCEDES-BENZ,28,Madrid,RAC,PHEV,9
+2026,06,09,MERCEDES-V,28,Madrid,Corporate,ICE,1
+2026,06,09,MERCEDES-V,28,Madrid,RAC,ICE,23
+2026,06,09,MG,28,Madrid,Corporate,ICE,2
+2026,06,09,MG,28,Madrid,Private,ICE,11
+2026,06,09,MG,28,Madrid,Private,PHEV,2
+2026,06,09,MINI,28,Madrid,Corporate,BEV,3
+2026,06,09,MINI,28,Madrid,Corporate,ICE,6
+2026,06,09,MINI,28,Madrid,Private,BEV,1
+2026,06,09,MINI,28,Madrid,Private,ICE,1
+2026,06,09,MINI,28,Madrid,RAC,ICE,14
+2026,06,09,MITSUBISHI,28,Madrid,Corporate,ICE,1
+2026,06,09,MODELCAR HNOS,28,Madrid,RAC,ICE,1
+2026,06,09,NISSAN,28,Madrid,Corporate,ICE,18
+2026,06,09,NISSAN,28,Madrid,Private,ICE,9
+2026,06,09,NISSAN,28,Madrid,RAC,ICE,2
+2026,06,09,OMODA,28,Madrid,Corporate,ICE,1
+2026,06,09,OMODA,28,Madrid,Corporate,PHEV,4
+2026,06,09,OMODA,28,Madrid,Private,ICE,2
+2026,06,09,OMODA,28,Madrid,Private,PHEV,1
+2026,06,09,OPEL,28,Madrid,Corporate,ICE,25
+2026,06,09,OPEL,28,Madrid,Private,ICE,3
+2026,06,09,OPEL,28,Madrid,RAC,ICE,44
+2026,06,09,PEUGEOT,28,Madrid,Corporate,BEV,1
+2026,06,09,PEUGEOT,28,Madrid,Corporate,ICE,86
+2026,06,09,PEUGEOT,28,Madrid,Corporate,PHEV,1
+2026,06,09,PEUGEOT,28,Madrid,Private,ICE,21
+2026,06,09,PEUGEOT,28,Madrid,RAC,ICE,23
+2026,06,09,POLESTAR,28,Madrid,Corporate,BEV,7
+2026,06,09,POLESTAR,28,Madrid,Private,BEV,1
+2026,06,09,PORSCHE,28,Madrid,Corporate,PHEV,2
+2026,06,09,PORSCHE,28,Madrid,Private,PHEV,1
+2026,06,09,RECAPOL,28,Madrid,Corporate,ICE,3
+2026,06,09,REHATRANS,28,Madrid,Corporate,ICE,1
+2026,06,09,RENAULT,28,Madrid,Corporate,BEV,4
+2026,06,09,RENAULT,28,Madrid,Corporate,ICE,48
+2026,06,09,RENAULT,28,Madrid,Corporate,PHEV,4
+2026,06,09,RENAULT,28,Madrid,Private,BEV,2
+2026,06,09,RENAULT,28,Madrid,Private,ICE,18
+2026,06,09,RENAULT,28,Madrid,Private,PHEV,1
+2026,06,09,SEAT,28,Madrid,Corporate,ICE,54
+2026,06,09,SEAT,28,Madrid,Private,ICE,7
+2026,06,09,SEAT,28,Madrid,RAC,ICE,21
+2026,06,09,SILA,28,Madrid,Corporate,ICE,1
+2026,06,09,SIN MARCA,28,Madrid,Corporate,ICE,1
+2026,06,09,SKODA,28,Madrid,Corporate,BEV,1
+2026,06,09,SKODA,28,Madrid,Corporate,ICE,36
+2026,06,09,SKODA,28,Madrid,Corporate,PHEV,2
+2026,06,09,SKODA,28,Madrid,Private,ICE,1
+2026,06,09,SKODA,28,Madrid,RAC,ICE,45
+2026,06,09,SMART,28,Madrid,Corporate,BEV,1
+2026,06,09,SMART,28,Madrid,Private,BEV,1
+2026,06,09,SORTIMO,28,Madrid,Corporate,ICE,1
+2026,06,09,SUBARU,28,Madrid,Private,ICE,1
+2026,06,09,SURTRUCK,28,Madrid,Corporate,ICE,1
+2026,06,09,SUZUKI,28,Madrid,Corporate,ICE,1
+2026,06,09,SUZUKI,28,Madrid,Private,ICE,1
+2026,06,09,TESLA,28,Madrid,Corporate,BEV,6
+2026,06,09,TESLA,28,Madrid,Private,BEV,34
+2026,06,09,TOYOTA,28,Madrid,Corporate,BEV,5
+2026,06,09,TOYOTA,28,Madrid,Corporate,ICE,93
+2026,06,09,TOYOTA,28,Madrid,Corporate,PHEV,3
+2026,06,09,TOYOTA,28,Madrid,Private,BEV,1
+2026,06,09,TOYOTA,28,Madrid,Private,ICE,55
+2026,06,09,TOYOTA,28,Madrid,Private,PHEV,2
+2026,06,09,TOYOTA,28,Madrid,RAC,BEV,5
+2026,06,09,TOYOTA,28,Madrid,RAC,ICE,123
+2026,06,09,TOYOTA,28,Madrid,RAC,PHEV,2
+2026,06,09,VOLKSWAGEN,28,Madrid,Corporate,BEV,1
+2026,06,09,VOLKSWAGEN,28,Madrid,Corporate,ICE,124
+2026,06,09,VOLKSWAGEN,28,Madrid,Corporate,PHEV,5
+2026,06,09,VOLKSWAGEN,28,Madrid,Private,ICE,21
+2026,06,09,VOLKSWAGEN,28,Madrid,Private,PHEV,4
+2026,06,09,VOLKSWAGEN,28,Madrid,RAC,PHEV,5
+2026,06,09,VOLVO,28,Madrid,Corporate,ICE,12
+2026,06,09,VOLVO,28,Madrid,Corporate,PHEV,7
+2026,06,09,VOLVO,28,Madrid,Private,BEV,3
+2026,06,09,VOLVO,28,Madrid,Private,ICE,4
+2026,06,09,VOLVO,28,Madrid,Private,PHEV,1
+2026,06,09,VOLVO,28,Madrid,RAC,ICE,12
+2026,06,09,XPENG,28,Madrid,Private,BEV,2
+2026,06,09,ZAGO AUTOMOTIVE,28,Madrid,Corporate,ICE,1
+2026,06,09,ADRIA,29,Málaga,Private,ICE,1
+2026,06,09,AUDI,29,Málaga,Private,ICE,2
+2026,06,09,BENIMAR,29,Málaga,Private,ICE,1
+2026,06,09,BMW,29,Málaga,Private,ICE,1
+2026,06,09,BYD,29,Málaga,Private,BEV,2
+2026,06,09,BYD,29,Málaga,Private,PHEV,2
+2026,06,09,CHAPISTERIA V.I.,29,Málaga,Corporate,ICE,3
+2026,06,09,CITROEN,29,Málaga,Corporate,ICE,10
+2026,06,09,CITROEN,29,Málaga,Private,BEV,1
+2026,06,09,CITROEN,29,Málaga,Private,ICE,2
+2026,06,09,CUPRA,29,Málaga,Private,PHEV,1
+2026,06,09,DACIA,29,Málaga,Corporate,ICE,1
+2026,06,09,DACIA,29,Málaga,Private,ICE,8
+2026,06,09,FIAT,29,Málaga,Private,ICE,1
+2026,06,09,FORD,29,Málaga,Corporate,BEV,1
+2026,06,09,FORD,29,Málaga,Corporate,PHEV,1
+2026,06,09,FORD,29,Málaga,RAC,ICE,7
+2026,06,09,HYUNDAI,29,Málaga,Private,ICE,3
+2026,06,09,IGLUVAN,29,Málaga,Private,ICE,1
+2026,06,09,IVECO,29,Málaga,RAC,ICE,4
+2026,06,09,JAECOO,29,Málaga,Private,ICE,2
+2026,06,09,KG MOBILITY,29,Málaga,Private,ICE,1
+2026,06,09,KIA,29,Málaga,Corporate,ICE,1
+2026,06,09,KIA,29,Málaga,Private,BEV,1
+2026,06,09,KIA,29,Málaga,Private,ICE,2
+2026,06,09,KIA,29,Málaga,RAC,ICE,2
+2026,06,09,LAND ROVER,29,Málaga,Private,ICE,2
+2026,06,09,LEAPMOTOR,29,Málaga,Private,BEV,1
+2026,06,09,MAZDA,29,Málaga,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,Corporate,BEV,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,Private,BEV,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,Private,PHEV,1
+2026,06,09,MERCEDES-BENZ,29,Málaga,RAC,ICE,5
+2026,06,09,MERCEDES-V,29,Málaga,RAC,ICE,1
+2026,06,09,MG,29,Málaga,Private,ICE,2
+2026,06,09,NISSAN,29,Málaga,Private,ICE,2
+2026,06,09,NISSAN,29,Málaga,RAC,ICE,1
+2026,06,09,OMODA,29,Málaga,Corporate,PHEV,1
+2026,06,09,OMODA,29,Málaga,Private,PHEV,1
+2026,06,09,PEUGEOT,29,Málaga,Private,ICE,2
+2026,06,09,RENAULT,29,Málaga,Corporate,ICE,1
+2026,06,09,RENAULT,29,Málaga,Private,ICE,1
+2026,06,09,SEAT,29,Málaga,Corporate,ICE,33
+2026,06,09,SEAT,29,Málaga,Private,ICE,7
+2026,06,09,SKODA,29,Málaga,Private,ICE,2
+2026,06,09,SUZUKI,29,Málaga,Private,ICE,1
+2026,06,09,TECNOVE FIBERGLASS,29,Málaga,Private,ICE,1
+2026,06,09,TESLA,29,Málaga,Private,BEV,10
+2026,06,09,TOYOTA,29,Málaga,Private,ICE,16
+2026,06,09,VOLVO,29,Málaga,Private,ICE,1
+2026,06,09,BMW,30,Murcia,Corporate,PHEV,1
+2026,06,09,BYD,30,Murcia,Private,PHEV,1
+2026,06,09,MAN,30,Murcia,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,30,Murcia,Private,ICE,1
+2026,06,09,PORSCHE,30,Murcia,Corporate,PHEV,1
+2026,06,09,RENAULT,30,Murcia,Private,ICE,1
+2026,06,09,TESLA,30,Murcia,Private,BEV,10
+2026,06,09,TOYOTA,30,Murcia,Corporate,ICE,1
+2026,06,09,CITROEN,31,Navarra,Private,BEV,1
+2026,06,09,CITROEN,31,Navarra,Private,ICE,1
+2026,06,09,CUPRA,31,Navarra,Private,ICE,1
+2026,06,09,DEEPAL,31,Navarra,Private,BEV,1
+2026,06,09,KIA,31,Navarra,Private,BEV,4
+2026,06,09,LEXUS,31,Navarra,Corporate,PHEV,1
+2026,06,09,NISSAN,31,Navarra,Private,BEV,1
+2026,06,09,OMODA,31,Navarra,Private,ICE,1
+2026,06,09,PEUGEOT,31,Navarra,Private,BEV,1
+2026,06,09,RENAULT,31,Navarra,Corporate,BEV,1
+2026,06,09,RENAULT,31,Navarra,Private,ICE,2
+2026,06,09,SKODA,31,Navarra,Private,BEV,1
+2026,06,09,TESLA,31,Navarra,Corporate,BEV,1
+2026,06,09,TESLA,31,Navarra,Private,BEV,3
+2026,06,09,TOYOTA,31,Navarra,Corporate,BEV,1
+2026,06,09,TOYOTA,31,Navarra,Private,ICE,1
+2026,06,09,VOLKSWAGEN,31,Navarra,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,31,Navarra,Private,BEV,1
+2026,06,09,VOLKSWAGEN,31,Navarra,Private,ICE,2
+2026,06,09,VOLVO,31,Navarra,Private,BEV,1
+2026,06,09,BMW,32,Ourense,Private,ICE,2
+2026,06,09,DACIA,32,Ourense,Private,ICE,2
+2026,06,09,HYUNDAI,32,Ourense,Private,ICE,1
+2026,06,09,MAN,32,Ourense,Private,ICE,1
+2026,06,09,SEAT,32,Ourense,Private,ICE,3
+2026,06,09,SKODA,32,Ourense,Private,ICE,1
+2026,06,09,AUDI,33,Asturias,Private,ICE,1
+2026,06,09,BMW,33,Asturias,Corporate,ICE,7
+2026,06,09,BMW,33,Asturias,Corporate,PHEV,1
+2026,06,09,BMW,33,Asturias,Private,ICE,1
+2026,06,09,BYD,33,Asturias,Private,BEV,1
+2026,06,09,DACIA,33,Asturias,Private,ICE,1
+2026,06,09,FORD,33,Asturias,Private,BEV,1
+2026,06,09,FORD,33,Asturias,Private,PHEV,1
+2026,06,09,GIOTTILINE,33,Asturias,RAC,ICE,2
+2026,06,09,HYUNDAI,33,Asturias,Corporate,ICE,1
+2026,06,09,KIA,33,Asturias,Private,ICE,2
+2026,06,09,LEXUS,33,Asturias,Private,BEV,1
+2026,06,09,LEXUS,33,Asturias,Private,ICE,2
+2026,06,09,MERCEDES-BENZ,33,Asturias,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,33,Asturias,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,33,Asturias,Private,PHEV,1
+2026,06,09,NISSAN,33,Asturias,Private,ICE,1
+2026,06,09,OPEL,33,Asturias,Private,ICE,2
+2026,06,09,PEUGEOT,33,Asturias,Private,ICE,1
+2026,06,09,PORSCHE,33,Asturias,Corporate,PHEV,2
+2026,06,09,SEAT,33,Asturias,Private,ICE,1
+2026,06,09,SKODA,33,Asturias,Corporate,ICE,4
+2026,06,09,SKODA,33,Asturias,Private,BEV,1
+2026,06,09,TESLA,33,Asturias,Private,BEV,2
+2026,06,09,TOYOTA,33,Asturias,Private,ICE,2
+2026,06,09,KIA,34,Palencia,Private,ICE,2
+2026,06,09,SKODA,34,Palencia,Private,ICE,1
+2026,06,09,TESLA,34,Palencia,Private,BEV,1
+2026,06,09,TOYOTA,34,Palencia,Private,ICE,1
+2026,06,09,ALFA ROMEO,35,Las Palmas,Corporate,ICE,1
+2026,06,09,AUDI,35,Las Palmas,Corporate,ICE,1
+2026,06,09,AUDI,35,Las Palmas,Private,BEV,1
+2026,06,09,AUDI,35,Las Palmas,Private,ICE,1
+2026,06,09,BMW,35,Las Palmas,Corporate,BEV,1
+2026,06,09,BMW,35,Las Palmas,Corporate,ICE,1
+2026,06,09,BMW,35,Las Palmas,Private,BEV,1
+2026,06,09,BYD,35,Las Palmas,Private,PHEV,1
+2026,06,09,CITROEN,35,Las Palmas,Corporate,ICE,1
+2026,06,09,CUPRA,35,Las Palmas,Private,PHEV,1
+2026,06,09,DACIA,35,Las Palmas,Corporate,ICE,20
+2026,06,09,DACIA,35,Las Palmas,Private,ICE,2
+2026,06,09,DEEPAL,35,Las Palmas,Private,BEV,1
+2026,06,09,FORD,35,Las Palmas,Corporate,PHEV,1
+2026,06,09,FORD,35,Las Palmas,Private,ICE,1
+2026,06,09,HYUNDAI,35,Las Palmas,Private,BEV,1
+2026,06,09,HYUNDAI,35,Las Palmas,Private,PHEV,1
+2026,06,09,KIA,35,Las Palmas,Corporate,BEV,1
+2026,06,09,KIA,35,Las Palmas,Private,BEV,2
+2026,06,09,KIA,35,Las Palmas,Private,ICE,2
+2026,06,09,MAZDA,35,Las Palmas,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,35,Las Palmas,Private,PHEV,1
+2026,06,09,MERCEDES-BENZ,35,Las Palmas,RAC,BEV,4
+2026,06,09,MITSUBISHI,35,Las Palmas,Corporate,ICE,1
+2026,06,09,OPEL,35,Las Palmas,Corporate,ICE,1
+2026,06,09,RENAULT,35,Las Palmas,Private,ICE,1
+2026,06,09,SEAT,35,Las Palmas,Private,ICE,1
+2026,06,09,SKODA,35,Las Palmas,Private,ICE,2
+2026,06,09,TESLA,35,Las Palmas,Private,BEV,2
+2026,06,09,TOYOTA,35,Las Palmas,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,35,Las Palmas,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,35,Las Palmas,Private,ICE,2
+2026,06,09,VOLKSWAGEN,35,Las Palmas,RAC,ICE,2
+2026,06,09,VOLVO,35,Las Palmas,Private,BEV,1
+2026,06,09,AUDI,36,Pontevedra,Private,ICE,2
+2026,06,09,BYD,36,Pontevedra,Corporate,BEV,1
+2026,06,09,BYD,36,Pontevedra,Corporate,PHEV,1
+2026,06,09,BYD,36,Pontevedra,Private,BEV,2
+2026,06,09,BYD,36,Pontevedra,Private,PHEV,1
+2026,06,09,CITROEN,36,Pontevedra,Private,BEV,3
+2026,06,09,CITROEN,36,Pontevedra,Private,ICE,1
+2026,06,09,DACIA,36,Pontevedra,Private,ICE,1
+2026,06,09,FORD,36,Pontevedra,Corporate,ICE,1
+2026,06,09,KIA,36,Pontevedra,Private,BEV,1
+2026,06,09,KIA,36,Pontevedra,Private,ICE,2
+2026,06,09,LEXUS,36,Pontevedra,Corporate,PHEV,1
+2026,06,09,MERCEDES-BENZ,36,Pontevedra,Private,ICE,1
+2026,06,09,MG,36,Pontevedra,Private,ICE,3
+2026,06,09,MINI,36,Pontevedra,Private,BEV,1
+2026,06,09,NISSAN,36,Pontevedra,Private,ICE,1
+2026,06,09,OMODA,36,Pontevedra,Corporate,PHEV,1
+2026,06,09,OPEL,36,Pontevedra,Private,BEV,1
+2026,06,09,PEUGEOT,36,Pontevedra,Private,ICE,2
+2026,06,09,ROMERO,36,Pontevedra,Corporate,ICE,1
+2026,06,09,TESLA,36,Pontevedra,Private,BEV,1
+2026,06,09,VOLKSWAGEN,36,Pontevedra,Private,ICE,2
+2026,06,09,AUDI,37,Salamanca,Corporate,ICE,1
+2026,06,09,BMW,37,Salamanca,Private,BEV,1
+2026,06,09,CHALLENGER,37,Salamanca,Private,ICE,1
+2026,06,09,HYUNDAI,37,Salamanca,Private,ICE,1
+2026,06,09,ISUZU,37,Salamanca,Corporate,ICE,1
+2026,06,09,IVECO,37,Salamanca,Corporate,ICE,1
+2026,06,09,KIA,37,Salamanca,Private,ICE,2
+2026,06,09,LEAPMOTOR,37,Salamanca,Private,BEV,1
+2026,06,09,LEXUS,37,Salamanca,Private,ICE,1
+2026,06,09,MAZDA,37,Salamanca,Private,ICE,2
+2026,06,09,MC LOUIS,37,Salamanca,RAC,ICE,1
+2026,06,09,MERCEDES-V,37,Salamanca,Corporate,ICE,2
+2026,06,09,RENAULT,37,Salamanca,Corporate,ICE,1
+2026,06,09,SEAT,37,Salamanca,Private,ICE,1
+2026,06,09,SKODA,37,Salamanca,Private,ICE,1
+2026,06,09,TESLA,37,Salamanca,Private,BEV,1
+2026,06,09,TOYOTA,37,Salamanca,Corporate,PHEV,1
+2026,06,09,TOYOTA,37,Salamanca,Private,ICE,2
+2026,06,09,TOYOTA,37,Salamanca,Private,PHEV,2
+2026,06,09,AUDI,38,S.C. Tenerife,Corporate,ICE,1
+2026,06,09,BENIMAR,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,BMW,38,S.C. Tenerife,Corporate,BEV,1
+2026,06,09,BMW,38,S.C. Tenerife,Corporate,PHEV,1
+2026,06,09,BMW,38,S.C. Tenerife,Private,BEV,1
+2026,06,09,BMW,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,CITROEN,38,S.C. Tenerife,Corporate,ICE,1
+2026,06,09,CITROEN,38,S.C. Tenerife,Private,BEV,1
+2026,06,09,COOLGADES,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,CUPRA,38,S.C. Tenerife,Private,PHEV,1
+2026,06,09,DACIA,38,S.C. Tenerife,Private,ICE,5
+2026,06,09,DEEPAL,38,S.C. Tenerife,Private,BEV,1
+2026,06,09,FORD,38,S.C. Tenerife,Corporate,ICE,1
+2026,06,09,JAECOO,38,S.C. Tenerife,Private,BEV,1
+2026,06,09,KIA,38,S.C. Tenerife,Private,ICE,3
+2026,06,09,LAND ROVER,38,S.C. Tenerife,Private,PHEV,1
+2026,06,09,LEXUS,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,MAZDA,38,S.C. Tenerife,Private,BEV,1
+2026,06,09,MAZDA,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,38,S.C. Tenerife,Corporate,PHEV,1
+2026,06,09,MG,38,S.C. Tenerife,Corporate,ICE,1
+2026,06,09,MG,38,S.C. Tenerife,Private,BEV,1
+2026,06,09,MG,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,MG,38,S.C. Tenerife,Private,PHEV,1
+2026,06,09,MINI,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,PEUGEOT,38,S.C. Tenerife,Corporate,ICE,2
+2026,06,09,PORSCHE,38,S.C. Tenerife,Corporate,PHEV,1
+2026,06,09,RENAULT,38,S.C. Tenerife,Private,BEV,2
+2026,06,09,SEAT,38,S.C. Tenerife,Corporate,ICE,3
+2026,06,09,SEAT,38,S.C. Tenerife,Private,ICE,3
+2026,06,09,SKODA,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,SUZUKI,38,S.C. Tenerife,Private,ICE,1
+2026,06,09,TOYOTA,38,S.C. Tenerife,Private,ICE,2
+2026,06,09,VOLKSWAGEN,38,S.C. Tenerife,Private,ICE,3
+2026,06,09,AUDI,39,Cantabria,Corporate,PHEV,1
+2026,06,09,CHALLENGER,39,Cantabria,Private,ICE,1
+2026,06,09,CITROEN,39,Cantabria,Private,ICE,1
+2026,06,09,DEEPAL,39,Cantabria,Private,BEV,1
+2026,06,09,EBRO,39,Cantabria,Private,ICE,1
+2026,06,09,GIOTTILINE,39,Cantabria,RAC,ICE,1
+2026,06,09,HYUNDAI,39,Cantabria,Private,ICE,1
+2026,06,09,KIA,39,Cantabria,Private,BEV,4
+2026,06,09,KIA,39,Cantabria,Private,ICE,4
+2026,06,09,MG,39,Cantabria,Private,ICE,1
+2026,06,09,MINI,39,Cantabria,Private,ICE,2
+2026,06,09,NISSAN,39,Cantabria,Private,ICE,1
+2026,06,09,OPEL,39,Cantabria,Private,ICE,1
+2026,06,09,PEUGEOT,39,Cantabria,Private,ICE,3
+2026,06,09,SKODA,39,Cantabria,Private,BEV,1
+2026,06,09,SUZUKI,39,Cantabria,Private,ICE,1
+2026,06,09,TESLA,39,Cantabria,Corporate,BEV,1
+2026,06,09,TESLA,39,Cantabria,Private,BEV,4
+2026,06,09,TOYOTA,39,Cantabria,Private,ICE,5
+2026,06,09,MERCEDES-BENZ,40,Segovia,Private,ICE,1
+2026,06,09,NISSAN,40,Segovia,Private,ICE,1
+2026,06,09,TOYOTA,40,Segovia,Private,BEV,1
+2026,06,09,TOYOTA,40,Segovia,Private,ICE,1
+2026,06,09,VOLKSWAGEN,40,Segovia,Corporate,ICE,1
+2026,06,09,VOLVO,40,Segovia,Private,ICE,2
+2026,06,09,ALFA ROMEO,41,Sevilla,Private,ICE,1
+2026,06,09,BAIC,41,Sevilla,Private,ICE,1
+2026,06,09,BYD,41,Sevilla,Private,PHEV,1
+2026,06,09,CITROEN,41,Sevilla,Private,ICE,4
+2026,06,09,CORVUS,41,Sevilla,Corporate,ICE,1
+2026,06,09,DACIA,41,Sevilla,Private,ICE,10
+2026,06,09,DEEPAL,41,Sevilla,Private,BEV,1
+2026,06,09,EBRO,41,Sevilla,Private,ICE,1
+2026,06,09,FORD,41,Sevilla,Corporate,ICE,1
+2026,06,09,FORD,41,Sevilla,Private,PHEV,1
+2026,06,09,HONDA,41,Sevilla,Private,PHEV,1
+2026,06,09,HYUNDAI,41,Sevilla,Private,ICE,2
+2026,06,09,JAECOO,41,Sevilla,Private,ICE,1
+2026,06,09,JEEP,41,Sevilla,Private,ICE,1
+2026,06,09,KIA,41,Sevilla,Private,BEV,1
+2026,06,09,KIA,41,Sevilla,Private,ICE,1
+2026,06,09,LEXUS,41,Sevilla,Private,PHEV,1
+2026,06,09,MAXUS,41,Sevilla,Corporate,BEV,2
+2026,06,09,MAZDA,41,Sevilla,Private,ICE,4
+2026,06,09,MERCEDES-BENZ,41,Sevilla,Corporate,ICE,2
+2026,06,09,MERCEDES-BENZ,41,Sevilla,Private,BEV,1
+2026,06,09,MERCEDES-BENZ,41,Sevilla,Private,ICE,1
+2026,06,09,MG,41,Sevilla,Private,ICE,6
+2026,06,09,MINI,41,Sevilla,Corporate,ICE,1
+2026,06,09,MITSUBISHI,41,Sevilla,Private,ICE,1
+2026,06,09,NISSAN,41,Sevilla,Private,ICE,3
+2026,06,09,NISSAN,41,Sevilla,RAC,ICE,5
+2026,06,09,PORSCHE,41,Sevilla,Corporate,PHEV,1
+2026,06,09,RENAULT,41,Sevilla,Corporate,ICE,1
+2026,06,09,SCORA,41,Sevilla,Private,ICE,1
+2026,06,09,SEAT,41,Sevilla,Private,ICE,3
+2026,06,09,SKODA,41,Sevilla,Private,ICE,4
+2026,06,09,TESLA,41,Sevilla,Corporate,BEV,1
+2026,06,09,TESLA,41,Sevilla,Private,BEV,6
+2026,06,09,TOYOTA,41,Sevilla,Corporate,ICE,1
+2026,06,09,TOYOTA,41,Sevilla,Private,BEV,1
+2026,06,09,TOYOTA,41,Sevilla,Private,ICE,8
+2026,06,09,VOLKSWAGEN,41,Sevilla,Private,ICE,5
+2026,06,09,VOLQUETES DEL SUR,41,Sevilla,Corporate,ICE,1
+2026,06,09,CITROEN,42,Soria,Corporate,ICE,1
+2026,06,09,EBRO,42,Soria,Private,ICE,1
+2026,06,09,KIA,42,Soria,Corporate,ICE,1
+2026,06,09,KIA,42,Soria,Private,ICE,1
+2026,06,09,RODRIGUEZ LOPEZ AUTO,42,Soria,Private,ICE,3
+2026,06,09,STIL CONVERSION,42,Soria,Private,BEV,12
+2026,06,09,STIL CONVERSION,42,Soria,Private,ICE,8
+2026,06,09,SUZUKI,42,Soria,Private,ICE,1
+2026,06,09,TESLA,42,Soria,Private,BEV,1
+2026,06,09,BYD,43,Tarragona,Private,BEV,1
+2026,06,09,CITROEN,43,Tarragona,Private,BEV,2
+2026,06,09,CITROEN,43,Tarragona,Private,ICE,1
+2026,06,09,CUPRA,43,Tarragona,Private,ICE,1
+2026,06,09,DACIA,43,Tarragona,Corporate,ICE,6
+2026,06,09,DACIA,43,Tarragona,Private,ICE,3
+2026,06,09,DACIA,43,Tarragona,RAC,ICE,1
+2026,06,09,DEEPAL,43,Tarragona,Private,BEV,1
+2026,06,09,EBRO,43,Tarragona,Private,ICE,2
+2026,06,09,FORD,43,Tarragona,Corporate,ICE,1
+2026,06,09,FORD,43,Tarragona,Private,PHEV,1
+2026,06,09,HONDA,43,Tarragona,Private,ICE,1
+2026,06,09,IVECO,43,Tarragona,Private,ICE,1
+2026,06,09,JEEP,43,Tarragona,Private,ICE,1
+2026,06,09,KIA,43,Tarragona,Private,ICE,1
+2026,06,09,LEAPMOTOR,43,Tarragona,Private,BEV,1
+2026,06,09,LEXUS,43,Tarragona,Corporate,PHEV,1
+2026,06,09,LIGIER,43,Tarragona,Private,ICE,1
+2026,06,09,MAZDA,43,Tarragona,Private,ICE,1
+2026,06,09,MCLOUIS,43,Tarragona,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,43,Tarragona,Private,ICE,1
+2026,06,09,MG,43,Tarragona,Private,ICE,3
+2026,06,09,MINI,43,Tarragona,Private,BEV,1
+2026,06,09,MINI,43,Tarragona,Private,ICE,2
+2026,06,09,NISSAN,43,Tarragona,Corporate,ICE,1
+2026,06,09,OMODA,43,Tarragona,Private,ICE,2
+2026,06,09,OMODA,43,Tarragona,Private,PHEV,3
+2026,06,09,RENAULT,43,Tarragona,Corporate,PHEV,1
+2026,06,09,SEAT,43,Tarragona,Private,ICE,1
+2026,06,09,TESLA,43,Tarragona,Private,BEV,6
+2026,06,09,TOYOTA,43,Tarragona,Private,ICE,1
+2026,06,09,TOYOTA,43,Tarragona,Private,PHEV,1
+2026,06,09,VOLKSWAGEN,43,Tarragona,Corporate,ICE,1
+2026,06,09,VOLKSWAGEN,43,Tarragona,Private,ICE,2
+2026,06,09,VOLKSWAGEN,43,Tarragona,Private,PHEV,1
+2026,06,09,OMODA,44,Teruel,Private,ICE,1
+2026,06,09,RENAULT,44,Teruel,Corporate,ICE,2
+2026,06,09,RENAULT,44,Teruel,Private,ICE,2
+2026,06,09,SEAT,44,Teruel,Corporate,ICE,1
+2026,06,09,TOYOTA,44,Teruel,Private,ICE,1
+2026,06,09,BMW,45,Toledo,Private,ICE,1
+2026,06,09,BYD,45,Toledo,Corporate,BEV,1
+2026,06,09,BYD,45,Toledo,Private,BEV,1
+2026,06,09,DACIA,45,Toledo,Private,ICE,1
+2026,06,09,EBRO,45,Toledo,Private,ICE,1
+2026,06,09,GRUAU,45,Toledo,Corporate,ICE,1
+2026,06,09,HYUNDAI,45,Toledo,Private,ICE,1
+2026,06,09,HYUNDAI,45,Toledo,Private,PHEV,2
+2026,06,09,KIA,45,Toledo,Private,BEV,1
+2026,06,09,KIA,45,Toledo,Private,ICE,1
+2026,06,09,MAZDA,45,Toledo,Private,ICE,1
+2026,06,09,MG,45,Toledo,Private,ICE,1
+2026,06,09,MG,45,Toledo,Private,PHEV,1
+2026,06,09,NISSAN,45,Toledo,Private,ICE,1
+2026,06,09,OPEL,45,Toledo,Corporate,ICE,1
+2026,06,09,PEUGEOT,45,Toledo,Private,ICE,1
+2026,06,09,RENAULT,45,Toledo,Corporate,ICE,1
+2026,06,09,SEAT,45,Toledo,Private,ICE,1
+2026,06,09,SUZUKI,45,Toledo,Private,ICE,1
+2026,06,09,TESLA,45,Toledo,Private,BEV,5
+2026,06,09,TOYOTA,45,Toledo,Corporate,ICE,2
+2026,06,09,TOYOTA,45,Toledo,Private,ICE,3
+2026,06,09,AUDI,46,Valencia,Private,BEV,1
+2026,06,09,AUDI,46,Valencia,Private,ICE,3
+2026,06,09,BMW,46,Valencia,Corporate,BEV,1
+2026,06,09,BMW,46,Valencia,Corporate,ICE,1
+2026,06,09,BMW,46,Valencia,Private,BEV,1
+2026,06,09,BYD,46,Valencia,Private,BEV,4
+2026,06,09,BYD,46,Valencia,Private,PHEV,7
+2026,06,09,CARROCERIAS SEVILLA,46,Valencia,Corporate,ICE,5
+2026,06,09,CITROEN,46,Valencia,Private,BEV,1
+2026,06,09,CITROEN,46,Valencia,Private,ICE,2
+2026,06,09,CUPRA,46,Valencia,Corporate,PHEV,1
+2026,06,09,CUPRA,46,Valencia,Private,ICE,1
+2026,06,09,DACIA,46,Valencia,Private,ICE,22
+2026,06,09,DETHLEFFS,46,Valencia,RAC,ICE,1
+2026,06,09,DONGFENG,46,Valencia,Private,BEV,1
+2026,06,09,EBRO,46,Valencia,Private,ICE,2
+2026,06,09,FIAT,46,Valencia,Corporate,ICE,1
+2026,06,09,FORD,46,Valencia,Corporate,BEV,1
+2026,06,09,FORD,46,Valencia,Corporate,ICE,2
+2026,06,09,FORD,46,Valencia,Private,BEV,4
+2026,06,09,HONDA,46,Valencia,Private,ICE,2
+2026,06,09,HYUNDAI,46,Valencia,Private,BEV,1
+2026,06,09,HYUNDAI,46,Valencia,Private,ICE,2
+2026,06,09,ITINEO,46,Valencia,Private,ICE,1
+2026,06,09,JAECOO,46,Valencia,Private,ICE,1
+2026,06,09,JEANJE,46,Valencia,Corporate,ICE,1
+2026,06,09,JEEP,46,Valencia,Private,ICE,1
+2026,06,09,KG MOBILITY,46,Valencia,Private,ICE,3
+2026,06,09,KIA,46,Valencia,Corporate,BEV,1
+2026,06,09,KIA,46,Valencia,Private,BEV,2
+2026,06,09,KIA,46,Valencia,Private,ICE,5
+2026,06,09,LIGIER,46,Valencia,Private,ICE,1
+2026,06,09,MAZDA,46,Valencia,Corporate,ICE,1
+2026,06,09,MEBAUTO,46,Valencia,Corporate,ICE,1
+2026,06,09,MERCEDES-BENZ,46,Valencia,Corporate,BEV,3
+2026,06,09,MERCEDES-BENZ,46,Valencia,Corporate,ICE,9
+2026,06,09,MERCEDES-BENZ,46,Valencia,Corporate,PHEV,8
+2026,06,09,MERCEDES-BENZ,46,Valencia,Private,PHEV,1
+2026,06,09,MG,46,Valencia,Private,ICE,8
+2026,06,09,MINI,46,Valencia,Private,ICE,2
+2026,06,09,NISSAN,46,Valencia,Corporate,ICE,2
+2026,06,09,NISSAN,46,Valencia,Private,ICE,3
+2026,06,09,OPEL,46,Valencia,Private,ICE,3
+2026,06,09,PEUGEOT,46,Valencia,Private,ICE,2
+2026,06,09,RENAULT,46,Valencia,Corporate,PHEV,1
+2026,06,09,RENAULT,46,Valencia,Private,BEV,1
+2026,06,09,RENAULT,46,Valencia,Private,ICE,1
+2026,06,09,RENAULT,46,Valencia,RAC,ICE,1
+2026,06,09,SEAT,46,Valencia,Private,ICE,3
+2026,06,09,SORIBERICA,46,Valencia,Corporate,ICE,4
+2026,06,09,TESLA,46,Valencia,Corporate,BEV,1
+2026,06,09,TESLA,46,Valencia,Private,BEV,21
+2026,06,09,TOYOTA,46,Valencia,Corporate,BEV,1
+2026,06,09,TOYOTA,46,Valencia,Corporate,ICE,5
+2026,06,09,TOYOTA,46,Valencia,Private,BEV,2
+2026,06,09,TOYOTA,46,Valencia,Private,ICE,6
+2026,06,09,TOYOTA,46,Valencia,Private,PHEV,3
+2026,06,09,VOLKSWAGEN,46,Valencia,Private,BEV,1
+2026,06,09,VOLKSWAGEN,46,Valencia,Private,ICE,7
+2026,06,09,VOLVO,46,Valencia,Private,BEV,1
+2026,06,09,XPENG,46,Valencia,Private,BEV,1
+2026,06,09,ADRIA,47,Valladolid,Private,ICE,1
+2026,06,09,ALPINE,47,Valladolid,Private,BEV,1
+2026,06,09,BMW,47,Valladolid,Private,ICE,1
+2026,06,09,CUPRA,47,Valladolid,Private,PHEV,1
+2026,06,09,DACIA,47,Valladolid,Private,ICE,2
+2026,06,09,HYUNDAI,47,Valladolid,Private,ICE,1
+2026,06,09,JAECOO,47,Valladolid,Private,ICE,1
+2026,06,09,KIA,47,Valladolid,Private,BEV,1
+2026,06,09,KIA,47,Valladolid,Private,ICE,1
+2026,06,09,LAND ROVER,47,Valladolid,Private,PHEV,1
+2026,06,09,MC LOUIS,47,Valladolid,RAC,ICE,1
+2026,06,09,MERCEDES-BENZ,47,Valladolid,Corporate,ICE,1
+2026,06,09,MERCEDES-V,47,Valladolid,Private,ICE,1
+2026,06,09,MG,47,Valladolid,Private,ICE,1
+2026,06,09,OMODA,47,Valladolid,Private,ICE,1
+2026,06,09,RENAULT,47,Valladolid,Private,ICE,1
+2026,06,09,RIMOR,47,Valladolid,RAC,ICE,1
+2026,06,09,TESLA,47,Valladolid,Private,BEV,3
+2026,06,09,TOYOTA,47,Valladolid,Corporate,BEV,1
+2026,06,09,TOYOTA,47,Valladolid,Private,BEV,1
+2026,06,09,TOYOTA,47,Valladolid,Private,ICE,1
+2026,06,09,AUDI,48,Bizkaia,Private,ICE,1
+2026,06,09,BMW,48,Bizkaia,Private,ICE,2
+2026,06,09,BYD,48,Bizkaia,Private,PHEV,2
+2026,06,09,CAPRON,48,Bizkaia,Private,ICE,1
+2026,06,09,CARROCERIAS CITY,48,Bizkaia,Corporate,ICE,1
+2026,06,09,CARROCERIAS EL GALLO,48,Bizkaia,Corporate,ICE,1
+2026,06,09,DACIA,48,Bizkaia,Corporate,ICE,1
+2026,06,09,DACIA,48,Bizkaia,Private,ICE,1
+2026,06,09,DS AUTOMOBILES,48,Bizkaia,Corporate,ICE,1
+2026,06,09,ERKE,48,Bizkaia,Corporate,ICE,2
+2026,06,09,HONDA,48,Bizkaia,Private,ICE,1
+2026,06,09,HYUNDAI,48,Bizkaia,Corporate,BEV,1
+2026,06,09,KG MOBILITY,48,Bizkaia,Private,ICE,1
+2026,06,09,LEAPMOTOR,48,Bizkaia,Corporate,BEV,1
+2026,06,09,MAZDA,48,Bizkaia,Private,ICE,1
+2026,06,09,MERCEDES-BENZ,48,Bizkaia,Corporate,ICE,3
+2026,06,09,MERCEDES-BENZ,48,Bizkaia,Private,ICE,1
+2026,06,09,MG,48,Bizkaia,Private,ICE,1
+2026,06,09,NISSAN,48,Bizkaia,Private,ICE,1
+2026,06,09,NISSAN,48,Bizkaia,RAC,ICE,1
+2026,06,09,OMODA,48,Bizkaia,Private,PHEV,1
+2026,06,09,PILOTE,48,Bizkaia,Private,ICE,1
+2026,06,09,PORSCHE,48,Bizkaia,Private,ICE,1
+2026,06,09,RENAULT,48,Bizkaia,Private,ICE,1
+2026,06,09,SKODA,48,Bizkaia,Private,ICE,2
+2026,06,09,TESLA,48,Bizkaia,Corporate,BEV,1
+2026,06,09,TESLA,48,Bizkaia,Private,BEV,2
+2026,06,09,TOYOTA,48,Bizkaia,Corporate,BEV,1
+2026,06,09,TOYOTA,48,Bizkaia,Private,ICE,4
+2026,06,09,TOYOTA,48,Bizkaia,RAC,BEV,3
+2026,06,09,VOLKSWAGEN,48,Bizkaia,Private,ICE,1
+2026,06,09,VOLVO,48,Bizkaia,Private,ICE,1
+2026,06,09,BYD,49,Zamora,Private,PHEV,1
+2026,06,09,IGLUVAN,49,Zamora,Corporate,ICE,1
+2026,06,09,TESLA,49,Zamora,Private,BEV,1
+2026,06,09,TOYOTA,49,Zamora,Corporate,ICE,1
+2026,06,09,TOYOTA,49,Zamora,Corporate,PHEV,1
+2026,06,09,TOYOTA,49,Zamora,Private,ICE,2
+2026,06,09,VOLKSWAGEN,49,Zamora,Private,ICE,1
+2026,06,09,BMW,50,Zaragoza,Private,ICE,1
+2026,06,09,BMW,50,Zaragoza,Private,PHEV,1
+2026,06,09,BYD,50,Zaragoza,Private,PHEV,1
+2026,06,09,CITROEN,50,Zaragoza,Private,BEV,1
+2026,06,09,CITROEN,50,Zaragoza,Private,ICE,1
+2026,06,09,DACIA,50,Zaragoza,Private,ICE,2
+2026,06,09,HARLEY-DAVIDSON,50,Zaragoza,Private,ICE,1
+2026,06,09,HYUNDAI,50,Zaragoza,Corporate,PHEV,1
+2026,06,09,HYUNDAI,50,Zaragoza,Private,ICE,1
+2026,06,09,JEEP,50,Zaragoza,Private,BEV,1
+2026,06,09,KIA,50,Zaragoza,Private,ICE,1
+2026,06,09,LEAPMOTOR,50,Zaragoza,Private,BEV,2
+2026,06,09,LIGIER,50,Zaragoza,Private,ICE,1
+2026,06,09,MAZDA,50,Zaragoza,Private,ICE,2
+2026,06,09,MERCEDES-BENZ,50,Zaragoza,Corporate,BEV,1
+2026,06,09,MERCEDES-BENZ,50,Zaragoza,Corporate,PHEV,1
+2026,06,09,MG,50,Zaragoza,Private,ICE,3
+2026,06,09,MITSUBISHI,50,Zaragoza,Private,ICE,1
+2026,06,09,NISSAN,50,Zaragoza,Private,ICE,1
+2026,06,09,OMODA,50,Zaragoza,Private,ICE,1
+2026,06,09,OPEL,50,Zaragoza,Private,ICE,1
+2026,06,09,PEUGEOT,50,Zaragoza,Private,ICE,1
+2026,06,09,RENAULT,50,Zaragoza,Corporate,ICE,1
+2026,06,09,RENAULT,50,Zaragoza,Private,ICE,2
+2026,06,09,SEAT,50,Zaragoza,Private,ICE,1
+2026,06,09,TESLA,50,Zaragoza,Private,BEV,1
+2026,06,09,TOYOTA,50,Zaragoza,Corporate,ICE,2
+2026,06,09,TOYOTA,50,Zaragoza,Private,BEV,1
+2026,06,09,TOYOTA,50,Zaragoza,Private,ICE,9
+2026,06,09,TOYOTA,50,Zaragoza,Private,PHEV,3
+2026,06,09,VOLKSWAGEN,50,Zaragoza,Private,BEV,1
+2026,06,09,VOLKSWAGEN,50,Zaragoza,Private,ICE,3
+2026,06,09,VOLVO,50,Zaragoza,Corporate,PHEV,1
+2026,06,09,VOLVO,50,Zaragoza,Private,ICE,1
+2026,06,09,DACIA,51,Ceuta,Private,ICE,1
+2026,06,09,HYUNDAI,51,Ceuta,Private,ICE,1
+2026,06,09,KIA,51,Ceuta,Corporate,ICE,1
+2026,06,09,TOYOTA,51,Ceuta,Private,ICE,1
+2026,06,09,VOLKSWAGEN,51,Ceuta,Private,ICE,1
+2026,06,09,AUDI,52,Melilla,Corporate,ICE,3
+2026,06,09,AUDI,52,Melilla,Private,ICE,1
+2026,06,09,EBRO,52,Melilla,Private,ICE,1
+2026,06,09,FIAT,52,Melilla,Private,ICE,1
+2026,06,09,KIA,52,Melilla,Private,ICE,1
+2026,06,09,TESLA,52,Melilla,Private,BEV,1

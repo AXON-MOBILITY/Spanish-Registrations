@@ -8,6 +8,70 @@
     "label": "Junio 2026"
   },
   "completed_months": 41,
-  "total_registrations_historical": 4291033,
-  "has_provinces": true
+  "total_registrations_historical": 2239781,
+  "has_provinces": true,
+  "scope": {
+    "mode": "simmix",
+    "source": "BBDD_PRODUCTO for years with Simmix export; DGT for remaining years and MTD",
+    "reference_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "diagnostics": {
+      "2023": {
+        "file": "BBDD_2023_PRODUCTO.csv",
+        "rows": 624738,
+        "valid_brands": 82,
+        "truncated_brand": null,
+        "malformed_rows": 0,
+        "reference_total": 1094845
+      },
+      "2024": {
+        "file": "BBDD_2024_PRODUCTO.csv",
+        "rows": 300022,
+        "valid_brands": 53,
+        "truncated_brand": "MERCEDES",
+        "malformed_rows": 0,
+        "reference_total": 489161
+      },
+      "2025": {
+        "file": "BBDD_2025_PRODUCTO.csv",
+        "rows": 36596,
+        "valid_brands": 9,
+        "truncated_brand": "BMW",
+        "malformed_rows": 4,
+        "reference_total": 45306
+      }
+    },
+    "loaded": {
+      "2023": {
+        "file": "BBDD_2023_PRODUCTO.csv",
+        "rows": 624738,
+        "loaded_rows": 624738,
+        "truncated_brand": null,
+        "malformed_rows": 0,
+        "total": 1094845,
+        "province_total": 1094845
+      },
+      "2024": {
+        "file": "BBDD_2024_PRODUCTO.csv",
+        "rows": 300021,
+        "loaded_rows": 285519,
+        "truncated_brand": "MERCEDES",
+        "malformed_rows": 0,
+        "total": 489161,
+        "province_total": 489161
+      },
+      "2025": {
+        "file": "BBDD_2025_PRODUCTO.csv",
+        "rows": 36591,
+        "loaded_rows": 24051,
+        "truncated_brand": "BMW",
+        "malformed_rows": 4,
+        "total": 45306,
+        "province_total": 45306
+      }
+    }
+  }
 }
