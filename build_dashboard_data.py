@@ -10,7 +10,7 @@ Salida principal:
 Columnas records.json (índices COL en index.html):
   0:y  1:m  2:marca  3:modelo  4:canal  5:fuel  6:fuel_det  7:seg  8:sub  9:hp  10:body  11:n
 """
-import argparse, csv, glob, json, re, unicodedata
+import argparse, csv, glob, json, re
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
@@ -20,28 +20,6 @@ MONTHS_ES = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",
              7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"}
 CANALES = ["Private","Corporate","RAC"]
 FUELS   = ["ICE","BEV","PHEV"]
-MONTH_NAME_TO_NUM = {v.upper(): k for k, v in {
-    1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",
-    7:"July",8:"August",9:"September",10:"October",11:"November",12:"December",
-}.items()}
-
-PROV_CODE_BY_SIMMIX_NAME = {
-    "A CORUNA": "15", "ALAVA": "01", "ALBACETE": "02", "ALICANTE": "03",
-    "ALMERIA": "04", "ASTURIAS": "33", "AVILA": "05", "BADAJOZ": "06",
-    "BALEARES": "07", "ISLAS BALEARES": "07", "BARCELONA": "08",
-    "BURGOS": "09", "CACERES": "10", "CADIZ": "11", "CANTABRIA": "39",
-    "CASTELLON": "12", "CEUTA": "51", "CIUDAD REAL": "13", "CORDOBA": "14",
-    "CUENCA": "16", "GIRONA": "17", "GRANADA": "18", "GUADALAJARA": "19",
-    "GIPUZKOA": "20", "GUIPUZCOA": "20", "HUELVA": "21", "HUESCA": "22",
-    "JAEN": "23", "LA RIOJA": "26", "LAS PALMAS": "35", "LEON": "24",
-    "LLEIDA": "25", "LUGO": "27", "MADRID": "28", "MALAGA": "29",
-    "MELILLA": "52", "MURCIA": "30", "NAVARRA": "31", "OURENSE": "32",
-    "PALENCIA": "34", "PONTEVEDRA": "36", "SALAMANCA": "37",
-    "SANTA CRUZ DE TENERIFE": "38", "S.C. TENERIFE": "38", "SEGOVIA": "40",
-    "SEVILLA": "41", "SORIA": "42", "TARRAGONA": "43", "TERUEL": "44",
-    "TOLEDO": "45", "VALENCIA": "46", "VALLADOLID": "47",
-    "BIZKAIA": "48", "VIZCAYA": "48", "ZAMORA": "49", "ZARAGOZA": "50",
-}
 
 # ── Normalización de marcas DGT → nombres canónicos Simmix ───────────────────
 _BRAND_NORM = {
@@ -86,26 +64,6 @@ def _normalize_brand(raw):
     s = (raw or '').strip()
     canon = _BRAND_NORM.get(s.upper())
     return canon if canon else (s.title() if s else s)
-
-def _strip_accents(raw):
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', raw or '')
-        if unicodedata.category(c) != 'Mn'
-    )
-
-def _normalize_prov_key(raw):
-    return re.sub(r"\s+", " ", _strip_accents(raw).strip().upper())
-
-def _fuel_type_from_simmix(raw_fuel_type, raw_fuel):
-    fuel_type = (raw_fuel_type or "").strip().upper()
-    if fuel_type in FUELS:
-        return fuel_type
-    fuel = _strip_accents(raw_fuel).upper()
-    if "ENCHUF" in fuel or "PHEV" in fuel:
-        return "PHEV"
-    if "ELECTR" in fuel or fuel_type == "BEV":
-        return "BEV"
-    return "ICE"
 
 def _read_csv(path):
     with open(path, encoding="utf-8-sig", newline="") as fh:
@@ -186,169 +144,6 @@ def apply_simmix_scope(records, scopes):
         else:
             stats[r["y"]]["excluded"] += r["n"]
     return kept, {str(y): dict(v) for y, v in sorted(stats.items())}
-
-def load_simmix_records(base):
-    """Load historical product records directly from Simmix exports.
-
-    The BBDD files already contain the provider's product/channel/fuel criteria.
-    For cut exports, the final incomplete brand is excluded consistently with
-    load_simmix_scope.
-    """
-    record_counts = defaultdict(int)
-    prov_data = defaultdict(int)
-    diagnostics = {}
-
-    for path in sorted(base.glob("BBDD_*_PRODUCTO.csv")):
-        m = re.match(r"BBDD_(\d{4})_PRODUCTO$", path.stem)
-        if not m:
-            continue
-        yr = int(m.group(1))
-        cols = {
-            "brand": f"Brand_{yr}",
-            "model": f"Model_{yr}",
-            "fuel": f"Fuel_{yr}",
-            "fuel_type": f"Fuel_Type_{yr}",
-            "channel": f"Channel_{yr}",
-            "year": f"Year_{yr}",
-            "month": f"Month_{yr}",
-            "segment": f"Segment_{yr}",
-            "sub": f"SubSegmento_{yr}",
-            "hp": f"High Performance_{yr}",
-            "body": f"Body Type_{yr}",
-            "regs": f"Registrations_{yr}",
-            "prov": f"Provincia_{yr}",
-        }
-        tmp = []
-        malformed = 0
-        truncated_brand = None
-
-        with open(path, encoding="utf-8-sig", newline="") as fh:
-            for row in csv.DictReader(fh):
-                raw_brand = (row.get(cols["brand"]) or "").strip()
-                if not raw_brand or "," in raw_brand or row.get(None):
-                    malformed += 1
-                    continue
-                brand = _normalize_brand(raw_brand)
-                raw_regs = (row.get(cols["regs"]) or "").strip()
-                if not raw_regs:
-                    truncated_brand = brand.upper()
-                    continue
-                try:
-                    n = int(float(raw_regs.replace(",", ".")))
-                except ValueError:
-                    malformed += 1
-                    continue
-                raw_month = (row.get(cols["month"]) or "").strip()
-                mo = MONTH_NAME_TO_NUM.get(raw_month.upper())
-                if not mo:
-                    malformed += 1
-                    continue
-                fuel_det = (row.get(cols["fuel"]) or "").strip()
-                fuel_type = _fuel_type_from_simmix(row.get(cols["fuel_type"]), fuel_det)
-                channel = (row.get(cols["channel"]) or "").strip()
-                if channel not in CANALES:
-                    malformed += 1
-                    continue
-                tmp.append({
-                    "y": yr,
-                    "m": mo,
-                    "marca": brand,
-                    "modelo": (row.get(cols["model"]) or "").strip(),
-                    "canal": channel,
-                    "fuel": fuel_type,
-                    "fuel_det": fuel_det,
-                    "seg": (row.get(cols["segment"]) or "").strip(),
-                    "sub": (row.get(cols["sub"]) or "").strip(),
-                    "hp": (row.get(cols["hp"]) or "").strip(),
-                    "body": (row.get(cols["body"]) or "").strip(),
-                    "n": n,
-                    "_prov": (row.get(cols["prov"]) or "").strip(),
-                })
-
-        valid_rows = 0
-        valid_total = 0
-        for r in tmp:
-            if truncated_brand and r["marca"].upper() == truncated_brand:
-                continue
-            prov = r.pop("_prov")
-            valid_rows += 1
-            valid_total += r["n"]
-            rec_key = (
-                r["y"], r["m"], r["marca"], r["modelo"], r["canal"], r["fuel"],
-                r["fuel_det"], r["seg"], r["sub"], r["hp"], r["body"],
-            )
-            record_counts[rec_key] += r["n"]
-            prov_key = _normalize_prov_key(prov)
-            cod = PROV_CODE_BY_SIMMIX_NAME.get(prov_key)
-            if cod:
-                prov_data[(r["y"], r["m"], r["marca"], cod, prov.title(), r["canal"], r["fuel"])] += r["n"]
-
-        diagnostics[yr] = {
-            "file": path.name,
-            "rows": len(tmp),
-            "loaded_rows": valid_rows,
-            "truncated_brand": truncated_brand,
-            "malformed_rows": malformed,
-            "total": valid_total,
-            "province_total": sum(v for k, v in prov_data.items() if k[0] == yr),
-        }
-
-    records = [
-        {
-            "y": y, "m": mo, "marca": marca, "modelo": modelo, "canal": canal,
-            "fuel": fuel, "fuel_det": fuel_det, "seg": seg, "sub": sub,
-            "hp": hp, "body": body, "n": n,
-        }
-        for (y, mo, marca, modelo, canal, fuel, fuel_det, seg, sub, hp, body), n
-        in sorted(record_counts.items())
-    ]
-    return records, prov_data, diagnostics
-
-def load_existing_simmix_records(out_dir):
-    path = Path(out_dir) / "records.json"
-    if not path.exists():
-        return [], set(), {}
-    try:
-        obj = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return [], set(), {}
-    scope = obj.get("scope") or {}
-    years = {int(y) for y in scope.get("reference_years", []) if str(y).isdigit()}
-    if scope.get("mode") != "simmix" or not years:
-        return [], set(), {}
-
-    enums = obj.get("enums", {})
-    cols = obj.get("cols", [])
-    rows = obj.get("rows", [])
-    try:
-        col = {k: cols.index(k) for k in cols}
-    except ValueError:
-        return [], set(), {}
-
-    def enum_value(name, idx):
-        vals = enums.get(name, [])
-        return vals[idx] if isinstance(idx, int) and 0 <= idx < len(vals) else ""
-
-    records = []
-    for r in rows:
-        y = r[col["y"]]
-        if y not in years:
-            continue
-        records.append({
-            "y": y,
-            "m": r[col["m"]],
-            "marca": enum_value("marca", r[col["marca"]]),
-            "modelo": enum_value("modelo", r[col["modelo"]]),
-            "canal": enum_value("canal", r[col["canal"]]),
-            "fuel": enum_value("fuel", r[col["fuel"]]),
-            "fuel_det": enum_value("fuel_det", r[col["fuel_det"]]),
-            "seg": enum_value("seg", r[col["seg"]]),
-            "sub": enum_value("sub", r[col["sub"]]),
-            "hp": enum_value("hp", r[col["hp"]]),
-            "body": enum_value("body", r[col["body"]]),
-            "n": r[col["n"]],
-        })
-    return records, years, scope
 
 # ── Carga datos ──────────────────────────────────────────────────────────────
 
@@ -604,42 +399,6 @@ def build_provinces_json(prov_data):
         by_month[ym]=sorted(rows,key=lambda x:-x["total"])
     return {"provinces":provs,"by_month":by_month}
 
-def merge_existing_provinces(out_dir, generated, preserve_years):
-    if not preserve_years:
-        return generated
-    path = Path(out_dir) / "provinces.json"
-    if not path.exists():
-        return generated
-    try:
-        existing = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return generated
-
-    preserve_prefixes = {f"{int(y)}-" for y in preserve_years}
-    by_month = {}
-    for ym, rows in (generated.get("by_month") or {}).items():
-        if not any(ym.startswith(prefix) for prefix in preserve_prefixes):
-            by_month[ym] = rows
-    for ym, rows in (existing.get("by_month") or {}).items():
-        if any(ym.startswith(prefix) for prefix in preserve_prefixes):
-            by_month[ym] = rows
-
-    pt = defaultdict(lambda: {"name": "", **_zero()})
-    for rows in by_month.values():
-        for row in rows:
-            cod = row.get("cod", "")
-            if not cod:
-                continue
-            pt[cod]["name"] = row.get("name", "")
-            for k in ("Private", "Corporate", "RAC", "ICE", "BEV", "PHEV", "total"):
-                pt[cod][k] += int(row.get(k, 0) or 0)
-    provs = [
-        {"cod": cod, "name": v["name"], **{k: v[k] for k in ("total", "Private", "Corporate", "RAC", "ICE", "BEV", "PHEV")}}
-        for cod, v in pt.items()
-    ]
-    provs.sort(key=lambda x: -x["total"])
-    return {"provinces": provs, "by_month": by_month}
-
 def build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data, scope_info=None):
     months = sorted({(r["y"],r["m"]) for r in monthly_records})
     total  = sum(r["n"] for r in monthly_records)
@@ -673,48 +432,28 @@ def main():
     prov_data                    = load_provinces(base)
 
     scope_info = {"mode": args.scope}
-    preserve_existing_province_years = set()
     if args.scope == "simmix":
         scopes, scope_diag = load_simmix_scope(base)
-        if scopes:
-            simmix_records, simmix_prov_data, simmix_diag = load_simmix_records(base)
-            simmix_years = set(scopes)
-            source = "BBDD_PRODUCTO for years with Simmix export; DGT for remaining years and MTD"
-        else:
-            simmix_records, simmix_years, existing_scope = load_existing_simmix_records(out_dir)
-            simmix_prov_data = defaultdict(int)
-            simmix_diag = {}
-            source = "existing public/data Simmix history fallback; DGT for remaining years and MTD"
-            preserve_existing_province_years = simmix_years
-            if existing_scope:
-                scope_diag = existing_scope.get("diagnostics", {})
-
-        monthly_records = [r for r in monthly_records if r["y"] not in simmix_years]
-        monthly_records.extend(simmix_records)
-
-        dgt_prov_future = defaultdict(int)
-        for key, cnt in prov_data.items():
-            if key[0] not in simmix_years:
-                dgt_prov_future[key] += cnt
-        dgt_prov_future.update(simmix_prov_data)
-        prov_data = dgt_prov_future
+        monthly_records, monthly_scope_stats = apply_simmix_scope(monthly_records, scopes)
+        mtd_records, mtd_scope_stats = apply_simmix_scope(mtd_records, scopes)
+        prov_data, prov_scope_stats = apply_simmix_scope_provinces(prov_data, scopes)
 
         scope_info = {
             "mode": "simmix",
-            "source": source,
-            "reference_years": sorted(simmix_years),
+            "source": "DGT microdata filtered with Simmix-derived scope; DGT for 2026 and MTD",
+            "reference_years": sorted(scopes),
             "diagnostics": {str(k): v for k, v in sorted(scope_diag.items())},
-            "loaded": {str(k): v for k, v in sorted(simmix_diag.items())},
+            "monthly_stats": monthly_scope_stats,
+            "mtd_stats": mtd_scope_stats,
+            "province_stats": prov_scope_stats,
         }
         if scopes:
             print("  Scope Simmix:", ", ".join(
                 f"{y}: {len(scopes[y])} marcas" + (f" (truncada {scope_diag[y]['truncated_brand']})" if scope_diag[y]["truncated_brand"] else "")
                 for y in sorted(scopes)
             ))
-        elif simmix_records:
-            print("  Scope Simmix: usando historico ya publicado para", ", ".join(str(y) for y in sorted(simmix_years)))
         else:
-            print("  Scope Simmix: sin BBDD ni historico publicado; usando DGT completo")
+            print("  Scope Simmix: sin BBDD de referencia; usando DGT completo")
 
     months_done = len({(r["y"],r["m"]) for r in monthly_records})
     mtd_str = f"{mtd_yr}-{mtd_mo:02d}" if mtd_yr else "-"
@@ -727,7 +466,6 @@ def main():
     print("Generando JSONs...")
     records_obj = build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info)
     provinces_obj = build_provinces_json(prov_data)
-    provinces_obj = merge_existing_provinces(out_dir, provinces_obj, preserve_existing_province_years)
 
     for fname, obj in [
         ("records.json",   records_obj),

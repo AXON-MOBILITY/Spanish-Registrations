@@ -8,11 +8,11 @@
     "label": "Junio 2026"
   },
   "completed_months": 41,
-  "total_registrations_historical": 2239781,
+  "total_registrations_historical": 2238394,
   "has_provinces": true,
   "scope": {
     "mode": "simmix",
-    "source": "BBDD_PRODUCTO for years with Simmix export; DGT for remaining years and MTD",
+    "source": "DGT microdata filtered with Simmix-derived scope; DGT for 2026 and MTD",
     "reference_years": [
       2023,
       2024,
@@ -44,33 +44,55 @@
         "reference_total": 45306
       }
     },
-    "loaded": {
+    "monthly_stats": {
       "2023": {
-        "file": "BBDD_2023_PRODUCTO.csv",
-        "rows": 624738,
-        "loaded_rows": 624738,
-        "truncated_brand": null,
-        "malformed_rows": 0,
-        "total": 1094845,
-        "province_total": 1094845
+        "kept": 1097366,
+        "excluded": 21739,
+        "scope_brands": 82
       },
       "2024": {
-        "file": "BBDD_2024_PRODUCTO.csv",
-        "rows": 300021,
-        "loaded_rows": 285519,
-        "truncated_brand": "MERCEDES",
-        "malformed_rows": 0,
-        "total": 489161,
-        "province_total": 489161
+        "kept": 485373,
+        "excluded": 719351,
+        "scope_brands": 53
       },
       "2025": {
-        "file": "BBDD_2025_PRODUCTO.csv",
-        "rows": 36591,
-        "loaded_rows": 24051,
-        "truncated_brand": "BMW",
-        "malformed_rows": 4,
-        "total": 45306,
-        "province_total": 45306
+        "kept": 45186,
+        "excluded": 1311280,
+        "scope_brands": 9
+      },
+      "2026": {
+        "kept": 610469,
+        "excluded": 0,
+        "scope_brands": 0
+      }
+    },
+    "mtd_stats": {
+      "2026": {
+        "kept": 129466,
+        "excluded": 0,
+        "scope_brands": 0
+      }
+    },
+    "province_stats": {
+      "2023": {
+        "kept": 1079845,
+        "excluded": 21739,
+        "scope_brands": 82
+      },
+      "2024": {
+        "kept": 475934,
+        "excluded": 713904,
+        "scope_brands": 53
+      },
+      "2025": {
+        "kept": 45229,
+        "excluded": 1295705,
+        "scope_brands": 9
+      },
+      "2026": {
+        "kept": 604962,
+        "excluded": 0,
+        "scope_brands": 0
       }
     }
   }
