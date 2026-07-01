@@ -1,6 +1,7 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202601,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,158,100,pool_b00d_private=2757; rate=0.0573
 202601,WARN,NEW_BRAND,MERCEDES-COMMERCIAL,,monthly_count,358,250,Marca con volumen relevante no vista en outputs historicos previos
+202601,WARN,CHANNEL_DRIFT,AUDI,Corporate,count_vs_same_month_history,360,+/-250 and +/-25%,"actual=1660; media_mismo_mes=1300.0; historico=1286,1317,1297; rel=+27.7%"
 202601,WARN,CHANNEL_DRIFT,BMW,Private,count_vs_same_month_history,-301,+/-250 and +/-25%,"actual=574; media_mismo_mes=875.3; historico=595,1238,793; rel=-34.4%"
 202601,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,634,+/-250 and +/-25%,"actual=751; media_mismo_mes=117.0; historico=22,212; rel=+541.9%"
 202601,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,305,+/-250 and +/-25%,"actual=832; media_mismo_mes=527.0; historico=121,933; rel=+57.9%"

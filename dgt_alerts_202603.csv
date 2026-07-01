@@ -4,6 +4,7 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202603,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,190,100,pool_b00d_private=3306; rate=0.0573
 202603,WARN,NEW_BRAND,DEEPAL,,monthly_count,256,250,Marca con volumen relevante no vista en outputs historicos previos
 202603,WARN,NEW_BRAND,MERCEDES-COMMERCIAL,,monthly_count,622,250,Marca con volumen relevante no vista en outputs historicos previos
+202603,WARN,CHANNEL_DRIFT,AUDI,Corporate,count_vs_same_month_history,470,+/-250 and +/-25%,"actual=1972; media_mismo_mes=1502.0; historico=1734,1520,1252; rel=+31.3%"
 202603,WARN,CHANNEL_DRIFT,BMW,Corporate,count_vs_same_month_history,703,+/-250 and +/-25%,"actual=2759; media_mismo_mes=2056.3; historico=1979,2189,2001; rel=+34.2%"
 202603,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,715,+/-250 and +/-25%,"actual=834; media_mismo_mes=119.0; historico=23,11,323; rel=+600.8%"
 202603,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,1936,+/-250 and +/-25%,"actual=2455; media_mismo_mes=518.5; historico=94,943; rel=+373.5%"
@@ -31,7 +32,7 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202603,WARN,CHANNEL_DRIFT,SEAT,RAC,count_vs_same_month_history,-850,+/-250 and +/-25%,"actual=2443; media_mismo_mes=3293.0; historico=3117,2346,4416; rel=-25.8%"
 202603,WARN,CHANNEL_DRIFT,SKODA,Corporate,count_vs_same_month_history,361,+/-250 and +/-25%,"actual=1530; media_mismo_mes=1168.7; historico=1371,907,1228; rel=+30.9%"
 202603,WARN,CHANNEL_DRIFT,SKODA,Private,count_vs_same_month_history,480,+/-250 and +/-25%,"actual=1462; media_mismo_mes=981.7; historico=808,893,1244; rel=+48.9%"
-202603,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,878,+/-250 and +/-25%,"actual=1998; media_mismo_mes=1120.3; historico=764,1153,1444; rel=+78.3%"
+202603,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,839,+/-250 and +/-25%,"actual=1959; media_mismo_mes=1120.3; historico=764,1153,1444; rel=+74.9%"
 202603,WARN,CHANNEL_DRIFT,TOYOTA,Corporate,count_vs_same_month_history,1261,+/-250 and +/-25%,"actual=4424; media_mismo_mes=3162.7; historico=3215,3334,2939; rel=+39.9%"
 202603,WARN,CHANNEL_DRIFT,TOYOTA,Private,count_vs_same_month_history,1844,+/-250 and +/-25%,"actual=6280; media_mismo_mes=4436.0; historico=4201,4148,4959; rel=+41.6%"
 202603,CRITICAL,CHANNEL_DRIFT,TOYOTA,RAC,count_vs_same_month_history,1222,+/-250 and +/-25%,"actual=2791; media_mismo_mes=1568.7; historico=1507,2916,283; rel=+77.9%"

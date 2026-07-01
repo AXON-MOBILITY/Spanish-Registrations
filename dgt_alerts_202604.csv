@@ -3,8 +3,8 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202604,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,167,100,pool_b00d_private=2918; rate=0.0573
 202604,WARN,NEW_BRAND,DEEPAL,,monthly_count,360,250,Marca con volumen relevante no vista en outputs historicos previos
 202604,WARN,NEW_BRAND,MERCEDES-COMMERCIAL,,monthly_count,313,250,Marca con volumen relevante no vista en outputs historicos previos
-202604,WARN,CHANNEL_DRIFT,AUDI,Private,count_vs_same_month_history,261,+/-250 and +/-25%,"actual=1198; media_mismo_mes=937.0; historico=931,835,1045; rel=+27.9%"
-202604,WARN,CHANNEL_DRIFT,AUDI,RAC,count_vs_same_month_history,417,+/-250 and +/-25%,"actual=1316; media_mismo_mes=899.3; historico=923,667,1108; rel=+46.3%"
+202604,WARN,CHANNEL_DRIFT,AUDI,Private,count_vs_same_month_history,325,+/-250 and +/-25%,"actual=1262; media_mismo_mes=937.0; historico=931,835,1045; rel=+34.7%"
+202604,CRITICAL,CHANNEL_DRIFT,AUDI,RAC,count_vs_same_month_history,575,+/-250 and +/-25%,"actual=1474; media_mismo_mes=899.3; historico=923,667,1108; rel=+63.9%"
 202604,WARN,CHANNEL_DRIFT,BMW,Corporate,count_vs_same_month_history,553,+/-250 and +/-25%,"actual=2458; media_mismo_mes=1905.3; historico=1576,2236,1904; rel=+29.0%"
 202604,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,789,+/-250 and +/-25%,"actual=890; media_mismo_mes=100.7; historico=5,84,213; rel=+784.1%"
 202604,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,1753,+/-250 and +/-25%,"actual=2287; media_mismo_mes=534.0; historico=197,871; rel=+328.3%"

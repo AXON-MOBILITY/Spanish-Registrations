@@ -3,7 +3,8 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202605,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,166,100,pool_b00d_private=2897; rate=0.0573
 202605,WARN,NEW_BRAND,DEEPAL,,monthly_count,441,250,Marca con volumen relevante no vista en outputs historicos previos
 202605,WARN,NEW_BRAND,MERCEDES-COMMERCIAL,,monthly_count,392,250,Marca con volumen relevante no vista en outputs historicos previos
-202605,WARN,CHANNEL_DRIFT,AUDI,RAC,count_vs_same_month_history,320,+/-250 and +/-25%,"actual=1443; media_mismo_mes=1123.0; historico=1046,1124,1199; rel=+28.5%"
+202605,WARN,CHANNEL_DRIFT,AUDI,Private,count_vs_same_month_history,257,+/-250 and +/-25%,"actual=1264; media_mismo_mes=1007.0; historico=1091,923,1007; rel=+25.5%"
+202605,WARN,CHANNEL_DRIFT,AUDI,RAC,count_vs_same_month_history,493,+/-250 and +/-25%,"actual=1616; media_mismo_mes=1123.0; historico=1046,1124,1199; rel=+43.9%"
 202605,WARN,CHANNEL_DRIFT,BMW,RAC,count_vs_same_month_history,346,+/-250 and +/-25%,"actual=1158; media_mismo_mes=812.0; historico=327,795,1314; rel=+42.6%"
 202605,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,616,+/-250 and +/-25%,"actual=800; media_mismo_mes=184.3; historico=11,50,492; rel=+334.0%"
 202605,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,2157,+/-250 and +/-25%,"actual=2650; media_mismo_mes=493.0; historico=17,151,1311; rel=+437.5%"
@@ -24,4 +25,4 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202605,WARN,CHANNEL_DRIFT,RENAULT,RAC,count_vs_same_month_history,688,+/-250 and +/-25%,"actual=2434; media_mismo_mes=1746.0; historico=1559,1948,1731; rel=+39.4%"
 202605,WARN,CHANNEL_DRIFT,SKODA,RAC,count_vs_same_month_history,385,+/-250 and +/-25%,"actual=1401; media_mismo_mes=1016.3; historico=517,708,1824; rel=+37.8%"
 202605,CRITICAL,CHANNEL_DRIFT,SSANGYONG,RAC,count_vs_same_month_history,-390,+/-250 and +/-25%,"actual=0; media_mismo_mes=390.0; historico=778,2; rel=-100.0%"
-202605,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,604,+/-250 and +/-25%,"actual=1414; media_mismo_mes=810.0; historico=860,912,658; rel=+74.6%"
+202605,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,577,+/-250 and +/-25%,"actual=1387; media_mismo_mes=810.0; historico=860,912,658; rel=+71.2%"
