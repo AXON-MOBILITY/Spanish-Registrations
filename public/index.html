@@ -155,11 +155,6 @@ tr:hover td{background:var(--card2)}
     <div class="chips" id="f-fuels"></div>
   </div>
 
-  <div class="fg">
-    <div class="fl">Tipo Combustible <span id="f-fuelDet-badge" class="ss-badge"></span></div>
-    <div class="chips" id="f-fuelDets"></div>
-  </div>
-
   <div class="divider"></div>
 
   <div class="fg">
@@ -234,33 +229,10 @@ const MONTHS_ES = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
 
 const SEG_ORDER = ['UKL0','UKL1','UKL2','MKL','KKL','SKL','GKL','GKL+'];
 
-// Etiquetas cortas para chips de Tipo Combustible
-const FUEL_DET_LABELS = {
-  'Gasolina':                          'Gasolina',
-  'Diesel':                            'Diesel',
-  'Gasolina Mild Hybrid':              'Gasol. MHEV',
-  'Diesel Mild Hybrid':                'Diesel MHEV',
-  'Gasolina/Electrico':                'HEV Gasolina',
-  'Gasolina/Electrico Enchufable':     'PHEV Gasolina',
-  'Diesel/Electrico Enchufable':       'PHEV Diesel',
-  'Electrico':                         'Eléctrico',
-  'Gas Licuado con petroleo (GLP)':    'GLP',
-  'Gas natural comprimido (GNC)':      'GNC',
-  'Hidrogeno':                         'Hidrógeno',
-};
-
-// Orden preferido para los chips de combustible detalle
-const FUEL_DET_ORDER = [
-  'Gasolina','Diesel','Gasolina Mild Hybrid','Diesel Mild Hybrid',
-  'Gasolina/Electrico','Gasolina/Electrico Enchufable','Diesel/Electrico Enchufable',
-  'Electrico','Gas Licuado con petroleo (GLP)','Gas natural comprimido (GNC)','Hidrogeno',
-];
-
 // Estado de filtros — Set vacío = todos permitidos
 const F = {
   years:    new Set(), months: new Set(),
   canales:  new Set(), fuels:  new Set(),
-  fuelDets: new Set(),
   marcas:   new Set(), modelos: new Set(),
   segs:     new Set(), subs:  new Set(),
   hps:      new Set(), bodies: new Set(),
@@ -328,26 +300,6 @@ function buildSidebar() {
     fc.appendChild(b);
     F.fuels.add(i);
   });
-
-  // ── Tipo Combustible (11 categorías Simmix) ──
-  const fdc = document.getElementById('f-fuelDets');
-  const availFuels = new Set(E.fuel_det);
-  FUEL_DET_ORDER.forEach(fd => {
-    if (!availFuels.has(fd)) return;
-    const fidx = E.fuel_det.indexOf(fd);
-    const lbl  = FUEL_DET_LABELS[fd] || fd;
-    const b = btn(lbl, fd, 'c-fuel', () => {
-      toggleChip('fuelDets', fidx, b, onFilterChange);
-      document.getElementById('f-fuelDet-badge').textContent =
-        F.fuelDets.size ? `(${F.fuelDets.size})` : '';
-    }, false);
-    fdc.appendChild(b);
-  });
-  // Empty rows (fuel_det='') chip
-  const emptyIdx = E.fuel_det.indexOf('');
-  if (emptyIdx >= 0) {
-    // Don't show chip for empty string — those are old-format rows without fuel detail
-  }
 
   // ── Segmento ──
   const sc = document.getElementById('f-segs');
@@ -467,7 +419,6 @@ function applyFilters() {
     if (F.years.size    && !F.years.has(r[COL.Y]))         return false;
     if (F.canales.size  && !F.canales.has(r[COL.CANAL]))   return false;
     if (F.fuels.size    && !F.fuels.has(r[COL.FUEL]))      return false;
-    if (F.fuelDets.size && !F.fuelDets.has(r[COL.FUEL_DET])) return false;
     if (F.marcas.size   && !F.marcas.has(r[COL.MARCA]))    return false;
     if (F.modelos.size  && !F.modelos.has(r[COL.MODELO]))  return false;
     if (F.segs.size     && !F.segs.has(r[COL.SEG]))        return false;
@@ -497,11 +448,10 @@ function resetFilters() {
   F.fuels.clear();
   document.querySelectorAll('#f-fuels .chip').forEach((b,i) => { b.classList.add('on'); F.fuels.add(i); });
   // Dimension filters: off = all allowed
-  ['f-fuelDets','f-segs','f-subs','f-bodies','f-hps'].forEach(id => {
+  ['f-segs','f-subs','f-bodies','f-hps'].forEach(id => {
     document.querySelectorAll(`#${id} .chip`).forEach(b => b.classList.remove('on'));
   });
-  F.fuelDets.clear(); F.segs.clear(); F.subs.clear(); F.bodies.clear(); F.hps.clear();
-  document.getElementById('f-fuelDet-badge').textContent = '';
+  F.segs.clear(); F.subs.clear(); F.bodies.clear(); F.hps.clear();
   // Brand/model
   F.marcas = new Set(); F.modelos = new Set();
   ['marca','modelo'].forEach(id => {
@@ -777,24 +727,21 @@ function renderSegmentos(rows) {
   const E = REC.enums;
   const el = document.getElementById('page-segmentos');
   const total = rows.reduce((s,r)=>s+r[COL.N],0);
-  const bySeg={}, bySub={}, byBody={}, byHP={}, byFuelDet={};
+  const bySeg={}, bySub={}, byBody={}, byHP={};
   rows.forEach(r => {
     const seg   = E.seg[r[COL.SEG]]||'Sin seg.';
     const sub   = E.sub[r[COL.SUB]]||'—';
     const body  = E.body[r[COL.BODY]]||'—';
     const hp    = E.hp[r[COL.HP]]||'—';
-    const fd    = E.fuel_det[r[COL.FUEL_DET]]||'—';
     bySeg[seg]  =(bySeg[seg]||0)+r[COL.N];
     bySub[sub]  =(bySub[sub]||0)+r[COL.N];
     byBody[body]=(byBody[body]||0)+r[COL.N];
     byHP[hp]    =(byHP[hp]||0)+r[COL.N];
-    byFuelDet[fd]=(byFuelDet[fd]||0)+r[COL.N];
   });
   const segs  = Object.entries(bySeg).sort((a,b)=>SEG_ORDER.indexOf(a[0])-SEG_ORDER.indexOf(b[0]));
   const bodies= Object.entries(byBody).sort((a,b)=>b[1]-a[1]);
   const subs  = Object.entries(bySub).sort((a,b)=>b[1]-a[1]);
   const hps   = Object.entries(byHP).sort((a,b)=>b[1]-a[1]);
-  const fds   = Object.entries(byFuelDet).filter(([k])=>k!=='—').sort((a,b)=>b[1]-a[1]);
   const maxSeg = segs[0]?.[1]||1;
 
   el.innerHTML = `
@@ -807,7 +754,6 @@ function renderSegmentos(rows) {
     <div class="cc"><div class="cc-t">High Performance</div><div class="cw" style="height:180px"><canvas id="ch-hp-pie"></canvas></div></div>
   </div>
   <div class="grid2">
-    <div class="cc"><div class="cc-t">Mix Tipo Combustible</div><div class="cw" style="height:220px"><canvas id="ch-fueldet-bar"></canvas></div></div>
     <div class="tw" style="margin-bottom:0">
       <div class="th"><div class="th-t">Detalle Segmentos</div></div>
       <table><thead><tr><th>Segmento</th><th>Total</th><th>% Total</th></tr></thead><tbody>
@@ -823,10 +769,6 @@ function renderSegmentos(rows) {
   makeChart('ch-body-bar','bar',{labels:bodies.map(x=>x[0]),datasets:[{label:'Matrículas',data:bodies.map(x=>x[1]),backgroundColor:PALETTE,borderWidth:0}]},{indexAxis:'y',plugins:{legend:{display:false}}});
   makeChart('ch-sub-pie','doughnut',{labels:subs.map(x=>x[0]),datasets:[{data:subs.map(x=>x[1]),backgroundColor:PALETTE,borderWidth:0}]},{plugins:{legend:{position:'bottom'}}});
   makeChart('ch-hp-pie','doughnut',{labels:hps.map(x=>x[0]),datasets:[{data:hps.map(x=>x[1]),backgroundColor:['#8892b0','#f7934f','#ffd700','#c084fc'],borderWidth:0}]},{plugins:{legend:{position:'bottom'}}});
-  makeChart('ch-fueldet-bar','bar',{
-    labels:fds.map(([k])=>FUEL_DET_LABELS[k]||k),
-    datasets:[{label:'Matrículas',data:fds.map(([,v])=>v),backgroundColor:PALETTE,borderWidth:0}]
-  },{indexAxis:'y',plugins:{legend:{display:false}}});
 }
 
 // ─── MODELOS ─────────────────────────────────────────
@@ -949,3 +891,4 @@ load();
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
