@@ -486,7 +486,7 @@ def _candidate_simmix_2026_product_paths():
     try:
         names = [
             n for n in os.listdir(downloads)
-            if n.upper().startswith('BBDD_2026_PRODUCTO_06_30') and n.lower().endswith('.csv')
+            if n.upper().startswith('BBDD_2026_PRODUCTO') and n.lower().endswith('.csv')
         ]
         paths.extend(os.path.join(downloads, n) for n in sorted(names, reverse=True))
     except OSError:

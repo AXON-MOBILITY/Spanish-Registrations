@@ -173,7 +173,7 @@ def _candidate_simmix_2026_product_paths(base):
     try:
         names = [
             n for n in downloads.iterdir()
-            if n.name.upper().startswith("BBDD_2026_PRODUCTO_06_30") and n.suffix.lower() == ".csv"
+            if n.name.upper().startswith("BBDD_2026_PRODUCTO") and n.suffix.lower() == ".csv"
         ]
         paths.extend(sorted(names, reverse=True))
     except OSError:
