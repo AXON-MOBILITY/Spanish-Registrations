@@ -125,6 +125,7 @@ _LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
 
 _BRAND_NORM = {
     'MERCEDES-BENZ': 'MERCEDES', 'MERCEDES BENZ': 'MERCEDES',
+    'MERCEDES-AMG': 'MERCEDES',   # AMG cars map to Mercedes scope brand
     'LYNK&CO': 'LYNK & CO',
     "ALKE'": 'ALKE',
     'DS AUTOMOBILES': 'DS',
@@ -974,7 +975,7 @@ def process_lines(lines_iter):
                 hp = 'M'
             elif ma_up == 'BMW' and ('M PERFORMANCE' in mo_up or 'M SPORT' in mo_up):
                 hp = 'M Performance'
-            elif ma_up == 'MINI' and 'JCW' in mo_up:
+            elif ma_up == 'MINI' and ('JCW' in mo_up or 'JOHN COOPER WORKS' in mo_up):
                 hp = 'JCW'
             elif ma_up == 'AUDI' and (mo_up.startswith('RS') or mo_up.startswith('R8')):
                 hp = 'M Performance'
