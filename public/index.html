@@ -3,173 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DGT Matriculaciones Dashboard</title>
+<title>DGT Matriculaciones</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --hdr:#05445E; --hdr2:#189AB4;
-  --bg:#eef2f7; --white:#fff;
-  --border:#cdd6e4;
-  --bev:#27ae60; --ice:#2980b9; --phev:#8e44ad;
-  --corp:#1a5276; --priv:#2471a3; --rac:#e67e22;
-  --pos:#1a8c40; --neg:#c0392b;
-  --row-alt:#f5f8fc; --text:#1a2632; --text2:#667890;
+  --bg:#0d1b2a;
+  --bg2:#111f32;
+  --card:#152a40;
+  --card2:#1a3350;
+  --sb:#0b1929;
+  --hdr:#0b1929;
+  --border:rgba(255,255,255,.08);
+  --border2:rgba(255,255,255,.05);
+  --acc:#0ea5e9;
+  --acc2:#38bdf8;
+  --bev:#10b981;
+  --ice:#3b82f6;
+  --phev:#8b5cf6;
+  --corp:#06b6d4;
+  --priv:#6366f1;
+  --rac:#f97316;
+  --pos:#22c55e;
+  --neg:#ef4444;
+  --text:#e2e8f0;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  --row-alt:rgba(255,255,255,.025);
 }
 html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;background:var(--bg);color:var(--text)}
 
-/* TOPBAR */
+/* ── TOPBAR ─────────────────────────────────────────── */
 #topbar{
-  position:sticky;top:0;z-index:100;
-  background:var(--white);border-bottom:2px solid var(--hdr);
-  display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;
+  height:52px;display:flex;align-items:center;gap:0;
+  background:var(--hdr);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;
 }
-.app-logo{font-weight:700;font-size:13px;color:var(--hdr);white-space:nowrap;margin-right:4px}
-.tb-sep{width:1px;height:22px;background:var(--border);flex-shrink:0}
-.tb-grp{display:flex;align-items:center;gap:4px}
-.tb-lbl{font-size:9px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-select.tb-sel{
-  border:1px solid var(--border);border-radius:4px;
-  padding:3px 20px 3px 6px;font-size:11px;color:var(--text);background:var(--white);
-  cursor:pointer;min-width:80px;max-width:150px;
+.tb-logo{
+  display:flex;align-items:center;gap:8px;padding:0 18px;
+  font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;
+  border-right:1px solid var(--border);height:100%;
+}
+.tb-logo .acc{color:var(--acc)}
+.tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px}
+.tab-btn{
+  padding:0 16px;height:100%;border:none;background:transparent;
+  color:var(--text3);font-size:12px;font-weight:500;cursor:pointer;
+  border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tab-btn.on{color:var(--acc);border-bottom-color:var(--acc);background:rgba(14,165,233,.06)}
+.tb-right{
+  margin-left:auto;display:flex;align-items:center;gap:10px;padding:0 16px;
+  font-size:11px;color:var(--text3);white-space:nowrap;
+}
+.tb-stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.tb-stat b{color:var(--text);font-size:13px;font-weight:700}
+.tb-sep{width:1px;height:28px;background:var(--border)}
+.tb-filters{display:flex;align-items:center;gap:8px;padding:0 14px;border-left:1px solid var(--border)}
+.tf-grp{display:flex;align-items:center;gap:4px}
+.tf-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
+select.tf-sel{
+  background:var(--card);border:1px solid var(--border);border-radius:5px;
+  color:var(--text);padding:3px 22px 3px 7px;font-size:11px;cursor:pointer;
+  min-width:80px;max-width:140px;
   appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23667890'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 6px center;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%2364748b'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 7px center;
 }
-.hp-row{display:flex;gap:6px;align-items:center}
-.hp-lbl{display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;white-space:nowrap}
+select.tf-sel:focus{outline:none;border-color:var(--acc)}
+.hp-row{display:flex;gap:5px;align-items:center}
+.hp-lbl{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text3);cursor:pointer}
+.hp-lbl input{accent-color:var(--acc);width:12px;height:12px;cursor:pointer}
 .btn-clear{
-  margin-left:auto;padding:4px 10px;background:var(--hdr);color:#fff;
-  border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;
+  padding:5px 11px;background:rgba(14,165,233,.15);border:1px solid var(--acc);
+  color:var(--acc);border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;
+  white-space:nowrap;transition:.15s;
 }
-.btn-clear:hover{background:var(--hdr2)}
+.btn-clear:hover{background:rgba(14,165,233,.25)}
 
-/* SHELL */
-#shell{display:flex;height:calc(100vh - 46px);overflow:hidden;background:var(--bg)}
+/* ── SHELL ───────────────────────────────────────────── */
+#shell{display:flex;height:calc(100vh - 52px);overflow:hidden}
 
-/* SIDEBAR */
+/* ── SIDEBAR ─────────────────────────────────────────── */
 #sidebar{
-  width:180px;flex-shrink:0;background:#fff;color:var(--text);
-  overflow-y:auto;padding:6px 0;display:flex;flex-direction:column;
-  border-right:1px solid var(--border);
+  width:190px;flex-shrink:0;background:var(--sb);
+  border-right:1px solid var(--border);overflow-y:auto;
 }
-/* Filter group — accordion style */
-.sg{display:flex;flex-direction:column}
+.sg{border-bottom:1px solid var(--border)}
 .sg-hdr{
   display:flex;align-items:center;justify-content:space-between;
-  padding:7px 10px;cursor:pointer;user-select:none;
-  font-size:11px;font-weight:600;color:var(--text);
-  background:#fff;border-bottom:1px solid var(--border);
-  transition:background .12s;
+  padding:9px 12px;cursor:pointer;user-select:none;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+  color:var(--text3);transition:background .12s;
 }
-.sg-hdr:hover{background:#f0f4f8}
-.sg-hdr .sg-arrow{
-  font-size:9px;color:var(--text2);transition:transform .2s;display:inline-block;
+.sg-hdr:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.sg-arrow{font-size:8px;transition:transform .2s;color:var(--text2)}
+.sg.open .sg-arrow{transform:rotate(180deg)}
+.sg-hdr .sg-count{
+  font-size:9px;font-weight:600;color:var(--acc);
+  background:rgba(14,165,233,.15);padding:1px 5px;border-radius:10px;margin-left:4px;
 }
-.sg.open .sg-hdr .sg-arrow{transform:rotate(180deg)}
-.sg-body{
-  display:none;flex-direction:column;gap:0;
-  background:#f7f9fc;border-bottom:1px solid var(--border);
-  padding:4px 0;
+.sg-body{display:none;padding:4px 0 6px}
+.sg.open .sg-body{display:block}
+/* Pill mode (fuel, canal) */
+.sg-pills{display:flex;flex-wrap:wrap;gap:4px;padding:4px 10px 6px}
+.sg-pill{
+  padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);color:var(--text3);
+  background:transparent;transition:.15s;user-select:none;
 }
-.sg.open .sg-body{display:flex}
-/* Square checkbox items */
+.sg-pill:hover{border-color:var(--acc);color:var(--acc)}
+.sg-pill.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.sg-pill.bev.on{background:var(--bev);border-color:var(--bev);color:#fff}
+.sg-pill.ice.on{background:var(--ice);border-color:var(--ice);color:#fff}
+.sg-pill.phev.on{background:var(--phev);border-color:var(--phev);color:#fff}
+.sg-pill.corp.on{background:var(--corp);border-color:var(--corp);color:#fff}
+.sg-pill.priv.on{background:var(--priv);border-color:var(--priv);color:#fff}
+.sg-pill.rac.on{background:var(--rac);border-color:var(--rac);color:#fff}
+/* Checkbox items */
 .sg-item{
-  display:flex;align-items:center;gap:7px;
-  font-size:11px;color:var(--text);cursor:pointer;
-  padding:3px 12px;user-select:none;
+  display:flex;align-items:center;gap:7px;padding:3px 12px;
+  font-size:11px;color:var(--text3);cursor:pointer;user-select:none;transition:.1s;
 }
-.sg-item:hover{background:#e8f0f8}
-.sg-item input[type=checkbox]{
-  cursor:pointer;
-  width:13px;height:13px;
-  accent-color:var(--hdr);
-  flex-shrink:0;
-  border-radius:2px;
-}
+.sg-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.sg-item input[type=checkbox]{accent-color:var(--acc);width:12px;height:12px;cursor:pointer;flex-shrink:0}
 
-/* CONTENT */
-#content{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
+/* ── CONTENT ─────────────────────────────────────────── */
+#content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.pane{display:none;flex:1;overflow-y:auto;padding:10px;flex-direction:column;gap:10px}
+.pane.on{display:flex}
 
-/* STAT ROW */
-.stat-row{display:flex;gap:8px}
+/* ── STAT CARDS ──────────────────────────────────────── */
+.stat-row{display:flex;gap:10px}
 .stat-card{
-  flex:1;background:var(--white);border-radius:5px;
-  border-top:3px solid var(--hdr);padding:8px 12px;
-  box-shadow:0 1px 3px rgba(0,0,0,.07);
+  flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;border-top:2px solid var(--acc);
 }
-.stat-val{font-size:20px;font-weight:700;color:var(--hdr);line-height:1.1}
-.stat-sub{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
-.stat-yoy{font-size:11px;font-weight:600;margin-top:2px}
+.stat-val{font-size:22px;font-weight:700;color:#fff;line-height:1.1}
+.stat-sub{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.stat-yoy{font-size:11px;font-weight:600;margin-top:4px}
 .pos{color:var(--pos)}.neg{color:var(--neg)}
 
-/* MAIN GRID — left col spans 2 rows */
+/* ── MAIN GRID ───────────────────────────────────────── */
 .main-grid{
   display:grid;
-  grid-template-columns:minmax(300px,2fr) minmax(240px,1.6fr) minmax(170px,1fr);
+  grid-template-columns:minmax(280px,2fr) minmax(220px,1.5fr) minmax(160px,1fr);
   grid-template-rows:auto auto;
-  gap:8px;align-items:start;
+  gap:10px;align-items:start;
 }
-.card-regs{grid-row:1/3}
+.span2{grid-row:1/3}
 
-/* CARDS */
-.card{background:var(--white);border-radius:5px;box-shadow:0 1px 3px rgba(0,0,0,.07);overflow:hidden}
+/* ── CARDS ───────────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .card-hdr{
-  background:var(--hdr);color:#fff;
-  padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.3px;
-  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.4px;
+  background:rgba(255,255,255,.04);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;color:var(--text);
 }
-.card-hdr-note{font-weight:400;opacity:.65;font-size:9px}
+.card-hdr .note{font-weight:400;color:var(--text2);font-size:9px}
 
-/* TABLES */
-.tbl-wrap{overflow-y:auto;max-height:390px}
+/* ── TABLES ──────────────────────────────────────────── */
+.tbl-wrap{overflow-y:auto;max-height:370px}
+.tbl-wrap2{overflow:auto}
 table{width:100%;border-collapse:collapse}
 thead th{
-  background:var(--hdr);color:#fff;padding:4px 7px;
-  text-align:right;font-size:10px;font-weight:600;white-space:nowrap;
-  position:sticky;top:0;z-index:2;
+  background:rgba(14,165,233,.12);color:var(--acc2);
+  padding:5px 8px;text-align:right;font-size:10px;font-weight:700;
+  white-space:nowrap;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);
 }
 thead th:first-child{text-align:left}
+thead th.month-hdr{
+  background:rgba(99,102,241,.15);color:#a5b4fc;text-align:center;
+}
 tbody tr:nth-child(even){background:var(--row-alt)}
-tbody tr:hover{background:#e3edf8}
-tbody td{padding:3px 7px;text-align:right;border-bottom:1px solid #edf0f6;white-space:nowrap}
-tbody td:first-child{text-align:left;font-weight:500}
-.total-row td{font-weight:700;background:#d8e6f5!important}
+tbody tr:hover{background:rgba(14,165,233,.06)}
+tbody td{padding:4px 8px;text-align:right;border-bottom:1px solid var(--border2);white-space:nowrap;color:var(--text3)}
+tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
+.total-row td{font-weight:700;background:rgba(14,165,233,.1)!important;color:var(--text)!important}
 .yoy-p{color:var(--pos);font-weight:600}
 .yoy-n{color:var(--neg);font-weight:600}
+.yoy-z{color:var(--text2)}
 
-/* CHART AREA */
-.ch-wrap{padding:8px 10px}
-.ch-legend{display:flex;gap:8px;margin-bottom:6px}
-.ch-leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)}
+/* ── CHARTS ──────────────────────────────────────────── */
+.ch-body{padding:10px 12px}
+.ch-legend{display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.ch-leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)}
 .ch-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── ANALYSIS GRID ───────────────────────────────────── */
+.analysis-grid-top{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.analysis-grid-bot{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+
+/* scrollable wide table */
+.wide-wrap{overflow-x:auto}
+.wide-wrap table{min-width:600px}
 </style>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="app-logo">DGT Matriculaciones</div>
-  <div class="tb-sep"></div>
-  <div class="tb-grp">
-    <span class="tb-lbl">Marca</span>
-    <select id="f-marca" class="tb-sel" onchange="onTopChange()"><option value="">Todas</option></select>
+  <div class="tb-logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    DGT <span class="acc">Matriculaciones</span>
   </div>
-  <div class="tb-grp">
-    <span class="tb-lbl">Modelo</span>
-    <select id="f-modelo" class="tb-sel" onchange="onTopChange()"><option value="">Todos</option></select>
+  <div class="tb-tabs">
+    <button class="tab-btn on" id="tbtn-overview" onclick="showTab('overview')">Overview</button>
+    <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Canal &amp; Mensual</button>
   </div>
-  <div class="tb-grp">
-    <span class="tb-lbl">Body Type</span>
-    <select id="f-body" class="tb-sel" onchange="onTopChange()"><option value="">Todos</option></select>
+  <div class="tb-filters">
+    <div class="tf-grp">
+      <span class="tf-lbl">Marca</span>
+      <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">Todas</option></select>
+    </div>
+    <div class="tf-grp">
+      <span class="tf-lbl">Modelo</span>
+      <select id="f-modelo" class="tf-sel" onchange="onTopChange()"><option value="">Todos</option></select>
+    </div>
+    <div class="tf-grp">
+      <span class="tf-lbl">Body</span>
+      <select id="f-body" class="tf-sel" onchange="onTopChange()"><option value="">Todos</option></select>
+    </div>
+    <div class="tf-grp">
+      <span class="tf-lbl">High Perf.</span>
+      <div class="hp-row" id="f-hp"></div>
+    </div>
+    <button class="btn-clear" onclick="resetFilters()">Clear Filters</button>
   </div>
-  <div class="tb-sep"></div>
-  <div class="tb-grp">
-    <span class="tb-lbl">High Perf.</span>
-    <div class="hp-row" id="f-hp"></div>
+  <div class="tb-right">
+    <div class="tb-stat"><b id="hdr-total">—</b><span>registrations</span></div>
+    <div class="tb-sep"></div>
+    <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
   </div>
-  <button class="btn-clear" onclick="resetFilters()">Clear all Filters</button>
 </div>
 
 <!-- SHELL -->
@@ -177,100 +244,190 @@ tbody td:first-child{text-align:left;font-weight:500}
 
   <!-- SIDEBAR -->
   <div id="sidebar">
-    <div class="sg open"><div class="sg-hdr" onclick="toggleSg(this)"><span>Month</span><span class="sg-arrow">▼</span></div><div class="sg-body" id="sb-months"></div></div>
-    <div class="sg open"><div class="sg-hdr" onclick="toggleSg(this)"><span>Year</span><span class="sg-arrow">▼</span></div><div class="sg-body" id="sb-years"></div></div>
-    <div class="sg open"><div class="sg-hdr" onclick="toggleSg(this)"><span>Subsegment</span><span class="sg-arrow">▼</span></div><div class="sg-body" id="sb-subs"></div></div>
-    <div class="sg open"><div class="sg-hdr" onclick="toggleSg(this)"><span>Fuel Type</span><span class="sg-arrow">▼</span></div><div class="sg-body" id="sb-fuels"></div></div>
-    <div class="sg open"><div class="sg-hdr" onclick="toggleSg(this)"><span>Channel</span><span class="sg-arrow">▼</span></div><div class="sg-body" id="sb-canales"></div></div>
-    <div class="sg open"><div class="sg-hdr" onclick="toggleSg(this)"><span>Segment</span><span class="sg-arrow">▼</span></div><div class="sg-body" id="sb-segs"></div></div>
+    <div class="sg open" id="sg-months">
+      <div class="sg-hdr" onclick="toggleSg('sg-months')">
+        <span>Month <span class="sg-count" id="cnt-months"></span></span>
+        <span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-months"></div>
+    </div>
+    <div class="sg open" id="sg-years">
+      <div class="sg-hdr" onclick="toggleSg('sg-years')">
+        <span>Year <span class="sg-count" id="cnt-years"></span></span>
+        <span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-years"></div>
+    </div>
+    <div class="sg open" id="sg-fuels">
+      <div class="sg-hdr" onclick="toggleSg('sg-fuels')">
+        <span>Fuel Type</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body"><div class="sg-pills" id="sb-fuels"></div></div>
+    </div>
+    <div class="sg open" id="sg-canales">
+      <div class="sg-hdr" onclick="toggleSg('sg-canales')">
+        <span>Channel</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body"><div class="sg-pills" id="sb-canales"></div></div>
+    </div>
+    <div class="sg" id="sg-subs">
+      <div class="sg-hdr" onclick="toggleSg('sg-subs')">
+        <span>Subsegment</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-subs"></div>
+    </div>
+    <div class="sg" id="sg-segs">
+      <div class="sg-hdr" onclick="toggleSg('sg-segs')">
+        <span>Segment <span class="sg-count" id="cnt-segs"></span></span>
+        <span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-segs"></div>
+    </div>
   </div>
 
   <!-- CONTENT -->
   <div id="content">
 
-    <div class="stat-row" id="stat-row"></div>
-
-    <div class="main-grid">
-
-      <!-- COL 1 (rows 1+2): Registrations table -->
-      <div class="card card-regs">
-        <div class="card-hdr">
-          <span>Registrations</span>
-          <span class="card-hdr-note" id="regs-note"></span>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Brand</th><th>Regs</th><th>YoY%</th><th>YoY&thinsp;&Delta;</th><th>Mkt%</th>
-            </tr></thead>
-            <tbody id="tbody-regs"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- COL 2 row 1: Fuel Mix -->
-      <div class="card">
-        <div class="card-hdr">Fuel Mix</div>
-        <div class="ch-wrap">
-          <div class="ch-legend">
-            <div class="ch-leg"><div class="ch-dot" style="background:var(--bev)"></div>BEV</div>
-            <div class="ch-leg"><div class="ch-dot" style="background:var(--ice)"></div>ICE</div>
-            <div class="ch-leg"><div class="ch-dot" style="background:var(--phev)"></div>PHEV</div>
+    <!-- TAB 1: OVERVIEW -->
+    <div class="pane on" id="pane-overview">
+      <div class="stat-row" id="stat-row"></div>
+      <div class="main-grid">
+        <!-- Registrations table spans 2 rows -->
+        <div class="card span2">
+          <div class="card-hdr">
+            <span>Registrations by Brand</span>
+            <span class="note" id="regs-note"></span>
           </div>
-          <div id="wrap-fuel"><canvas id="ch-fuel"></canvas></div>
-        </div>
-      </div>
-
-      <!-- COL 3 row 1: MS by Fuel -->
-      <div class="card">
-        <div class="card-hdr">MS by Fuel</div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Brand</th><th>BEV</th><th>ICE</th><th>PHEV</th></tr></thead>
-            <tbody id="tbody-msfuel"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- COL 2 row 2: Channel Mix -->
-      <div class="card">
-        <div class="card-hdr">Channel Mix</div>
-        <div class="ch-wrap">
-          <div class="ch-legend">
-            <div class="ch-leg"><div class="ch-dot" style="background:var(--corp)"></div>Corporate</div>
-            <div class="ch-leg"><div class="ch-dot" style="background:var(--priv)"></div>Private</div>
-            <div class="ch-leg"><div class="ch-dot" style="background:var(--rac)"></div>RAC</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>Brand</th><th>Regs</th><th>YoY%</th><th>YoY&thinsp;&Delta;</th><th>Mkt%</th>
+              </tr></thead>
+              <tbody id="tbody-regs"></tbody>
+            </table>
           </div>
-          <div id="wrap-canal"><canvas id="ch-canal"></canvas></div>
+        </div>
+        <!-- Fuel Mix chart -->
+        <div class="card">
+          <div class="card-hdr">Fuel Mix by Brand</div>
+          <div class="ch-body">
+            <div class="ch-legend">
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--bev)"></div>BEV</div>
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--ice)"></div>ICE</div>
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--phev)"></div>PHEV</div>
+            </div>
+            <div id="wrap-fuel" style="position:relative"><canvas id="ch-fuel"></canvas></div>
+          </div>
+        </div>
+        <!-- MS by Fuel -->
+        <div class="card">
+          <div class="card-hdr">Market Share by Fuel</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Brand</th><th>BEV</th><th>ICE</th><th>PHEV</th></tr></thead>
+              <tbody id="tbody-msfuel"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Channel Mix chart -->
+        <div class="card">
+          <div class="card-hdr">Channel Mix by Brand</div>
+          <div class="ch-body">
+            <div class="ch-legend">
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--corp)"></div>Corporate</div>
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--priv)"></div>Private</div>
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--rac)"></div>RAC</div>
+            </div>
+            <div id="wrap-canal" style="position:relative"><canvas id="ch-canal"></canvas></div>
+          </div>
+        </div>
+        <!-- MS by Channel -->
+        <div class="card">
+          <div class="card-hdr">Market Share by Channel</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Brand</th><th>Corp</th><th>Priv</th><th>RAC</th></tr></thead>
+              <tbody id="tbody-mscanal"></tbody>
+            </table>
+          </div>
         </div>
       </div>
+    </div><!-- /pane-overview -->
 
-      <!-- COL 3 row 2: MS by Channel -->
-      <div class="card">
-        <div class="card-hdr">MS by Channel</div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Brand</th><th>Corp</th><th>Priv</th><th>RAC</th></tr></thead>
-            <tbody id="tbody-mscanal"></tbody>
-          </table>
+    <!-- TAB 2: CANAL & MENSUAL -->
+    <div class="pane" id="pane-analisis">
+      <div class="analysis-grid-top">
+        <!-- Channel distribution table -->
+        <div class="card">
+          <div class="card-hdr">Distribución por Canal</div>
+          <div class="tbl-wrap wide-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th rowspan="2">Brand</th>
+                  <th colspan="3" class="month-hdr" style="background:rgba(6,182,212,.12);color:#67e8f9">Corporate</th>
+                  <th colspan="3" class="month-hdr" style="background:rgba(99,102,241,.12);color:#a5b4fc">Private</th>
+                  <th colspan="3" class="month-hdr" style="background:rgba(249,115,22,.12);color:#fdba74">RAC</th>
+                </tr>
+                <tr>
+                  <th>Regs</th><th>%Distrib</th><th>YoY%</th>
+                  <th>Regs</th><th>%Distrib</th><th>YoY%</th>
+                  <th>Regs</th><th>%Distrib</th><th>YoY%</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-canal"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Market Share table -->
+        <div class="card">
+          <div class="card-hdr">Market Share by Fuel</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Brand</th><th>BEV</th><th>ICE</th><th>PHEV</th><th>Total</th></tr></thead>
+              <tbody id="tbody-ms2"></tbody>
+            </table>
+          </div>
         </div>
       </div>
+      <div class="analysis-grid-bot">
+        <!-- Monthly registrations -->
+        <div class="card">
+          <div class="card-hdr">Registrations by Month</div>
+          <div class="tbl-wrap2 wide-wrap" id="monthly-wrap">
+            <table id="tbl-monthly">
+              <thead id="thead-monthly"></thead>
+              <tbody id="tbody-monthly"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Fuel Mix vertical chart -->
+        <div class="card">
+          <div class="card-hdr">Fuel Mix</div>
+          <div class="ch-body">
+            <div class="ch-legend">
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--bev)"></div>BEV</div>
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--ice)"></div>ICE</div>
+              <div class="ch-leg"><div class="ch-dot" style="background:var(--phev)"></div>PHEV</div>
+            </div>
+            <div id="wrap-fuelv" style="position:relative;height:280px"><canvas id="ch-fuelv"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /pane-analisis -->
 
-    </div>
-  </div>
-</div>
+  </div><!-- /content -->
+</div><!-- /shell -->
 
 <script>
 Chart.register(ChartDataLabels);
 
-const COL = {Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,N:11};
+const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,N:11};
+const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MES3=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const SEG_ORDER=['UKL0','UKL1','UKL2','KKL','MKL','SKL','GKL','GKL+'];
 
-const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                   'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const SEG_ORDER = ['UKL0','UKL1','UKL2','KKL','MKL','SKL','GKL','GKL+'];
-
-// Simmix canonical brand scope (82 marcas)
-const SIMMIX_BRANDS = new Set([
+const SIMMIX_BRANDS=new Set([
   'Abarth','Aiways','Alfa Romeo','Alke','Alpine','Aston Martin','Audi',
   'BMW','BYD','Bentley','Cadillac','Caterham','Cenntro','Citroen','Cupra',
   'DFSK','DR','DS','Dacia','EVO','Esagono Energia','Etesia','Evum Motors',
@@ -281,393 +438,529 @@ const SIMMIX_BRANDS = new Set([
   'Mitsubishi','Mitsubishi-Fuso','Morgan','Nextem','Nissan','Omoda','Opel',
   'Peugeot','Piaggio','Polestar','Porsche','Renault','Renault Trucks',
   'Rolls-Royce','SEAT','Seres','Shineray','Skoda','Skywell','Smart',
-  'Ssangyong','Subaru','Suzuki','Tesla','Toyota','Volkswagen','Volvo',
-  'Voyah','Yudo'
+  'Ssangyong','Subaru','Suzuki','Tesla','Toyota','Volkswagen','Volvo','Voyah','Yudo'
 ]);
 
-let REC = null;
-const F = {
-  years:new Set(), months:new Set(),
-  fuels:new Set(), canales:new Set(),
-  segs:new Set(), subs:new Set(),
-  hps:new Set(),
-  marca:'', modelo:'', body:''
+let REC=null;
+const F={
+  years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
+  segs:new Set(),subs:new Set(),hps:new Set(),
+  marca:'',modelo:'',body:''
 };
-const CHARTS = {};
+const CHARTS={};
 
-const fmtN    = n => n.toLocaleString('es-ES');
-const fmtP1   = n => n.toFixed(1) + '%';
-const fmtP2   = n => n.toFixed(2) + '%';
+const fN=n=>n.toLocaleString('es-ES');
+const fP1=n=>n.toFixed(1)+'%';
+const fP2=n=>n.toFixed(2)+'%';
+const g=id=>document.getElementById(id);
 
-// ── LOAD ──────────────────────────────────────────────────
-fetch('data/records.json').then(r => r.json()).then(data => {
-  REC = data;
+// ── LOAD ────────────────────────────────────────────────
+fetch('data/records.json').then(r=>r.json()).then(data=>{
+  REC=data;
   buildSidebar();
   buildTopFilters();
   render();
 });
 
-// ── SIDEBAR ───────────────────────────────────────────────
-function buildSidebar() {
-  const E = REC.enums;
+// ── SIDEBAR BUILD ────────────────────────────────────────
+function buildSidebar(){
+  const E=REC.enums;
+  const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
 
-  // Years
-  [...new Set(REC.rows.map(r => r[COL.Y]))].sort().forEach(y => {
+  allYears.forEach(y=>{
     F.years.add(y);
-    g('sb-years').appendChild(mkCb(String(y), true, on => {
-      if(on) F.years.add(y); else F.years.delete(y); render();
+    g('sb-years').appendChild(mkCb(String(y),true,on=>{
+      if(on)F.years.add(y);else F.years.delete(y);
+      updateCount('cnt-years',F.years.size,allYears.length);
+      render();
     }));
   });
 
-  // Months
-  for(let m = 1; m <= 12; m++) {
+  for(let m=1;m<=12;m++){
     F.months.add(m);
-    g('sb-months').appendChild(mkCb(MONTHS_ES[m-1], true, on => {
-      if(on) F.months.add(m); else F.months.delete(m); render();
+    g('sb-months').appendChild(mkCb(MES[m-1],true,on=>{
+      if(on)F.months.add(m);else F.months.delete(m);
+      updateCount('cnt-months',F.months.size,12);
+      render();
     }));
   }
 
-  // SubSegments
-  E.sub.forEach((s, i) => {
-    F.subs.add(i);
-    g('sb-subs').appendChild(mkCb(s || '(Todas)', true, on => {
-      if(on) F.subs.add(i); else F.subs.delete(i); render();
-    }));
-  });
-
-  // Fuel
-  E.fuel.forEach((f, i) => {
+  // Fuel — pills
+  const fuelPills=[['ICE','bev'],['BEV','bev'],['PHEV','phev']];
+  // Actually map fuel names to pill classes
+  const fuelClass={ICE:'ice',BEV:'bev',PHEV:'phev'};
+  E.fuel.forEach((f,i)=>{
     F.fuels.add(i);
-    g('sb-fuels').appendChild(mkCb(f, true, on => {
-      if(on) F.fuels.add(i); else F.fuels.delete(i); render();
-    }));
+    const pill=document.createElement('div');
+    pill.className=`sg-pill ${fuelClass[f]||''} on`;
+    pill.textContent=f;
+    pill.onclick=()=>{
+      if(F.fuels.has(i)){if(F.fuels.size>1){F.fuels.delete(i);pill.classList.remove('on');}}
+      else{F.fuels.add(i);pill.classList.add('on');}
+      render();
+    };
+    g('sb-fuels').appendChild(pill);
   });
 
-  // Canal
-  E.canal.forEach((c, i) => {
+  // Canal — pills
+  const canalClass={Corporate:'corp',Private:'priv',RAC:'rac'};
+  E.canal.forEach((c,i)=>{
     F.canales.add(i);
-    g('sb-canales').appendChild(mkCb(c, true, on => {
-      if(on) F.canales.add(i); else F.canales.delete(i); render();
+    const pill=document.createElement('div');
+    pill.className=`sg-pill ${canalClass[c]||''} on`;
+    pill.textContent=c;
+    pill.onclick=()=>{
+      if(F.canales.has(i)){if(F.canales.size>1){F.canales.delete(i);pill.classList.remove('on');}}
+      else{F.canales.add(i);pill.classList.add('on');}
+      render();
+    };
+    g('sb-canales').appendChild(pill);
+  });
+
+  // Subsegment
+  E.sub.forEach((s,i)=>{
+    F.subs.add(i);
+    g('sb-subs').appendChild(mkCb(s||'(Todas)',true,on=>{
+      if(on)F.subs.add(i);else F.subs.delete(i);render();
     }));
   });
 
   // Segments
-  SEG_ORDER.forEach(s => {
-    const i = E.seg.indexOf(s);
-    if(i < 0) return;
+  SEG_ORDER.forEach(s=>{
+    const i=E.seg.indexOf(s);if(i<0)return;
     F.segs.add(i);
-    g('sb-segs').appendChild(mkCb(s, true, on => {
-      if(on) F.segs.add(i); else F.segs.delete(i); render();
+    g('sb-segs').appendChild(mkCb(s,true,on=>{
+      if(on)F.segs.add(i);else F.segs.delete(i);
+      updateCount('cnt-segs',F.segs.size,SEG_ORDER.filter(x=>E.seg.includes(x)).length+1);
+      render();
     }));
   });
-  const noSegIdx = E.seg.indexOf('');
-  if(noSegIdx >= 0) {
-    F.segs.add(noSegIdx);
-    g('sb-segs').appendChild(mkCb('Sin seg.', true, on => {
-      if(on) F.segs.add(noSegIdx); else F.segs.delete(noSegIdx); render();
+  const noSeg=E.seg.indexOf('');
+  if(noSeg>=0){
+    F.segs.add(noSeg);
+    g('sb-segs').appendChild(mkCb('Sin seg.',true,on=>{
+      if(on)F.segs.add(noSeg);else F.segs.delete(noSeg);render();
     }));
   }
 }
 
-function mkCb(label, checked, onChange) {
-  const d = document.createElement('div'); d.className = 'sg-item';
-  const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = checked;
-  cb.addEventListener('change', () => onChange(cb.checked));
-  d.appendChild(cb); d.appendChild(document.createTextNode(label));
+function mkCb(label,checked,onChange){
+  const d=document.createElement('div');d.className='sg-item';
+  const cb=document.createElement('input');cb.type='checkbox';cb.checked=checked;
+  cb.addEventListener('change',()=>onChange(cb.checked));
+  d.appendChild(cb);d.appendChild(document.createTextNode(label));
   return d;
 }
 
-// ── TOP FILTERS ───────────────────────────────────────────
-function buildTopFilters() {
-  const E = REC.enums;
+function updateCount(id,sel,total){
+  const el=g(id);if(!el)return;
+  if(sel<total){el.textContent=sel+'/'+total;el.style.display='inline';}
+  else el.style.display='none';
+}
 
-  // Brand (Simmix scope only)
-  const bSel = g('f-marca');
-  [...SIMMIX_BRANDS].sort().forEach(b => {
-    if(!E.marca.includes(b)) return;
-    const o = document.createElement('option'); o.value = b; o.textContent = b;
+// ── TOP FILTERS ──────────────────────────────────────────
+function buildTopFilters(){
+  const E=REC.enums;
+  const bSel=g('f-marca');
+  [...SIMMIX_BRANDS].sort().forEach(b=>{
+    if(!E.marca.includes(b))return;
+    const o=document.createElement('option');o.value=b;o.textContent=b;
     bSel.appendChild(o);
   });
-
-  // Body type
-  const bodySel = g('f-body');
-  E.body.filter(b => b).sort().forEach(b => {
-    const o = document.createElement('option'); o.value = b; o.textContent = b;
-    bodySel.appendChild(o);
+  E.body.filter(b=>b).sort().forEach(b=>{
+    const o=document.createElement('option');o.value=b;o.textContent=b;
+    g('f-body').appendChild(o);
   });
-
-  // HP checkboxes
-  E.hp.filter(h => h && h !== 'Standard').forEach(h => {
-    const hIdx = E.hp.indexOf(h);
-    const lbl = document.createElement('label'); lbl.className = 'hp-lbl';
-    const cb = document.createElement('input'); cb.type = 'checkbox';
-    cb.addEventListener('change', () => {
-      if(cb.checked) F.hps.add(hIdx); else F.hps.delete(hIdx); render();
-    });
-    lbl.appendChild(cb); lbl.appendChild(document.createTextNode(h));
+  E.hp.filter(h=>h&&h!=='Standard').forEach(h=>{
+    const hIdx=E.hp.indexOf(h);
+    const lbl=document.createElement('label');lbl.className='hp-lbl';
+    const cb=document.createElement('input');cb.type='checkbox';
+    cb.addEventListener('change',()=>{if(cb.checked)F.hps.add(hIdx);else F.hps.delete(hIdx);render();});
+    lbl.appendChild(cb);lbl.appendChild(document.createTextNode(h));
     g('f-hp').appendChild(lbl);
   });
 }
 
-function onTopChange() {
-  F.marca = g('f-marca').value;
-  F.body  = g('f-body').value;
-  refreshModels();
-  F.modelo = g('f-modelo').value;
-  render();
+function onTopChange(){
+  F.marca=g('f-marca').value;F.body=g('f-body').value;
+  refreshModels();F.modelo=g('f-modelo').value;render();
 }
 
-function refreshModels() {
-  const E = REC.enums;
-  const sel = g('f-modelo');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Todos</option>';
-  if(!F.marca) return;
-  const mIdx = E.marca.indexOf(F.marca);
-  [...new Set(REC.rows.filter(r => r[COL.MARCA] === mIdx).map(r => E.modelo[r[COL.MODELO]]))]
-    .filter(m => m).sort().forEach(m => {
-      const o = document.createElement('option'); o.value = m; o.textContent = m;
-      if(m === cur) o.selected = true;
-      sel.appendChild(o);
+function refreshModels(){
+  const E=REC.enums,sel=g('f-modelo'),cur=sel.value;
+  sel.innerHTML='<option value="">Todos</option>';
+  if(!F.marca)return;
+  const mIdx=E.marca.indexOf(F.marca);
+  [...new Set(REC.rows.filter(r=>r[COL.MARCA]===mIdx).map(r=>E.modelo[r[COL.MODELO]]))]
+    .filter(m=>m).sort().forEach(m=>{
+      const o=document.createElement('option');o.value=m;o.textContent=m;
+      if(m===cur)o.selected=true;sel.appendChild(o);
     });
 }
 
-// ── FILTER ────────────────────────────────────────────────
-function applyFilters() {
-  const E = REC.enums;
-  const mIdx  = F.marca  ? E.marca.indexOf(F.marca)   : -1;
-  const moIdx = F.modelo ? E.modelo.indexOf(F.modelo) : -1;
-  const bIdx  = F.body   ? E.body.indexOf(F.body)     : -1;
-
-  return REC.rows.filter(r => {
-    if(!SIMMIX_BRANDS.has(E.marca[r[COL.MARCA]])) return false;
-    if(!F.years.has(r[COL.Y]))      return false;
-    if(!F.months.has(r[COL.M]))     return false;
-    if(!F.fuels.has(r[COL.FUEL]))   return false;
-    if(!F.canales.has(r[COL.CANAL])) return false;
-    if(!F.segs.has(r[COL.SEG]))     return false;
-    if(!F.subs.has(r[COL.SUB]))     return false;
-    if(F.hps.size && !F.hps.has(r[COL.HP])) return false;
-    if(mIdx  >= 0 && r[COL.MARCA]  !== mIdx)  return false;
-    if(moIdx >= 0 && r[COL.MODELO] !== moIdx) return false;
-    if(bIdx  >= 0 && r[COL.BODY]   !== bIdx)  return false;
+// ── FILTERS ───────────────────────────────────────────────
+// Base = all filters except year (used for YoY prevYear lookup)
+function applyFiltersBase(){
+  const E=REC.enums;
+  const mIdx=F.marca?E.marca.indexOf(F.marca):-1;
+  const moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
+  const bIdx=F.body?E.body.indexOf(F.body):-1;
+  return REC.rows.filter(r=>{
+    if(!SIMMIX_BRANDS.has(E.marca[r[COL.MARCA]]))return false;
+    if(!F.months.has(r[COL.M]))return false;
+    if(!F.fuels.has(r[COL.FUEL]))return false;
+    if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.segs.has(r[COL.SEG]))return false;
+    if(!F.subs.has(r[COL.SUB]))return false;
+    if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
+    if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
+    if(moIdx>=0&&r[COL.MODELO]!==moIdx)return false;
+    if(bIdx>=0&&r[COL.BODY]!==bIdx)return false;
     return true;
   });
 }
 
+function applyFilters(){
+  return applyFiltersBase().filter(r=>F.years.has(r[COL.Y]));
+}
+
 // ── RENDER ────────────────────────────────────────────────
-function render() {
-  const E    = REC.enums;
-  const rows = applyFilters();
-  const total = rows.reduce((s, r) => s + r[COL.N], 0);
+function render(){
+  const E=REC.enums;
+  const rows=applyFilters();
+  const total=rows.reduce((s,r)=>s+r[COL.N],0);
 
-  // YoY — compare last two available years; use only months present in both
-  const allYears = [...new Set(rows.map(r => r[COL.Y]))].sort();
-  const refYear  = allYears.at(-1);
-  const prevYear = refYear ? refYear - 1 : null;
-  const hasPrev  = prevYear !== null && allYears.includes(prevYear);
+  // YoY: refYear = max selected year; prevYear always = refYear-1
+  // prevYear rows come from applyFiltersBase (no year restriction)
+  const refYear=F.years.size?Math.max(...F.years):null;
+  const prevYear=refYear?refYear-1:null;
+  const baseRows=applyFiltersBase();
+  const prevRows=prevYear?baseRows.filter(r=>r[COL.Y]===prevYear):[];
+  const refRows=rows.filter(r=>r[COL.Y]===refYear);
 
-  let commonM = null;
-  if(hasPrev) {
-    const refM  = new Set(rows.filter(r => r[COL.Y] === refYear).map(r  => r[COL.M]));
-    const prevM = new Set(rows.filter(r => r[COL.Y] === prevYear).map(r => r[COL.M]));
-    commonM = new Set([...refM].filter(m => prevM.has(m)));
-  }
+  // Common months between refYear and prevYear
+  const refM=new Set(refRows.map(r=>r[COL.M]));
+  const prevM=new Set(prevRows.map(r=>r[COL.M]));
+  const commonM=new Set([...refM].filter(m=>prevM.has(m)));
+  const hasPrev=prevRows.length>0&&commonM.size>0;
 
-  // Aggregate
-  const byBrand    = {};
-  const byBrandYoY = {};
-  const fuelTots   = {ICE:0, BEV:0, PHEV:0};
-  const canalTots  = {Corporate:0, Private:0, RAC:0};
+  // Aggregate by brand
+  const byBrand={};
+  const fuelTots={ICE:0,BEV:0,PHEV:0};
+  const canalTots={Corporate:0,Private:0,RAC:0};
+  // YoY by brand: {brand:{ref,prev}} using commonM only
+  const byBrandYoY={};
+  // Canal YoY by brand: {brand:{corp:{ref,prev}, priv:{ref,prev}, rac:{ref,prev}}}
+  const byCanalYoY={};
 
-  rows.forEach(r => {
-    const brand = E.marca[r[COL.MARCA]];
-    const fuel  = E.fuel[r[COL.FUEL]];
-    const canal = E.canal[r[COL.CANAL]];
-    const n     = r[COL.N];
-
-    if(!byBrand[brand]) byBrand[brand] = {total:0,BEV:0,ICE:0,PHEV:0,Corporate:0,Private:0,RAC:0};
-    byBrand[brand].total  += n;
-    byBrand[brand][fuel]  += n;
-    byBrand[brand][canal] += n;
-    fuelTots[fuel]   += n;
-    canalTots[canal] += n;
-
-    if(hasPrev && commonM.has(r[COL.M]) && (r[COL.Y] === refYear || r[COL.Y] === prevYear)) {
-      if(!byBrandYoY[brand]) byBrandYoY[brand] = {ref:0, prev:0};
-      if(r[COL.Y] === refYear) byBrandYoY[brand].ref  += n;
-      else                      byBrandYoY[brand].prev += n;
+  rows.forEach(r=>{
+    const brand=E.marca[r[COL.MARCA]];
+    const fuel=E.fuel[r[COL.FUEL]];
+    const canal=E.canal[r[COL.CANAL]];
+    const n=r[COL.N];
+    if(!byBrand[brand])byBrand[brand]={total:0,BEV:0,ICE:0,PHEV:0,Corporate:0,Private:0,RAC:0};
+    byBrand[brand].total+=n;byBrand[brand][fuel]+=n;byBrand[brand][canal]+=n;
+    fuelTots[fuel]+=n;canalTots[canal]+=n;
+    // YoY ref
+    if(r[COL.Y]===refYear&&commonM.has(r[COL.M])){
+      if(!byBrandYoY[brand])byBrandYoY[brand]={ref:0,prev:0};
+      byBrandYoY[brand].ref+=n;
+      if(!byCanalYoY[brand])byCanalYoY[brand]={Corporate:{ref:0,prev:0},Private:{ref:0,prev:0},RAC:{ref:0,prev:0}};
+      byCanalYoY[brand][canal].ref+=n;
     }
+  });
+  // YoY prev
+  prevRows.forEach(r=>{
+    if(!commonM.has(r[COL.M]))return;
+    const brand=E.marca[r[COL.MARCA]];
+    const canal=E.canal[r[COL.CANAL]];
+    const n=r[COL.N];
+    if(byBrandYoY[brand])byBrandYoY[brand].prev+=n;
+    if(byCanalYoY[brand])byCanalYoY[brand][canal].prev+=n;
   });
 
   // Total YoY
-  let totRef = 0, totPrv = 0;
-  Object.values(byBrandYoY).forEach(d => { totRef += d.ref; totPrv += d.prev; });
-  const totYoYPct   = hasPrev && totPrv ? (totRef - totPrv) / totPrv * 100 : null;
-  const totYoYDelta = hasPrev ? totRef - totPrv : null;
+  let totRef=0,totPrv=0;
+  Object.values(byBrandYoY).forEach(d=>{totRef+=d.ref;totPrv+=d.prev;});
+  const totYoYPct=hasPrev&&totPrv?(totRef-totPrv)/totPrv*100:null;
+  const totYoYD=hasPrev?totRef-totPrv:null;
 
-  const sorted = Object.entries(byBrand).sort((a, b) => b[1].total - a[1].total);
+  const sorted=Object.entries(byBrand).sort((a,b)=>b[1].total-a[1].total);
+
+  // Header stats
+  g('hdr-total').textContent=fN(total);
+  g('hdr-yoy').textContent=totYoYPct!==null?(totYoYPct>=0?'+':'')+totYoYPct.toFixed(2)+'%':'—';
+  g('hdr-yoy').className=totYoYPct===null?'':(totYoYPct>=0?'pos':'neg');
 
   // ── STAT CARDS ──
-  const bevShare  = total ? fuelTots.BEV  / total * 100 : 0;
-  const phevShare = total ? fuelTots.PHEV / total * 100 : 0;
-  g('stat-row').innerHTML = `
+  const bevShare=total?fuelTots.BEV/total*100:0;
+  const phevShare=total?fuelTots.PHEV/total*100:0;
+  g('stat-row').innerHTML=`
     <div class="stat-card">
-      <div class="stat-val">${fmtN(total)}</div>
+      <div class="stat-val">${fN(total)}</div>
       <div class="stat-sub">Total Registrations</div>
-      ${totYoYPct !== null
-        ? `<div class="stat-yoy ${totYoYPct >= 0 ? 'pos' : 'neg'}">${totYoYPct >= 0 ? '+' : ''}${totYoYPct.toFixed(2)}%&ensp;${totYoYDelta >= 0 ? '+' : ''}${fmtN(totYoYDelta)}</div>`
-        : ''}
+      ${totYoYPct!==null?`<div class="stat-yoy ${totYoYPct>=0?'pos':'neg'}">${totYoYPct>=0?'+':''}${totYoYPct.toFixed(2)}% &ensp; ${totYoYD>=0?'+':''}${fN(totYoYD)}</div>`:''}
     </div>
-    <div class="stat-card">
-      <div class="stat-val">${fmtP1(bevShare)}</div>
+    <div class="stat-card" style="border-top-color:var(--bev)">
+      <div class="stat-val" style="color:var(--bev)">${fP1(bevShare)}</div>
       <div class="stat-sub">BEV Share</div>
+      <div class="stat-yoy" style="color:var(--text2)">${fN(fuelTots.BEV)} unidades</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-val">${fmtP1(phevShare)}</div>
+    <div class="stat-card" style="border-top-color:var(--phev)">
+      <div class="stat-val" style="color:var(--phev)">${fP1(phevShare)}</div>
       <div class="stat-sub">PHEV Share</div>
+      <div class="stat-yoy" style="color:var(--text2)">${fN(fuelTots.PHEV)} unidades</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-val">${sorted.length}</div>
+    <div class="stat-card" style="border-top-color:var(--acc)">
+      <div class="stat-val" style="color:var(--acc2)">${sorted.length}</div>
       <div class="stat-sub">Marcas activas</div>
+      <div class="stat-yoy" style="color:var(--text2)">${refYear||'—'} vs ${prevYear&&hasPrev?prevYear:'—'}</div>
     </div>`;
 
   // ── REGISTRATIONS TABLE ──
-  g('regs-note').textContent = `${sorted.length} marcas`;
-  const tbody = g('tbody-regs');
-  tbody.innerHTML = '';
-  sorted.forEach(([brand, d]) => {
-    const yD = byBrandYoY[brand];
-    const yPct   = yD && yD.prev ? (yD.ref - yD.prev) / yD.prev * 100 : null;
-    const yDelta = yD ? yD.ref - yD.prev : null;
-    const share  = total ? d.total / total * 100 : 0;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${brand}</td>
-      <td>${fmtN(d.total)}</td>
-      <td class="${yPct !== null ? (yPct >= 0 ? 'yoy-p' : 'yoy-n') : ''}">${yPct !== null ? (yPct >= 0 ? '+' : '') + fmtP2(yPct) : '&mdash;'}</td>
-      <td class="${yDelta !== null ? (yDelta >= 0 ? 'yoy-p' : 'yoy-n') : ''}">${yDelta !== null ? (yDelta >= 0 ? '+' : '') + fmtN(yDelta) : '&mdash;'}</td>
-      <td>${fmtP2(share)}</td>`;
+  g('regs-note').textContent=sorted.length+' marcas';
+  const tbody=g('tbody-regs');tbody.innerHTML='';
+  sorted.forEach(([brand,d])=>{
+    const yD=byBrandYoY[brand];
+    const yPct=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
+    const yDelta=yD?yD.ref-yD.prev:null;
+    const share=total?d.total/total*100:0;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${brand}</td><td>${fN(d.total)}</td>
+      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
+      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
+      <td>${fP2(share)}</td>`;
     tbody.appendChild(tr);
   });
-  const totRow = document.createElement('tr'); totRow.className = 'total-row';
-  totRow.innerHTML = `
-    <td>Total</td>
-    <td>${fmtN(total)}</td>
-    <td class="${totYoYPct !== null ? (totYoYPct >= 0 ? 'yoy-p' : 'yoy-n') : ''}">${totYoYPct !== null ? (totYoYPct >= 0 ? '+' : '') + fmtP2(totYoYPct) : '&mdash;'}</td>
-    <td class="${totYoYDelta !== null ? (totYoYDelta >= 0 ? 'yoy-p' : 'yoy-n') : ''}">${totYoYDelta !== null ? (totYoYDelta >= 0 ? '+' : '') + fmtN(totYoYDelta) : '&mdash;'}</td>
-    <td>100.00%</td>`;
-  tbody.appendChild(totRow);
-
-  // Top 20 for charts
-  const top20  = sorted.slice(0, 20);
-  const labels = top20.map(([b]) => b);
-
-  // ── FUEL MIX CHART ──
-  drawBar('ch-fuel', 'wrap-fuel', labels, [
-    {label:'BEV',  data:top20.map(([,d]) => d.total ? +(d.BEV  / d.total * 100).toFixed(2) : 0), bg:'#27ae60'},
-    {label:'ICE',  data:top20.map(([,d]) => d.total ? +(d.ICE  / d.total * 100).toFixed(2) : 0), bg:'#2980b9'},
-    {label:'PHEV', data:top20.map(([,d]) => d.total ? +(d.PHEV / d.total * 100).toFixed(2) : 0), bg:'#8e44ad'}
+  addTotalRow(tbody,[
+    'Total',fN(total),
+    `<span class="${cls(totYoYPct)}">${yPctStr(totYoYPct)}</span>`,
+    `<span class="${cls(totYoYD)}">${totYoYD!==null?(totYoYD>=0?'+':'')+fN(totYoYD):'—'}</span>`,
+    '100.00%'
   ]);
 
-  // ── CHANNEL MIX CHART ──
-  drawBar('ch-canal', 'wrap-canal', labels, [
-    {label:'Corporate', data:top20.map(([,d]) => d.total ? +(d.Corporate / d.total * 100).toFixed(2) : 0), bg:'#1a5276'},
-    {label:'Private',   data:top20.map(([,d]) => d.total ? +(d.Private   / d.total * 100).toFixed(2) : 0), bg:'#2471a3'},
-    {label:'RAC',       data:top20.map(([,d]) => d.total ? +(d.RAC       / d.total * 100).toFixed(2) : 0), bg:'#e67e22'}
+  // Charts — top 20
+  const top20=sorted.slice(0,20);
+  const labels=top20.map(([b])=>b);
+
+  drawHBar('ch-fuel','wrap-fuel',labels,[
+    {label:'BEV',data:top20.map(([,d])=>d.total?+(d.BEV/d.total*100).toFixed(2):0),bg:'#10b981'},
+    {label:'ICE',data:top20.map(([,d])=>d.total?+(d.ICE/d.total*100).toFixed(2):0),bg:'#3b82f6'},
+    {label:'PHEV',data:top20.map(([,d])=>d.total?+(d.PHEV/d.total*100).toFixed(2):0),bg:'#8b5cf6'}
+  ]);
+  drawHBar('ch-canal','wrap-canal',labels,[
+    {label:'Corp',data:top20.map(([,d])=>d.total?+(d.Corporate/d.total*100).toFixed(2):0),bg:'#06b6d4'},
+    {label:'Priv',data:top20.map(([,d])=>d.total?+(d.Private/d.total*100).toFixed(2):0),bg:'#6366f1'},
+    {label:'RAC',data:top20.map(([,d])=>d.total?+(d.RAC/d.total*100).toFixed(2):0),bg:'#f97316'}
   ]);
 
-  // ── MS BY FUEL ──
-  const mfB = g('tbody-msfuel'); mfB.innerHTML = '';
-  top20.forEach(([brand, d]) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${brand}</td>
-      <td>${fuelTots.BEV  ? fmtP1(d.BEV  / fuelTots.BEV  * 100) : '&mdash;'}</td>
-      <td>${fuelTots.ICE  ? fmtP1(d.ICE  / fuelTots.ICE  * 100) : '&mdash;'}</td>
-      <td>${fuelTots.PHEV ? fmtP1(d.PHEV / fuelTots.PHEV * 100) : '&mdash;'}</td>`;
+  // MS by Fuel
+  const mfB=g('tbody-msfuel');mfB.innerHTML='';
+  top20.forEach(([brand,d])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${brand}</td>
+      <td>${fuelTots.BEV?fP1(d.BEV/fuelTots.BEV*100):'—'}</td>
+      <td>${fuelTots.ICE?fP1(d.ICE/fuelTots.ICE*100):'—'}</td>
+      <td>${fuelTots.PHEV?fP1(d.PHEV/fuelTots.PHEV*100):'—'}</td>`;
     mfB.appendChild(tr);
   });
-  const mfT = document.createElement('tr'); mfT.className = 'total-row';
-  mfT.innerHTML = '<td>Total</td><td>100%</td><td>100%</td><td>100%</td>';
-  mfB.appendChild(mfT);
+  addTotalRow(mfB,['Total','100%','100%','100%']);
 
-  // ── MS BY CHANNEL ──
-  const mcB = g('tbody-mscanal'); mcB.innerHTML = '';
-  top20.forEach(([brand, d]) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${brand}</td>
-      <td>${canalTots.Corporate ? fmtP1(d.Corporate / canalTots.Corporate * 100) : '&mdash;'}</td>
-      <td>${canalTots.Private   ? fmtP1(d.Private   / canalTots.Private   * 100) : '&mdash;'}</td>
-      <td>${canalTots.RAC       ? fmtP1(d.RAC       / canalTots.RAC       * 100) : '&mdash;'}</td>`;
+  // MS by Channel
+  const mcB=g('tbody-mscanal');mcB.innerHTML='';
+  top20.forEach(([brand,d])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${brand}</td>
+      <td>${canalTots.Corporate?fP1(d.Corporate/canalTots.Corporate*100):'—'}</td>
+      <td>${canalTots.Private?fP1(d.Private/canalTots.Private*100):'—'}</td>
+      <td>${canalTots.RAC?fP1(d.RAC/canalTots.RAC*100):'—'}</td>`;
     mcB.appendChild(tr);
   });
-  const mcT = document.createElement('tr'); mcT.className = 'total-row';
-  mcT.innerHTML = '<td>Total</td><td>100%</td><td>100%</td><td>100%</td>';
-  mcB.appendChild(mcT);
+  addTotalRow(mcB,['Total','100%','100%','100%']);
+
+  // ── TAB 2: CANAL DISTRIBUTION ──
+  const canalBody=g('tbody-canal');canalBody.innerHTML='';
+  sorted.forEach(([brand,d])=>{
+    const yC=byCanalYoY[brand];
+    const tr=document.createElement('tr');
+    const cRow=(canal,key)=>{
+      const regs=d[canal];const distrib=canalTots[canal]?regs/canalTots[canal]*100:0;
+      const yD=yC?yC[canal]:null;
+      const yPct2=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
+      return `<td>${fN(regs)}</td><td>${fP1(distrib)}</td><td class="${cls(yPct2)}">${yPctStr(yPct2)}</td>`;
+    };
+    tr.innerHTML=`<td>${brand}</td>${cRow('Corporate','corp')}${cRow('Private','priv')}${cRow('RAC','rac')}`;
+    canalBody.appendChild(tr);
+  });
+  addTotalRow(canalBody,[
+    'Total',
+    fN(canalTots.Corporate),fP1(100),'—',
+    fN(canalTots.Private),fP1(100),'—',
+    fN(canalTots.RAC),fP1(100),'—'
+  ]);
+
+  // ── TAB 2: MS2 TABLE ──
+  const ms2B=g('tbody-ms2');ms2B.innerHTML='';
+  sorted.forEach(([brand,d])=>{
+    const share=total?d.total/total*100:0;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${brand}</td>
+      <td>${fuelTots.BEV?fP1(d.BEV/fuelTots.BEV*100):'—'}</td>
+      <td>${fuelTots.ICE?fP1(d.ICE/fuelTots.ICE*100):'—'}</td>
+      <td>${fuelTots.PHEV?fP1(d.PHEV/fuelTots.PHEV*100):'—'}</td>
+      <td><b>${fP2(share)}</b></td>`;
+    ms2B.appendChild(tr);
+  });
+  addTotalRow(ms2B,['Total','100%','100%','100%','100%']);
+
+  // ── TAB 2: MONTHLY TABLE ──
+  // Months available in refYear (base filtered)
+  const refMonths=[...new Set(baseRows.filter(r=>r[COL.Y]===refYear).map(r=>r[COL.M]))].sort((a,b)=>a-b);
+  // Aggregate by brand × month for ref and prev
+  const byBM={}; // {brand:{month:{ref,prev}}}
+  baseRows.forEach(r=>{
+    if(r[COL.Y]!==refYear&&r[COL.Y]!==prevYear)return;
+    if(!refMonths.includes(r[COL.M]))return;
+    const brand=E.marca[r[COL.MARCA]];
+    const m=r[COL.M];
+    if(!byBM[brand])byBM[brand]={};
+    if(!byBM[brand][m])byBM[brand][m]={ref:0,prev:0};
+    if(r[COL.Y]===refYear)byBM[brand][m].ref+=r[COL.N];
+    else byBM[brand][m].prev+=r[COL.N];
+  });
+
+  // Only include brands that pass the current filter (SIMMIX_BRANDS + other filters)
+  const monthBrands=sorted.map(([b])=>b);
+
+  const thead=g('thead-monthly');thead.innerHTML='';
+  const tr1=document.createElement('tr');
+  tr1.innerHTML='<th rowspan="2">Brand</th>'+refMonths.map(m=>`<th colspan="2" class="month-hdr">${MES3[m-1]}</th>`).join('');
+  const tr2=document.createElement('tr');
+  tr2.innerHTML=refMonths.map(()=>'<th>Regs</th><th>YoY%</th>').join('');
+  thead.appendChild(tr1);thead.appendChild(tr2);
+
+  const monthBody=g('tbody-monthly');monthBody.innerHTML='';
+  monthBrands.forEach(brand=>{
+    const bm=byBM[brand]||{};
+    const tr=document.createElement('tr');
+    let cells=`<td>${brand}</td>`;
+    refMonths.forEach(m=>{
+      const d=bm[m]||{ref:0,prev:0};
+      const yPct3=d.prev?(d.ref-d.prev)/d.prev*100:null;
+      cells+=`<td>${fN(d.ref)}</td><td class="${cls(yPct3)}">${yPctStr(yPct3)}</td>`;
+    });
+    tr.innerHTML=cells;monthBody.appendChild(tr);
+  });
+  // Total row
+  const totByMonth={};
+  refMonths.forEach(m=>{
+    totByMonth[m]={ref:0,prev:0};
+    monthBrands.forEach(brand=>{const d=(byBM[brand]||{})[m]||{ref:0,prev:0};totByMonth[m].ref+=d.ref;totByMonth[m].prev+=d.prev;});
+  });
+  const totMRow=document.createElement('tr');totMRow.className='total-row';
+  let totCells='<td>Total</td>';
+  refMonths.forEach(m=>{
+    const d=totByMonth[m];
+    const yPct4=d.prev?(d.ref-d.prev)/d.prev*100:null;
+    totCells+=`<td>${fN(d.ref)}</td><td class="${cls(yPct4)}">${yPctStr(yPct4)}</td>`;
+  });
+  totMRow.innerHTML=totCells;monthBody.appendChild(totMRow);
+
+  // ── TAB 2: FUEL MIX VERTICAL CHART ──
+  drawVBar('ch-fuelv','wrap-fuelv',labels,[
+    {label:'BEV',data:top20.map(([,d])=>d.total?+(d.BEV/d.total*100).toFixed(2):0),bg:'#10b981'},
+    {label:'ICE',data:top20.map(([,d])=>d.total?+(d.ICE/d.total*100).toFixed(2):0),bg:'#3b82f6'},
+    {label:'PHEV',data:top20.map(([,d])=>d.total?+(d.PHEV/d.total*100).toFixed(2):0),bg:'#8b5cf6'}
+  ]);
 }
 
-// ── CHART HELPER ──────────────────────────────────────────
-function drawBar(canvasId, wrapId, labels, datasets) {
-  const wrap = g(wrapId);
-  wrap.style.height = Math.max(160, labels.length * 22) + 'px';
-  if(CHARTS[canvasId]) { CHARTS[canvasId].destroy(); delete CHARTS[canvasId]; }
-  const old = g(canvasId);
-  const cnv = document.createElement('canvas'); cnv.id = canvasId;
-  old.replaceWith(cnv);
-  CHARTS[canvasId] = new Chart(cnv, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: datasets.map(d => ({label:d.label, data:d.data, backgroundColor:d.bg, borderWidth:0}))
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
-      layout: {padding:{right:4}},
-      scales: {
-        x: {stacked:true, max:100, display:false, grid:{display:false}},
-        y: {stacked:true, ticks:{font:{size:10}, color:'#1a2632'}, grid:{display:false}}
+// ── HELPERS ──────────────────────────────────────────────
+function cls(v){return v===null?'':(v>=0?'yoy-p':'yoy-n')}
+function yPctStr(v){return v===null?'—':(v===0?'0.00%':((v>=0?'+':'')+v.toFixed(2)+'%'))}
+
+function addTotalRow(tbody,cells){
+  const tr=document.createElement('tr');tr.className='total-row';
+  tr.innerHTML=cells.map((c,i)=>`<td>${c}</td>`).join('');
+  tbody.appendChild(tr);
+}
+
+// ── CHARTS ───────────────────────────────────────────────
+function drawHBar(canvasId,wrapId,labels,datasets){
+  const wrap=g(wrapId);
+  wrap.style.height=Math.max(150,labels.length*22)+'px';
+  if(CHARTS[canvasId]){CHARTS[canvasId].destroy();delete CHARTS[canvasId];}
+  const old=g(canvasId);const cnv=document.createElement('canvas');cnv.id=canvasId;old.replaceWith(cnv);
+  CHARTS[canvasId]=new Chart(cnv,{
+    type:'bar',
+    data:{labels,datasets:datasets.map(d=>({label:d.label,data:d.data,backgroundColor:d.bg,borderWidth:0}))},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      layout:{padding:{right:4}},
+      scales:{
+        x:{stacked:true,max:100,display:false,grid:{display:false}},
+        y:{stacked:true,ticks:{font:{size:10},color:'#94a3b8'},grid:{display:false}}
       },
-      plugins: {
-        legend: {display:false},
-        tooltip: {callbacks:{label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%`}},
-        datalabels: {
-          color:'#fff', font:{size:9, weight:'bold'},
-          formatter: v => v >= 9 ? v.toFixed(0) + '%' : '',
-          anchor:'center', align:'center'
-        }
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%`}},
+        datalabels:{color:'rgba(255,255,255,.9)',font:{size:9,weight:'bold'},
+          formatter:v=>v>=9?v.toFixed(0)+'%':'',anchor:'center',align:'center'}
       }
-    },
-    plugins: [ChartDataLabels]
+    },plugins:[ChartDataLabels]
   });
 }
 
-// ── RESET ─────────────────────────────────────────────────
-function resetFilters() {
-  const E = REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb => cb.checked = true);
-  F.years   = new Set([...new Set(REC.rows.map(r => r[COL.Y]))]);
-  F.months  = new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels   = new Set(E.fuel.map((_,i) => i));
-  F.canales = new Set(E.canal.map((_,i) => i));
-  F.segs    = new Set(E.seg.map((_,i) => i));
-  F.subs    = new Set(E.sub.map((_,i) => i));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb => cb.checked = false);
-  g('f-marca').value = ''; g('f-modelo').value = ''; g('f-body').value = '';
-  F.marca = ''; F.modelo = ''; F.body = '';
-  refreshModels();
-  render();
+function drawVBar(canvasId,wrapId,labels,datasets){
+  if(CHARTS[canvasId]){CHARTS[canvasId].destroy();delete CHARTS[canvasId];}
+  const old=g(canvasId);const cnv=document.createElement('canvas');cnv.id=canvasId;old.replaceWith(cnv);
+  const wrap=g(wrapId);
+  CHARTS[canvasId]=new Chart(cnv,{
+    type:'bar',
+    data:{labels,datasets:datasets.map(d=>({label:d.label,data:d.data,backgroundColor:d.bg,borderWidth:0}))},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{
+        x:{stacked:true,ticks:{font:{size:9},color:'#94a3b8',maxRotation:45,minRotation:30},grid:{display:false,color:'rgba(255,255,255,.06)'}},
+        y:{stacked:true,max:100,ticks:{font:{size:9},color:'#64748b',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'}}
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`}},
+        datalabels:{display:false}
+      }
+    },plugins:[ChartDataLabels]
+  });
 }
 
-const g = id => document.getElementById(id);
+// ── UI CONTROLS ──────────────────────────────────────────
+function toggleSg(id){g(id).classList.toggle('open')}
 
-function toggleSg(hdr) {
-  hdr.closest('.sg').classList.toggle('open');
+function showTab(name){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  g('pane-'+name).classList.add('on');
+  g('tbtn-'+name).classList.add('on');
+}
+
+function resetFilters(){
+  const E=REC.enums;
+  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
+  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
+  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
+  F.fuels=new Set(E.fuel.map((_,i)=>i));
+  F.canales=new Set(E.canal.map((_,i)=>i));
+  F.segs=new Set(E.seg.map((_,i)=>i));
+  F.subs=new Set(E.sub.map((_,i)=>i));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body='';
+  g('cnt-months').style.display='none';g('cnt-years').style.display='none';
+  refreshModels();render();
 }
 </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
