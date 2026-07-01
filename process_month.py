@@ -125,7 +125,7 @@ EXCLUIR_MARCA_RAW = {
 }
 MERCEDES_EXCLUDED_MODEL_PREFIXES = (
     'MB E ', 'ECITARO', 'CITARO', 'ECONIC', 'I6 EFF', '16 12.37',
-    'T21', 'V-KLASSE', 'RE5', 'QG5', 'CEDAH', 'ML-T', 'GRAND CANYON',
+    'T21', 'RE5', 'QG5', 'CEDAH', 'ML-T', 'GRAND CANYON',
     'SPICA', 'TATOO', 'CLASSE GLA', 'CLASE C,220', 'C300', 'C220D',
     '280 SL', '250 CE', '190 SL', 'SLK 230', 'MAYBACH GLS', 'MAYBACH EQS',
 )
@@ -173,9 +173,10 @@ def _strip_accents(s):
 def _model_candidates(sbrand, s):
     """Genera lista de candidatos (sbrand, model_name) para buscar en el lookup."""
     # Quitar código de homologación (6+ alfanum al final) y acentos
-    s = _APPROVAL_RE.sub('', s).strip()
     s = s.replace('\xa0', ' ')
     s = _strip_accents(s)
+    s_probe = s
+    s = _APPROVAL_RE.sub('', s).strip()
     # Quitar prefijo marca si está repetido en el modelo
     bwords = sbrand.split(); swords = s.split()
     if swords[:len(bwords)] == bwords:
@@ -186,6 +187,26 @@ def _model_candidates(sbrand, s):
     s_nd = re.sub(r'([A-Z]+)-([\d])', r'\1\2', s)  # CX-5→CX5
     cands = []
     if sbrand == 'MERCEDES':
+        if s.startswith('VITO'):
+            cands.append(('MERCEDES-V', 'VITO'))
+        if s.startswith('SPRINTER'):
+            cands.append((sbrand, 'SPRINTER 300'))
+        if s.startswith('ESPRINTER') or s.startswith('E-SPRINTER'):
+            cands.append((sbrand, 'E-SPRINTER'))
+        if s.startswith('CITAN'):
+            cands.append((sbrand, 'CITAN'))
+        if s.startswith('ECITAN') or s.startswith('E-CITAN'):
+            cands.append((sbrand, 'ECITAN'))
+        if s.startswith('MARCO POLO'):
+            cands.append((sbrand, 'MARCO POLO'))
+        if s.startswith('EVITO') or s.startswith('E-VITO'):
+            cands.append((sbrand, 'EVITO'))
+        if s.startswith('V-KLASSE') or s.startswith('CLASE V'):
+            cands.append((sbrand, 'CLASE V'))
+        if re.search(r'\bGLC\b', s_probe) and 'COUP' in s_probe:
+            cands.append((sbrand, 'CLASE GLC COUPE'))
+        if re.search(r'\bGLE\b', s_probe) and 'COUP' in s_probe:
+            cands.append((sbrand, 'CLASE GLE COUPE'))
         for code, name in sorted(_MERC_CLASS.items(), key=lambda x: -len(x[0])):
             if s == code or s.startswith(code + ' '):
                 cands.append((sbrand, name)); break
@@ -206,10 +227,21 @@ def _model_candidates(sbrand, s):
         cands += [(sbrand, 'MG ' + first), (sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', first))]
     if sbrand == 'AUDI':
         sx = s.replace(' ', '')
+        if sx.startswith('Q3SPORTBACK') or sx.startswith('Q3SB'):
+            cands.append((sbrand, 'Q3 SPORTBACK'))
         if sx.startswith('Q5SPORTBACK'): cands.append((sbrand, 'Q5 SPORTBACK'))
+        if sx.startswith('Q5SB'): cands.append((sbrand, 'Q5 SPORTBACK'))
+        if sx.startswith('SQ5SB'): cands.append((sbrand, 'Q5 SPORTBACK'))
         if sx.startswith('Q4SPORTBACK'): cands.append((sbrand, 'Q4 SPORTBACK E-TRON'))
         elif sx.startswith('Q4'): cands.append((sbrand, 'Q4 E-TRON'))
+        if sx.startswith('Q6SBE') or sx.startswith('Q6SPORTBACKE') or sx.startswith('SQ6SBE') or sx.startswith('SQ6SPORTBACKE'):
+            cands.append((sbrand, 'Q6 E-TRON SPORTBACK'))
         if sx.startswith('Q6') or sx.startswith('SQ6'): cands.append((sbrand, 'Q6 E-TRON'))
+        if sx.startswith('A6ALLROAD'): cands.append((sbrand, 'A6 ALLROAD'))
+        if sx.startswith('A6SBE') or sx.startswith('A6AVE') or sx.startswith('A6LIME'):
+            cands.append((sbrand, 'A6'))
+        if sx.startswith('ETRONGT') or sx.startswith('RSETRONGT'): cands.append((sbrand, 'E-TRON GT'))
+        if sx.startswith('Q8ETRON') or sx.startswith('Q8E-TRON'): cands.append((sbrand, 'Q8 E-TRON'))
         for prefix, model in (
             ('RSQ3SPORTBACK', 'Q3 SPORTBACK'), ('RSQ3', 'Q3'), ('SQ5SPORTBACK', 'Q5 SPORTBACK'),
             ('SQ5', 'Q5'), ('RSQ8', 'Q8'), ('SQ8', 'Q8'), ('RS3', 'A3'), ('S3', 'A3'),
@@ -260,7 +292,10 @@ def _model_candidates(sbrand, s):
             if code in s:
                 cands.append((sbrand, model)); break
     if sbrand == 'MINI':
-        if 'CABRIO' in s or 'CONVERTIBLE' in s: cands.append((sbrand, 'CABRIO'))
+        if 'ACEMAN' in s:
+            cands.append((sbrand, 'ACEMAN'))
+        if 'CABRIO' in s or 'CONVERTIBLE' in s or '3WMW41GD' in s_probe:
+            cands.append((sbrand, 'CABRIO'))
         elif 'COUNTRYMAN' in s: cands.append((sbrand, 'COUNTRYMAN'))
         elif 'CLUBMAN' in s: cands.append((sbrand, 'CLUBMAN'))
         else: cands.append((sbrand, 'HATCHBACK'))
@@ -301,6 +336,13 @@ def _model_candidates(sbrand, s):
                     if 'COUPE' in amg and code in ('GLC', 'GLE'):
                         cands.append((sbrand, name + ' COUPE'))
                     cands.append((sbrand, name)); break
+    if sbrand == 'VOLVO':
+        for code in ('EX40', 'EC40', 'EX90', 'ES90', 'EX30', 'XC40', 'XC60', 'XC90', 'V60', 'V90', 'S60'):
+            if s.startswith(code):
+                cands.append((sbrand, code)); break
+    if sbrand == 'PORSCHE':
+        if s.startswith('CAYENNE E-HYBRID') or s == 'CAYENNE S':
+            cands.append((sbrand, 'CAYENNE COUPE'))
     if sbrand == 'MAZDA':
         if s.startswith('MAZDA2 HYBRID'): cands.append((sbrand, 'MAZDA 2'))
         cands += [(sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', s)), (sbrand, s_nd)]
@@ -359,6 +401,32 @@ def _load_enrichment():
 
 # Carga lookup brand+model desde Simmix BBDD directamente
 _MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
+_MODEL_LOOKUP_PATCHES = {
+    ('MINI', 'ACEMAN'): {
+        'modelo': 'ACEMAN', 'seg': '2.UKL1', 'sub': 'TRADITIONAL COMPETITION',
+        'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
+    },
+    ('VOLVO', 'EC40'): {
+        'modelo': 'EC40', 'seg': '3.UKL2', 'sub': 'TRADITIONAL COMPETITION',
+        'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
+    },
+    ('VOLVO', 'ES90'): {
+        'modelo': 'ES90', 'seg': '5.MKL', 'sub': 'TRADITIONAL COMPETITION',
+        'hp': 'Standard', 'body': 'SEDAN', 'fuel_detail': 'Electrico',
+    },
+    ('VOLVO', 'EX40'): {
+        'modelo': 'EX40', 'seg': '3.UKL2', 'sub': 'TRADITIONAL COMPETITION',
+        'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
+    },
+    ('VOLVO', 'EX90'): {
+        'modelo': 'EX90', 'seg': '5.MKL', 'sub': 'TRADITIONAL COMPETITION',
+        'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
+    },
+}
+
+def _apply_model_lookup_patches():
+    for key, row in _MODEL_LOOKUP_PATCHES.items():
+        _MODEL_LOOKUP[key] = row.copy()
 
 def _load_model_lookup_fallback():
     if not os.path.exists(MODEL_LOOKUP_FALLBACK):
@@ -436,9 +504,11 @@ def _load_simmix_bbdd():
         except Exception:
             pass
     if loaded_from_bbdd:
+        _apply_model_lookup_patches()
         _save_model_lookup_fallback()
     elif not _MODEL_LOOKUP:
         _load_model_lookup_fallback()
+        _apply_model_lookup_patches()
 
 _PROP_FUEL_NAME = {
     '0': 'Gasolina', '1': 'Diesel', '2': 'Electrico',
@@ -699,21 +769,23 @@ KM0_BRAND_FALLBACK_RATE = {
     'VOLVO': 0.01861878,
 }
 
-# Residual scope calibration by brand/channel, learned from the 2023-2025
-# DGT-vs-Simmix comparison after deterministic rules and Km.0 fallback.
-# This handles cases where Simmix includes/excludes a slightly different scope
-# than the DGT microdata filter or brand aliases.
+# Residual scope calibration by brand/channel, learned from Simmix exports
+# after deterministic brand/model/channel rules and Km.0 fallback.
+# This handles small remaining scope differences between the DGT microdata and
+# Simmix business rules while keeping the adjustment tied to source exports.
 CHANNEL_SCOPE_FACTOR = {
-    ('AUDI', 'Corporate'): 1.07928815,
-    ('AUDI', 'Private'): 1.07928815,
-    ('AUDI', 'RAC'): 1.07928815,
-    ('BMW', 'Private'): 0.98360000,
-    ('MINI', 'Corporate'): 0.99800016,
-    ('MINI', 'Private'): 0.99800016,
-    ('MINI', 'RAC'): 0.99800016,
-    ('MERCEDES', 'Corporate'): 0.99840000,
-    ('MERCEDES', 'Private'): 0.99840000,
-    ('MERCEDES', 'RAC'): 0.99840000,
+    ('AUDI', 'Corporate'): 0.9939793579,
+    ('AUDI', 'Private'): 1.0138427465,
+    ('AUDI', 'RAC'): 0.9923413568,
+    ('BMW', 'Corporate'): 0.9971098267,
+    ('BMW', 'Private'): 0.9895104896,
+    ('BMW', 'RAC'): 1.0012953369,
+    ('MINI', 'Corporate'): 0.9930362118,
+    ('MINI', 'Private'): 1.0011111112,
+    ('MINI', 'RAC'): 0.9973118281,
+    ('MERCEDES', 'Corporate'): 1.0216586450,
+    ('MERCEDES', 'Private'): 1.0005296611,
+    ('MERCEDES', 'RAC'): 1.0173891130,
     ('BYD', 'Corporate'): 0.96574882,
     ('CITROEN', 'Private'): 1.06724235,
     ('CITROEN', 'RAC'): 0.99078595,
@@ -732,19 +804,19 @@ CHANNEL_SCOPE_FACTOR = {
     ('IVECO', 'Private'): 1.62838915,
     ('IVECO', 'RAC'): 1.62768031,
     ('KIA', 'Corporate'): 0.99571533,
-    ('LAND ROVER', 'Corporate'): 0.99647906,
-    ('LAND ROVER', 'Private'): 0.99647906,
-    ('LAND ROVER', 'RAC'): 0.99647906,
+    ('LAND ROVER', 'Corporate'): 0.9970238096,
+    ('LAND ROVER', 'Private'): 0.9659090910,
+    ('LAND ROVER', 'RAC'): 1.0106382980,
     ('LEAPMOTOR', 'Corporate'): 0.70937129,
     ('LEAPMOTOR', 'Private'): 0.50065246,
-    ('LEXUS', 'Corporate'): 0.99547930,
-    ('LEXUS', 'Private'): 0.99547930,
-    ('LEXUS', 'RAC'): 0.99547930,
+    ('LEXUS', 'Corporate'): 0.9924924926,
+    ('LEXUS', 'Private'): 1.0009041592,
+    ('LEXUS', 'RAC'): 0.9875000001,
     ('MAN', 'Corporate'): 1.12428793,
     ('MAN', 'RAC'): 1.49287169,
-    ('MERCEDES-BENZ', 'Private'): 1.00714571,
-    ('MERCEDES-BENZ', 'RAC'): 1.04516948,
-    ('MERCEDES-V', 'Corporate'): 0.92486428,
+    ('MERCEDES-V', 'Corporate'): 1.0138121548,
+    ('MERCEDES-V', 'Private'): 1.1363636365,
+    ('MERCEDES-V', 'RAC'): 0.9901574804,
     ('MG', 'Corporate'): 0.94479441,
     ('MG', 'Private'): 1.00496327,
     ('NISSAN', 'Private'): 1.01034865,
@@ -753,9 +825,9 @@ CHANNEL_SCOPE_FACTOR = {
     ('OPEL', 'RAC'): 0.95423341,
     ('PEUGEOT', 'Private'): 1.07181872,
     ('PEUGEOT', 'RAC'): 1.01310178,
-    ('PORSCHE', 'Corporate'): 0.99759634,
-    ('PORSCHE', 'Private'): 0.99759634,
-    ('PORSCHE', 'RAC'): 0.99759634,
+    ('PORSCHE', 'Corporate'): 0.9779874215,
+    ('PORSCHE', 'Private'): 1.0035211269,
+    ('PORSCHE', 'RAC'): 1.1170212767,
     ('RENAULT', 'Private'): 1.07027027,
     ('RENAULT', 'RAC'): 0.97824095,
     ('SEAT', 'Private'): 1.03028465,
@@ -765,17 +837,17 @@ CHANNEL_SCOPE_FACTOR = {
     ('SSANGYONG', 'Private'): 1.07851385,
     ('SUZUKI', 'Corporate'): 0.91580977,
     ('SUZUKI', 'RAC'): 1.14340263,
-    ('TESLA', 'Corporate'): 0.99860739,
-    ('TESLA', 'Private'): 0.99860739,
-    ('TESLA', 'RAC'): 0.99860739,
+    ('TESLA', 'Corporate'): 0.8838383839,
+    ('TESLA', 'Private'): 1.0255102042,
+    ('TESLA', 'RAC'): 0.9500000001,
     ('TOYOTA', 'Private'): 1.01480633,
     ('TOYOTA', 'RAC'): 0.98402966,
     ('VOLKSWAGEN', 'Corporate'): 0.99806854,
     ('VOLKSWAGEN', 'Private'): 1.00295073,
     ('VOLKSWAGEN', 'RAC'): 1.06340502,
-    ('VOLVO', 'Corporate'): 0.99623510,
-    ('VOLVO', 'Private'): 0.99623510,
-    ('VOLVO', 'RAC'): 0.99623510,
+    ('VOLVO', 'Corporate'): 0.9877250410,
+    ('VOLVO', 'Private'): 1.0079365080,
+    ('VOLVO', 'RAC'): 0.9989247313,
 }
 
 ALERT_DRIFT_START_YEAR = 2026
@@ -947,14 +1019,10 @@ def normalize_marca(marca, modelo=''):
     if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG'):
         # Mercedes V-Class derivatives → Mercedes-V scope (separate brand in Simmix)
         # DGT raw F_MODELO: 'V 220 D...', 'VITO 116...', 'EQV 300...', 'MARCO POLO'
-        if ('VITO' in mo or 'EQV' in mo or 'MARCO POLO' in mo or 'CLASE V' in mo
-                or mo == 'V' or mo.startswith('V ')):
+        if 'VITO' in mo:
             return 'MERCEDES-V'
         # T-Class and commercial vans → outside Simmix scope (exclude)
         # DGT raw F_MODELO: 'T 180 D...', 'CITAN 110...', 'ECITAN...', 'EQT...', 'SPRINTER...'
-        if ('SPRINTER' in mo or 'CITAN' in mo or 'ECITAN' in mo or 'EQT' in mo
-                or 'CLASE T' in mo or mo == 'T' or mo.startswith('T ')):
-            return 'MERCEDES-COMMERCIAL'
     return m
 
 def get_fuel_type_code(line_s):
