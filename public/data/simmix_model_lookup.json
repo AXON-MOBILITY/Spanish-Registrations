@@ -4,7 +4,7 @@
     {
       "brand": "ABARTH",
       "model": "500",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 3P",
@@ -13,7 +13,25 @@
     {
       "brand": "ABARTH",
       "model": "600",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "AION",
+      "model": "UT",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "AION",
+      "model": "V",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -40,11 +58,11 @@
     {
       "brand": "ALFA ROMEO",
       "model": "GIULIA",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "ALFA ROMEO",
@@ -58,29 +76,29 @@
     {
       "brand": "ALFA ROMEO",
       "model": "JUNIOR",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "ALFA ROMEO",
       "model": "STELVIO",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "ALFA ROMEO",
       "model": "TONALE",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "ALKE",
@@ -94,7 +112,7 @@
     {
       "brand": "ALKE",
       "model": "ATX340",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -103,7 +121,7 @@
     {
       "brand": "ALPINE",
       "model": "A 110",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "COUPE",
@@ -112,10 +130,19 @@
     {
       "brand": "ALPINE",
       "model": "A 290",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "ALPINE",
+      "model": "A 390",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SEDAN",
       "fuel_detail": "Electrico"
     },
     {
@@ -148,7 +175,7 @@
     {
       "brand": "ASTON MARTIN",
       "model": "DB12",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "CABRIO",
@@ -166,7 +193,7 @@
     {
       "brand": "ASTON MARTIN",
       "model": "DBX",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -175,7 +202,7 @@
     {
       "brand": "ASTON MARTIN",
       "model": "VANTAGE",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -184,7 +211,7 @@
     {
       "brand": "AUDI",
       "model": "A1",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -193,20 +220,20 @@
     {
       "brand": "AUDI",
       "model": "A3",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "A4",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "body": "ESTATE",
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "AUDI",
@@ -220,29 +247,29 @@
     {
       "brand": "AUDI",
       "model": "A5",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "A6",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "ESTATE",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "body": "SEDAN",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "A6 ALLROAD",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "ESTATE",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
@@ -256,16 +283,16 @@
     {
       "brand": "AUDI",
       "model": "A8",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "E-TRON GT",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -274,34 +301,34 @@
     {
       "brand": "AUDI",
       "model": "Q2",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "AUDI",
       "model": "Q3",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "Q3 SPORTBACK",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "Q4 E-TRON",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -310,7 +337,7 @@
     {
       "brand": "AUDI",
       "model": "Q4 SPORTBACK E-TRON",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -319,25 +346,25 @@
     {
       "brand": "AUDI",
       "model": "Q5",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "Q5 SPORTBACK",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "Q6 E-TRON",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -346,7 +373,7 @@
     {
       "brand": "AUDI",
       "model": "Q6 E-TRON SPORTBACK",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -355,25 +382,25 @@
     {
       "brand": "AUDI",
       "model": "Q7",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "Q8",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "AUDI",
       "model": "Q8 E-TRON",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -400,7 +427,7 @@
     {
       "brand": "AUDI",
       "model": "TT",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -409,7 +436,25 @@
     {
       "brand": "BAIC",
       "model": "X55",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "BAIC",
+      "model": "X75",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "BAW",
+      "model": "212 T01",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -418,25 +463,25 @@
     {
       "brand": "BENTLEY",
       "model": "BENTAYGA",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BENTLEY",
       "model": "CONTINENTAL",
-      "seg": "GKL+",
+      "seg": "8.GKL++2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "COUPE",
-      "fuel_detail": "Gasolina"
+      "body": "CABRIO",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BENTLEY",
       "model": "FLYING SPUR",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -445,7 +490,7 @@
     {
       "brand": "BESTUNE",
       "model": "B70",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
@@ -453,8 +498,17 @@
     },
     {
       "brand": "BESTUNE",
+      "model": "JOYEE 07",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "BESTUNE",
       "model": "T90",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -472,7 +526,7 @@
     {
       "brand": "BMW",
       "model": "I4",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -481,16 +535,16 @@
     {
       "brand": "BMW",
       "model": "I5",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
+      "body": "ESTATE",
       "fuel_detail": "Electrico"
     },
     {
       "brand": "BMW",
       "model": "I7",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -499,7 +553,7 @@
     {
       "brand": "BMW",
       "model": "IX",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -508,7 +562,7 @@
     {
       "brand": "BMW",
       "model": "IX1",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -517,7 +571,7 @@
     {
       "brand": "BMW",
       "model": "IX2",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -526,7 +580,7 @@
     {
       "brand": "BMW",
       "model": "IX3",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -535,47 +589,47 @@
     {
       "brand": "BMW",
       "model": "SERIE 1",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "BMW",
       "model": "SERIE 2",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "body": "MPV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BMW",
       "model": "SERIE 3",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "ESTATE",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "BMW",
       "model": "SERIE 4",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "body": "CABRIO",
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "BMW",
       "model": "SERIE 5",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "body": "ESTATE",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BMW",
@@ -589,43 +643,34 @@
     {
       "brand": "BMW",
       "model": "SERIE 7",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BMW",
       "model": "SERIE 8",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "CABRIO",
+      "body": "COUPE",
       "fuel_detail": "Diesel Mild Hybrid"
     },
     {
       "brand": "BMW",
       "model": "X1",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BMW",
       "model": "X2",
-      "seg": "UKL2",
-      "sub": "FOCUS SEGMENT",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel"
-    },
-    {
-      "brand": "BMW",
-      "model": "X3",
-      "seg": "KKL",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -633,8 +678,17 @@
     },
     {
       "brand": "BMW",
+      "model": "X3",
+      "seg": "4.KKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina Mild Hybrid"
+    },
+    {
+      "brand": "BMW",
       "model": "X4",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -643,43 +697,43 @@
     {
       "brand": "BMW",
       "model": "X5",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BMW",
       "model": "X6",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "BMW",
       "model": "X7",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "BMW",
       "model": "XM",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
-      "hp": "M",
+      "hp": "Standard",
       "body": "SAV",
       "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BMW",
       "model": "Z4",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "ROADSTER",
@@ -687,8 +741,26 @@
     },
     {
       "brand": "BYD",
+      "model": "ATTO 2",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "BYD",
       "model": "ATTO 3",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "BYD",
+      "model": "ATTO 3 EVO",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -697,7 +769,25 @@
     {
       "brand": "BYD",
       "model": "DOLPHIN",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "BYD",
+      "model": "DOLPHIN G",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "BYD",
+      "model": "DOLPHIN SURF",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -724,7 +814,7 @@
     {
       "brand": "BYD",
       "model": "SEAL",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
@@ -732,17 +822,26 @@
     },
     {
       "brand": "BYD",
+      "model": "SEAL 6",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "BYD",
       "model": "SEAL U",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "BYD",
       "model": "SEALION 7",
-      "seg": "UKL2",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -751,7 +850,7 @@
     {
       "brand": "BYD",
       "model": "TANG",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -769,7 +868,7 @@
     {
       "brand": "CADILLAC",
       "model": "ESCALADE",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SUV",
@@ -778,7 +877,7 @@
     {
       "brand": "CATERHAM",
       "model": "SUPER SEVEN",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "CABRIO",
@@ -787,7 +886,7 @@
     {
       "brand": "CENNTRO",
       "model": "LOGISTAR",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -796,7 +895,43 @@
     {
       "brand": "CENNTRO",
       "model": "METRO",
-      "seg": "SKL",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "CHANGAN",
+      "model": "DEEPAL S05",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "CHANGAN",
+      "model": "DEEPAL S07",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "CIRELLI",
+      "model": "CIRELLI 1",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "CITROEN",
+      "model": "BERLINGO",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -804,66 +939,57 @@
     },
     {
       "brand": "CITROEN",
-      "model": "BERLINGO",
-      "seg": "SKL",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
-    },
-    {
-      "brand": "CITROEN",
       "model": "C3",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "CITROEN",
       "model": "C3 AIRCROSS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "CITROEN",
       "model": "C4",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "CITROEN",
       "model": "C4X",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "CITROEN",
       "model": "C5 AIRCROSS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "CITROEN",
       "model": "C5X",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "CITROEN",
@@ -877,7 +1003,7 @@
     {
       "brand": "CITROEN",
       "model": "JUMPER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -886,25 +1012,34 @@
     {
       "brand": "CITROEN",
       "model": "JUMPY",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "CITROEN",
       "model": "SPACETOURER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "CLUB CAR",
+      "model": "URBAN N1",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "CUPRA",
       "model": "BORN",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -913,7 +1048,7 @@
     {
       "brand": "CUPRA",
       "model": "CUPRA ATECA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
@@ -922,25 +1057,34 @@
     {
       "brand": "CUPRA",
       "model": "CUPRA LEON",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "CUPRA",
       "model": "FORMENTOR",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "CUPRA",
+      "model": "RAVAL",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "CUPRA",
       "model": "TAVASCAN",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -949,11 +1093,20 @@
     {
       "brand": "CUPRA",
       "model": "TERRAMAR",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "DACIA",
+      "model": "BIGSTER",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "DACIA",
@@ -967,20 +1120,20 @@
     {
       "brand": "DACIA",
       "model": "DUSTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "DACIA",
       "model": "JOGGER",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "DACIA",
@@ -1003,16 +1156,16 @@
     {
       "brand": "DACIA",
       "model": "SANDERO",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "DACIA",
       "model": "SPRING",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1021,16 +1174,16 @@
     {
       "brand": "DFSK",
       "model": "580",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "DFSK",
       "model": "600",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
@@ -1039,7 +1192,7 @@
     {
       "brand": "DFSK",
       "model": "CAPTAIN",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1048,7 +1201,7 @@
     {
       "brand": "DFSK",
       "model": "E5",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1057,7 +1210,7 @@
     {
       "brand": "DFSK",
       "model": "F5",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1074,8 +1227,17 @@
     },
     {
       "brand": "DFSK",
+      "model": "Q21",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "DFSK",
       "model": "Q51",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1093,16 +1255,16 @@
     {
       "brand": "DFSK",
       "model": "SERIE C",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "DFSK",
       "model": "SERIE K",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1111,7 +1273,7 @@
     {
       "brand": "DONGFENG",
       "model": "BOX",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -1138,7 +1300,7 @@
     {
       "brand": "DR",
       "model": "DR4",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1147,20 +1309,20 @@
     {
       "brand": "DR",
       "model": "DR5",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "DR",
       "model": "DR6",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "DR",
@@ -1181,31 +1343,49 @@
       "fuel_detail": "Gas Licuado con petroleo (GLP)"
     },
     {
+      "brand": "DR",
+      "model": "G3",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "DR",
+      "model": "PK8",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "PICKUP",
+      "fuel_detail": "Diesel"
+    },
+    {
       "brand": "DS",
       "model": "DS3 CROSSBACK",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 3P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "DS",
       "model": "DS4",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "DS",
       "model": "DS7 CROSSBACK",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "DS",
@@ -1217,18 +1397,63 @@
       "fuel_detail": "Gasolina"
     },
     {
+      "brand": "DS",
+      "model": "NO4",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "DS",
+      "model": "NO8",
+      "seg": "5.MKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
       "brand": "EBRO",
-      "model": "S700",
-      "seg": "UKL2",
+      "model": "S400",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "EBRO",
+      "model": "S700",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "EBRO",
+      "model": "S800",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "EBRO",
+      "model": "S900",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "ESAGONO ENERGIA",
       "model": "GASTONE",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1237,7 +1462,7 @@
     {
       "brand": "ETESIA",
       "model": "ET LANDER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1246,7 +1471,7 @@
     {
       "brand": "EVO",
       "model": "CROSS 4",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
@@ -1255,47 +1480,56 @@
     {
       "brand": "EVO",
       "model": "EVO 3",
-      "seg": "UKL1",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
-    },
-    {
-      "brand": "EVO",
-      "model": "EVO 4",
-      "seg": "UKL1",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
-    },
-    {
-      "brand": "EVO",
-      "model": "EVO 5",
-      "seg": "UKL2",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
-    },
-    {
-      "brand": "EVO",
-      "model": "EVO 6",
-      "seg": "UKL2",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
-    },
-    {
-      "brand": "EVO",
-      "model": "EVO 7",
-      "seg": "UKL2",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
       "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "EVO",
+      "model": "EVO 4",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "EVO",
+      "model": "EVO 5",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "EVO",
+      "model": "EVO 6",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "EVO",
+      "model": "EVO 7",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "EVO",
+      "model": "SPAZIO",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "MPV",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
     },
     {
       "brand": "EVUM MOTORS",
@@ -1307,9 +1541,36 @@
       "fuel_detail": "Electrico"
     },
     {
+      "brand": "FARIZON",
+      "model": "SUPERVAN",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "FAW",
+      "model": "T77",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "12CILINDRI",
+      "seg": "9.GKL++3",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Gasolina"
+    },
+    {
       "brand": "FERRARI",
       "model": "296",
-      "seg": "GKL+",
+      "seg": "8.GKL++2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -1319,6 +1580,15 @@
       "brand": "FERRARI",
       "model": "812",
       "seg": "GKL+",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "AMALFI",
+      "seg": "9.GKL++3",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -1336,7 +1606,7 @@
     {
       "brand": "FERRARI",
       "model": "F8",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -1354,7 +1624,7 @@
     {
       "brand": "FERRARI",
       "model": "PUROSANGUE",
-      "seg": "GKL+",
+      "seg": "9.GKL++3",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -1363,7 +1633,7 @@
     {
       "brand": "FERRARI",
       "model": "ROMA",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -1372,7 +1642,7 @@
     {
       "brand": "FERRARI",
       "model": "SF90",
-      "seg": "GKL+",
+      "seg": "9.GKL++3",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -1390,34 +1660,34 @@
     {
       "brand": "FIAT",
       "model": "500",
-      "seg": "UKL1",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel"
+      "body": "HACH 3P",
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "FIAT",
       "model": "600",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "FIAT",
       "model": "DOBLO CARGO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "FIAT",
       "model": "DUCATO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1443,21 +1713,39 @@
     },
     {
       "brand": "FIAT",
-      "model": "PANDA",
-      "seg": "UKL0",
+      "model": "GRANDE PANDA",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "FIAT",
-      "model": "SCUDO",
-      "seg": "SKL",
+      "model": "PANDA",
+      "seg": "1.UKL0",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina Mild Hybrid"
+    },
+    {
+      "brand": "FIAT",
+      "model": "QUBO L",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
       "fuel_detail": "Diesel"
+    },
+    {
+      "brand": "FIAT",
+      "model": "SCUDO",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "FIAT",
@@ -1471,16 +1759,25 @@
     {
       "brand": "FIAT",
       "model": "TIPO",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
       "fuel_detail": "Diesel"
     },
     {
+      "brand": "FIAT",
+      "model": "ULYSSE",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Diesel"
+    },
+    {
       "brand": "FORD",
       "model": "BRONCO",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
@@ -1489,7 +1786,7 @@
     {
       "brand": "FORD",
       "model": "CAPRI",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1507,7 +1804,7 @@
     {
       "brand": "FORD",
       "model": "EXPLORER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
@@ -1516,20 +1813,20 @@
     {
       "brand": "FORD",
       "model": "FIESTA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "FORD",
       "model": "FOCUS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "FORD",
@@ -1543,11 +1840,11 @@
     {
       "brand": "FORD",
       "model": "KUGA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "FORD",
@@ -1561,7 +1858,7 @@
     {
       "brand": "FORD",
       "model": "MUSTANG",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "CABRIO",
@@ -1570,7 +1867,7 @@
     {
       "brand": "FORD",
       "model": "MUSTANG MACH-E",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1579,20 +1876,20 @@
     {
       "brand": "FORD",
       "model": "PUMA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "FORD",
       "model": "RANGER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "FORD",
@@ -1606,52 +1903,115 @@
     {
       "brand": "FORD",
       "model": "TOURNEO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "FORD",
       "model": "TRANSIT",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "FORD",
+      "model": "TRANSIT CITY",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "FORD",
       "model": "TRANSIT CONNECT",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "FORD",
       "model": "TRANSIT COURIER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "FORD",
       "model": "TRANSIT CUSTOM",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "FOTON MOTORS",
+      "model": "EVIEW",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "FOTON MOTORS",
+      "model": "TUNLAND",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "PICKUP",
+      "fuel_detail": "Diesel Mild Hybrid"
+    },
+    {
+      "brand": "GEELY",
+      "model": "E5",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "GEELY",
+      "model": "STARRAY",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "GENESIS",
+      "model": "GV60",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "GENESIS",
+      "model": "GV70",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "GIOTTI VICTORIA",
       "model": "GLADIATOR",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1660,29 +2020,56 @@
     {
       "brand": "GOUPIL",
       "model": "G6",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
       "fuel_detail": "Electrico"
     },
     {
+      "brand": "GWM",
+      "model": "ORA 5",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "HERKO",
+      "model": "BIOS 35",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+    },
+    {
+      "brand": "HISPANO-SUIZA",
+      "model": "CARMEN BOULOGNE",
+      "seg": "9.GKL++3",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Electrico"
+    },
+    {
       "brand": "HONDA",
       "model": "CIVIC",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "HONDA",
       "model": "CR-V",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "HONDA",
@@ -1696,7 +2083,7 @@
     {
       "brand": "HONDA",
       "model": "E:NY1",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1705,7 +2092,7 @@
     {
       "brand": "HONDA",
       "model": "HR-V",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1714,7 +2101,7 @@
     {
       "brand": "HONDA",
       "model": "JAZZ",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -1722,8 +2109,17 @@
     },
     {
       "brand": "HONDA",
+      "model": "PRELUDE",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "HONDA",
       "model": "ZR-V",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1732,16 +2128,16 @@
     {
       "brand": "HYUNDAI",
       "model": "BAYON",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "HYUNDAI",
       "model": "I10",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -1750,25 +2146,25 @@
     {
       "brand": "HYUNDAI",
       "model": "I20",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "HYUNDAI",
       "model": "I30",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
-      "body": "ESTATE",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "HYUNDAI",
       "model": "INSTER",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1786,7 +2182,7 @@
     {
       "brand": "HYUNDAI",
       "model": "IONIQ 5",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1795,7 +2191,7 @@
     {
       "brand": "HYUNDAI",
       "model": "IONIQ 6",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
@@ -1803,17 +2199,26 @@
     },
     {
       "brand": "HYUNDAI",
-      "model": "KONA",
-      "seg": "UKL1",
+      "model": "IONIQ 9",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
-      "body": "SAV",
+      "body": "MPV",
       "fuel_detail": "Electrico"
     },
     {
       "brand": "HYUNDAI",
+      "model": "KONA",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "HYUNDAI",
       "model": "NEXO",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -1822,52 +2227,70 @@
     {
       "brand": "HYUNDAI",
       "model": "SANTA FE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "HYUNDAI",
       "model": "STARIA",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "HYUNDAI",
       "model": "TUCSON",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "ICH-X",
+      "model": "K2",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
       "fuel_detail": "Diesel"
     },
     {
+      "brand": "ICH-X",
+      "model": "K3",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+    },
+    {
       "brand": "INEOS",
       "model": "GRENADIER",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "ISUZU",
       "model": "D-MAX",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "ISUZU",
       "model": "N-SERIES",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -1876,20 +2299,47 @@
     {
       "brand": "IVECO",
       "model": "DAILY",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gas natural comprimido (GNC)"
+    },
+    {
+      "brand": "IVECO",
+      "model": "EMOOVY",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "JAECOO",
+      "model": "JAECOO 5",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "JAECOO",
       "model": "JAECOO 7",
-      "seg": "KKL",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
-      "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "JAECOO",
+      "model": "JAECOO 8",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "JAGUAR",
@@ -1948,20 +2398,20 @@
     {
       "brand": "JEEP",
       "model": "AVENGER",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "JEEP",
       "model": "COMPASS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "JEEP",
@@ -1975,7 +2425,7 @@
     {
       "brand": "JEEP",
       "model": "GRAND CHEROKEE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
@@ -1984,20 +2434,20 @@
     {
       "brand": "JEEP",
       "model": "RENEGADE",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "JEEP",
       "model": "WRANGLER",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "KARMA",
@@ -2011,7 +2461,7 @@
     {
       "brand": "KG MOBILITY",
       "model": "KORANDO",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
@@ -2020,16 +2470,16 @@
     {
       "brand": "KG MOBILITY",
       "model": "MUSSO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "KG MOBILITY",
       "model": "REXTON",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2038,7 +2488,7 @@
     {
       "brand": "KG MOBILITY",
       "model": "TIVOLI",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2047,25 +2497,25 @@
     {
       "brand": "KG MOBILITY",
       "model": "TORRES",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "KIA",
       "model": "CEED",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "KIA",
-      "model": "EV3",
-      "seg": "UKL1",
+      "model": "EV2",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2073,8 +2523,35 @@
     },
     {
       "brand": "KIA",
+      "model": "EV3",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "KIA",
+      "model": "EV4",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "KIA",
+      "model": "EV5",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "KIA",
       "model": "EV6",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2083,7 +2560,7 @@
     {
       "brand": "KIA",
       "model": "EV9",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
@@ -2091,21 +2568,39 @@
     },
     {
       "brand": "KIA",
+      "model": "K4",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina Mild Hybrid"
+    },
+    {
+      "brand": "KIA",
       "model": "NIRO",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "KIA",
       "model": "PICANTO",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
       "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "KIA",
+      "model": "PV5",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "KIA",
@@ -2118,12 +2613,21 @@
     },
     {
       "brand": "KIA",
-      "model": "SORENTO",
-      "seg": "KKL",
+      "model": "SELTOS",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "KIA",
+      "model": "SORENTO",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "KIA",
@@ -2137,11 +2641,11 @@
     {
       "brand": "KIA",
       "model": "SPORTAGE",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "KIA",
@@ -2155,20 +2659,20 @@
     {
       "brand": "KIA",
       "model": "STONIC",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "KIA",
       "model": "XCEED",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "LAMBORGHINI",
@@ -2182,7 +2686,7 @@
     {
       "brand": "LAMBORGHINI",
       "model": "HURACAN",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -2191,7 +2695,16 @@
     {
       "brand": "LAMBORGHINI",
       "model": "REVUELTO",
-      "seg": "GKL+",
+      "seg": "9.GKL++3",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LAMBORGHINI",
+      "model": "TEMERARIO",
+      "seg": "9.GKL++3",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -2200,88 +2713,106 @@
     {
       "brand": "LAMBORGHINI",
       "model": "URUS",
-      "seg": "GKL+",
+      "seg": "7.GKL++1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "LANCIA",
       "model": "YPSILON",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina Mild Hybrid"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "DEFENDER",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SUV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "DISCOVERY",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SUV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "RANGE ROVER",
+      "seg": "6.GKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "RANGE ROVER EVOQUE",
+      "seg": "3.UKL2",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "RANGE ROVER SPORT",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "RANGE ROVER VELAR",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LEAPMOTOR",
+      "model": "B05",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
       "fuel_detail": "Electrico"
     },
     {
-      "brand": "LAND ROVER",
-      "model": "DEFENDER",
-      "seg": "MKL",
-      "sub": "FOCUS SEGMENT",
-      "hp": "Standard",
-      "body": "SUV",
-      "fuel_detail": "Diesel Mild Hybrid"
-    },
-    {
-      "brand": "LAND ROVER",
-      "model": "DISCOVERY",
-      "seg": "MKL",
-      "sub": "FOCUS SEGMENT",
-      "hp": "Standard",
-      "body": "SUV",
-      "fuel_detail": "Diesel"
-    },
-    {
-      "brand": "LAND ROVER",
-      "model": "RANGE ROVER",
-      "seg": "GKL",
-      "sub": "FOCUS SEGMENT",
+      "brand": "LEAPMOTOR",
+      "model": "B10",
+      "seg": "3.UKL2",
+      "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
-    },
-    {
-      "brand": "LAND ROVER",
-      "model": "RANGE ROVER EVOQUE",
-      "seg": "UKL2",
-      "sub": "FOCUS SEGMENT",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel"
-    },
-    {
-      "brand": "LAND ROVER",
-      "model": "RANGE ROVER SPORT",
-      "seg": "MKL",
-      "sub": "FOCUS SEGMENT",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
-    },
-    {
-      "brand": "LAND ROVER",
-      "model": "RANGE ROVER VELAR",
-      "seg": "MKL",
-      "sub": "FOCUS SEGMENT",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "LEAPMOTOR",
       "model": "C10",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "LEAPMOTOR",
       "model": "T03",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -2308,7 +2839,7 @@
     {
       "brand": "LEXUS",
       "model": "ES",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -2326,7 +2857,7 @@
     {
       "brand": "LEXUS",
       "model": "LBX",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -2344,7 +2875,7 @@
     {
       "brand": "LEXUS",
       "model": "LM",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
@@ -2353,7 +2884,7 @@
     {
       "brand": "LEXUS",
       "model": "LS",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -2362,11 +2893,11 @@
     {
       "brand": "LEXUS",
       "model": "NX",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina/Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "LEXUS",
@@ -2380,16 +2911,16 @@
     {
       "brand": "LEXUS",
       "model": "RX",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina/Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "LEXUS",
       "model": "RZ",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAT",
@@ -2398,16 +2929,25 @@
     {
       "brand": "LEXUS",
       "model": "UX",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "LIVAN",
       "model": "X3 PRO",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "LIVAN",
+      "model": "X6 PRO",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2416,7 +2956,7 @@
     {
       "brand": "LOTUS",
       "model": "ELETRE",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAT",
@@ -2425,7 +2965,7 @@
     {
       "brand": "LOTUS",
       "model": "EMIRA",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -2434,7 +2974,25 @@
     {
       "brand": "LYNK & CO",
       "model": "LYNK&CO 01",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "LYNK & CO",
+      "model": "LYNK&CO 02",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "LYNK & CO",
+      "model": "LYNK&CO 08",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2443,7 +3001,7 @@
     {
       "brand": "MAN",
       "model": "TGE",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2460,8 +3018,17 @@
     },
     {
       "brand": "MASERATI",
+      "model": "GRANCABRIO",
+      "seg": "6.GKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "CABRIO",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "MASERATI",
       "model": "GRANTURISMO",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -2470,10 +3037,19 @@
     {
       "brand": "MASERATI",
       "model": "GRECALE",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
+      "fuel_detail": "Gasolina Mild Hybrid"
+    },
+    {
+      "brand": "MASERATI",
+      "model": "GT2 STRADALE",
+      "seg": "7.GKL++1",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "COUPE",
       "fuel_detail": "Gasolina"
     },
     {
@@ -2506,7 +3082,16 @@
     {
       "brand": "MAXUS",
       "model": "DELIVER 3",
-      "seg": "SKL",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "MAXUS",
+      "model": "DELIVER 5",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2515,7 +3100,7 @@
     {
       "brand": "MAXUS",
       "model": "DELIVER 7",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2524,11 +3109,11 @@
     {
       "brand": "MAXUS",
       "model": "DELIVER 9",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "MAXUS",
@@ -2541,8 +3126,17 @@
     },
     {
       "brand": "MAXUS",
+      "model": "T60",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "PICKUP",
+      "fuel_detail": "Diesel"
+    },
+    {
+      "brand": "MAXUS",
       "model": "T90",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
@@ -2551,7 +3145,7 @@
     {
       "brand": "MAZDA",
       "model": "CX30",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -2560,43 +3154,52 @@
     {
       "brand": "MAZDA",
       "model": "CX5",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
-    },
-    {
-      "brand": "MAZDA",
-      "model": "CX60",
-      "seg": "KKL",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
-    },
-    {
-      "brand": "MAZDA",
-      "model": "CX80",
-      "seg": "KKL",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
-    },
-    {
-      "brand": "MAZDA",
-      "model": "MAZDA 2",
-      "seg": "UKL1",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "HACH 5P",
       "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MAZDA",
+      "model": "CX60",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "MAZDA",
+      "model": "CX80",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "MAZDA",
+      "model": "E6",
+      "seg": "5.MKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "MAZDA",
+      "model": "MAZDA 2",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "MAZDA",
       "model": "MAZDA 3",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
@@ -2605,25 +3208,25 @@
     {
       "brand": "MAZDA",
       "model": "MAZDA 6",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
-      "body": "SEDAN",
+      "body": "ESTATE",
       "fuel_detail": "Gasolina"
     },
     {
       "brand": "MAZDA",
       "model": "MX-30",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MAZDA",
       "model": "MX-5",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "ROADSTER",
@@ -2641,7 +3244,7 @@
     {
       "brand": "MCLAREN",
       "model": "750S",
-      "seg": "GKL+",
+      "seg": "9.GKL++3",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
@@ -2659,10 +3262,10 @@
     {
       "brand": "MCLAREN",
       "model": "ARTURA",
-      "seg": "GKL+",
+      "seg": "8.GKL++2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "ROADSTER",
+      "body": "COUPE",
       "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
@@ -2677,65 +3280,65 @@
     {
       "brand": "MERCEDES",
       "model": "AMG GT",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
-      "hp": "M",
+      "hp": "Standard",
       "body": "COUPE",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MERCEDES",
       "model": "CITAN",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE A",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE B",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SAT",
-      "fuel_detail": "Diesel"
+      "body": "MPV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE C",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "CABRIO",
-      "fuel_detail": "Diesel"
+      "body": "SEDAN",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE CLA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "ESTATE",
-      "fuel_detail": "Diesel"
+      "body": "SEDAN",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE CLE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "COUPE",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
@@ -2749,124 +3352,124 @@
     {
       "brand": "MERCEDES",
       "model": "CLASE E",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "body": "ESTATE",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE G",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLB",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLC",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLC COUPE",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLE COUPE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE GLS",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE S",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE SL",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
-      "hp": "M",
+      "hp": "Standard",
       "body": "ROADSTER",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE T",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "MERCEDES",
       "model": "CLASE V",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "MERCEDES",
       "model": "E-SPRINTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2875,7 +3478,7 @@
     {
       "brand": "MERCEDES",
       "model": "ECITAN",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2884,7 +3487,7 @@
     {
       "brand": "MERCEDES",
       "model": "EQA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -2893,7 +3496,7 @@
     {
       "brand": "MERCEDES",
       "model": "EQB",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -2911,7 +3514,7 @@
     {
       "brand": "MERCEDES",
       "model": "EQE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -2920,16 +3523,16 @@
     {
       "brand": "MERCEDES",
       "model": "EQS",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "SEDAN",
+      "body": "SAV",
       "fuel_detail": "Electrico"
     },
     {
       "brand": "MERCEDES",
       "model": "EQT",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2938,7 +3541,7 @@
     {
       "brand": "MERCEDES",
       "model": "EQV",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
@@ -2947,7 +3550,7 @@
     {
       "brand": "MERCEDES",
       "model": "EVITO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2956,7 +3559,7 @@
     {
       "brand": "MERCEDES",
       "model": "MARCO POLO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2965,7 +3568,7 @@
     {
       "brand": "MERCEDES",
       "model": "SPRINTER 200",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2974,7 +3577,7 @@
     {
       "brand": "MERCEDES",
       "model": "SPRINTER 300",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2983,7 +3586,7 @@
     {
       "brand": "MERCEDES",
       "model": "SPRINTER 400",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -2992,7 +3595,7 @@
     {
       "brand": "MERCEDES",
       "model": "SPRINTER 500",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3001,11 +3604,20 @@
     {
       "brand": "MERCEDES-V",
       "model": "VITO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
       "fuel_detail": "Diesel"
+    },
+    {
+      "brand": "MG",
+      "model": "CYBERSTER",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "ROADSTER",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "MG",
@@ -3019,11 +3631,11 @@
     {
       "brand": "MG",
       "model": "HS",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MG",
@@ -3036,8 +3648,17 @@
     },
     {
       "brand": "MG",
+      "model": "MG 3",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "MG",
       "model": "MG 4",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -3054,12 +3675,39 @@
     },
     {
       "brand": "MG",
-      "model": "ZS",
-      "seg": "UKL1",
+      "model": "MG S5",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "MG",
+      "model": "MG S6",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "MG",
+      "model": "MG S9",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "MG",
+      "model": "ZS",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "MG",
@@ -3082,11 +3730,11 @@
     {
       "brand": "MINI",
       "model": "CABRIO",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "CABRIO",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "MINI",
@@ -3100,16 +3748,16 @@
     {
       "brand": "MINI",
       "model": "COUNTRYMAN",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "MINI",
       "model": "HATCHBACK",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "HACH 3P",
@@ -3118,25 +3766,25 @@
     {
       "brand": "MITSUBISHI",
       "model": "ASX",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "MITSUBISHI",
       "model": "COLT",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 3P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "MITSUBISHI",
       "model": "ECLIPSE CROSS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -3144,12 +3792,21 @@
     },
     {
       "brand": "MITSUBISHI",
-      "model": "OUTLANDER",
-      "seg": "KKL",
+      "model": "GRANDIS",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "OUTLANDER",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "MITSUBISHI",
@@ -3163,11 +3820,20 @@
     {
       "brand": "MITSUBISHI-FUSO",
       "model": "CANTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "MOKE",
+      "model": "MOKE",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "MORGAN",
@@ -3190,7 +3856,7 @@
     {
       "brand": "NEXTEM",
       "model": "ORCA",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3199,7 +3865,7 @@
     {
       "brand": "NISSAN",
       "model": "ARIYA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -3217,7 +3883,7 @@
     {
       "brand": "NISSAN",
       "model": "INTERSTAR",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3226,16 +3892,16 @@
     {
       "brand": "NISSAN",
       "model": "JUKE",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "NISSAN",
       "model": "LEAF",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -3244,11 +3910,11 @@
     {
       "brand": "NISSAN",
       "model": "MICRA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "NISSAN",
@@ -3271,7 +3937,7 @@
     {
       "brand": "NISSAN",
       "model": "PRIMASTAR",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3280,65 +3946,92 @@
     {
       "brand": "NISSAN",
       "model": "QASHQAI",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "NISSAN",
       "model": "TOWNSTAR",
-      "seg": "SKL",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "X-TRAIL",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SUV",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "OHM",
+      "model": "35 BEV",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
       "fuel_detail": "Electrico"
     },
     {
-      "brand": "NISSAN",
-      "model": "X-TRAIL",
-      "seg": "KKL",
+      "brand": "OMODA",
+      "model": "OMODA 5",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
-      "body": "SUV",
-      "fuel_detail": "Gasolina"
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "OMODA",
-      "model": "OMODA 5",
-      "seg": "UKL2",
+      "model": "OMODA 7",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
-      "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "OMODA",
+      "model": "OMODA 9",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "OPEL",
       "model": "ASTRA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "OPEL",
       "model": "COMBO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "OPEL",
       "model": "CORSA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "OPEL",
@@ -3351,12 +4044,21 @@
     },
     {
       "brand": "OPEL",
+      "model": "FRONTERA",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SUV",
+      "fuel_detail": "Gasolina Mild Hybrid"
+    },
+    {
+      "brand": "OPEL",
       "model": "GRANDLAND X",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "OPEL",
@@ -3370,38 +4072,38 @@
     {
       "brand": "OPEL",
       "model": "MOKKA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "OPEL",
       "model": "MOVANO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "OPEL",
       "model": "VIVARO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "OPEL",
       "model": "ZAFIRA LIFE",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "PEUGEOT",
@@ -3415,56 +4117,56 @@
     {
       "brand": "PEUGEOT",
       "model": "2008",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "PEUGEOT",
       "model": "208",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "PEUGEOT",
       "model": "3008",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PEUGEOT",
       "model": "308",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
-      "body": "ESTATE",
-      "fuel_detail": "Diesel"
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PEUGEOT",
       "model": "408",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PEUGEOT",
       "model": "5008",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PEUGEOT",
@@ -3478,7 +4180,7 @@
     {
       "brand": "PEUGEOT",
       "model": "BOXER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3487,34 +4189,34 @@
     {
       "brand": "PEUGEOT",
       "model": "EXPERT",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "PEUGEOT",
       "model": "PARTNER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "PEUGEOT",
       "model": "RIFTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "PEUGEOT",
       "model": "TRAVELLER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3523,7 +4225,16 @@
     {
       "brand": "PIAGGIO",
       "model": "PORTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Gas natural comprimido (GNC)"
+    },
+    {
+      "brand": "PIAGGIO",
+      "model": "PORTER NPE",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3532,16 +4243,34 @@
     {
       "brand": "POLESTAR",
       "model": "POLESTAR 2",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
       "fuel_detail": "Electrico"
     },
     {
+      "brand": "POLESTAR",
+      "model": "POLESTAR 3",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "POLESTAR",
+      "model": "POLESTAR 4",
+      "seg": "4.KKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
       "brand": "PORSCHE",
       "model": "718",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "ROADSTER",
@@ -3550,101 +4279,119 @@
     {
       "brand": "PORSCHE",
       "model": "911",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
-      "hp": "M Performance",
-      "body": "CABRIO",
-      "fuel_detail": "Gasolina"
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "PORSCHE",
       "model": "CAYENNE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PORSCHE",
       "model": "CAYENNE COUPE",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
-      "hp": "M Performance",
+      "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PORSCHE",
       "model": "MACAN",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "PORSCHE",
       "model": "PANAMERA",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
-      "body": "ESTATE",
-      "fuel_detail": "Gasolina"
+      "body": "SEDAN",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "PORSCHE",
       "model": "TAYCAN",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
-      "hp": "M",
-      "body": "SEDAN",
+      "hp": "Standard",
+      "body": "ESTATE",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "4",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "5",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "HACH 5P",
       "fuel_detail": "Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "ARKANA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "AUSTRAL",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "CAPTUR",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "CLIO",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "ESPACE",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
-      "body": "MPV",
-      "fuel_detail": "Diesel"
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "RENAULT",
@@ -3658,7 +4405,7 @@
     {
       "brand": "RENAULT",
       "model": "GRAND SCENIC",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
@@ -3676,11 +4423,11 @@
     {
       "brand": "RENAULT",
       "model": "KANGOO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "RENAULT",
@@ -3694,34 +4441,34 @@
     {
       "brand": "RENAULT",
       "model": "MASTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "MEGANE",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "RENAULT",
       "model": "RAFALE",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina/Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "RENAULT",
       "model": "SCENIC",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
@@ -3729,17 +4476,26 @@
     },
     {
       "brand": "RENAULT",
+      "model": "SYMBIOZ",
+      "seg": "2.UKL1",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "RENAULT",
       "model": "TRAFIC",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "RENAULT",
       "model": "TWINGO",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -3757,7 +4513,16 @@
     {
       "brand": "RENAULT TRUCKS",
       "model": "MASTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "RENAULT TRUCKS",
+      "model": "TRAFIC",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -3766,11 +4531,29 @@
     {
       "brand": "ROLLS-ROYCE",
       "model": "CULLINAN",
-      "seg": "GKL+",
+      "seg": "9.GKL++3",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
       "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "ROLLS-ROYCE",
+      "model": "SPECTRE",
+      "seg": "9.GKL++3",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "COUPE",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "SANTANA",
+      "model": "400",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "PICKUP",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "SEAT",
@@ -3784,38 +4567,38 @@
     {
       "brand": "SEAT",
       "model": "ARONA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gas natural comprimido (GNC)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "SEAT",
       "model": "ATECA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "SEAT",
       "model": "IBIZA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gas natural comprimido (GNC)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "SEAT",
       "model": "LEON",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
-      "body": "ESTATE",
-      "fuel_detail": "Diesel"
+      "body": "HACH 5P",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "SEAT",
@@ -3837,8 +4620,26 @@
     },
     {
       "brand": "SHINERAY",
+      "model": "G03F",
+      "seg": "5.MKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SUV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "SHINERAY",
+      "model": "G05",
+      "seg": "5.MKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "SHINERAY",
       "model": "SWM G01",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
@@ -3847,7 +4648,7 @@
     {
       "brand": "SHINERAY",
       "model": "SWM G01F",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
@@ -3855,8 +4656,26 @@
     },
     {
       "brand": "SKODA",
+      "model": "ELROQ",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "SKODA",
       "model": "ENYAQ",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "SKODA",
+      "model": "EPIQ",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -3865,7 +4684,7 @@
     {
       "brand": "SKODA",
       "model": "FABIA",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -3874,7 +4693,7 @@
     {
       "brand": "SKODA",
       "model": "KAMIQ",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -3883,47 +4702,47 @@
     {
       "brand": "SKODA",
       "model": "KAROQ",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAT",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "SKODA",
       "model": "KODIAQ",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "SKODA",
       "model": "OCTAVIA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
-      "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "body": "ESTATE",
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "SKODA",
       "model": "SCALA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gas natural comprimido (GNC)"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "SKODA",
       "model": "SUPERB",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "SKYWELL",
@@ -3937,7 +4756,7 @@
     {
       "brand": "SMART",
       "model": "#1",
-      "seg": "UKL2",
+      "seg": "2.UKL1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -3946,7 +4765,16 @@
     {
       "brand": "SMART",
       "model": "#3",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "HACH 5P",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "SMART",
+      "model": "#5",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -3962,6 +4790,33 @@
       "fuel_detail": "Electrico"
     },
     {
+      "brand": "SPORTEQUIPE",
+      "model": "SPORTEQUIPE 6",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+    },
+    {
+      "brand": "SPORTEQUIPE",
+      "model": "SPORTEQUIPE 7",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+    },
+    {
+      "brand": "SPORTEQUIPE",
+      "model": "SPORTEQUIPE 8",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
+    },
+    {
       "brand": "SSANGYONG",
       "model": "KORANDO K4",
       "seg": "KKL",
@@ -3973,7 +4828,7 @@
     {
       "brand": "SSANGYONG",
       "model": "MUSSO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
@@ -3991,7 +4846,7 @@
     {
       "brand": "SSANGYONG",
       "model": "REXTON",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4018,7 +4873,7 @@
     {
       "brand": "SUBARU",
       "model": "BRZ",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "COUPE",
@@ -4026,12 +4881,21 @@
     },
     {
       "brand": "SUBARU",
-      "model": "FORESTER",
-      "seg": "KKL",
+      "model": "CROSSTREK",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico"
+    },
+    {
+      "brand": "SUBARU",
+      "model": "FORESTER",
+      "seg": "4.KKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "SUBARU",
@@ -4045,7 +4909,7 @@
     {
       "brand": "SUBARU",
       "model": "OUTBACK",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "ESTATE",
@@ -4081,7 +4945,7 @@
     {
       "brand": "SUZUKI",
       "model": "ACROSS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4090,7 +4954,7 @@
     {
       "brand": "SUZUKI",
       "model": "IGNIS",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -4108,7 +4972,7 @@
     {
       "brand": "SUZUKI",
       "model": "SWACE",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -4117,7 +4981,7 @@
     {
       "brand": "SUZUKI",
       "model": "SWIFT",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -4126,25 +4990,25 @@
     {
       "brand": "SUZUKI",
       "model": "SX4",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "SUZUKI",
       "model": "VITARA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "TESLA",
       "model": "MODEL 3",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -4153,7 +5017,7 @@
     {
       "brand": "TESLA",
       "model": "MODEL S",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
@@ -4162,7 +5026,7 @@
     {
       "brand": "TESLA",
       "model": "MODEL X",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAT",
@@ -4171,11 +5035,29 @@
     {
       "brand": "TESLA",
       "model": "MODEL Y",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAT",
       "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "TIGER",
+      "model": "TIGER 6",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "TIGER",
+      "model": "TIGER 8",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gas Licuado con petroleo (GLP)"
     },
     {
       "brand": "TOYOTA",
@@ -4189,16 +5071,16 @@
     {
       "brand": "TOYOTA",
       "model": "AYGO X",
-      "seg": "UKL0",
+      "seg": "1.UKL0",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "TOYOTA",
       "model": "BZ4X",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4207,16 +5089,16 @@
     {
       "brand": "TOYOTA",
       "model": "C-HR",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina/Electrico"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "TOYOTA",
       "model": "CAMRY",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SEDAN",
@@ -4225,7 +5107,7 @@
     {
       "brand": "TOYOTA",
       "model": "COROLLA",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -4234,7 +5116,7 @@
     {
       "brand": "TOYOTA",
       "model": "COROLLA CROSS",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4261,16 +5143,16 @@
     {
       "brand": "TOYOTA",
       "model": "HI LUX",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "TOYOTA",
       "model": "HIGHLANDER",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
@@ -4279,11 +5161,11 @@
     {
       "brand": "TOYOTA",
       "model": "LAND CRUISER",
-      "seg": "GKL",
+      "seg": "6.GKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SUV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Diesel Mild Hybrid"
     },
     {
       "brand": "TOYOTA",
@@ -4306,43 +5188,52 @@
     {
       "brand": "TOYOTA",
       "model": "PROACE",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "TOYOTA",
       "model": "PROACE CITY",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "PROACE MAX",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "TOYOTA",
       "model": "PROACE VERSO",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
-    },
-    {
-      "brand": "TOYOTA",
-      "model": "RAV 4",
-      "seg": "UKL2",
-      "sub": "REST",
-      "hp": "Standard",
-      "body": "SAV",
       "fuel_detail": "Gasolina"
     },
     {
       "brand": "TOYOTA",
+      "model": "RAV 4",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "TOYOTA",
       "model": "SUPRA",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "COUPE",
@@ -4351,25 +5242,25 @@
     {
       "brand": "TOYOTA",
       "model": "YARIS",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "TOYOTA",
       "model": "YARIS CROSS",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Gasolina"
+      "fuel_detail": "Gasolina/Electrico"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "AMAROK",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "PICKUP",
@@ -4396,34 +5287,34 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "CADDY",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "CALIFORNIA",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "CARAVELLE",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "CRAFTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -4432,16 +5323,16 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "GOLF",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "GRAND CALIFORNIA",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -4450,7 +5341,7 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "ID.3",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -4459,7 +5350,7 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "ID.4",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4468,7 +5359,7 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "ID.5",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4476,8 +5367,17 @@
     },
     {
       "brand": "VOLKSWAGEN",
+      "model": "ID.7",
+      "seg": "5.MKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "VOLKSWAGEN",
       "model": "ID.BUZZ",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
@@ -4486,25 +5386,25 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "MULTIVAN",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "PASSAT",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "ESTATE",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "POLO",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "HACH 5P",
@@ -4522,7 +5422,7 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "T-CROSS",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4531,16 +5431,16 @@
     {
       "brand": "VOLKSWAGEN",
       "model": "T-ROC",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "TAIGO",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
@@ -4548,48 +5448,57 @@
     },
     {
       "brand": "VOLKSWAGEN",
-      "model": "TIGUAN",
-      "seg": "UKL2",
+      "model": "TAYRON",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "TIGUAN",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "TIGUAN ALLSPACE",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "TOUAREG",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "TOURAN",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "REST",
       "hp": "Standard",
       "body": "MPV",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina"
     },
     {
       "brand": "VOLKSWAGEN",
       "model": "TRANSPORTER",
-      "seg": "SKL",
+      "seg": "10.SKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "TRANSPORTER",
-      "fuel_detail": "Diesel"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLKSWAGEN",
@@ -4630,7 +5539,7 @@
     {
       "brand": "VOLVO",
       "model": "EX30",
-      "seg": "UKL1",
+      "seg": "2.UKL1",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
@@ -4657,11 +5566,11 @@
     {
       "brand": "VOLVO",
       "model": "S60",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SEDAN",
-      "fuel_detail": "Gasolina Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLVO",
@@ -4675,64 +5584,154 @@
     {
       "brand": "VOLVO",
       "model": "V60",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "ESTATE",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLVO",
       "model": "V90",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "ESTATE",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLVO",
       "model": "XC40",
-      "seg": "UKL2",
+      "seg": "3.UKL2",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Electrico"
+      "fuel_detail": "Gasolina Mild Hybrid"
     },
     {
       "brand": "VOLVO",
       "model": "XC60",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
     },
     {
       "brand": "VOLVO",
       "model": "XC90",
-      "seg": "MKL",
+      "seg": "5.MKL",
       "sub": "FOCUS SEGMENT",
       "hp": "Standard",
       "body": "SAV",
-      "fuel_detail": "Diesel Mild Hybrid"
+      "fuel_detail": "Gasolina/Electrico Enchufable"
+    },
+    {
+      "brand": "VOYAH",
+      "model": "DREAM",
+      "seg": "5.MKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "MPV",
+      "fuel_detail": "Electrico"
     },
     {
       "brand": "VOYAH",
       "model": "FREE",
-      "seg": "KKL",
+      "seg": "4.KKL",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
       "fuel_detail": "Electrico"
     },
     {
+      "brand": "XPENG",
+      "model": "G6",
+      "seg": "4.KKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "XPENG",
+      "model": "G9",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "XPENG",
+      "model": "P7",
+      "seg": "4.KKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
       "brand": "YUDO",
-      "model": "YUDO 3",
-      "seg": "UKL2",
+      "model": "YUDO 2 PRO",
+      "seg": "2.UKL1",
       "sub": "REST",
       "hp": "Standard",
       "body": "SAV",
+      "fuel_detail": "Gasolina"
+    },
+    {
+      "brand": "YUDO",
+      "model": "YUDO 3",
+      "seg": "3.UKL2",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "ZEEKR",
+      "model": "7GT",
+      "seg": "4.KKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "ZEEKR",
+      "model": "7X",
+      "seg": "4.KKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "ZEEKR",
+      "model": "ZEEKR 1",
+      "seg": "5.MKL",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SEDAN",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "ZEEKR",
+      "model": "ZEEKR X",
+      "seg": "3.UKL2",
+      "sub": "FOCUS SEGMENT",
+      "hp": "Standard",
+      "body": "SAV",
+      "fuel_detail": "Electrico"
+    },
+    {
+      "brand": "ZEROID",
+      "model": "EV15",
+      "seg": "10.SKL",
+      "sub": "REST",
+      "hp": "Standard",
+      "body": "TRANSPORTER",
       "fuel_detail": "Electrico"
     }
   ]

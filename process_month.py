@@ -452,6 +452,53 @@ def _load_model_lookup_fallback():
         print(f'  WARN: no se pudo cargar fallback de modelos Simmix: {exc}')
         return False
 
+def _candidate_simmix_2026_product_paths():
+    paths = [os.path.join(OUT_DIR, 'BBDD_2026_PRODUCTO_06_30.csv')]
+    downloads = os.path.join(os.path.expanduser('~'), 'Downloads')
+    try:
+        names = [
+            n for n in os.listdir(downloads)
+            if n.upper().startswith('BBDD_2026_PRODUCTO_06_30') and n.lower().endswith('.csv')
+        ]
+        paths.extend(os.path.join(downloads, n) for n in sorted(names, reverse=True))
+    except OSError:
+        pass
+    return paths
+
+def _load_simmix_2026_product_lookup():
+    for fname in _candidate_simmix_2026_product_paths():
+        if not os.path.exists(fname):
+            continue
+        try:
+            with open(fname, encoding='utf-8-sig', newline='') as f:
+                reader = csv.reader(f)
+                header = next(reader)
+                idx = {name: header.index(name) for name in (
+                    'Brand_2026', 'Model_2026', 'Fuel_2026', 'Segment_Origin_2026',
+                    'SubSegmento_2026', 'High Performance_2026', 'Body Type_2026'
+                )}
+                loaded = False
+                for raw in reader:
+                    if len(raw) <= max(idx.values()):
+                        continue
+                    brand = raw[idx['Brand_2026']].strip().upper()
+                    model = raw[idx['Model_2026']].strip().upper()
+                    if not brand or not model:
+                        continue
+                    _MODEL_LOOKUP[(brand, model)] = {
+                        'modelo': model,
+                        'seg': raw[idx['Segment_Origin_2026']].strip(),
+                        'sub': raw[idx['SubSegmento_2026']].strip(),
+                        'hp': 'Standard',
+                        'body': raw[idx['Body Type_2026']].strip(),
+                        'fuel_detail': raw[idx['Fuel_2026']].strip(),
+                    }
+                    loaded = True
+            return loaded
+        except Exception as exc:
+            print(f'  WARN: no se pudo cargar BBDD 2026 producto {fname}: {exc}')
+    return False
+
 def _save_model_lookup_fallback():
     if not _MODEL_LOOKUP:
         return
@@ -504,10 +551,12 @@ def _load_simmix_bbdd():
         except Exception:
             pass
     if loaded_from_bbdd:
+        _load_simmix_2026_product_lookup()
         _apply_model_lookup_patches()
         _save_model_lookup_fallback()
     elif not _MODEL_LOOKUP:
         _load_model_lookup_fallback()
+        _load_simmix_2026_product_lookup()
         _apply_model_lookup_patches()
 
 _PROP_FUEL_NAME = {
@@ -547,7 +596,7 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
             return 'M'
 
         # M Performance Automobiles: Mxxi/Mxxd, i M50/M60/M70, X M35/M40/M50/M60, Z4 M40.
-        if (re.match(r'^M(135|140|235|240|340|440|550|760|850)\b', mo) or
+        if (re.match(r'^M(?:135|140|235|240|340|440|550|760|850)[A-Z]*\b', mo) or
                 re.match(r'^I[457X]\s+M(50|60|70)\b', mo) or
                 re.match(r'^X[12]\s+M35', mo) or
                 re.match(r'^X[34]\s+M(40|50)', mo) or
@@ -560,14 +609,37 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
         return 'JCW' if ('JCW' in mo or 'JOHN COOPER WORKS' in mo or 'JHON COOPER WORKS' in mo) else 'Standard'
 
     if m in ('MERCEDES-BENZ','MERCEDES','MERCEDES BENZ','MERCEDES-AMG'):
-        return 'M Performance' if 'AMG' in mo else 'Standard'
+        if 'AMG' not in mo:
+            return 'Standard'
+        if (re.search(r'AMG\s+(?:A|C|CLA|GLA)\s*45', mo) or
+                re.search(r'AMG\s+(?:C|G|GLC|GLE|GLS|GT)\s*63', mo) or
+                re.search(r'AMG\s+SL\s*55', mo)):
+            return 'M'
+        return 'M Performance'
+
+    if m == 'AUDI':
+        audi = re.sub(r'^AUDI\s+', '', mo)
+        if audi.startswith('RS') or audi.startswith('R8'):
+            return 'M'
+        if re.match(r'^(?:S[0-9]|SQ[0-9]|S\s+E-TRON)', audi):
+            return 'M Performance'
+        return lookup_hp or 'Standard'
+
+    if m == 'PORSCHE':
+        if ('TURBO' in mo or 'GT3' in mo or 'GT4 RS' in mo or
+                'SPYDER RS' in mo or 'TURBO GT' in mo):
+            return 'M'
+        if ('GTS' in mo or re.search(r'\b4S\b', mo) or
+                re.search(r'\bCARRERA\s+(?:4)?S\b', mo) or
+                re.search(r'\bTARGA\s+4S\b', mo) or
+                re.search(r'\b(?:CAYENNE|MACAN)\s+S\b', mo) or
+                'E-HYBRID S' in mo or 'S E-HYBRID' in mo):
+            return 'M Performance'
+        return 'Standard'
 
     if not lookup_hp or lookup_hp == 'Standard':
-        if m == 'AUDI' and (mo.startswith('RS') or mo.startswith('R8')):
-            return 'M Performance'
-        if m == 'PORSCHE' and mo.startswith('911') and 'GT' in mo:
-            return 'M'
-    return lookup_hp or 'Standard'
+        return lookup_hp or 'Standard'
+    return lookup_hp
 
 
 # Reglas de campa
