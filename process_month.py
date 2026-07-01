@@ -151,8 +151,14 @@ _BRAND_NORM = {
     'MERCEDES-AMG': 'MERCEDES',   # AMG cars map to Mercedes scope brand
     'LYNK&CO': 'LYNK & CO',
     "ALKE'": 'ALKE',
+    '212': 'BAW',
+    'AUTOMOBILI LAMBORGHINI S.P.A.': 'LAMBORGHINI',
+    'DEEPAL': 'CHANGAN',
     'DS AUTOMOBILES': 'DS',
-    'FUSO': 'MITSUBISHI FUSO',
+    'FOTON': 'FOTON MOTORS',
+    'FUSO': 'MITSUBISHI-FUSO',
+    'GREAT WALL MOTOR COMPANY LIMIT': 'GWM',
+    'MITSUBISHI FUSO': 'MITSUBISHI-FUSO',
     'RENAULT TRUCKS SAS': 'RENAULT TRUCKS',
     'SWM': 'SHINERAY',
 }
@@ -1148,6 +1154,8 @@ def normalize_marca(marca, modelo=''):
     m = marca.strip().upper()
     mo = modelo.strip().upper()
     m = _BRAND_NORM.get(m, m)
+    if m == 'SPORTEQUIPE' and ('ICH-X' in mo or mo.startswith('X K')):
+        return 'ICH-X'
     if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG'):
         # Mercedes V-Class derivatives → Mercedes-V scope (separate brand in Simmix)
         # DGT raw F_MODELO: 'V 220 D...', 'VITO 116...', 'EQV 300...', 'MARCO POLO'

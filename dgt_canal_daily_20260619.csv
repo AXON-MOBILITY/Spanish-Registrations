@@ -1,6 +1,4 @@
 anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
-2026,06,19,212,,Corporate,ICE,Diesel,,REST,Standard,,2
-2026,06,19,212,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,06,19,A.A. AIRBUS,,Corporate,ICE,Diesel,,REST,Standard,,5
 2026,06,19,ABARTH,500,Private,BEV,Electrico,1.UKL0,REST,Standard,HACH 3P,1
 2026,06,19,ALFA ROMEO,JUNIOR,Corporate,ICE,Gasolina Mild Hybrid,2.UKL1,REST,Standard,SAV,1
@@ -47,8 +45,9 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,19,AUDI,Q5 SPORTBACK,Private,PHEV,Gasolina/Electrico Enchufable,4.KKL,FOCUS SEGMENT,Standard,SAV,4
 2026,06,19,AUDI,Q8,Corporate,ICE,Gasolina/Electrico Enchufable,5.MKL,FOCUS SEGMENT,Standard,SAV,1
 2026,06,19,AUDI,Q8,Corporate,PHEV,Gasolina/Electrico Enchufable,5.MKL,FOCUS SEGMENT,Standard,SAV,1
-2026,06,19,AUTOMOBILI LAMBORGHINI S.P.A.,,Private,PHEV,Gasolina/Electrico Enchufable,,REST,Standard,,2
 2026,06,19,BARBANY,,RAC,ICE,Diesel,,REST,Standard,,1
+2026,06,19,BAW,,Corporate,ICE,Diesel,,REST,Standard,,2
+2026,06,19,BAW,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,06,19,BAYCAR,,Corporate,ICE,Diesel,,REST,Standard,,1
 2026,06,19,BENIMAR,,Corporate,ICE,Diesel,,REST,Standard,,2
 2026,06,19,BENIMAR,,Private,ICE,Diesel,,REST,Standard,,5
@@ -123,6 +122,8 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,19,"CARROCERIAS SANCA, S.A.",,Corporate,ICE,Diesel,,REST,Standard,,1
 2026,06,19,CERRAJERIA AURELIO,,Corporate,ICE,Diesel,,REST,Standard,,1
 2026,06,19,CHALLENGER,,Private,ICE,Diesel,,REST,Standard,,1
+2026,06,19,CHANGAN,DEEPAL S05,Private,BEV,Gasolina/Electrico Enchufable,3.UKL2,REST,Standard,HACH 5P,7
+2026,06,19,CHANGAN,DEEPAL S07,Private,BEV,Electrico,3.UKL2,REST,Standard,SAV,4
 2026,06,19,CHAPISTERIA V.I.,,Corporate,ICE,Diesel,,REST,Standard,,1
 2026,06,19,CIRELLI,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,06,19,CIRELLI,,Private,ICE,Gasolina,,REST,Standard,,1
@@ -182,7 +183,6 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,19,DACIA,SANDERO,Corporate,ICE,Gasolina,2.UKL1,REST,Standard,HACH 5P,42
 2026,06,19,DACIA,SANDERO,Private,ICE,Gasolina,2.UKL1,REST,Standard,HACH 5P,192
 2026,06,19,DACIA,SPRING,Corporate,BEV,Electrico,1.UKL0,REST,Standard,SAV,1
-2026,06,19,DEEPAL,,Private,BEV,Electrico,,REST,Standard,,11
 2026,06,19,DONGFENG,BOX,Corporate,BEV,Electrico,1.UKL0,REST,Standard,HACH 5P,1
 2026,06,19,DR,DR5,Private,ICE,Gasolina,3.UKL2,REST,Standard,SAV,1
 2026,06,19,DR,PK8,Corporate,ICE,Diesel,10.SKL,REST,Standard,PICKUP,1
@@ -258,8 +258,8 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,19,FORD,TRANSIT CUSTOM,Corporate,PHEV,Gasolina/Electrico Enchufable,10.SKL,REST,Standard,TRANSPORTER,6
 2026,06,19,FORD,TRANSIT CUSTOM,Private,PHEV,Gasolina/Electrico Enchufable,10.SKL,REST,Standard,TRANSPORTER,2
 2026,06,19,FORD,TRANSIT CUSTOM,RAC,ICE,Gasolina/Electrico Enchufable,10.SKL,REST,Standard,TRANSPORTER,2
-2026,06,19,FOTON,,Corporate,ICE,Diesel,,REST,Standard,,2
-2026,06,19,FOTON,,Private,ICE,Diesel,,REST,Standard,,2
+2026,06,19,FOTON MOTORS,TUNLAND,Corporate,ICE,Diesel Mild Hybrid,10.SKL,REST,Standard,PICKUP,2
+2026,06,19,FOTON MOTORS,TUNLAND,Private,ICE,Diesel Mild Hybrid,10.SKL,REST,Standard,PICKUP,2
 2026,06,19,GEELY,E5,Corporate,BEV,Electrico,3.UKL2,REST,Standard,HACH 5P,1
 2026,06,19,GEELY,E5,Private,BEV,Electrico,3.UKL2,REST,Standard,HACH 5P,2
 2026,06,19,GEELY,STARRAY,Corporate,PHEV,Gasolina/Electrico Enchufable,3.UKL2,REST,Standard,HACH 5P,1
@@ -355,6 +355,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,19,KIA,STONIC,Private,ICE,Gasolina Mild Hybrid,2.UKL1,REST,Standard,SAV,20
 2026,06,19,KIA,XCEED,Corporate,ICE,Gasolina Mild Hybrid,3.UKL2,REST,Standard,HACH 5P,3
 2026,06,19,KIA,XCEED,Private,ICE,Gasolina Mild Hybrid,3.UKL2,REST,Standard,HACH 5P,35
+2026,06,19,LAMBORGHINI,URUS,Private,PHEV,Gasolina/Electrico Enchufable,7.GKL++1,FOCUS SEGMENT,Standard,SAV,2
 2026,06,19,LANCIA,YPSILON,Corporate,ICE,Gasolina Mild Hybrid,2.UKL1,REST,Standard,HACH 5P,4
 2026,06,19,LAND ROVER,DEFENDER,Corporate,ICE,Gasolina/Electrico Enchufable,5.MKL,FOCUS SEGMENT,Standard,SUV,2
 2026,06,19,LAND ROVER,DEFENDER,Private,ICE,Gasolina/Electrico Enchufable,5.MKL,FOCUS SEGMENT,Standard,SUV,1

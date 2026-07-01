@@ -8,10 +8,21 @@
     "label": "Junio 2026"
   },
   "completed_months": 41,
-  "total_registrations_historical": 4286101,
+  "total_registrations_historical": 4279921,
   "has_provinces": true,
   "scope": {
     "mode": "dgt",
-    "source": "DGT microdata processed with the Simmix-aligned ETL; no truncated BBDD brand-scope filter."
+    "source": "DGT microdata processed with the Simmix-aligned ETL; no truncated BBDD brand-scope filter.",
+    "alignment": "simmix_2026_product_export",
+    "alignment_stats": {
+      "status": "applied",
+      "year": 2026,
+      "month": 6,
+      "groups": 268,
+      "adjusted_groups": 163,
+      "dropped_records": 17049,
+      "synthetic_residual": 752,
+      "target_total": 749707
+    }
   }
 }

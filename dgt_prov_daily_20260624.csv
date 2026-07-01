@@ -92,7 +92,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,DACIA,09,Burgos,Private,ICE,3
 2026,06,24,EBRO,09,Burgos,Private,ICE,1
 2026,06,24,FIAT,09,Burgos,Corporate,ICE,2
-2026,06,24,FOTON,09,Burgos,Corporate,ICE,1
+2026,06,24,FOTON MOTORS,09,Burgos,Corporate,ICE,1
 2026,06,24,HONDA,09,Burgos,Private,ICE,1
 2026,06,24,KIA,09,Burgos,Private,BEV,1
 2026,06,24,LEXUS,09,Burgos,Private,ICE,1
@@ -226,8 +226,8 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,MINI,15,A Coruña,Private,ICE,2
 2026,06,24,AUDI,16,Cuenca,Private,ICE,1
 2026,06,24,AUDI,16,Cuenca,Private,PHEV,1
+2026,06,24,CHANGAN,16,Cuenca,Private,BEV,1
 2026,06,24,DACIA,16,Cuenca,Private,ICE,1
-2026,06,24,DEEPAL,16,Cuenca,Private,BEV,1
 2026,06,24,MG,16,Cuenca,Private,ICE,1
 2026,06,24,OMODA,16,Cuenca,Private,PHEV,1
 2026,06,24,PEUGEOT,16,Cuenca,Private,ICE,1
@@ -291,8 +291,8 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,AUDI,20,Gipuzkoa,Corporate,ICE,1
 2026,06,24,AUDI,20,Gipuzkoa,Private,ICE,1
 2026,06,24,BYD,20,Gipuzkoa,Private,PHEV,1
+2026,06,24,CHANGAN,20,Gipuzkoa,Corporate,BEV,1
 2026,06,24,DACIA,20,Gipuzkoa,Private,ICE,5
-2026,06,24,DEEPAL,20,Gipuzkoa,Corporate,BEV,1
 2026,06,24,EBRO,20,Gipuzkoa,Private,ICE,1
 2026,06,24,ERROBITRAK,20,Gipuzkoa,Corporate,ICE,1
 2026,06,24,FORD,20,Gipuzkoa,Private,ICE,1
@@ -417,6 +417,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,BYD,28,Madrid,Private,BEV,19
 2026,06,24,BYD,28,Madrid,Private,PHEV,21
 2026,06,24,"CARROCERIAS SANCA, S.A.",28,Madrid,RAC,ICE,1
+2026,06,24,CHANGAN,28,Madrid,Private,BEV,1
 2026,06,24,CHAPISTERIA V.I.,28,Madrid,RAC,ICE,3
 2026,06,24,CHT,28,Madrid,Corporate,BEV,2
 2026,06,24,CITROEN,28,Madrid,Corporate,BEV,1
@@ -437,7 +438,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,DACIA,28,Madrid,Corporate,ICE,14
 2026,06,24,DACIA,28,Madrid,Private,ICE,52
 2026,06,24,DACIA,28,Madrid,RAC,ICE,19
-2026,06,24,DEEPAL,28,Madrid,Private,BEV,1
 2026,06,24,DFSK,28,Madrid,Corporate,BEV,3
 2026,06,24,DS,28,Madrid,Corporate,ICE,4
 2026,06,24,DS,28,Madrid,Private,ICE,1
@@ -458,7 +458,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,FORD,28,Madrid,Private,ICE,2
 2026,06,24,FORD,28,Madrid,Private,PHEV,1
 2026,06,24,FORD,28,Madrid,RAC,ICE,1
-2026,06,24,FOTON,28,Madrid,Corporate,ICE,1
+2026,06,24,FOTON MOTORS,28,Madrid,Corporate,ICE,1
 2026,06,24,GEELY,28,Madrid,Private,PHEV,7
 2026,06,24,HONDA,28,Madrid,Corporate,PHEV,1
 2026,06,24,HONDA,28,Madrid,Private,PHEV,1
@@ -760,11 +760,11 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,BMW,33,Asturias,Private,ICE,1
 2026,06,24,BYD,33,Asturias,Private,BEV,1
 2026,06,24,BYD,33,Asturias,Private,PHEV,1
+2026,06,24,CHANGAN,33,Asturias,Private,BEV,2
 2026,06,24,CITROEN,33,Asturias,Private,ICE,1
 2026,06,24,CODETRANS,33,Asturias,Corporate,ICE,1
 2026,06,24,CUPRA,33,Asturias,Private,ICE,1
 2026,06,24,DACIA,33,Asturias,Private,ICE,5
-2026,06,24,DEEPAL,33,Asturias,Private,BEV,2
 2026,06,24,EBRO,33,Asturias,Corporate,PHEV,1
 2026,06,24,EBRO,33,Asturias,Private,ICE,2
 2026,06,24,EBRO,33,Asturias,Private,PHEV,1
@@ -831,7 +831,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,VOLKSWAGEN,37,Salamanca,Corporate,ICE,2
 2026,06,24,VOLKSWAGEN,37,Salamanca,Private,ICE,1
 2026,06,24,VOLKSWAGEN,37,Salamanca,Private,PHEV,1
-2026,06,24,AUTOMOBILI LAMBORGHINI S.P.A.,38,S.C. Tenerife,Corporate,PHEV,1
 2026,06,24,BMW,38,S.C. Tenerife,Corporate,ICE,1
 2026,06,24,BMW,38,S.C. Tenerife,Corporate,PHEV,1
 2026,06,24,BMW,38,S.C. Tenerife,Private,ICE,1
@@ -841,6 +840,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,DETHLEFFS,38,S.C. Tenerife,Private,ICE,1
 2026,06,24,EBRO,38,S.C. Tenerife,Private,PHEV,1
 2026,06,24,FORD,38,S.C. Tenerife,Private,ICE,1
+2026,06,24,LAMBORGHINI,38,S.C. Tenerife,Corporate,PHEV,1
 2026,06,24,LEAPMOTOR,38,S.C. Tenerife,Private,BEV,2
 2026,06,24,MG,38,S.C. Tenerife,Private,ICE,2
 2026,06,24,OPEL,38,S.C. Tenerife,Private,ICE,2
@@ -857,12 +857,12 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,BMW,39,Cantabria,Corporate,ICE,2
 2026,06,24,BMW,39,Cantabria,Private,BEV,1
 2026,06,24,BMW,39,Cantabria,Private,ICE,2
+2026,06,24,CHANGAN,39,Cantabria,Corporate,BEV,1
+2026,06,24,CHANGAN,39,Cantabria,Private,BEV,2
 2026,06,24,CITROEN,39,Cantabria,Private,ICE,5
 2026,06,24,CUPRA,39,Cantabria,Private,ICE,1
 2026,06,24,CUPRA,39,Cantabria,Private,PHEV,1
 2026,06,24,DACIA,39,Cantabria,Private,ICE,4
-2026,06,24,DEEPAL,39,Cantabria,Corporate,BEV,1
-2026,06,24,DEEPAL,39,Cantabria,Private,BEV,2
 2026,06,24,DETHLEFFS,39,Cantabria,Private,ICE,1
 2026,06,24,EBRO,39,Cantabria,Private,ICE,3
 2026,06,24,FORD,39,Cantabria,Corporate,PHEV,1
@@ -1063,12 +1063,12 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,24,BYD,48,Bizkaia,Private,BEV,4
 2026,06,24,BYD,48,Bizkaia,Private,PHEV,1
 2026,06,24,CARROCERIAS EL GALLO,48,Bizkaia,Corporate,ICE,1
+2026,06,24,CHANGAN,48,Bizkaia,Private,BEV,1
 2026,06,24,CITROEN,48,Bizkaia,Corporate,BEV,1
 2026,06,24,CITROEN,48,Bizkaia,Corporate,ICE,2
 2026,06,24,CITROEN,48,Bizkaia,Private,ICE,2
 2026,06,24,CUPRA,48,Bizkaia,Private,ICE,1
 2026,06,24,DACIA,48,Bizkaia,Private,ICE,9
-2026,06,24,DEEPAL,48,Bizkaia,Private,BEV,1
 2026,06,24,EBRO,48,Bizkaia,Corporate,ICE,1
 2026,06,24,EBRO,48,Bizkaia,Private,ICE,3
 2026,06,24,EBRO,48,Bizkaia,Private,PHEV,3

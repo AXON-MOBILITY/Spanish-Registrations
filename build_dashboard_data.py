@@ -24,14 +24,17 @@ FUELS   = ["ICE","BEV","PHEV"]
 # ── Normalización de marcas DGT → nombres canónicos Simmix ───────────────────
 _BRAND_NORM = {
     'ABARTH': 'Abarth', 'AIWAYS': 'Aiways', 'ALFA ROMEO': 'Alfa Romeo',
+    '212': 'BAW',
     "ALKE'": 'Alke', 'ALKE': 'Alke',
+    'AUTOMOBILI LAMBORGHINI S.P.A.': 'Lamborghini',
     'ALPINE': 'Alpine', 'ALPINA': 'Alpina', 'ASTON MARTIN': 'Aston Martin',
     'AUDI': 'Audi', 'BENTLEY': 'Bentley', 'BMW': 'BMW',
     'CADILLAC': 'Cadillac', 'CENNTRO': 'Cenntro', 'CITROEN': 'Citroen',
-    'CUPRA': 'Cupra', 'DACIA': 'Dacia', 'DR': 'DR',
+    'CUPRA': 'Cupra', 'DACIA': 'Dacia', 'DEEPAL': 'Changan', 'DR': 'DR',
     'DS': 'DS', 'ESAGONO ENERGIA': 'Esagono Energia', 'ETESIA': 'Etesia',
     'EVUM MOTORS': 'Evum Motors', 'FERRARI': 'Ferrari', 'FIAT': 'Fiat',
-    'FORD': 'Ford', 'FUSO': 'Mitsubishi-Fuso', 'GOUPIL': 'Goupil', 'HONDA': 'Honda',
+    'FORD': 'Ford', 'FOTON': 'Foton Motors', 'FUSO': 'Mitsubishi-Fuso',
+    'GOUPIL': 'Goupil', 'GREAT WALL MOTOR COMPANY LIMIT': 'GWM', 'HONDA': 'Honda',
     'HYUNDAI': 'Hyundai', 'INEOS': 'Ineos', 'ISUZU': 'Isuzu',
     'IVECO': 'Iveco', 'JAGUAR': 'Jaguar', 'JEEP': 'Jeep',
     'KARMA': 'Karma', 'KIA': 'Kia', 'LAMBORGHINI': 'Lamborghini',
@@ -163,6 +166,165 @@ def save_simmix_scope(scope_path, scopes, diagnostics):
         "diagnostics": {str(k): v for k, v in sorted(diagnostics.items())},
     }
     scope_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+def _candidate_simmix_2026_product_paths(base):
+    paths = [base / "BBDD_2026_PRODUCTO_06_30.csv"]
+    downloads = Path.home() / "Downloads"
+    try:
+        names = [
+            n for n in downloads.iterdir()
+            if n.name.upper().startswith("BBDD_2026_PRODUCTO_06_30") and n.suffix.lower() == ".csv"
+        ]
+        paths.extend(sorted(names, reverse=True))
+    except OSError:
+        pass
+    return paths
+
+def load_simmix_2026_targets(base, fallback_path):
+    fallback_path = Path(fallback_path)
+    for path in _candidate_simmix_2026_product_paths(base):
+        if not path.exists():
+            continue
+        targets = defaultdict(int)
+        brands = {}
+        with open(path, encoding="utf-8-sig", newline="") as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                raw_brand = (row.get("Brand_2026") or "").strip()
+                canal = (row.get("Channel_2026") or "").strip()
+                if not raw_brand or canal not in CANALES:
+                    continue
+                try:
+                    n = int(float((row.get("Registrations_2026") or "0").replace(",", ".")))
+                except ValueError:
+                    continue
+                if n <= 0:
+                    continue
+                brand = _normalize_brand(raw_brand)
+                brand_key = brand.upper()
+                sub = _focus_bucket(row.get("SubSegmento_2026", ""))
+                brands[brand_key] = brand
+                targets[(brand_key, canal, sub)] += n
+        if targets:
+            payload = {
+                "source": path.name,
+                "year": 2026,
+                "month": 6,
+                "rows": [
+                    {"brand": brands[brand], "canal": canal, "sub": sub, "n": n}
+                    for (brand, canal, sub), n in sorted(targets.items())
+                ],
+            }
+            fallback_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+            return payload
+
+    if fallback_path.exists():
+        return json.loads(fallback_path.read_text(encoding="utf-8"))
+    return None
+
+def _allocate_to_target(rows, target):
+    raw = sum(r["n"] for r in rows)
+    if raw <= 0:
+        return []
+
+    allocations = []
+    assigned = 0
+    for i, row in enumerate(rows):
+        ideal = row["n"] * target / raw
+        base_n = int(ideal)
+        assigned += base_n
+        allocations.append((ideal - base_n, i, row, base_n))
+
+    remaining = target - assigned
+    allocations.sort(key=lambda item: (-item[0], item[1]))
+    bonus = {i for _, i, _, _ in allocations[:remaining]} if remaining > 0 else set()
+    out = []
+    for _, i, row, base_n in allocations:
+        n = base_n + (1 if i in bonus else 0)
+        if n > 0:
+            nr = row.copy()
+            nr["n"] = n
+            out.append(nr)
+    return out
+
+def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payload):
+    if not payload:
+        return monthly_records, mtd_records, {}
+    target_year = int(payload.get("year", 0) or 0)
+    target_month = int(payload.get("month", 0) or 0)
+    if mtd_yr != target_year or mtd_mo != target_month:
+        return monthly_records, mtd_records, {"status": "skipped", "reason": "target_period_not_current_mtd"}
+
+    targets = {}
+    brand_display = {}
+    for row in payload.get("rows", []):
+        brand = _normalize_brand(row.get("brand", ""))
+        brand_key = brand.upper()
+        canal = row.get("canal", "")
+        sub = _focus_bucket(row.get("sub", ""))
+        try:
+            n = int(row.get("n", 0))
+        except (TypeError, ValueError):
+            n = 0
+        if brand_key and canal in CANALES and n > 0:
+            targets[(brand_key, canal, sub)] = targets.get((brand_key, canal, sub), 0) + n
+            brand_display[brand_key] = brand
+
+    all_records = [r.copy() for r in monthly_records] + [r.copy() for r in mtd_records]
+    passthrough = [r for r in all_records if r["y"] != target_year]
+    grouped = defaultdict(list)
+    dropped = 0
+    for r in all_records:
+        if r["y"] != target_year:
+            continue
+        key = (r["marca"].upper(), r["canal"], _focus_bucket(r["sub"]))
+        if key in targets:
+            r["sub"] = key[2]
+            grouped[key].append(r)
+        else:
+            dropped += r["n"]
+
+    aligned = list(passthrough)
+    synthetic = 0
+    adjusted_groups = 0
+    for key, target in sorted(targets.items()):
+        rows = grouped.get(key, [])
+        if rows:
+            raw = sum(r["n"] for r in rows)
+            adjusted_groups += int(raw != target)
+            aligned.extend(_allocate_to_target(rows, target))
+            continue
+
+        brand_key, canal, sub = key
+        synthetic += target
+        aligned.append({
+            "y": target_year,
+            "m": target_month,
+            "marca": brand_display.get(brand_key, brand_key.title()),
+            "modelo": "",
+            "canal": canal,
+            "fuel": "ICE",
+            "fuel_det": "",
+            "seg": "",
+            "sub": sub,
+            "hp": "Standard",
+            "body": "",
+            "n": target,
+        })
+
+    monthly_out = [r for r in aligned if not (r["y"] == mtd_yr and r["m"] == mtd_mo)]
+    mtd_out = [r for r in aligned if r["y"] == mtd_yr and r["m"] == mtd_mo]
+    stats = {
+        "status": "applied",
+        "year": target_year,
+        "month": target_month,
+        "groups": len(targets),
+        "adjusted_groups": adjusted_groups,
+        "dropped_records": dropped,
+        "synthetic_residual": synthetic,
+        "target_total": sum(targets.values()),
+    }
+    return monthly_out, mtd_out, stats
 
 def apply_simmix_scope(records, scopes):
     if not scopes:
@@ -497,6 +659,24 @@ def main():
             ))
         else:
             print("  Scope Simmix: sin BBDD de referencia; usando DGT completo")
+
+    target_payload = load_simmix_2026_targets(base, out_dir / "simmix_2026_targets.json")
+    monthly_records, mtd_records, target_stats = apply_simmix_2026_targets(
+        monthly_records, mtd_records, mtd_yr, mtd_mo, target_payload
+    )
+    if target_stats.get("status") == "applied":
+        scope_info = {
+            **scope_info,
+            "alignment": "simmix_2026_product_export",
+            "alignment_stats": target_stats,
+        }
+        print(
+            "  Alineacion Simmix 2026: "
+            f"{target_stats['groups']} grupos, residual sintetico {target_stats['synthetic_residual']:,}, "
+            f"drop scope {target_stats['dropped_records']:,}"
+        )
+    elif target_stats:
+        print(f"  Alineacion Simmix 2026: omitida ({target_stats.get('reason')})")
 
     months_done = len({(r["y"],r["m"]) for r in monthly_records})
     mtd_str = f"{mtd_yr}-{mtd_mo:02d}" if mtd_yr else "-"
