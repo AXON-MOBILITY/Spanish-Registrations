@@ -97,6 +97,7 @@ F_MODELO      = (47,   77)   # modelo del vehiculo
 F_PLAZAS      = (119, 120)   # numero de plazas (asientos)
 F_MMA         = (111, 117)   # Masa Maxima Autorizada en kg  ej: "  1615" = 1615 kg
                               # motos: <700, turismos: 700-3500, camiones: >3500
+F_HOMOLOGACION = (426, 430)   # M1/M1G/N1/N1G/M2/M3/N2/N3...
 F_PROPULSION    = (93,   94)   # 0=gasolina, 1=diesel, 2=electrico, 6=GLP, 7=GNC
 F_CAT_ELECTRICO = (453, 457)   # BEV, HEV, PHEV, REEV o vacio
 
@@ -117,6 +118,28 @@ PROV_NAMES = {
 
 # Modelos excluidos del scope (no estan en Simmix)
 EXCLUIR_MARCA_MODELO = {}
+EXCLUIR_MARCA_RAW = {
+    'MERCEDES BENZ AG',
+    'MERCEDES IDILIS',
+    'MERCEDES-BENZ MINIBUS',
+}
+MERCEDES_EXCLUDED_MODEL_PREFIXES = (
+    'MB E ', 'ECITARO', 'CITARO', 'ECONIC', 'I6 EFF', '16 12.37',
+    'T21', 'V-KLASSE', 'RE5', 'QG5', 'CEDAH', 'ML-T', 'GRAND CANYON',
+    'SPICA', 'TATOO', 'CLASSE GLA', 'CLASE C,220', 'C300', 'C220D',
+    '280 SL', '250 CE', '190 SL', 'SLK 230', 'MAYBACH GLS', 'MAYBACH EQS',
+)
+
+def is_excluded_scope(marca_raw, marca, modelo):
+    raw = marca_raw.strip().upper()
+    m = marca.strip().upper()
+    mo = modelo.strip().upper()
+    if raw in EXCLUIR_MARCA_RAW:
+        return True
+    if m == 'MERCEDES' and mo.startswith(MERCEDES_EXCLUDED_MODEL_PREFIXES):
+        return True
+    excl = EXCLUIR_MARCA_MODELO.get(m)
+    return bool(excl and any(token in mo for token in excl))
 
 # ── Enriquecimiento modelo → segmento/body_type (desde Simmix) ────────────
 _APPROVAL_RE   = re.compile(r'\s+[A-Z0-9]{6,}\s*$')
@@ -649,7 +672,10 @@ KM0_BRAND_FALLBACK_RATE = {
 CHANNEL_SCOPE_FACTOR = {
     ('AUDI', 'Private'): 1.02446686,
     ('AUDI', 'RAC'): 0.96362760,
-    ('BMW', 'Private'): 0.98484432,
+    ('BMW', 'Private'): 0.98360000,
+    ('MERCEDES', 'Corporate'): 0.99840000,
+    ('MERCEDES', 'Private'): 0.99840000,
+    ('MERCEDES', 'RAC'): 0.99840000,
     ('BYD', 'Corporate'): 0.96574882,
     ('CITROEN', 'Private'): 1.06724235,
     ('CITROEN', 'RAC'): 0.99078595,
@@ -729,6 +755,36 @@ def apply_scope_calibration(counts):
         else:
             calibrated[(marca, canal)] += max(0, int(round(n * factor)))
     return calibrated
+
+def allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals):
+    grouped = collections.defaultdict(list)
+    for key, n in fuel_counts.items():
+        marca = key[0]
+        canal = key[2] if len(key) in (8, 9) else key[1]
+        grouped[(marca, canal)].append((key, n))
+
+    out = collections.Counter()
+    for group, rows in grouped.items():
+        raw = raw_totals.get(group, 0)
+        target = calibrated.get(group, raw)
+        if raw <= 0 or target <= 0:
+            continue
+
+        allocations = []
+        assigned = 0
+        for key, n in rows:
+            ideal = n * target / raw
+            base = int(ideal)
+            assigned += base
+            allocations.append((ideal - base, repr(key), key, base))
+
+        remaining = target - assigned
+        allocations.sort(key=lambda item: (-item[0], item[1]))
+        bonus_keys = {key for _, _, key, _ in allocations[:remaining]} if remaining > 0 else set()
+
+        for _, _, key, base in allocations:
+            out[key] += base + (1 if key in bonus_keys else 0)
+    return out
 
 def make_alert(severity, kind, marca='', canal='', metric='', value='', threshold='', detail=''):
     return {
@@ -899,6 +955,10 @@ def classify(servicio, persona, renting, mun, marca):
 def es_turismo_o_furgoneta(line_s):
     """True si turismo (plazas>=4) o furgoneta ligera N1 (plazas=2-3, MMA 700-3500 kg).
     Excluye motos (MMA<700), camiones pesados (MMA>3500) y trailers (plazas=0)."""
+    cat_homol = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
+    if cat_homol:
+        return cat_homol.startswith('M1') or cat_homol.startswith('N1')
+
     plazas_s = line_s[F_PLAZAS[0]:F_PLAZAS[1]].strip()
     plazas = int(plazas_s) if plazas_s.isdigit() else 0
 
@@ -954,8 +1014,7 @@ def process_lines(lines_iter):
         marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
         modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
         marca  = normalize_marca(marca_raw, modelo)
-        excl = EXCLUIR_MARCA_MODELO.get(marca)
-        if excl and any(m in modelo for m in excl):
+        if is_excluded_scope(marca_raw, marca, modelo):
             continue
         servicio  = line_s[F_SERVICIO[0]:F_SERVICIO[1]]
         persona   = line_s[F_PERSONA_FJ[0]:F_PERSONA_FJ[1]]
@@ -1029,9 +1088,9 @@ def process_lines(lines_iter):
         marca = key[0]
         canal = key[2] if len(key) in (8, 9) else key[1]
         raw = raw_totals.get((marca, canal), 0)
-        cal = calibrated.get((marca, canal), 0)
-        ratio = cal / raw if raw > 0 else 1.0
-        calibrated_fuel[key] += max(0, int(round(n * ratio)))
+        cal = calibrated.get((marca, canal), raw)
+        calibrated[(marca, canal)] = cal
+    calibrated_fuel = allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals)
     return calibrated_fuel, prov_counts
 
 
