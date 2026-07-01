@@ -465,6 +465,40 @@ def lookup_enrichment(marca_raw, raw_modelo_field):
             return r['modelo'], r['seg'], r['sub'], r['hp'], r['body'], r.get('fuel_detail','')
     return '', '', '', '', '', ''
 
+def classify_high_performance(marca, modelo_raw, lookup_hp=''):
+    m = marca.strip().upper()
+    mo = re.sub(r'\s+', ' ', modelo_raw.strip().upper())
+
+    if m == 'BMW':
+        # Full M cars. "M Sport" is a trim package and must remain Standard.
+        if (re.match(r'^M[23458]\b', mo) or mo.startswith('XM') or
+                re.match(r'^X[3456]\s+M(?:\s+COMPETITION|\s*$)', mo) or
+                mo.startswith('M COMPETICION')):
+            return 'M'
+
+        # M Performance Automobiles: Mxxi/Mxxd, i M50/M60/M70, X M35/M40/M50/M60, Z4 M40.
+        if (re.match(r'^M(135|140|235|240|340|440|550|760|850)\b', mo) or
+                re.match(r'^I[457X]\s+M(50|60|70)\b', mo) or
+                re.match(r'^X[12]\s+M35', mo) or
+                re.match(r'^X[34]\s+M(40|50)', mo) or
+                re.match(r'^X[567]\s+M(50|60)', mo) or
+                re.match(r'^Z4\s+M40', mo)):
+            return 'M Performance'
+        return 'Standard'
+
+    if m == 'MINI':
+        return 'JCW' if ('JCW' in mo or 'JOHN COOPER WORKS' in mo or 'JHON COOPER WORKS' in mo) else 'Standard'
+
+    if m in ('MERCEDES-BENZ','MERCEDES','MERCEDES BENZ','MERCEDES-AMG'):
+        return 'M Performance' if 'AMG' in mo else 'Standard'
+
+    if not lookup_hp or lookup_hp == 'Standard':
+        if m == 'AUDI' and (mo.startswith('RS') or mo.startswith('R8')):
+            return 'M Performance'
+        if m == 'PORSCHE' and mo.startswith('911') and 'GT' in mo:
+            return 'M'
+    return lookup_hp or 'Standard'
+
 
 # Reglas de campa
 # 28169 Venturada = campa fabricante (Corporate) excepto Toyota/Lexus que van a alquiler (RAC)
@@ -1027,28 +1061,7 @@ def process_lines(lines_iter):
         modelo_canon, seg, sub, hp, body, fuel_detail = lookup_enrichment(marca, modelo)
         if not fuel_detail:
             fuel_detail = get_fuel_detail_from_dgt(line_s)
-        # HP keyword fallback when lookup didn't resolve it
-        if not hp or hp == 'Standard':
-            mo_up = modelo.upper()
-            ma_up = marca.upper()
-            if (ma_up in ('MERCEDES-BENZ','MERCEDES','MERCEDES BENZ','MERCEDES-AMG') and
-                    ('AMG' in mo_up or 'AMG' in ma_up)):
-                hp = 'M Performance'
-            elif ma_up == 'BMW' and (
-                    mo_up.startswith('M2') or mo_up.startswith('M3') or
-                    mo_up.startswith('M4') or mo_up.startswith('M5') or
-                    mo_up.startswith('M8') or mo_up.startswith('XM') or
-                    mo_up.startswith('M COMPETICION') or
-                    (' M ' in mo_up and 'BMW' in ma_up)):
-                hp = 'M'
-            elif ma_up == 'BMW' and ('M PERFORMANCE' in mo_up or 'M SPORT' in mo_up):
-                hp = 'M Performance'
-            elif ma_up == 'MINI' and ('JCW' in mo_up or 'JOHN COOPER WORKS' in mo_up):
-                hp = 'JCW'
-            elif ma_up == 'AUDI' and (mo_up.startswith('RS') or mo_up.startswith('R8')):
-                hp = 'M Performance'
-            elif ma_up == 'PORSCHE' and mo_up.startswith('911') and 'GT' in mo_up:
-                hp = 'M'
+        hp = classify_high_performance(marca, modelo, hp)
         counts[(marca, canal)] += 1
         fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
