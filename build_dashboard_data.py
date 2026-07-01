@@ -67,6 +67,9 @@ def _normalize_brand(raw):
     canon = _BRAND_NORM.get(s.upper())
     return canon if canon else (s.title() if s else s)
 
+def _focus_bucket(raw):
+    return "FOCUS SEGMENT" if (raw or "").strip().upper() == "FOCUS SEGMENT" else "REST"
+
 def _read_csv(path):
     with open(path, encoding="utf-8-sig", newline="") as fh:
         for row in csv.DictReader(fh):
@@ -201,7 +204,7 @@ def load_monthly(base):
                     "fuel":     row.get("fuel_type", "ICE") or "ICE",
                     "fuel_det": row.get("fuel", "").strip(),
                     "seg":      row.get("segmento", ""),
-                    "sub":      row.get("subseg", ""),
+                    "sub":      _focus_bucket(row.get("subseg", "")),
                     "hp":       row.get("hp", ""),
                     "body":     row.get("body_type", ""),
                     "n":        n,
@@ -230,7 +233,7 @@ def load_mtd(base):
                 "fuel":     row.get("fuel_type", "ICE") or "ICE",
                 "fuel_det": row.get("fuel", "").strip(),
                 "seg":      row.get("segmento", ""),
-                "sub":      row.get("subseg", ""),
+                "sub":      _focus_bucket(row.get("subseg", "")),
                 "hp":       row.get("hp", ""),
                 "body":     row.get("body_type", ""),
                 "n":        n,

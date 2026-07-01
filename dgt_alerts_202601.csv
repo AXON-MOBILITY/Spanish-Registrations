@@ -11,7 +11,7 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202601,WARN,CHANNEL_DRIFT,HYUNDAI,Private,count_vs_same_month_history,-1094,+/-250 and +/-25%,"actual=1609; media_mismo_mes=2703.0; historico=2645,2938,2526; rel=-40.5%"
 202601,WARN,CHANNEL_DRIFT,KIA,Private,count_vs_same_month_history,-877,+/-250 and +/-25%,"actual=2440; media_mismo_mes=3317.3; historico=3643,2947,3362; rel=-26.4%"
 202601,CRITICAL,CHANNEL_DRIFT,KIA,RAC,count_vs_same_month_history,-276,+/-250 and +/-25%,"actual=33; media_mismo_mes=309.0; historico=34,520,373; rel=-89.3%"
-202601,CRITICAL,CHANNEL_DRIFT,MERCEDES,RAC,count_vs_same_month_history,541,+/-250 and +/-25%,"actual=742; media_mismo_mes=200.7; historico=238,167,197; rel=+269.8%"
+202601,CRITICAL,CHANNEL_DRIFT,MERCEDES,RAC,count_vs_same_month_history,533,+/-250 and +/-25%,"actual=734; media_mismo_mes=200.7; historico=238,167,197; rel=+265.8%"
 202601,CRITICAL,CHANNEL_DRIFT,OMODA,Corporate,count_vs_same_month_history,286,+/-250 and +/-25%,"actual=343; media_mismo_mes=57.5; historico=9,106; rel=+496.5%"
 202601,CRITICAL,CHANNEL_DRIFT,OMODA,Private,count_vs_same_month_history,788,+/-250 and +/-25%,"actual=1098; media_mismo_mes=310.5; historico=16,605; rel=+253.6%"
 202601,CRITICAL,CHANNEL_DRIFT,OPEL,RAC,count_vs_same_month_history,324,+/-250 and +/-25%,"actual=744; media_mismo_mes=419.7; historico=325,773,161; rel=+77.3%"

@@ -182,7 +182,7 @@ def _model_candidates(sbrand, s):
     if swords[:len(bwords)] == bwords:
         swords = swords[len(bwords):]
         s = ' '.join(swords)
-    for pfx in ('NUEVO ', 'NEW ', 'E-'):
+    for pfx in ('NUEVO ', 'NEW '):
         if s.startswith(pfx): s = s[len(pfx):].strip()
     s_nd = re.sub(r'([A-Z]+)-([\d])', r'\1\2', s)  # CX-5→CX5
     cands = []
@@ -213,12 +213,16 @@ def _model_candidates(sbrand, s):
     if sbrand == 'BMW':
         m = _BMW_SERIE_RE.match(s)
         if m: cands.append((sbrand, f'SERIE {m.group(1)}'))
+        if re.match(r'^1ER\s+REIHE', s): cands.append((sbrand, 'SERIE 1'))
+        if re.match(r'^3ER\s+REIHE', s): cands.append((sbrand, 'SERIE 3'))
+        if re.match(r'^X\s+REIHE', s): cands.append((sbrand, 'X1'))
         if re.match(r'^(?:116|118|120|128|M135)', s): cands.append((sbrand, 'SERIE 1'))
-        if re.match(r'^(?:220|230|M2|M240)', s): cands.append((sbrand, 'SERIE 2'))
-        if re.match(r'^(?:M3|M340)', s): cands.append((sbrand, 'SERIE 3'))
+        if re.match(r'^(?:216|218|220|225|230|M2|M235|M240)', s): cands.append((sbrand, 'SERIE 2'))
+        if re.match(r'^(?:320|330|M3|M340)', s): cands.append((sbrand, 'SERIE 3'))
         if re.match(r'^(?:M4|M440)', s): cands.append((sbrand, 'SERIE 4'))
-        if re.match(r'^(?:M5|M550)', s): cands.append((sbrand, 'SERIE 5'))
+        if re.match(r'^(?:520|530|M5|M550)', s): cands.append((sbrand, 'SERIE 5'))
         if re.match(r'^(?:M760)', s): cands.append((sbrand, 'SERIE 7'))
+        if re.match(r'^(?:M8|840|850)', s): cands.append((sbrand, 'SERIE 8'))
     if sbrand == 'LEXUS':
         m = _LEXUS_PFX_RE.match(s_nd)
         if m: cands.append((sbrand, m.group(1)))
@@ -227,6 +231,7 @@ def _model_candidates(sbrand, s):
         cands += [(sbrand, 'MG ' + first), (sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', first))]
     if sbrand == 'AUDI':
         sx = s.replace(' ', '')
+        sx_no_dash = sx.replace('-', '')
         if sx.startswith('Q3SPORTBACK') or sx.startswith('Q3SB'):
             cands.append((sbrand, 'Q3 SPORTBACK'))
         if sx.startswith('Q5SPORTBACK'): cands.append((sbrand, 'Q5 SPORTBACK'))
@@ -240,15 +245,20 @@ def _model_candidates(sbrand, s):
         if sx.startswith('A6ALLROAD'): cands.append((sbrand, 'A6 ALLROAD'))
         if sx.startswith('A6SBE') or sx.startswith('A6AVE') or sx.startswith('A6LIME'):
             cands.append((sbrand, 'A6'))
-        if sx.startswith('ETRONGT') or sx.startswith('RSETRONGT'): cands.append((sbrand, 'E-TRON GT'))
+        if sx_no_dash.startswith('ETRONGT') or sx_no_dash.startswith('RSETRONGT') or sx_no_dash.startswith('SETRONGT'):
+            cands.append((sbrand, 'E-TRON GT'))
         if sx.startswith('Q8ETRON') or sx.startswith('Q8E-TRON'): cands.append((sbrand, 'Q8 E-TRON'))
+        if sx.startswith('A8L') or sx.startswith('S8') or sx.startswith('LIMOUSINE'):
+            cands.append((sbrand, 'A8'))
         for prefix, model in (
             ('RSQ3SPORTBACK', 'Q3 SPORTBACK'), ('RSQ3', 'Q3'), ('SQ5SPORTBACK', 'Q5 SPORTBACK'),
-            ('SQ5', 'Q5'), ('RSQ8', 'Q8'), ('SQ8', 'Q8'), ('RS3', 'A3'), ('S3', 'A3'),
+            ('SQ2', 'Q2'), ('SQ5', 'Q5'), ('SQ7', 'Q7'), ('RSQ8', 'Q8'), ('SQ8', 'Q8'), ('RS3', 'A3'), ('S3', 'A3'),
             ('RS4', 'A4'), ('RS5', 'A5'), ('RS6', 'A6'), ('S6', 'A6'), ('S5', 'A5'),
         ):
             if sx.startswith(prefix):
                 cands.append((sbrand, model)); break
+        if sx.startswith('CRAFTER'):
+            cands.append((sbrand, 'CRAFTER'))
     if sbrand == 'DS':
         if re.match(r'^(?:DS\s*)?7\s*CROSSBACK\b', s):
             cands.append((sbrand, 'DS7 CROSSBACK'))
@@ -337,9 +347,14 @@ def _model_candidates(sbrand, s):
                         cands.append((sbrand, name + ' COUPE'))
                     cands.append((sbrand, name)); break
     if sbrand == 'VOLVO':
+        if s.startswith('YV1XZK7'):
+            cands.append((sbrand, 'EX30'))
         for code in ('EX40', 'EC40', 'EX90', 'ES90', 'EX30', 'XC40', 'XC60', 'XC90', 'V60', 'V90', 'S60'):
             if s.startswith(code):
                 cands.append((sbrand, code)); break
+    if sbrand == 'LAND ROVER':
+        if s.startswith('A5C2') or s.startswith('LM'):
+            cands.append((sbrand, 'DEFENDER'))
     if sbrand == 'PORSCHE':
         if s.startswith('CAYENNE E-HYBRID') or s == 'CAYENNE S':
             cands.append((sbrand, 'CAYENNE COUPE'))
@@ -403,26 +418,33 @@ def _load_enrichment():
 _MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
 _MODEL_LOOKUP_PATCHES = {
     ('MINI', 'ACEMAN'): {
-        'modelo': 'ACEMAN', 'seg': '2.UKL1', 'sub': 'TRADITIONAL COMPETITION',
+        'modelo': 'ACEMAN', 'seg': '2.UKL1', 'sub': 'FOCUS SEGMENT',
         'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
     },
     ('VOLVO', 'EC40'): {
-        'modelo': 'EC40', 'seg': '3.UKL2', 'sub': 'TRADITIONAL COMPETITION',
+        'modelo': 'EC40', 'seg': '3.UKL2', 'sub': 'FOCUS SEGMENT',
         'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
     },
     ('VOLVO', 'ES90'): {
-        'modelo': 'ES90', 'seg': '5.MKL', 'sub': 'TRADITIONAL COMPETITION',
+        'modelo': 'ES90', 'seg': '5.MKL', 'sub': 'FOCUS SEGMENT',
         'hp': 'Standard', 'body': 'SEDAN', 'fuel_detail': 'Electrico',
     },
     ('VOLVO', 'EX40'): {
-        'modelo': 'EX40', 'seg': '3.UKL2', 'sub': 'TRADITIONAL COMPETITION',
+        'modelo': 'EX40', 'seg': '3.UKL2', 'sub': 'FOCUS SEGMENT',
         'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
     },
     ('VOLVO', 'EX90'): {
-        'modelo': 'EX90', 'seg': '5.MKL', 'sub': 'TRADITIONAL COMPETITION',
+        'modelo': 'EX90', 'seg': '5.MKL', 'sub': 'FOCUS SEGMENT',
         'hp': 'Standard', 'body': 'SAV', 'fuel_detail': 'Electrico',
     },
+    ('AUDI', 'CRAFTER'): {
+        'modelo': 'CRAFTER', 'seg': '', 'sub': 'FOCUS SEGMENT',
+        'hp': 'Standard', 'body': '', 'fuel_detail': 'Diesel',
+    },
 }
+
+def _focus_bucket(value):
+    return 'FOCUS SEGMENT' if (value or '').strip().upper() == 'FOCUS SEGMENT' else 'REST'
 
 def _apply_model_lookup_patches():
     for key, row in _MODEL_LOOKUP_PATCHES.items():
@@ -442,7 +464,7 @@ def _load_model_lookup_fallback():
             _MODEL_LOOKUP[(brand, model)] = {
                 'modelo'      : model,
                 'seg'         : (row.get('seg') or '').strip(),
-                'sub'         : (row.get('sub') or '').strip(),
+                'sub'         : _focus_bucket(row.get('sub') or ''),
                 'hp'          : (row.get('hp') or '').strip(),
                 'body'        : (row.get('body') or '').strip(),
                 'fuel_detail' : (row.get('fuel_detail') or '').strip(),
@@ -488,7 +510,7 @@ def _load_simmix_2026_product_lookup():
                     _MODEL_LOOKUP[(brand, model)] = {
                         'modelo': model,
                         'seg': raw[idx['Segment_Origin_2026']].strip(),
-                        'sub': raw[idx['SubSegmento_2026']].strip(),
+                        'sub': _focus_bucket(raw[idx['SubSegmento_2026']]),
                         'hp': 'Standard',
                         'body': raw[idx['Body Type_2026']].strip(),
                         'fuel_detail': raw[idx['Fuel_2026']].strip(),
@@ -543,7 +565,7 @@ def _load_simmix_bbdd():
                         _MODEL_LOOKUP[key] = {
                             'modelo'      : model,
                             'seg'         : (row.get('Segment') or '').strip(),
-                            'sub'         : (row.get('SubSegmento') or '').strip(),
+                            'sub'         : _focus_bucket(row.get('SubSegmento') or ''),
                             'hp'          : (row.get('High Performance') or '').strip(),
                             'body'        : (row.get('Body Type') or '').strip(),
                             'fuel_detail' : (row.get('Fuel') or '').strip(),
@@ -582,7 +604,7 @@ def lookup_enrichment(marca_raw, raw_modelo_field):
         r = _MODEL_LOOKUP.get(cand)
         if r:
             return r['modelo'], r['seg'], r['sub'], r['hp'], r['body'], r.get('fuel_detail','')
-    return '', '', '', '', '', ''
+    return '', '', 'REST', '', '', ''
 
 def classify_high_performance(marca, modelo_raw, lookup_hp=''):
     m = marca.strip().upper()
@@ -922,6 +944,27 @@ CHANNEL_SCOPE_FACTOR = {
     ('VOLVO', 'RAC'): 0.9989247313,
 }
 
+# 2026 Simmix residuals are not always distributed evenly across Focus/Rest.
+# Mercedes is the relevant case: most residual scope appears in commercial Rest
+# models, so a brand+channel factor incorrectly inflates passenger Focus.
+CHANNEL_SUBSEG_SCOPE_FACTOR = {
+    ('MERCEDES', 'Corporate', 'FOCUS SEGMENT'): 1.0180512627,
+    ('MERCEDES', 'Corporate', 'REST'): 1.1226966292,
+    ('MERCEDES', 'Private', 'FOCUS SEGMENT'): 0.9532303901,
+    ('MERCEDES', 'Private', 'REST'): 1.2984870968,
+    ('MERCEDES', 'RAC', 'FOCUS SEGMENT'): 1.0035294118,
+    ('MERCEDES', 'RAC', 'REST'): 1.0987903226,
+    ('LEXUS', 'Corporate', 'FOCUS SEGMENT'): 0.9927686217,
+    ('LEXUS', 'Corporate', 'REST'): 0.7501000000,
+    ('LEXUS', 'Private', 'FOCUS SEGMENT'): 1.0012468174,
+    ('LEXUS', 'Private', 'REST'): 0.2500000000,
+    ('LEXUS', 'RAC', 'FOCUS SEGMENT'): 1.0000000000,
+    ('VOLVO', 'Corporate', 'FOCUS SEGMENT'): 1.0015505367,
+    ('VOLVO', 'Private', 'FOCUS SEGMENT'): 0.9864429752,
+    ('VOLVO', 'Private', 'REST'): 0.0000000000,
+    ('VOLVO', 'RAC', 'FOCUS SEGMENT'): 1.0000000000,
+}
+
 ALERT_DRIFT_START_YEAR = 2026
 ALERT_MIN_BASELINE_COUNT = 50
 ALERT_DRIFT_ABS = 250
@@ -950,17 +993,34 @@ def apply_scope_calibration(counts):
             calibrated[(marca, canal)] += max(0, int(round(n * factor)))
     return calibrated
 
+def scope_group_for_fuel_key(key):
+    if len(key) == 9:
+        marca, canal, sub = key[0], key[2], key[6]
+    elif len(key) == 8:
+        marca, canal, sub = key[0], key[2], key[5]
+    else:
+        marca = key[0]
+        canal = key[1]
+        sub = ''
+    bucket = _focus_bucket(sub)
+    detailed = (marca, canal, bucket)
+    if detailed in CHANNEL_SUBSEG_SCOPE_FACTOR:
+        return detailed
+    return (marca, canal)
+
 def allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals):
     grouped = collections.defaultdict(list)
     for key, n in fuel_counts.items():
-        marca = key[0]
-        canal = key[2] if len(key) in (8, 9) else key[1]
-        grouped[(marca, canal)].append((key, n))
+        grouped[scope_group_for_fuel_key(key)].append((key, n))
 
     out = collections.Counter()
     for group, rows in grouped.items():
-        raw = raw_totals.get(group, 0)
-        target = calibrated.get(group, raw)
+        raw = sum(n for _, n in rows)
+        factor = CHANNEL_SUBSEG_SCOPE_FACTOR.get(group)
+        if factor is None:
+            target = calibrated.get(group, raw)
+        else:
+            target = max(0, int(round(raw * factor)))
         if raw <= 0 or target <= 0:
             continue
 
