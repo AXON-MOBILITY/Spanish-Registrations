@@ -129,6 +129,15 @@ select.tf-sel:focus{outline:none;border-color:var(--acc)}
 }
 .sg-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
 .sg-item input[type=checkbox]{accent-color:var(--acc);width:12px;height:12px;cursor:pointer;flex-shrink:0}
+/* All / None quick-select */
+.sg-quicksel{
+  display:flex;gap:6px;padding:3px 12px 5px;
+}
+.sg-qs-btn{
+  font-size:10px;color:var(--acc);background:none;border:none;
+  cursor:pointer;padding:0;text-decoration:underline;opacity:.75;
+}
+.sg-qs-btn:hover{opacity:1}
 
 /* ── CONTENT ─────────────────────────────────────────── */
 #content{flex:1;overflow:hidden;display:flex;flex-direction:column}
@@ -463,10 +472,24 @@ fetch('data/records.json').then(r=>r.json()).then(data=>{
 });
 
 // ── SIDEBAR BUILD ────────────────────────────────────────
+function addQuickSel(containerId, allFn, noneFn){
+  const row=document.createElement('div');row.className='sg-quicksel';
+  const bAll=document.createElement('button');bAll.className='sg-qs-btn';bAll.textContent='Todos';bAll.onclick=allFn;
+  const sep=document.createTextNode(' · ');
+  const bNone=document.createElement('button');bNone.className='sg-qs-btn';bNone.textContent='Ninguno';bNone.onclick=noneFn;
+  row.appendChild(bAll);row.appendChild(sep);row.appendChild(bNone);
+  g(containerId).appendChild(row);
+}
+
 function buildSidebar(){
   const E=REC.enums;
   const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
 
+  // YEARS
+  addQuickSel('sb-years',
+    ()=>{ allYears.forEach(y=>F.years.add(y)); g('sb-years').querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-years',F.years.size,allYears.length); render(); },
+    ()=>{ F.years.clear(); g('sb-years').querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-years',0,allYears.length); render(); }
+  );
   allYears.forEach(y=>{
     F.years.add(y);
     g('sb-years').appendChild(mkCb(String(y),true,on=>{
@@ -476,6 +499,11 @@ function buildSidebar(){
     }));
   });
 
+  // MONTHS
+  addQuickSel('sb-months',
+    ()=>{ for(let m=1;m<=12;m++)F.months.add(m); g('sb-months').querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-months',12,12); render(); },
+    ()=>{ F.months.clear(); g('sb-months').querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-months',0,12); render(); }
+  );
   for(let m=1;m<=12;m++){
     F.months.add(m);
     g('sb-months').appendChild(mkCb(MES[m-1],true,on=>{
@@ -486,8 +514,6 @@ function buildSidebar(){
   }
 
   // Fuel — pills
-  const fuelPills=[['ICE','bev'],['BEV','bev'],['PHEV','phev']];
-  // Actually map fuel names to pill classes
   const fuelClass={ICE:'ice',BEV:'bev',PHEV:'phev'};
   E.fuel.forEach((f,i)=>{
     F.fuels.add(i);
@@ -518,6 +544,11 @@ function buildSidebar(){
   });
 
   // Subsegment
+  const allSubs=[...E.sub.keys()];
+  addQuickSel('sb-subs',
+    ()=>{ allSubs.forEach(i=>F.subs.add(i)); g('sb-subs').querySelectorAll('input').forEach(c=>c.checked=true); render(); },
+    ()=>{ F.subs.clear(); g('sb-subs').querySelectorAll('input').forEach(c=>c.checked=false); render(); }
+  );
   E.sub.forEach((s,i)=>{
     F.subs.add(i);
     g('sb-subs').appendChild(mkCb(s||'(Todas)',true,on=>{
@@ -526,12 +557,17 @@ function buildSidebar(){
   });
 
   // Segments
+  const segTotal=SEG_ORDER.filter(x=>E.seg.includes(x)).length+1;
+  addQuickSel('sb-segs',
+    ()=>{ E.seg.forEach((_,i)=>F.segs.add(i)); g('sb-segs').querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-segs',F.segs.size,segTotal); render(); },
+    ()=>{ F.segs.clear(); g('sb-segs').querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-segs',0,segTotal); render(); }
+  );
   SEG_ORDER.forEach(s=>{
     const i=E.seg.indexOf(s);if(i<0)return;
     F.segs.add(i);
     g('sb-segs').appendChild(mkCb(s,true,on=>{
       if(on)F.segs.add(i);else F.segs.delete(i);
-      updateCount('cnt-segs',F.segs.size,SEG_ORDER.filter(x=>E.seg.includes(x)).length+1);
+      updateCount('cnt-segs',F.segs.size,segTotal);
       render();
     }));
   });
