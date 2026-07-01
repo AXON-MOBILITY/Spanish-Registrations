@@ -958,6 +958,28 @@ def process_lines(lines_iter):
         modelo_canon, seg, sub, hp, body, fuel_detail = lookup_enrichment(marca, modelo)
         if not fuel_detail:
             fuel_detail = get_fuel_detail_from_dgt(line_s)
+        # HP keyword fallback when lookup didn't resolve it
+        if not hp or hp == 'Standard':
+            mo_up = modelo.upper()
+            ma_up = marca.upper()
+            if (ma_up in ('MERCEDES-BENZ','MERCEDES','MERCEDES BENZ','MERCEDES-AMG') and
+                    ('AMG' in mo_up or 'AMG' in ma_up)):
+                hp = 'M Performance'
+            elif ma_up == 'BMW' and (
+                    mo_up.startswith('M2') or mo_up.startswith('M3') or
+                    mo_up.startswith('M4') or mo_up.startswith('M5') or
+                    mo_up.startswith('M8') or mo_up.startswith('XM') or
+                    mo_up.startswith('M COMPETICION') or
+                    (' M ' in mo_up and 'BMW' in ma_up)):
+                hp = 'M'
+            elif ma_up == 'BMW' and ('M PERFORMANCE' in mo_up or 'M SPORT' in mo_up):
+                hp = 'M Performance'
+            elif ma_up == 'MINI' and 'JCW' in mo_up:
+                hp = 'JCW'
+            elif ma_up == 'AUDI' and (mo_up.startswith('RS') or mo_up.startswith('R8')):
+                hp = 'M Performance'
+            elif ma_up == 'PORSCHE' and mo_up.startswith('911') and 'GT' in mo_up:
+                hp = 'M'
         counts[(marca, canal)] += 1
         fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
