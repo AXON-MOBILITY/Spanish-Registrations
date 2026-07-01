@@ -838,8 +838,17 @@ def normalize_marca(marca, modelo=''):
     m = marca.strip().upper()
     mo = modelo.strip().upper()
     m = _BRAND_NORM.get(m, m)
-    if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG') and 'VITO' in mo:
-        return 'MERCEDES-V'
+    if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG'):
+        # Mercedes V-Class derivatives → Mercedes-V scope (separate brand in Simmix)
+        # DGT raw F_MODELO: 'V 220 D...', 'VITO 116...', 'EQV 300...', 'MARCO POLO'
+        if ('VITO' in mo or 'EQV' in mo or 'MARCO POLO' in mo or 'CLASE V' in mo
+                or mo == 'V' or mo.startswith('V ')):
+            return 'MERCEDES-V'
+        # T-Class and commercial vans → outside Simmix scope (exclude)
+        # DGT raw F_MODELO: 'T 180 D...', 'CITAN 110...', 'ECITAN...', 'EQT...', 'SPRINTER...'
+        if ('SPRINTER' in mo or 'CITAN' in mo or 'ECITAN' in mo or 'EQT' in mo
+                or 'CLASE T' in mo or mo == 'T' or mo.startswith('T ')):
+            return 'MERCEDES-COMMERCIAL'
     return m
 
 def get_fuel_type_code(line_s):
