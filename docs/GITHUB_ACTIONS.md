@@ -16,4 +16,13 @@ GitHub Actions esta programado entre semana en varias ventanas UTC para cubrir C
 
 La variable `SIMMIX_ALIGN` (definida en `dgt-auto.yml`, seccion `env`):
 
-- `"1"` (transicion): el dashboa
+- `"1"` (transicion): el dashboard alinea 2026 al ultimo export Simmix. En paralelo se publica siempre `public/data/simmix_drift.json` con el delta real de la ETL propia.
+- `"0"` (independiente): el dashboard publica la ETL propia; Simmix solo alimenta el drift.
+
+Criterio para cambiar a `"0"`: KPI de `docs/AUDITORIA_INDEPENDENCIA_SIMMIX.md`.
+
+## Ficheros versionados
+
+- `scripts/`, `tests/`, `masters/`, `.github/workflows/`
+- `data/processed/dgt_canal_*.csv`, `dgt_prov_*.csv`, `dgt_alerts_*.csv` (se commitean solos)
+- Los CSV fuente Simmix `BBDD_*` viven en `validation/` y quedan ignorados (grandes y de pago); no hacen falta para la ejecucion diaria.

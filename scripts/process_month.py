@@ -490,7 +490,7 @@ def _load_enrichment():
             if key not in _ENRICHMENT:
                 _ENRICHMENT[key] = {
                     'modelo': row.get('model','').strip().upper(),
-                    'seg'   : row.get('segment','').strip(),
+                    'seg'   : _canon_seg(row.get('segment','')),
                     'sub'   : row.get('subsegment','').strip(),
                     'hp'    : row.get('high_perf','').strip(),
                     'body'  : row.get('body_type','').strip(),
@@ -532,9 +532,58 @@ _MODEL_LOOKUP_PATCHES = {
 def _focus_bucket(value):
     return 'FOCUS SEGMENT' if (value or '').strip().upper() == 'FOCUS SEGMENT' else 'REST'
 
+_SEG_PREFIX_RE = re.compile(r'^\d+\.')
+
+def _canon_seg(value):
+    """Canoniza el segmento: '3.UKL2'→'UKL2', '7.GKL++1'→'GKL+', 'MKL'→'MKL'.
+
+    Simmix mezcla Segment ('UKL2') y Segment_Origin ('3.UKL2') según el export;
+    sin canonizar, el dashboard duplica segmentos y sus filtros pierden filas.
+    """
+    s = _SEG_PREFIX_RE.sub('', (value or '').strip())
+    if s.startswith('GKL+'):
+        s = 'GKL+'
+    return s
+
 def _apply_model_lookup_patches():
     for key, row in _MODEL_LOOKUP_PATCHES.items():
-        _MODEL_LOOKUP[key] = row.copy()
+        patched = row.copy()
+        patched['seg'] = _canon_seg(patched.get('seg', ''))
+        _MODEL_LOOKUP[key] = patched
+
+def _load_manual_master():
+    """masters/master_clasificacion_manual.csv — decisiones propias de clasificacion.
+
+    Maxima prioridad: se carga el ULTIMO y sobreescribe cualquier otra fuente.
+    Es el mecanismo para clasificar marcas/modelos nuevos sin depender de
+    Simmix ni tocar codigo: una fila por (brand, model).
+    Columnas: brand,model,seg,sub,hp,body,fuel_detail
+    """
+    fname = os.path.join(MASTERS_DIR, 'master_clasificacion_manual.csv')
+    if not os.path.exists(fname):
+        return 0
+    n = 0
+    try:
+        with open(fname, encoding='utf-8-sig', newline='') as f:
+            for row in csv.DictReader(f):
+                brand = (row.get('brand') or '').strip().upper()
+                model = (row.get('model') or '').strip().upper()
+                if not brand or not model or brand.startswith('#'):
+                    continue
+                _MODEL_LOOKUP[(brand, model)] = {
+                    'modelo'      : model,
+                    'seg'         : _canon_seg(row.get('seg') or ''),
+                    'sub'         : _focus_bucket(row.get('sub') or ''),
+                    'hp'          : (row.get('hp') or 'Standard').strip(),
+                    'body'        : (row.get('body') or '').strip(),
+                    'fuel_detail' : (row.get('fuel_detail') or '').strip(),
+                }
+                n += 1
+        if n:
+            print(f'  -> Maestro manual: {n} clasificaciones propias aplicadas')
+    except Exception as exc:
+        print(f'  WARN: no se pudo cargar maestro manual: {exc}')
+    return n
 
 def _load_model_lookup_fallback():
     if not os.path.exists(MODEL_LOOKUP_FALLBACK):
@@ -549,7 +598,7 @@ def _load_model_lookup_fallback():
                 continue
             _MODEL_LOOKUP[(brand, model)] = {
                 'modelo'      : model,
-                'seg'         : (row.get('seg') or '').strip(),
+                'seg'         : _canon_seg(row.get('seg') or ''),
                 'sub'         : _focus_bucket(row.get('sub') or ''),
                 'hp'          : (row.get('hp') or '').strip(),
                 'body'        : (row.get('body') or '').strip(),
@@ -596,7 +645,7 @@ def _load_simmix_2026_product_lookup():
                         continue
                     _MODEL_LOOKUP[(brand, model)] = {
                         'modelo': model,
-                        'seg': raw[idx['Segment_Origin_2026']].strip(),
+                        'seg': _canon_seg(raw[idx['Segment_Origin_2026']]),
                         'sub': _focus_bucket(raw[idx['SubSegmento_2026']]),
                         'hp': 'Standard',
                         'body': raw[idx['Body Type_2026']].strip(),
@@ -653,7 +702,7 @@ def _load_simmix_bbdd():
                     if key not in _MODEL_LOOKUP:
                         _MODEL_LOOKUP[key] = {
                             'modelo'      : model,
-                            'seg'         : (row.get('Segment') or '').strip(),
+                            'seg'         : _canon_seg(row.get('Segment') or ''),
                             'sub'         : _focus_bucket(row.get('SubSegmento') or ''),
                             'hp'          : (row.get('High Performance') or '').strip(),
                             'body'        : (row.get('Body Type') or '').strip(),
@@ -664,11 +713,13 @@ def _load_simmix_bbdd():
     if loaded_from_bbdd:
         _load_simmix_2026_product_lookup()
         _apply_model_lookup_patches()
+        _load_manual_master()
         _save_model_lookup_fallback()
     elif not _MODEL_LOOKUP:
         _load_model_lookup_fallback()
         _load_simmix_2026_product_lookup()
         _apply_model_lookup_patches()
+        _load_manual_master()
 
 _PROP_FUEL_NAME = {
     '0': 'Gasolina', '1': 'Diesel', '2': 'Electrico',
@@ -1755,15 +1806,3 @@ if __name__ == '__main__':
         import datetime as _dt
         _now = _dt.date.today()
         _end = '{:04d}{:02d}'.format(_now.year, _now.month)
-        months = all_months('202301', _end)
-        print("Procesando {} meses (2023-01 -> {})...".format(len(months), _end))
-        for mm in months:
-            download_and_process(mm, keep_raw=keep, force=force)
-    elif arg == 'monthly-2026':
-        sync_monthly_2026(keep_raw=keep, force=force)
-    elif arg == 'daily-current':
-        sync_daily_current(keep_raw=keep, force=force)
-    elif arg == 'auto':
-        sync_auto(keep_raw=keep, force=force)
-    else:
-        download_and_process(arg, keep_raw=keep, force=force)

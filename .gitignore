@@ -16,4 +16,10 @@ validation/BBDD_*.csv
 
 # Record-level output (demasiado grande para git — generar localmente)
 BBDD_DGT.csv
-.check
+.checkpoint.json
+
+# Local/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

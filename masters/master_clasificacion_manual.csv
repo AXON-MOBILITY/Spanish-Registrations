@@ -1,0 +1,5 @@
+brand,model,seg,sub,hp,body,fuel_detail
+# Decisiones propias de clasificacion (maxima prioridad, sobreescribe todo).
+# seg: UKL0/UKL1/UKL2/KKL/MKL/SKL/GKL/GKL+ | sub: FOCUS SEGMENT o REST
+# hp: Standard/M/M Performance/JCW | body: SAV/SEDAN/ESTATE/HACH 5P/COUPE...
+# Ejemplo: XPENG,G6,UKL2,FOCUS SEGMENT,Standard,SAV,Electrico
