@@ -501,7 +501,7 @@ const fP2=n=>n.toFixed(2)+'%';
 const g=id=>document.getElementById(id);
 
 // ── LOAD ────────────────────────────────────────────────
-fetch('data/records.json').then(r=>r.json()).then(data=>{
+fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   REC=data;
   REC.enums.marca.forEach((b,i)=>{if(b&&!EXCLUDED_BRANDS.has(b))INCLUDED_MARCA_IDX.add(i);});
   buildSidebar();
