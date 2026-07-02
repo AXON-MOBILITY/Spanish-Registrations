@@ -223,6 +223,22 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .tr-pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;
   border:1px solid var(--border);color:var(--text3);user-select:none;transition:.15s}
 .tr-pill.on{color:#fff;border-color:transparent}
+/* Provincias: scroll + cuadricula */
+#pane-prov .tbl-wrap2{max-height:calc(100vh - 200px);overflow:auto}
+#tbl-prov{border-collapse:separate;border-spacing:0}
+#tbl-prov thead th{position:sticky;top:0;z-index:4;border-right:1px solid var(--border)}
+#tbl-prov thead th.r1{color:#fbbf24}
+#tbl-prov thead th.r2{color:#cbd5e1}
+#tbl-prov thead th.r3{color:#e8956b}
+#tbl-prov td{border-right:1px solid var(--border);border-bottom:1px solid var(--border2)}
+#tbl-prov td:first-child{position:sticky;left:0;z-index:2;background:#122740;
+  color:var(--acc2);font-weight:700;border-right:2px solid var(--acc)}
+#tbl-prov td:nth-child(2){font-weight:600;color:var(--text)}
+#tbl-prov tbody tr:hover td:first-child{background:#16304e}
+/* Trend: controles */
+.tr-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tr-pill .x{margin-left:6px;opacity:.7;font-weight:700}
+.tr-pill:hover .x{opacity:1}
 
 /* scrollable wide table */
 .wide-wrap{overflow-x:auto}
@@ -478,7 +494,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           <table id="tbl-prov">
             <thead><tr>
               <th>Provincia</th><th>Uds</th>
-              <th>1&ordm;</th><th>2&ordm;</th><th>3&ordm;</th><th>4&ordm;</th><th>5&ordm;</th>
+              <th class="r1">1&ordm;</th><th class="r2">2&ordm;</th><th class="r3">3&ordm;</th><th>4&ordm;</th><th>5&ordm;</th>
             </tr></thead>
             <tbody id="tbody-prov"></tbody>
           </table>
@@ -486,14 +502,28 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
     </div><!-- /pane-prov -->
 
-    <!-- TAB 4: TREND DIARIO -->
+    <!-- TAB 4: TREND -->
     <div class="pane" id="pane-trend">
       <div class="card">
         <div class="card-hdr">
-          <span>Tendencia diaria por marca <span class="note" id="tr-note"></span></span>
-          <span class="rk-ctrls"><span class="sg-pills" id="tr-mode" style="padding:0"></span></span>
+          <span>Tendencia por marca <span class="note" id="tr-note"></span></span>
+          <span class="rk-ctrls">
+            <span class="sg-pills" id="tr-gran" style="padding:0"></span>
+            <span class="sg-pills" id="tr-mode" style="padding:0"></span>
+          </span>
         </div>
         <div class="ch-body">
+          <div class="tr-controls">
+            <span class="tf-lbl">Marca</span>
+            <input id="tr-brand-input" class="tf-modelo-input" list="tr-brand-list"
+                   placeholder="A&ntilde;adir marca&hellip;" autocomplete="off"
+                   onchange="trAddBrand()">
+            <datalist id="tr-brand-list"></datalist>
+            <span class="tf-lbl" style="margin-left:14px">Desde</span>
+            <select id="tr-from" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">Hasta</span>
+            <select id="tr-to" class="tf-sel" onchange="renderTrend()"></select>
+          </div>
           <div id="tr-brands" class="tr-brands"></div>
           <div id="wrap-trend" style="position:relative;height:360px"><canvas id="ch-trend"></canvas></div>
         </div>
@@ -574,6 +604,7 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   render();
 });
 let PROV=null, TREND=null;
+let BRAND_CHOICES=[];
 fetch('data/province_brands.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{PROV=d;initProv();}).catch(()=>{});
 fetch('data/daily_brands.json?v='+Date.now()).then(r=>r.json())
@@ -717,13 +748,13 @@ function buildTopFilters(){
       const b=E.marca[r[COL.MARCA]];volReciente[b]=(volReciente[b]||0)+r[COL.N];
     }
   });
-  Object.keys(volReciente)
+  BRAND_CHOICES=Object.keys(volReciente)
     .filter(b=>KNOWN_BRANDS.has(b)||volReciente[b]>=250)
-    .sort((a,b)=>a.localeCompare(b))
-    .forEach(b=>{
-      const o=document.createElement('option');o.value=b;o.textContent=b;
-      bSel.appendChild(o);
-    });
+    .sort((a,b)=>a.localeCompare(b));
+  BRAND_CHOICES.forEach(b=>{
+    const o=document.createElement('option');o.value=b;o.textContent=b;
+    bSel.appendChild(o);
+  });
   E.body.filter(b=>b).sort().forEach(b=>{
     const o=document.createElement('option');o.value=b;o.textContent=b;
     g('f-body').appendChild(o);
@@ -1180,65 +1211,117 @@ function renderProv(){
   });
 }
 
-// ── TAB 4: TREND DIARIO POR MARCA ────────────────────────
-const TR={mode:'daily',sel:new Set(),brands:[]};
-const TR_COLORS=['#0ea5e9','#f97316','#10b981','#8b5cf6','#ef4444','#eab308',
-  '#ec4899','#84cc16','#6366f1','#14b8a6','#f43f5e','#f59e0b','#06b6d4','#a78bfa'];
+// ── TAB 4: TREND POR MARCA (diario/mensual, rango y marcas a eleccion) ──
+const TR={gran:'daily',mode:'units',sel:[],colors:{}};
+const TR_COLORS=['#f97316','#10b981','#8b5cf6','#ef4444','#eab308',
+  '#ec4899','#84cc16','#6366f1','#14b8a6','#f43f5e','#f59e0b','#a78bfa','#22d3ee','#fb7185'];
+
+function trColor(m){
+  if(m==='BMW')return '#0ea5e9';
+  if(!TR.colors[m])TR.colors[m]=TR_COLORS[Object.keys(TR.colors).length%TR_COLORS.length];
+  return TR.colors[m];
+}
+
+function trPeriods(){
+  if(TR.gran==='daily')return TREND?TREND.days.map(d=>d.day):[];
+  return TR.months||[];
+}
+
+function trFillRange(){
+  const per=trPeriods();
+  const selF=g('tr-from'),selT=g('tr-to');
+  const prevF=selF.value,prevT=selT.value;
+  selF.innerHTML='';selT.innerHTML='';
+  per.forEach(pd=>{
+    selF.appendChild(new Option(pd,pd));
+    selT.appendChild(new Option(pd,pd));
+  });
+  selF.value=per.includes(prevF)?prevF:per[0];
+  selT.value=per.includes(prevT)?prevT:per[per.length-1];
+}
+
+function trAddBrand(){
+  const inp=g('tr-brand-input');
+  const b=inp.value.trim();
+  if(!b||!BRAND_CHOICES.includes(b)||TR.sel.includes(b))return;
+  TR.sel.push(b);inp.value='';
+  trChips();renderTrend();
+}
+
+function trChips(){
+  const box=g('tr-brands');box.innerHTML='';
+  TR.sel.forEach(m=>{
+    const pill=document.createElement('div');
+    pill.className='tr-pill on';
+    pill.style.background=trColor(m);
+    pill.innerHTML=m+'<span class="x">&times;</span>';
+    pill.title='Quitar';
+    pill.onclick=()=>{TR.sel=TR.sel.filter(x=>x!==m);trChips();renderTrend();};
+    box.appendChild(pill);
+  });
+}
 
 function initTrend(){
-  if(!TREND||!TREND.days.length)return;
-  const tot={};
-  TREND.days.forEach(d=>{for(const [m,n] of Object.entries(d.brands)){
-    if(EXCLUDED_BRANDS.has(m))continue;tot[m]=(tot[m]||0)+n;}});
-  const top=Object.entries(tot).sort((a,b)=>b[1]-a[1]).slice(0,14).map(([m])=>m);
-  if(!top.includes('BMW')&&tot['BMW'])top.push('BMW');
-  TR.brands=top;
-  TR.sel=new Set([...top.slice(0,5),...(tot['BMW']?['BMW']:[])]);
-  [['daily','Diario'],['cumul','Acumulado']].forEach(([k,lbl],i)=>{
+  if(!TREND)return;
+  if(!REC||!BRAND_CHOICES.length){setTimeout(initTrend,150);return;}
+  // Serie mensual por marca desde records.json (todo el historico)
+  TR.monthly={};const mm={};
+  REC.rows.forEach(r=>{
+    const b=REC.enums.marca[r[COL.MARCA]];
+    const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
+    (TR.monthly[b]=TR.monthly[b]||{})[k]=(TR.monthly[b][k]||0)+r[COL.N];
+    mm[k]=1;
+  });
+  TR.months=Object.keys(mm).sort();
+  TR.sel=['BMW'].filter(b=>BRAND_CHOICES.includes(b));
+  BRAND_CHOICES.forEach(b=>g('tr-brand-list').appendChild(new Option(b,b)));
+  [['daily','Diario'],['monthly','Mensual']].forEach(([k,lbl],i)=>{
+    const pill=document.createElement('div');
+    pill.className='sg-pill'+(k===TR.gran?' on':'');
+    pill.textContent=lbl;
+    pill.onclick=()=>{
+      TR.gran=k;
+      [...g('tr-gran').children].forEach((x,j)=>x.classList.toggle('on',j===i));
+      trFillRange();renderTrend();
+    };
+    g('tr-gran').appendChild(pill);
+  });
+  [['units','Unidades'],['cumul','Acumulado']].forEach(([k,lbl],i)=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===TR.mode?' on':'');
     pill.textContent=lbl;
     pill.onclick=()=>{
       TR.mode=k;
-      [...g('tr-mode').children].forEach((p,j)=>p.classList.toggle('on',j===i));
+      [...g('tr-mode').children].forEach((x,j)=>x.classList.toggle('on',j===i));
       renderTrend();
     };
     g('tr-mode').appendChild(pill);
   });
-  const box=g('tr-brands');
-  TR.brands.forEach((m,i)=>{
-    const pill=document.createElement('div');
-    pill.className='tr-pill'+(TR.sel.has(m)?' on':'');
-    const color=m==='BMW'?'#0ea5e9':TR_COLORS[i%TR_COLORS.length];
-    if(TR.sel.has(m))pill.style.background=color;
-    pill.textContent=m;
-    pill.onclick=()=>{
-      if(TR.sel.has(m)){TR.sel.delete(m);pill.classList.remove('on');pill.style.background='';}
-      else{TR.sel.add(m);pill.classList.add('on');pill.style.background=color;}
-      renderTrend();
-    };
-    box.appendChild(pill);
-  });
-  const d0=TREND.days[0].day,d1=TREND.days[TREND.days.length-1].day;
-  g('tr-note').textContent=d0+' \u2192 '+d1+' (d\u00edas con publicaci\u00f3n DGT)';
-  renderTrend();
+  trFillRange();trChips();renderTrend();
 }
 
 function renderTrend(){
-  if(!TREND)return;
-  const labels=TREND.days.map(d=>d.day.slice(5));
-  const datasets=[];
-  TR.brands.forEach((m,i)=>{
-    if(!TR.sel.has(m))return;
-    const color=m==='BMW'?'#0ea5e9':TR_COLORS[i%TR_COLORS.length];
+  if(!TREND||!TR.months)return;
+  let f=g('tr-from').value,t=g('tr-to').value;
+  if(f>t){const tmp=f;f=t;t=tmp;g('tr-from').value=f;g('tr-to').value=t;}
+  const per=trPeriods().filter(pd=>pd>=f&&pd<=t);
+  const labels=per.map(pd=>TR.gran==='daily'?pd.slice(5):pd);
+  const dailyMap={};
+  if(TR.gran==='daily')TREND.days.forEach(d=>dailyMap[d.day]=d.brands);
+  const datasets=TR.sel.map(m=>{
     let acc=0;
-    const data=TREND.days.map(d=>{
-      const v=d.brands[m]||0;
+    const data=per.map(pd=>{
+      const v=TR.gran==='daily'?((dailyMap[pd]||{})[m]||0):((TR.monthly[m]||{})[pd]||0);
       return TR.mode==='cumul'?(acc+=v):v;
     });
-    datasets.push({label:m,data,borderColor:color,backgroundColor:color,
-      borderWidth:m==='BMW'?3:1.8,pointRadius:0,pointHoverRadius:4,tension:.25});
+    const c=trColor(m);
+    return {label:m,data,borderColor:c,backgroundColor:c,
+      borderWidth:m==='BMW'?3:1.8,pointRadius:per.length>60?0:2,pointHoverRadius:4,tension:.25};
   });
+  const d0=trPeriods()[0]||'',d1=trPeriods().slice(-1)[0]||'';
+  g('tr-note').textContent=TR.gran==='daily'
+    ?('diarios DGT disponibles: '+d0+' \u2192 '+d1)
+    :('mensual: '+d0+' \u2192 '+d1);
   if(CHARTS['ch-trend']){CHARTS['ch-trend'].destroy();delete CHARTS['ch-trend'];}
   const old=g('ch-trend');const cnv=document.createElement('canvas');cnv.id='ch-trend';old.replaceWith(cnv);
   CHARTS['ch-trend']=new Chart(cnv,{
