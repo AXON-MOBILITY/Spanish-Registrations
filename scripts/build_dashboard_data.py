@@ -644,6 +644,7 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
         if r["sub"] == "FOCUS SEGMENT":
             v[1] += r["n"]
     focus = {m for m, (t, f) in vol.items() if t > 0 and f / t >= 0.5}
+    focus |= {"BYD"}   # inclusion explicita solicitada (no es Focus por volumen)
 
     out = {}
     years = set()
