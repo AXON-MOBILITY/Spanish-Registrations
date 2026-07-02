@@ -34,6 +34,11 @@ concurrency:
   group: dgt-auto-sync
   cancel-in-progress: false
 
+env:
+  # 1 = el dashboard se alinea al último export Simmix (transición).
+  # 0 = modo independiente: publica la ETL propia; Simmix solo auditoría/drift.
+  SIMMIX_ALIGN: "1"
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -50,7 +55,11 @@ jobs:
 
       - name: Install Python deps
         shell: bash
-        run: pip install requests
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests (gate)
+        shell: bash
+        run: python -m pytest tests/ -q
 
       - name: Run DGT sync
         shell: bash
@@ -62,15 +71,15 @@ jobs:
           if [ "$FORCE" = "true" ]; then FORCE_FLAG="--force"; fi
           if [ "$MODE" = "all" ]; then
             echo "Modo: reprocesar TODOS los meses históricos"
-            python process_month.py all $FORCE_FLAG
+            python scripts/process_month.py all $FORCE_FLAG
           else
             echo "Modo: auto (diario + mensual 2026)"
-            python process_month.py auto $FORCE_FLAG
+            python scripts/process_month.py auto $FORCE_FLAG
           fi
 
       - name: Build dashboard data
         shell: bash
-        run: python build_dashboard_data.py
+        run: python scripts/build_dashboard_data.py
 
       - name: Commit generated outputs
         shell: bash
@@ -78,10 +87,5 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dgt_canal_*.csv dgt_prov_*.csv dgt_alerts_*.csv public/ || true
-          if git diff --cached --quiet; then
-            echo "No hay cambios que commitear."
-            exit 0
-          fi
-          git commit -m "Update DGT matriculaciones outputs [skip ci]"
-          git push
+          git add data/processed/ public/ || true
+          if git diff --c
