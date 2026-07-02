@@ -1149,7 +1149,9 @@ function drawVBar(canvasId,wrapId,labels,datasets){
 
 // ── TAB 3: RANKING PROVINCIAS ────────────────────────────
 const RK={gama:0,year:null};
-const GAMAS=['Total','BEV','PHEV'];
+const GAMAS=['Total','ICE','BEV','PHEV'];
+// v = [total, BEV, PHEV]; ICE se deriva: total - BEV - PHEV
+const GAMA_VAL=[v=>v[0], v=>v[0]-v[1]-v[2], v=>v[1], v=>v[2]];
 
 function initProv(){
   if(!PROV||!PROV.provinces.length)return;
@@ -1182,7 +1184,7 @@ function renderProv(){
   PROV.provinces.forEach(p=>{
     const brands=p.years[RK.year]||{};
     const entries=Object.entries(brands)
-      .map(([m,v])=>[m,v[gi]])
+      .map(([m,v])=>[m,GAMA_VAL[gi](v)])
       .filter(([,v])=>v>0)
       .sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
     if(!entries.length)return;
