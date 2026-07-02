@@ -527,6 +527,21 @@ const EXCLUDED_BRANDS=new Set([
   'Soriberica','Sortimo','Stil Conversion','Subiela','Tecnocarrocera','Tecnove',
   'Tecnove Fiberglass','Tsd','Ultrand','Vsve','Weinsberg','Zago Automotive'
 ]);
+// Marcas de coche conocidas: siempre visibles en el desplegable aunque tengan
+// poco volumen (Ferrari, Morgan...). Las demas entran si superan 250 uds desde 2025.
+const KNOWN_BRANDS=new Set([
+  'Abarth','Aiways','Alfa Romeo','Alpine','Alpina','Aston Martin','Audi','BAIC',
+  'BMW','BYD','Bentley','Bestune','Cadillac','Caterham','Changan','Citroen',
+  'Cupra','DFSK','DR','DS','Dacia','Dongfeng','EVO','Ebro','Ferrari','Fiat',
+  'Ford','Foton Motors','GWM','Geely','Honda','Hyundai','Ineos','Isuzu','Iveco',
+  'Jaecoo','Jaguar','Jeep','Karma','Kg Mobility','Kia','LEVC','Lamborghini',
+  'Lancia','Land Rover','Leapmotor','Lexus','Livan','Lotus','Lynk & Co','MAN',
+  'MG','MINI','Maserati','Maxus','Mazda','McLaren','Mercedes','Mercedes-V',
+  'Mitsubishi','Mitsubishi-Fuso','Morgan','Nissan','Omoda','Opel','Peugeot',
+  'Polestar','Porsche','Renault','Renault Trucks','Rolls-Royce','SEAT','Seres',
+  'Shineray','Skoda','Skywell','Smart','Ssangyong','Subaru','Suzuki','Tesla',
+  'Toyota','Volkswagen','Volvo','Voyah','Xpeng','Yudo','Zeekr'
+]);
 let INCLUDED_MARCA_IDX=new Set();   // índices de enums.marca dentro del scope
 
 // Canonización de segmento: '3.UKL2'→'UKL2', '7.GKL++1'→'GKL+'
@@ -694,10 +709,21 @@ function updateCount(id,sel,total){
 function buildTopFilters(){
   const E=REC.enums;
   const bSel=g('f-marca');
-  [...INCLUDED_MARCA_IDX].map(i=>E.marca[i]).sort((a,b)=>a.localeCompare(b)).forEach(b=>{
-    const o=document.createElement('option');o.value=b;o.textContent=b;
-    bSel.appendChild(o);
+  // Desplegable: marcas conocidas + cualquiera con >=250 uds desde 2025.
+  // (INCLUDED_MARCA_IDX se mantiene integro para los totales del mercado.)
+  const volReciente={};
+  REC.rows.forEach(r=>{
+    if(r[COL.Y]>=2025&&INCLUDED_MARCA_IDX.has(r[COL.MARCA])){
+      const b=E.marca[r[COL.MARCA]];volReciente[b]=(volReciente[b]||0)+r[COL.N];
+    }
   });
+  Object.keys(volReciente)
+    .filter(b=>KNOWN_BRANDS.has(b)||volReciente[b]>=250)
+    .sort((a,b)=>a.localeCompare(b))
+    .forEach(b=>{
+      const o=document.createElement('option');o.value=b;o.textContent=b;
+      bSel.appendChild(o);
+    });
   E.body.filter(b=>b).sort().forEach(b=>{
     const o=document.createElement('option');o.value=b;o.textContent=b;
     g('f-body').appendChild(o);
