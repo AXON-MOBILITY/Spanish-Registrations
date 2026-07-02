@@ -230,11 +230,11 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 #tbl-prov thead th.r1{color:#fbbf24}
 #tbl-prov thead th.r2{color:#cbd5e1}
 #tbl-prov thead th.r3{color:#e8956b}
-#tbl-prov td{border-right:1px solid var(--border);border-bottom:1px solid var(--border2)}
-#tbl-prov td:first-child{position:sticky;left:0;z-index:2;background:#e5e9f0;
-  color:#1e293b;font-weight:700;border-right:2px solid #94a3b8}
-#tbl-prov td:nth-child(2){font-weight:600;color:var(--text)}
-#tbl-prov tbody tr:hover td:first-child{background:#f1f5f9}
+#tbl-prov td{border-right:1px solid rgba(255,255,255,.13);border-bottom:1px solid rgba(255,255,255,.10)}
+#tbl-prov td:first-child{position:sticky;left:0;z-index:2;background:#333e4d;
+  color:#f1f5f9;font-weight:700;border-right:2px solid #64748b}
+#tbl-prov td:nth-child(2){font-weight:600;color:var(--text);background:rgba(255,255,255,.03)}
+#tbl-prov tbody tr:hover td:first-child{background:#3d4a5c}
 /* Trend: controles */
 .tr-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .tr-pill .x{margin-left:6px;opacity:.7;font-weight:700}
@@ -506,11 +506,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="pane" id="pane-trend">
       <div class="card">
         <div class="card-hdr">
-          <span>Tendencia por marca <span class="note" id="tr-note"></span></span>
-          <span class="rk-ctrls">
-            <span class="sg-pills" id="tr-gran" style="padding:0"></span>
-            <span class="sg-pills" id="tr-mode" style="padding:0"></span>
-          </span>
+          <span>Tendencia por marca</span>
+          <span class="rk-ctrls"><span class="sg-pills" id="tr-mode" style="padding:0"></span></span>
         </div>
         <div class="ch-body">
           <div class="tr-controls">
@@ -519,13 +516,32 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
                    placeholder="A&ntilde;adir marca&hellip;" autocomplete="off"
                    onchange="trAddBrand()">
             <datalist id="tr-brand-list"></datalist>
-            <span class="tf-lbl" style="margin-left:14px">Desde</span>
-            <select id="tr-from" class="tf-sel" onchange="renderTrend()"></select>
-            <span class="tf-lbl">Hasta</span>
-            <select id="tr-to" class="tf-sel" onchange="renderTrend()"></select>
+            <span id="tr-brands" class="tr-brands" style="margin:0"></span>
           </div>
-          <div id="tr-brands" class="tr-brands"></div>
-          <div id="wrap-trend" style="position:relative;height:360px"><canvas id="ch-trend"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span>Mensual &middot; hist&oacute;rico completo</span>
+          <span class="rk-ctrls">
+            <span class="tf-lbl">Desde</span><select id="tr-from-m" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">Hasta</span><select id="tr-to-m" class="tf-sel" onchange="renderTrend()"></select>
+          </span>
+        </div>
+        <div class="ch-body">
+          <div id="wrap-trend-m" style="position:relative;height:300px"><canvas id="ch-trend-m"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span>Diario <span class="note" id="tr-note"></span></span>
+          <span class="rk-ctrls">
+            <span class="tf-lbl">Desde</span><select id="tr-from-d" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">Hasta</span><select id="tr-to-d" class="tf-sel" onchange="renderTrend()"></select>
+          </span>
+        </div>
+        <div class="ch-body">
+          <div id="wrap-trend-d" style="position:relative;height:300px"><canvas id="ch-trend-d"></canvas></div>
         </div>
       </div>
     </div><!-- /pane-trend -->
@@ -1213,8 +1229,8 @@ function renderProv(){
   });
 }
 
-// ── TAB 4: TREND POR MARCA (diario/mensual, rango y marcas a eleccion) ──
-const TR={gran:'daily',mode:'units',sel:[],colors:{}};
+// ── TAB 4: TREND POR MARCA (grafica mensual + grafica diaria) ──
+const TR={mode:'units',sel:[],colors:{}};
 const TR_COLORS=['#f97316','#10b981','#8b5cf6','#ef4444','#eab308',
   '#ec4899','#84cc16','#6366f1','#14b8a6','#f43f5e','#f59e0b','#a78bfa','#22d3ee','#fb7185'];
 
@@ -1224,21 +1240,12 @@ function trColor(m){
   return TR.colors[m];
 }
 
-function trPeriods(){
-  if(TR.gran==='daily')return TREND?TREND.days.map(d=>d.day):[];
-  return TR.months||[];
-}
-
-function trFillRange(){
-  const per=trPeriods();
-  const selF=g('tr-from'),selT=g('tr-to');
+function trFillRange(idF,idT,per,defFrom){
+  const selF=g(idF),selT=g(idT);
   const prevF=selF.value,prevT=selT.value;
   selF.innerHTML='';selT.innerHTML='';
-  per.forEach(pd=>{
-    selF.appendChild(new Option(pd,pd));
-    selT.appendChild(new Option(pd,pd));
-  });
-  selF.value=per.includes(prevF)?prevF:per[0];
+  per.forEach(pd=>{selF.appendChild(new Option(pd,pd));selT.appendChild(new Option(pd,pd));});
+  selF.value=per.includes(prevF)?prevF:(defFrom&&per.includes(defFrom)?defFrom:per[0]);
   selT.value=per.includes(prevT)?prevT:per[per.length-1];
 }
 
@@ -1266,7 +1273,6 @@ function trChips(){
 function initTrend(){
   if(!TREND)return;
   if(!REC||!BRAND_CHOICES.length){setTimeout(initTrend,150);return;}
-  // Serie mensual por marca desde records.json (todo el historico)
   TR.monthly={};const mm={};
   REC.rows.forEach(r=>{
     const b=REC.enums.marca[r[COL.MARCA]];
@@ -1275,19 +1281,9 @@ function initTrend(){
     mm[k]=1;
   });
   TR.months=Object.keys(mm).sort();
+  TR.days=TREND.days.map(d=>d.day);
   TR.sel=['BMW'].filter(b=>BRAND_CHOICES.includes(b));
   BRAND_CHOICES.forEach(b=>g('tr-brand-list').appendChild(new Option(b,b)));
-  [['daily','Diario'],['monthly','Mensual']].forEach(([k,lbl],i)=>{
-    const pill=document.createElement('div');
-    pill.className='sg-pill'+(k===TR.gran?' on':'');
-    pill.textContent=lbl;
-    pill.onclick=()=>{
-      TR.gran=k;
-      [...g('tr-gran').children].forEach((x,j)=>x.classList.toggle('on',j===i));
-      trFillRange();renderTrend();
-    };
-    g('tr-gran').appendChild(pill);
-  });
   [['units','Unidades'],['cumul','Acumulado']].forEach(([k,lbl],i)=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===TR.mode?' on':'');
@@ -1299,34 +1295,19 @@ function initTrend(){
     };
     g('tr-mode').appendChild(pill);
   });
-  trFillRange();trChips();renderTrend();
+  // mensual: por defecto ultimos 18 meses; diario: todo lo disponible
+  const defM=TR.months[Math.max(0,TR.months.length-18)];
+  trFillRange('tr-from-m','tr-to-m',TR.months,defM);
+  trFillRange('tr-from-d','tr-to-d',TR.days,null);
+  const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
+  g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
+  trChips();renderTrend();
 }
 
-function renderTrend(){
-  if(!TREND||!TR.months)return;
-  let f=g('tr-from').value,t=g('tr-to').value;
-  if(f>t){const tmp=f;f=t;t=tmp;g('tr-from').value=f;g('tr-to').value=t;}
-  const per=trPeriods().filter(pd=>pd>=f&&pd<=t);
-  const labels=per.map(pd=>TR.gran==='daily'?pd.slice(5):pd);
-  const dailyMap={};
-  if(TR.gran==='daily')TREND.days.forEach(d=>dailyMap[d.day]=d.brands);
-  const datasets=TR.sel.map(m=>{
-    let acc=0;
-    const data=per.map(pd=>{
-      const v=TR.gran==='daily'?((dailyMap[pd]||{})[m]||0):((TR.monthly[m]||{})[pd]||0);
-      return TR.mode==='cumul'?(acc+=v):v;
-    });
-    const c=trColor(m);
-    return {label:m,data,borderColor:c,backgroundColor:c,
-      borderWidth:m==='BMW'?3:1.8,pointRadius:per.length>60?0:2,pointHoverRadius:4,tension:.25};
-  });
-  const d0=trPeriods()[0]||'',d1=trPeriods().slice(-1)[0]||'';
-  g('tr-note').textContent=TR.gran==='daily'
-    ?('diarios DGT disponibles: '+d0+' \u2192 '+d1)
-    :('mensual: '+d0+' \u2192 '+d1);
-  if(CHARTS['ch-trend']){CHARTS['ch-trend'].destroy();delete CHARTS['ch-trend'];}
-  const old=g('ch-trend');const cnv=document.createElement('canvas');cnv.id='ch-trend';old.replaceWith(cnv);
-  CHARTS['ch-trend']=new Chart(cnv,{
+function trDrawLine(canvasId,labels,datasets,manyPoints){
+  if(CHARTS[canvasId]){CHARTS[canvasId].destroy();delete CHARTS[canvasId];}
+  const old=g(canvasId);const cnv=document.createElement('canvas');cnv.id=canvasId;old.replaceWith(cnv);
+  CHARTS[canvasId]=new Chart(cnv,{
     type:'line',
     data:{labels,datasets},
     options:{
@@ -1342,6 +1323,34 @@ function renderTrend(){
       }
     },plugins:[ChartDataLabels]
   });
+}
+
+function trSeries(per,getter){
+  return TR.sel.map(m=>{
+    let acc=0;
+    const data=per.map(pd=>{
+      const v=getter(m,pd);
+      return TR.mode==='cumul'?(acc+=v):v;
+    });
+    const c=trColor(m);
+    return {label:m,data,borderColor:c,backgroundColor:c,
+      borderWidth:m==='BMW'?3:1.8,pointRadius:per.length>60?0:2,pointHoverRadius:4,tension:.25};
+  });
+}
+
+function renderTrend(){
+  if(!TREND||!TR.months)return;
+  // mensual
+  let fm=g('tr-from-m').value,tm=g('tr-to-m').value;
+  if(fm>tm){const x=fm;fm=tm;tm=x;g('tr-from-m').value=fm;g('tr-to-m').value=tm;}
+  const perM=TR.months.filter(pd=>pd>=fm&&pd<=tm);
+  trDrawLine('ch-trend-m',perM,trSeries(perM,(m,pd)=>(TR.monthly[m]||{})[pd]||0));
+  // diario
+  let fd=g('tr-from-d').value,td=g('tr-to-d').value;
+  if(fd>td){const x=fd;fd=td;td=x;g('tr-from-d').value=fd;g('tr-to-d').value=td;}
+  const dailyMap={};TREND.days.forEach(d=>dailyMap[d.day]=d.brands);
+  const perD=TR.days.filter(pd=>pd>=fd&&pd<=td);
+  trDrawLine('ch-trend-d',perD.map(x=>x.slice(5)),trSeries(perD,(m,pd)=>(dailyMap[pd]||{})[m]||0));
 }
 
 // ── UI CONTROLS ──────────────────────────────────────────
