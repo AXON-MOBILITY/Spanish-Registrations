@@ -33,10 +33,11 @@
   --row-alt:rgba(255,255,255,.025);
 }
 html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;background:var(--bg);color:var(--text)}
+body{display:flex;flex-direction:column;overflow:hidden}
 
 /* ── TOPBAR ─────────────────────────────────────────── */
 #topbar{
-  height:52px;display:flex;align-items:center;gap:0;
+  min-height:52px;display:flex;align-items:center;gap:0;flex-wrap:wrap;
   background:var(--hdr);border-bottom:1px solid var(--border);
   position:sticky;top:0;z-index:200;
 }
@@ -61,7 +62,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px
 .tb-stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
 .tb-stat b{color:var(--text);font-size:13px;font-weight:700}
 .tb-sep{width:1px;height:28px;background:var(--border)}
-.tb-filters{display:flex;align-items:center;gap:8px;padding:0 14px;border-left:1px solid var(--border)}
+.tb-filters{display:flex;align-items:center;gap:8px;padding:6px 14px;border-left:1px solid var(--border);flex-wrap:wrap;row-gap:6px}
 .tf-grp{display:flex;align-items:center;gap:4px}
 .tf-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
 select.tf-sel{
@@ -87,7 +88,9 @@ input.tf-modelo-input::placeholder{color:var(--text3)}
 .btn-clear:hover{background:rgba(14,165,233,.25)}
 
 /* ── SHELL ───────────────────────────────────────────── */
-#shell{display:flex;height:calc(100vh - 52px);overflow:hidden}
+/* flex:1 en vez de calc(100vh-52px): si el topbar crece al envolver filtros
+   en pantallas estrechas, el contenido no queda cortado */
+#shell{display:flex;flex:1;min-height:0;overflow:hidden}
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 #sidebar{
@@ -148,7 +151,8 @@ input.tf-modelo-input::placeholder{color:var(--text3)}
 .pane.on{display:flex}
 
 /* ── STAT CARDS ──────────────────────────────────────── */
-.stat-row{display:flex;gap:16px}
+.stat-row{display:flex;gap:16px;flex-wrap:wrap}
+.stat-row .stat-card{min-width:170px}
 .stat-card{
   flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;
   padding:16px 20px;border-top:2px solid var(--acc);
@@ -211,6 +215,22 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 /* scrollable wide table */
 .wide-wrap{overflow-x:auto}
 .wide-wrap table{min-width:600px}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width:1400px){
+  .main-grid{grid-template-columns:minmax(280px,1.2fr) minmax(220px,1fr)}
+  .span2{grid-row:auto;grid-column:1/-1}
+}
+@media (max-width:1100px){
+  .main-grid,.analysis-grid-top,.analysis-grid-bot{grid-template-columns:1fr}
+  .span2{grid-column:auto}
+  #sidebar{width:165px}
+}
+@media (max-width:760px){
+  #shell{flex-direction:column;overflow:auto}
+  #sidebar{width:100%;max-height:220px;border-right:none;border-bottom:1px solid var(--border)}
+  .pane{padding:10px;gap:10px}
+}
 </style>
 </head>
 <body>
@@ -258,19 +278,19 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
   <!-- SIDEBAR -->
   <div id="sidebar">
-    <div class="sg open" id="sg-months">
-      <div class="sg-hdr" onclick="toggleSg('sg-months')">
-        <span>Month <span class="sg-count" id="cnt-months"></span></span>
-        <span class="sg-arrow">▼</span>
-      </div>
-      <div class="sg-body" id="sb-months"></div>
-    </div>
     <div class="sg open" id="sg-years">
       <div class="sg-hdr" onclick="toggleSg('sg-years')">
         <span>Year <span class="sg-count" id="cnt-years"></span></span>
         <span class="sg-arrow">▼</span>
       </div>
       <div class="sg-body" id="sb-years"></div>
+    </div>
+    <div class="sg open" id="sg-months">
+      <div class="sg-hdr" onclick="toggleSg('sg-months')">
+        <span>Month <span class="sg-count" id="cnt-months"></span></span>
+        <span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-months"></div>
     </div>
     <div class="sg open" id="sg-fuels">
       <div class="sg-hdr" onclick="toggleSg('sg-fuels')">
@@ -335,7 +355,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <!-- MS by Fuel -->
         <div class="card">
-          <div class="card-hdr">Market Share by Fuel</div>
+          <div class="card-hdr"><span>Market Share by Fuel</span><span class="note">Top 20 marcas</span></div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Brand</th><th>BEV</th><th>ICE</th><th>PHEV</th></tr></thead>
@@ -357,7 +377,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <!-- MS by Channel -->
         <div class="card">
-          <div class="card-hdr">Market Share by Channel</div>
+          <div class="card-hdr"><span>Market Share by Channel</span><span class="note">Top 20 marcas</span></div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Brand</th><th>Corp</th><th>Priv</th><th>RAC</th></tr></thead>
@@ -441,20 +461,31 @@ const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Se
 const MES3=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const SEG_ORDER=['UKL0','UKL1','UKL2','KKL','MKL','SKL','GKL','GKL+'];
 
-const SIMMIX_BRANDS=new Set([
-  'Abarth','Aiways','Alfa Romeo','Alke','Alpine','Arcfox','Aston Martin','Audi',
-  'BAIC','BMW','BYD','Bentley','Bestune','Cadillac','Caterham','Cenntro','Citroen','Cupra',
-  'DFSK','DR','DS','Dacia','Dongfeng','EVO','Ebro','Esagono Energia','Etesia','Evum Motors',
-  'Ferrari','Fiat','Ford','Giotti Victoria','Goupil','Honda','Hyundai',
-  'Ineos','Isuzu','Iveco','Jaecoo','Jaguar','Jeep','KG Mobility','Karma','Kia','LEVC',
-  'Lamborghini','Lancia','Land Rover','Leapmotor','Lexus','Livan','Lotus','Lynk & Co',
-  'MAN','MG','MINI','MW Motors','Maserati','Maxus','Mazda','McLaren',
-  'Mercedes','Mercedes-V','Mitsubishi','Mitsubishi-Fuso','Morgan',
-  'Nextem','Nissan','Omoda','Opel',
-  'Peugeot','Piaggio','Polestar','Porsche','Renault','Renault Trucks',
-  'Rolls-Royce','SEAT','Seres','Shineray','Skoda','Skywell','Smart',
-  'Ssangyong','Subaru','Suzuki','Tesla','Toyota','Volkswagen','Volvo','Voyah','Yudo'
+// Lista de EXCLUSIÓN (scope de mercado): carroceros/camperizadores aún no
+// reasignados por la ETL, buses, quads/microcoches y ruido. Todo lo demás se
+// incluye automáticamente — las marcas nuevas del mercado aparecen solas.
+const EXCLUDED_BRANDS=new Set([
+  'Sin Marca','3 Carroceros','A.A. Airbus','Adria','Alquiber Quality','Barbany',
+  'Benimar','Bergadana','Brp','Cajisa','Capron','Carrocera Castrosua Sa',
+  'Carrocerias Minda','Carrocerias Sanca, S.A.','Carrocerias Sevilla',
+  'Carrozados Tecai','Cfmoto','Challenger','Chatenet','Codetrans','Coinpol',
+  'Dethleffs','Digal','Divisegur Catalunya','Ecoauto','Elnagh','Erke',
+  'Eurocarrocera','Eurogaza','Giottiline','Grau','Igluvan','Indusauto','Irizar',
+  'Iveco Bus','Jeanje','Ligier','Mc Louis','Mclouis','Mebauto','Microcar',
+  'Aixam','Polaris','Pujol','Recapol','Rehatrans','Rodriguez Lopez Auto',
+  'Roller Team','Romu','Segway','Semicarfran,S.L','Silence','Socage',
+  'Soriberica','Sortimo','Stil Conversion','Subiela','Tecnocarrocera','Tecnove',
+  'Tecnove Fiberglass','Tsd','Ultrand','Vsve','Weinsberg','Zago Automotive'
 ]);
+let INCLUDED_MARCA_IDX=new Set();   // índices de enums.marca dentro del scope
+
+// Canonización de segmento: '3.UKL2'→'UKL2', '7.GKL++1'→'GKL+'
+// (la ETL ya canoniza; esto cubre los records.json generados antes del fix)
+function segCanon(label){
+  let s=(label||'').replace(/^\d+\./,'');
+  if(s.startsWith('GKL+'))s='GKL+';
+  return s;
+}
 
 let REC=null;
 const F={
@@ -472,6 +503,7 @@ const g=id=>document.getElementById(id);
 // ── LOAD ────────────────────────────────────────────────
 fetch('data/records.json').then(r=>r.json()).then(data=>{
   REC=data;
+  REC.enums.marca.forEach((b,i)=>{if(b&&!EXCLUDED_BRANDS.has(b))INCLUDED_MARCA_IDX.add(i);});
   buildSidebar();
   buildTopFilters();
   render();
@@ -562,28 +594,31 @@ function buildSidebar(){
     }));
   });
 
-  // Segments
-  const segTotal=SEG_ORDER.filter(x=>E.seg.includes(x)).length+1;
+  // Segments — agrupados por etiqueta canónica ('3.UKL2' cuenta como 'UKL2').
+  // Cada checkbox controla TODOS los índices cuya canonización coincide, de
+  // modo que ninguna fila queda excluida silenciosamente.
+  const segGroups={};   // canon → [idx,...]
+  E.seg.forEach((s,i)=>{
+    const c=segCanon(s);
+    (segGroups[c]=segGroups[c]||[]).push(i);
+    F.segs.add(i);      // todo seleccionado al inicio
+  });
+  const canonLabels=[...SEG_ORDER.filter(s=>segGroups[s]),
+                     ...Object.keys(segGroups).filter(s=>s&&!SEG_ORDER.includes(s)).sort(),
+                     ...(segGroups['']?['']:[])];
+  const segTotal=canonLabels.length;
   addQuickSel('sb-segs',
-    ()=>{ E.seg.forEach((_,i)=>F.segs.add(i)); g('sb-segs').querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-segs',F.segs.size,segTotal); render(); },
+    ()=>{ E.seg.forEach((_,i)=>F.segs.add(i)); g('sb-segs').querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-segs',segTotal,segTotal); render(); },
     ()=>{ F.segs.clear(); g('sb-segs').querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-segs',0,segTotal); render(); }
   );
-  SEG_ORDER.forEach(s=>{
-    const i=E.seg.indexOf(s);if(i<0)return;
-    F.segs.add(i);
-    g('sb-segs').appendChild(mkCb(s,true,on=>{
-      if(on)F.segs.add(i);else F.segs.delete(i);
-      updateCount('cnt-segs',F.segs.size,segTotal);
+  canonLabels.forEach(c=>{
+    g('sb-segs').appendChild(mkCb(c||'Sin seg.',true,on=>{
+      segGroups[c].forEach(i=>{if(on)F.segs.add(i);else F.segs.delete(i);});
+      const selCanon=canonLabels.filter(cc=>segGroups[cc].some(i=>F.segs.has(i))).length;
+      updateCount('cnt-segs',selCanon,segTotal);
       render();
     }));
   });
-  const noSeg=E.seg.indexOf('');
-  if(noSeg>=0){
-    F.segs.add(noSeg);
-    g('sb-segs').appendChild(mkCb('Sin seg.',true,on=>{
-      if(on)F.segs.add(noSeg);else F.segs.delete(noSeg);render();
-    }));
-  }
 }
 
 function mkCb(label,checked,onChange){
@@ -604,8 +639,7 @@ function updateCount(id,sel,total){
 function buildTopFilters(){
   const E=REC.enums;
   const bSel=g('f-marca');
-  [...SIMMIX_BRANDS].sort().forEach(b=>{
-    if(!E.marca.includes(b))return;
+  [...INCLUDED_MARCA_IDX].map(i=>E.marca[i]).sort((a,b)=>a.localeCompare(b)).forEach(b=>{
     const o=document.createElement('option');o.value=b;o.textContent=b;
     bSel.appendChild(o);
   });
@@ -624,12 +658,22 @@ function buildTopFilters(){
   });
 }
 
+let _topDebounce=null;
 function onTopChange(){
+  const marcaChanged=F.marca!==g('f-marca').value;
   F.marca=g('f-marca').value;F.body=g('f-body').value;
-  refreshModels();
-  const _mv=g('f-modelo').value.trim();
-  F.modelo=(_mv&&REC.enums.modelo.includes(_mv))?_mv:'';
-  render();
+  const modelSet=refreshModels();
+  const inp=g('f-modelo');
+  // Si cambia la marca y el modelo escrito no pertenece a ella, se limpia
+  // (antes se quedaba un modelo huérfano y la vista salía vacía sin aviso).
+  if(marcaChanged&&inp.value.trim()&&!modelSet.has(inp.value.trim())){
+    inp.value='';
+  }
+  const _mv=inp.value.trim();
+  F.modelo=(_mv&&modelSet.has(_mv))?_mv:'';
+  // Debounce: el input de modelo dispara en cada tecla; 66k filas por render
+  clearTimeout(_topDebounce);
+  _topDebounce=setTimeout(render,180);
 }
 
 function refreshModels(){
@@ -640,12 +684,13 @@ function refreshModels(){
     const mIdx=E.marca.indexOf(F.marca);
     modelSet=new Set(REC.rows.filter(r=>r[COL.MARCA]===mIdx).map(r=>E.modelo[r[COL.MODELO]]));
   } else {
-    const sIdx=new Set([...SIMMIX_BRANDS].map(b=>E.marca.indexOf(b)).filter(i=>i>=0));
-    modelSet=new Set(REC.rows.filter(r=>sIdx.has(r[COL.MARCA])).map(r=>E.modelo[r[COL.MODELO]]));
+    modelSet=new Set(REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])).map(r=>E.modelo[r[COL.MODELO]]));
   }
-  [...modelSet].filter(m=>m).sort().forEach(m=>{
+  modelSet.delete('');modelSet.delete(undefined);
+  [...modelSet].sort().forEach(m=>{
     const opt=document.createElement('option');opt.value=m;dl.appendChild(opt);
   });
+  return modelSet;
 }
 
 // ── FILTERS ───────────────────────────────────────────────
@@ -656,7 +701,7 @@ function applyFiltersBase(){
   const moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
   const bIdx=F.body?E.body.indexOf(F.body):-1;
   return REC.rows.filter(r=>{
-    if(!SIMMIX_BRANDS.has(E.marca[r[COL.MARCA]]))return false;
+    if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
     if(!F.months.has(r[COL.M]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
@@ -991,6 +1036,8 @@ function showTab(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
   g('pane-'+name).classList.add('on');
   g('tbtn-'+name).classList.add('on');
+  // Los canvas de un pane oculto se crean con anchura 0: re-render al mostrar
+  if(REC)requestAnimationFrame(render);
 }
 
 function resetFilters(){
@@ -1007,10 +1054,9 @@ function resetFilters(){
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
   F.marca='';F.modelo='';F.body='';
-  g('cnt-months').style.display='none';g('cnt-years').style.display='none';
+  ['cnt-months','cnt-years','cnt-segs'].forEach(id=>{const el=g(id);if(el)el.style.display='none';});
   refreshModels();render();
 }
 </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
