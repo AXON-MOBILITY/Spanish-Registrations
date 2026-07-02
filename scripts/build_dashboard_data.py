@@ -268,8 +268,8 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
         return monthly_records, mtd_records, {}
     target_year = int(payload.get("year", 0) or 0)
     target_month = int(payload.get("month", 0) or 0)
-    if mtd_yr != target_year or mtd_mo != target_month:
-        return monthly_records, mtd_records, {"status": "skipped", "reason": "target_period_not_current_mtd"}
+    if not target_year or not target_month:
+        return monthly_records, mtd_records, {"status": "skipped", "reason": "invalid_target_period"}
 
     targets = {}
     brand_display = {}
@@ -287,11 +287,14 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
             brand_display[brand_key] = brand
 
     all_records = [r.copy() for r in monthly_records] + [r.copy() for r in mtd_records]
-    passthrough = [r for r in all_records if r["y"] != target_year]
+    def in_target_period(r):
+        return r["y"] == target_year and r["m"] <= target_month
+
+    passthrough = [r for r in all_records if not in_target_period(r)]
     grouped = defaultdict(list)
     dropped = 0
     for r in all_records:
-        if r["y"] != target_year:
+        if not in_target_period(r):
             continue
         key = (r["marca"].upper(), r["canal"], _focus_bucket(r["sub"]))
         if key in targets:
@@ -339,6 +342,7 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
         "dropped_records": dropped,
         "synthetic_residual": synthetic,
         "target_total": sum(targets.values()),
+        "aligned_through_month": target_month,
     }
     return monthly_out, mtd_out, stats
 
@@ -351,6 +355,7 @@ def compute_simmix_drift(monthly_records, mtd_records, payload, min_units=200):
     if not payload:
         return {"status": "skipped", "reason": "sin export Simmix disponible"}
     target_year = int(payload.get("year", 0) or 0)
+    target_month = int(payload.get("month", 0) or 12)
     targets = defaultdict(int)
     for row in payload.get("rows", []):
         brand = _normalize_brand(row.get("brand", "")).upper()
@@ -364,7 +369,7 @@ def compute_simmix_drift(monthly_records, mtd_records, payload, min_units=200):
 
     etl = defaultdict(int)
     for r in list(monthly_records) + list(mtd_records):
-        if r["y"] == target_year:
+        if r["y"] == target_year and r["m"] <= target_month:
             etl[(r["marca"].upper(), r["canal"])] += r["n"]
 
     rows = []
@@ -416,42 +421,9 @@ def apply_simmix_scope(records, scopes):
 
 # ── Carga datos ──────────────────────────────────────────────────────────────
 
-def load_monthly(base):
+def _load_channel_records(path, yr, mo):
     records = []
-    for f in sorted(glob.glob(str(base/"dgt_canal_[0-9][0-9][0-9][0-9][0-9][0-9].csv"))):
-        m = re.match(r"dgt_canal_(\d{4})(\d{2})$", Path(f).stem)
-        if not m: continue
-        yr, mo = int(m.group(1)), int(m.group(2))
-        for row in _read_csv(f):
-            try:
-                n = int(row.get("count", 0) or 0)
-                if n <= 0: continue
-                records.append({
-                    "y":        yr,
-                    "m":        mo,
-                    "marca":    _normalize_brand(row.get("marca", "")),
-                    "modelo":   row.get("modelo", "").strip().upper(),
-                    "canal":    row.get("canal", ""),
-                    "fuel":     row.get("fuel_type", "ICE") or "ICE",
-                    "fuel_det": row.get("fuel", "").strip(),
-                    "seg":      row.get("segmento", ""),
-                    "sub":      _focus_bucket(row.get("subseg", "")),
-                    "hp":       row.get("hp", ""),
-                    "body":     row.get("body_type", ""),
-                    "n":        n,
-                })
-            except (ValueError, KeyError):
-                pass
-    return records
-
-def load_mtd(base):
-    records = []
-    files = sorted(glob.glob(str(base/"dgt_canal_*_mtd.csv")))
-    if not files: return records, None, None
-    m = re.match(r"dgt_canal_(\d{4})(\d{2})_mtd$", Path(files[-1]).stem)
-    if not m: return records, None, None
-    yr, mo = int(m.group(1)), int(m.group(2))
-    for row in _read_csv(files[-1]):
+    for row in _read_csv(path):
         try:
             n = int(row.get("count", 0) or 0)
             if n <= 0: continue
@@ -471,7 +443,40 @@ def load_mtd(base):
             })
         except (ValueError, KeyError):
             pass
-    return records, yr, mo
+    return records
+
+def _mtd_files(base):
+    files = []
+    for f in sorted(glob.glob(str(base/"dgt_canal_*_mtd.csv"))):
+        m = re.match(r"dgt_canal_(\d{4})(\d{2})_mtd$", Path(f).stem)
+        if m:
+            files.append((int(m.group(1)), int(m.group(2)), f))
+    return files
+
+def load_monthly(base):
+    records = []
+    completed = set()
+    for f in sorted(glob.glob(str(base/"dgt_canal_[0-9][0-9][0-9][0-9][0-9][0-9].csv"))):
+        m = re.match(r"dgt_canal_(\d{4})(\d{2})$", Path(f).stem)
+        if not m: continue
+        yr, mo = int(m.group(1)), int(m.group(2))
+        records.extend(_load_channel_records(f, yr, mo))
+        completed.add((yr, mo))
+
+    mtd_files = _mtd_files(base)
+    if mtd_files:
+        latest_mtd = max((yr, mo) for yr, mo, _ in mtd_files)
+        for yr, mo, f in mtd_files:
+            if (yr, mo) != latest_mtd and (yr, mo) not in completed:
+                records.extend(_load_channel_records(f, yr, mo))
+                completed.add((yr, mo))
+    return records
+
+def load_mtd(base):
+    files = _mtd_files(base)
+    if not files: return [], None, None
+    yr, mo, f = files[-1]
+    return _load_channel_records(f, yr, mo), yr, mo
 
 def load_daily(base):
     data = defaultdict(int)
