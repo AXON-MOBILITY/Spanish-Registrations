@@ -212,6 +212,18 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .analysis-grid-top{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .analysis-grid-bot{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
 
+/* Ranking provincias + trend */
+.rk-ctrls{display:flex;gap:8px;align-items:center}
+#tbl-prov td{font-size:11px}
+#tbl-prov td.rk-cell{text-align:left;color:var(--text3)}
+#tbl-prov td.rk-cell b{color:var(--text);font-weight:600}
+#tbl-prov td.rk-bmw{background:rgba(14,165,233,.28)!important}
+#tbl-prov td.rk-bmw b,#tbl-prov td.rk-bmw{color:#7dd3fc!important}
+.tr-brands{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.tr-pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);color:var(--text3);user-select:none;transition:.15s}
+.tr-pill.on{color:#fff;border-color:transparent}
+
 /* scrollable wide table */
 .wide-wrap{overflow-x:auto}
 .wide-wrap table{min-width:600px}
@@ -244,6 +256,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   <div class="tb-tabs">
     <button class="tab-btn on" id="tbtn-overview" onclick="showTab('overview')">Overview</button>
     <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Canal &amp; Mensual</button>
+    <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provincias</button>
+    <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
   </div>
   <div class="tb-filters">
     <div class="tf-grp">
@@ -450,6 +464,42 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
     </div><!-- /pane-analisis -->
 
+    <!-- TAB 3: RANKING PROVINCIAS -->
+    <div class="pane" id="pane-prov">
+      <div class="card">
+        <div class="card-hdr">
+          <span>Ranking marcas Focus por provincia &middot; Top 5</span>
+          <span class="rk-ctrls">
+            <span class="sg-pills" id="rk-gama" style="padding:0"></span>
+            <select id="rk-year" class="tf-sel" onchange="renderProv()"></select>
+          </span>
+        </div>
+        <div class="tbl-wrap2">
+          <table id="tbl-prov">
+            <thead><tr>
+              <th>Provincia</th><th>Uds</th>
+              <th>1&ordm;</th><th>2&ordm;</th><th>3&ordm;</th><th>4&ordm;</th><th>5&ordm;</th>
+            </tr></thead>
+            <tbody id="tbody-prov"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /pane-prov -->
+
+    <!-- TAB 4: TREND DIARIO -->
+    <div class="pane" id="pane-trend">
+      <div class="card">
+        <div class="card-hdr">
+          <span>Tendencia diaria por marca <span class="note" id="tr-note"></span></span>
+          <span class="rk-ctrls"><span class="sg-pills" id="tr-mode" style="padding:0"></span></span>
+        </div>
+        <div class="ch-body">
+          <div id="tr-brands" class="tr-brands"></div>
+          <div id="wrap-trend" style="position:relative;height:360px"><canvas id="ch-trend"></canvas></div>
+        </div>
+      </div>
+    </div><!-- /pane-trend -->
+
   </div><!-- /content -->
 </div><!-- /shell -->
 
@@ -508,6 +558,11 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   buildTopFilters();
   render();
 });
+let PROV=null, TREND=null;
+fetch('data/province_brands.json?v='+Date.now()).then(r=>r.json())
+  .then(d=>{PROV=d;initProv();}).catch(()=>{});
+fetch('data/daily_brands.json?v='+Date.now()).then(r=>r.json())
+  .then(d=>{TREND=d;initTrend();}).catch(()=>{});
 
 // ── SIDEBAR BUILD ────────────────────────────────────────
 function addQuickSel(containerId, allFn, noneFn){
@@ -648,11 +703,18 @@ function buildTopFilters(){
     g('f-body').appendChild(o);
   });
   refreshModels();
-  E.hp.filter(h=>h&&h!=='Standard').forEach(h=>{
-    const hIdx=E.hp.indexOf(h);
+  // High Performance: M, M Performance, JCW y Standard ('' cuenta como Standard)
+  ['M','M Performance','JCW','Standard'].forEach(h=>{
+    const idxs=h==='Standard'
+      ?[E.hp.indexOf('Standard'),E.hp.indexOf('')].filter(i=>i>=0)
+      :[E.hp.indexOf(h)].filter(i=>i>=0);
+    if(!idxs.length)return;
     const lbl=document.createElement('label');lbl.className='hp-lbl';
     const cb=document.createElement('input');cb.type='checkbox';
-    cb.addEventListener('change',()=>{if(cb.checked)F.hps.add(hIdx);else F.hps.delete(hIdx);render();});
+    cb.addEventListener('change',()=>{
+      idxs.forEach(i=>{if(cb.checked)F.hps.add(i);else F.hps.delete(i);});
+      render();
+    });
     lbl.appendChild(cb);lbl.appendChild(document.createTextNode(h));
     g('f-hp').appendChild(lbl);
   });
@@ -1028,6 +1090,149 @@ function drawVBar(canvasId,wrapId,labels,datasets){
   });
 }
 
+// ── TAB 3: RANKING PROVINCIAS ────────────────────────────
+const RK={gama:0,year:null};
+const GAMAS=['Total','BEV','PHEV'];
+
+function initProv(){
+  if(!PROV||!PROV.provinces.length)return;
+  GAMAS.forEach((gm,i)=>{
+    const pill=document.createElement('div');
+    pill.className='sg-pill'+(i===RK.gama?' on':'');
+    pill.textContent=gm;
+    pill.onclick=()=>{
+      RK.gama=i;
+      [...g('rk-gama').children].forEach((p,j)=>p.classList.toggle('on',j===i));
+      renderProv();
+    };
+    g('rk-gama').appendChild(pill);
+  });
+  const sel=g('rk-year');
+  PROV.years.slice().reverse().forEach(y=>{
+    const o=document.createElement('option');o.value=y;o.textContent=y;
+    sel.appendChild(o);
+  });
+  RK.year=String(PROV.years[PROV.years.length-1]);
+  sel.value=RK.year;
+  renderProv();
+}
+
+function renderProv(){
+  if(!PROV)return;
+  RK.year=g('rk-year').value;
+  const gi=RK.gama;
+  const rows=[];
+  PROV.provinces.forEach(p=>{
+    const brands=p.years[RK.year]||{};
+    const entries=Object.entries(brands)
+      .map(([m,v])=>[m,v[gi]])
+      .filter(([,v])=>v>0)
+      .sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+    if(!entries.length)return;
+    // Top 5 puestos; empates a unidades comparten celda
+    const cells=[];
+    for(const [m,v] of entries){
+      if(cells.length&&cells[cells.length-1][0][1]===v){cells[cells.length-1].push([m,v]);continue;}
+      if(cells.length===5)break;
+      cells.push([[m,v]]);
+    }
+    rows.push({name:p.name,total:entries.reduce((s,[,v])=>s+v,0),cells});
+  });
+  rows.sort((a,b)=>b.total-a.total);
+  const tb=g('tbody-prov');tb.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    let html=`<td>${r.name}</td><td>${fN(r.total)}</td>`;
+    for(let i=0;i<5;i++){
+      const cell=r.cells[i];
+      if(!cell){html+='<td class="rk-cell">&mdash;</td>';continue;}
+      const isBmw=cell.some(([m])=>m==='BMW');
+      const txt=cell.map(([m,v])=>`<b>${m}</b> ${fN(v)}`).join('<br>');
+      html+=`<td class="rk-cell${isBmw?' rk-bmw':''}">${txt}</td>`;
+    }
+    tr.innerHTML=html;tb.appendChild(tr);
+  });
+}
+
+// ── TAB 4: TREND DIARIO POR MARCA ────────────────────────
+const TR={mode:'daily',sel:new Set(),brands:[]};
+const TR_COLORS=['#0ea5e9','#f97316','#10b981','#8b5cf6','#ef4444','#eab308',
+  '#ec4899','#84cc16','#6366f1','#14b8a6','#f43f5e','#f59e0b','#06b6d4','#a78bfa'];
+
+function initTrend(){
+  if(!TREND||!TREND.days.length)return;
+  const tot={};
+  TREND.days.forEach(d=>{for(const [m,n] of Object.entries(d.brands)){
+    if(EXCLUDED_BRANDS.has(m))continue;tot[m]=(tot[m]||0)+n;}});
+  const top=Object.entries(tot).sort((a,b)=>b[1]-a[1]).slice(0,14).map(([m])=>m);
+  if(!top.includes('BMW')&&tot['BMW'])top.push('BMW');
+  TR.brands=top;
+  TR.sel=new Set([...top.slice(0,5),...(tot['BMW']?['BMW']:[])]);
+  [['daily','Diario'],['cumul','Acumulado']].forEach(([k,lbl],i)=>{
+    const pill=document.createElement('div');
+    pill.className='sg-pill'+(k===TR.mode?' on':'');
+    pill.textContent=lbl;
+    pill.onclick=()=>{
+      TR.mode=k;
+      [...g('tr-mode').children].forEach((p,j)=>p.classList.toggle('on',j===i));
+      renderTrend();
+    };
+    g('tr-mode').appendChild(pill);
+  });
+  const box=g('tr-brands');
+  TR.brands.forEach((m,i)=>{
+    const pill=document.createElement('div');
+    pill.className='tr-pill'+(TR.sel.has(m)?' on':'');
+    const color=m==='BMW'?'#0ea5e9':TR_COLORS[i%TR_COLORS.length];
+    if(TR.sel.has(m))pill.style.background=color;
+    pill.textContent=m;
+    pill.onclick=()=>{
+      if(TR.sel.has(m)){TR.sel.delete(m);pill.classList.remove('on');pill.style.background='';}
+      else{TR.sel.add(m);pill.classList.add('on');pill.style.background=color;}
+      renderTrend();
+    };
+    box.appendChild(pill);
+  });
+  const d0=TREND.days[0].day,d1=TREND.days[TREND.days.length-1].day;
+  g('tr-note').textContent=d0+' \u2192 '+d1+' (d\u00edas con publicaci\u00f3n DGT)';
+  renderTrend();
+}
+
+function renderTrend(){
+  if(!TREND)return;
+  const labels=TREND.days.map(d=>d.day.slice(5));
+  const datasets=[];
+  TR.brands.forEach((m,i)=>{
+    if(!TR.sel.has(m))return;
+    const color=m==='BMW'?'#0ea5e9':TR_COLORS[i%TR_COLORS.length];
+    let acc=0;
+    const data=TREND.days.map(d=>{
+      const v=d.brands[m]||0;
+      return TR.mode==='cumul'?(acc+=v):v;
+    });
+    datasets.push({label:m,data,borderColor:color,backgroundColor:color,
+      borderWidth:m==='BMW'?3:1.8,pointRadius:0,pointHoverRadius:4,tension:.25});
+  });
+  if(CHARTS['ch-trend']){CHARTS['ch-trend'].destroy();delete CHARTS['ch-trend'];}
+  const old=g('ch-trend');const cnv=document.createElement('canvas');cnv.id='ch-trend';old.replaceWith(cnv);
+  CHARTS['ch-trend']=new Chart(cnv,{
+    type:'line',
+    data:{labels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{ticks:{font:{size:9},color:'#94a3b8',maxRotation:45},grid:{display:false}},
+        y:{beginAtZero:true,ticks:{font:{size:9},color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}}
+      },
+      plugins:{
+        legend:{display:true,labels:{color:'#94a3b8',font:{size:10},boxWidth:12,boxHeight:3}},
+        tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.parsed.y)}},
+        datalabels:{display:false}
+      }
+    },plugins:[ChartDataLabels]
+  });
+}
+
 // ── UI CONTROLS ──────────────────────────────────────────
 function toggleSg(id){g(id).classList.toggle('open')}
 
@@ -1037,7 +1242,9 @@ function showTab(name){
   g('pane-'+name).classList.add('on');
   g('tbtn-'+name).classList.add('on');
   // Los canvas de un pane oculto se crean con anchura 0: re-render al mostrar
-  if(REC)requestAnimationFrame(render);
+  if(REC&&(name==='overview'||name==='analisis'))requestAnimationFrame(render);
+  if(name==='prov'&&PROV)requestAnimationFrame(renderProv);
+  if(name==='trend'&&TREND)requestAnimationFrame(renderTrend);
 }
 
 function resetFilters(){

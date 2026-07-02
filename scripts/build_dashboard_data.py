@@ -629,6 +629,69 @@ def build_daily_mtd_json(daily_data, cy, cm):
         })
     return {"year":cy,"month":cm,"month_label":MONTHS_ES[cm],"days":days_out}
 
+
+def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
+    """province_brands.json: provincia x marca Focus x [total, BEV, PHEV] por anyo.
+
+    Alimenta el ranking Top-5 provincial del dashboard. Las marcas Focus se
+    derivan de los datos (mayoria de volumen en FOCUS SEGMENT), sin listas
+    hardcodeadas, para que altas nuevas (Xpeng, Polestar...) entren solas.
+    """
+    vol = defaultdict(lambda: [0, 0])
+    for r in list(monthly_records) + list(mtd_records):
+        v = vol[r["marca"]]
+        v[0] += r["n"]
+        if r["sub"] == "FOCUS SEGMENT":
+            v[1] += r["n"]
+    focus = {m for m, (t, f) in vol.items() if t > 0 and f / t >= 0.5}
+
+    out = {}
+    years = set()
+    for key, cnt in prov_data.items():
+        if len(key) != 7:
+            continue
+        yr, mo, marca, cod, nombre, canal, fuel = key
+        if canal not in CANALES or marca not in focus:
+            continue
+        years.add(yr)
+        d = out.setdefault(cod, {"name": nombre, "years": {}})
+        d["name"] = nombre
+        cell = d["years"].setdefault(yr, {}).setdefault(marca, [0, 0, 0])
+        cell[0] += cnt
+        if fuel == "BEV":
+            cell[1] += cnt
+        elif fuel == "PHEV":
+            cell[2] += cnt
+
+    provinces = [
+        {"cod": cod, "name": d["name"],
+         "years": {str(y): brands for y, brands in sorted(d["years"].items())}}
+        for cod, d in sorted(out.items())
+    ]
+    return {"years": sorted(years), "focus_brands": sorted(focus), "provinces": provinces}
+
+def build_daily_brand_trend(base):
+    """daily_brands.json: unidades por marca y dia (ficheros diarios DGT)."""
+    days = {}
+    for f in sorted(glob.glob(str(base / "dgt_canal_daily_[0-9]*.csv"))):
+        m = re.match(r"dgt_canal_daily_(\d{4})(\d{2})(\d{2})$", Path(f).stem)
+        if not m:
+            continue
+        day = "{}-{}-{}".format(m.group(1), m.group(2), m.group(3))
+        agg = defaultdict(int)
+        for row in _read_csv(f):
+            try:
+                n = int(row.get("count", 0) or 0)
+                if n > 0:
+                    agg[_normalize_brand(row.get("marca", ""))] += n
+            except (ValueError, KeyError):
+                pass
+        if agg:
+            days[day] = dict(sorted(agg.items()))
+    brands = sorted({b for d in days.values() for b in d})
+    return {"days": [{"day": k, "brands": v} for k, v in sorted(days.items())],
+            "brands": brands}
+
 def build_provinces_json(prov_data):
     if not prov_data:
         return {"provinces":[],"by_month":{}}
@@ -739,6 +802,9 @@ def main():
     # SIMMIX_ALIGN=0: modo independiente — el dashboard publica la ETL propia y
     # el export Simmix se usa SOLO para el informe de drift (auditoría).
     # Criterio para pasar a 0: drift por marca/canal < 2% (ver docs/AUDITORIA).
+    ranking_obj      = build_province_brand_ranking(prov_data, monthly_records, mtd_records)
+    daily_brands_obj = build_daily_brand_trend(base)
+
     align_enabled = os.environ.get("SIMMIX_ALIGN", "1") != "0"
     target_payload = load_simmix_2026_targets(base, out_dir / "simmix_2026_targets.json")
 
@@ -786,6 +852,8 @@ def main():
         ("records.json",   records_obj),
         ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
         ("provinces.json", provinces_obj),
+        ("province_brands.json", ranking_obj),
+        ("daily_brands.json", daily_brands_obj),
     ]:
         p = out_dir / fname
         p.write_text(json.dumps(obj, ensure_ascii=False, separators=(",",":")), encoding="utf-8")
