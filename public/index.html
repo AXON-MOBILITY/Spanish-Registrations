@@ -37,9 +37,9 @@ body{display:flex;flex-direction:column;overflow:hidden}
 
 /* ── TOPBAR ─────────────────────────────────────────── */
 #topbar{
-  min-height:52px;display:flex;align-items:center;gap:0;flex-wrap:wrap;
+  height:52px;display:flex;align-items:center;gap:0;
   background:var(--hdr);border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:200;
+  flex-shrink:0;z-index:200;
 }
 .tb-logo{
   display:flex;align-items:center;gap:8px;padding:0 18px;
@@ -47,7 +47,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
   border-right:1px solid var(--border);height:100%;
 }
 .tb-logo .acc{color:var(--acc)}
-.tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px;overflow-x:auto;scrollbar-width:none;max-width:42vw}
+.tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tab-btn{
   padding:0 16px;height:100%;border:none;background:transparent;
   color:var(--text3);font-size:12px;font-weight:500;cursor:pointer;
@@ -62,7 +62,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 .tb-stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
 .tb-stat b{color:var(--text);font-size:13px;font-weight:700}
 .tb-sep{width:1px;height:28px;background:var(--border)}
-.tb-filters{display:flex;align-items:center;gap:8px;padding:6px 14px;border-left:1px solid var(--border);flex-wrap:wrap;row-gap:6px}
+.tb-filters{display:flex;align-items:center;gap:8px;padding:7px 16px;flex-wrap:wrap;row-gap:6px;background:var(--hdr);border-bottom:1px solid var(--border);flex-shrink:0}
 .tf-grp{display:flex;align-items:center;gap:4px}
 .tf-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
 select.tf-sel{
@@ -255,12 +255,6 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 /* ── RESPONSIVE ──────────────────────────────────────── */
 /* Portatiles (escala Windows 125-150%): los filtros bajan a su propia fila
    para no solaparse con pestañas y KPIs */
-@media (max-width:1600px){
-  .tb-filters{flex-basis:100%;order:10;border-left:none;
-    border-top:1px solid var(--border);padding:6px 12px;justify-content:flex-start}
-  .tb-tabs{max-width:none}
-  .tb-right{margin-left:auto}
-}
 @media (max-width:1500px){
   .main-grid{grid-template-columns:minmax(280px,1.2fr) minmax(220px,1fr)}
   .span2{grid-row:auto;grid-column:1/-1}
@@ -292,6 +286,16 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
     <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
   </div>
+  <div class="tb-right">
+    <div class="tb-stat"><b id="hdr-updated">—</b><span>last update</span></div>
+    <div class="tb-sep"></div>
+    <div class="tb-stat"><b id="hdr-total">—</b><span>registrations</span></div>
+    <div class="tb-sep"></div>
+    <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
+  </div>
+</div>
+
+<!-- BARRA DE FILTROS (fila propia, nunca se solapa) -->
   <div class="tb-filters">
     <div class="tf-grp">
       <span class="tf-lbl">Marca</span>
@@ -313,14 +317,6 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     </div>
     <button class="btn-clear" onclick="resetFilters()">Clear Filters</button>
   </div>
-  <div class="tb-right">
-    <div class="tb-stat"><b id="hdr-updated">—</b><span>last update</span></div>
-    <div class="tb-sep"></div>
-    <div class="tb-stat"><b id="hdr-total">—</b><span>registrations</span></div>
-    <div class="tb-sep"></div>
-    <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
-  </div>
-</div>
 
 <!-- SHELL -->
 <div id="shell">
