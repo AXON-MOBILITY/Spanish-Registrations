@@ -229,7 +229,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   font-weight:700;border-right:2px solid #64748b}
 #tbl-fc thead th{border-right:1px solid var(--border)}
 #tbl-fc td{border-right:1px solid rgba(255,255,255,.10)}
-#tbl-fc input{width:78px}
+#tbl-fc{min-width:1500px}
+#tbl-fc input{width:92px}
 /* Provincias: scroll + cuadricula */
 #pane-prov .tbl-wrap2{max-height:calc(100vh - 200px);overflow:auto}
 #tbl-prov{border-collapse:separate;border-spacing:0}
@@ -539,7 +540,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           </span>
         </div>
         <div class="ch-body">
-          <div id="wrap-trend-m" style="position:relative;height:300px"><canvas id="ch-trend-m"></canvas></div>
+          <div id="wrap-trend-m" style="position:relative;height:330px"><canvas id="ch-trend-m"></canvas></div>
         </div>
       </div>
       <div class="card">
@@ -551,7 +552,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           </span>
         </div>
         <div class="ch-body">
-          <div id="wrap-trend-d" style="position:relative;height:300px"><canvas id="ch-trend-d"></canvas></div>
+          <div id="wrap-trend-d" style="position:relative;height:330px"><canvas id="ch-trend-d"></canvas></div>
         </div>
       </div>
     </div><!-- /pane-trend -->
@@ -565,11 +566,11 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <div class="ch-body">
           <div class="tr-controls">
-            <span class="tf-lbl">Contexto</span>
+            <span class="tf-lbl" title="Ajuste por entorno de mercado: lo que las series aun no reflejan (incentivos anunciados, fiscalidad, aranceles). Default +1% calibrado con ANFAC/Faconauto; se revisa cada lunes.">Contexto &#9432;</span>
             <input id="fc-ctx" type="range" min="-5" max="5" step="0.5" style="width:110px" oninput="renderForecast()">
             <b id="fc-ctx-val" style="font-size:11px;min-width:38px"></b>
             <span class="tf-lbl" style="margin-left:14px">Objetivo mercado 2026 (total)</span>
-            <input id="fc-target" class="tf-modelo-input" type="number" style="width:105px"
+            <input id="fc-target" class="tf-modelo-input" type="text" inputmode="numeric" style="width:105px"
                    placeholder="opcional" oninput="renderForecast()">
           </div>
           <div class="stat-row" id="fc-stats"></div>
@@ -1413,8 +1414,10 @@ function trDrawLine(canvasId,labels,datasets,manyPoints){
     options:{
       responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       scales:{
-        x:{ticks:{font:{size:9},color:'#94a3b8',maxRotation:45},grid:{display:false}},
-        y:{beginAtZero:true,ticks:{font:{size:9},color:'#64748b'},grid:{color:'rgba(255,255,255,.05)'}}
+        x:{display:true,ticks:{display:true,font:{size:11},color:'#cbd5e1',
+           maxRotation:0,autoSkip:true,maxTicksLimit:14,padding:4},
+           grid:{display:false},border:{color:'rgba(255,255,255,.25)'}},
+        y:{beginAtZero:true,ticks:{font:{size:10},color:'#94a3b8'},grid:{color:'rgba(255,255,255,.05)'}}
       },
       plugins:{
         legend:{display:true,labels:{color:'#94a3b8',font:{size:10},boxWidth:12,boxHeight:3}},
@@ -1460,7 +1463,8 @@ function renderTrend(){
   let fm=g('tr-from-m').value,tm=g('tr-to-m').value;
   if(fm>tm){const x=fm;fm=tm;tm=x;g('tr-from-m').value=fm;g('tr-to-m').value=tm;}
   const perM=TR.months.filter(pd=>pd>=fm&&pd<=tm);
-  trDrawLine('ch-trend-m',perM,trSeries(perM,(m,pd)=>(monthly[m]||{})[pd]||0));
+  const labM=perM.map(pd=>MES3[parseInt(pd.slice(5),10)-1]+'-'+pd.slice(2,4));
+  trDrawLine('ch-trend-m',labM,trSeries(perM,(m,pd)=>(monthly[m]||{})[pd]||0));
   // ── Diario: respeta canal y fuel (matriz 3x3 del JSON) ──
   const canalSel=new Set([...F.canales].map(i=>E.canal[i]));
   const fuelSel=new Set([...F.fuels].map(i=>E.fuel[i]));
@@ -1480,7 +1484,7 @@ function renderTrend(){
   let fd=g('tr-from-d').value,td=g('tr-to-d').value;
   if(fd>td){const x=fd;fd=td;td=x;g('tr-from-d').value=fd;g('tr-to-d').value=td;}
   const perD=TR.days.filter(pd=>pd>=fd&&pd<=td);
-  trDrawLine('ch-trend-d',perD.map(x=>x.slice(5)),trSeries(perD,(m,pd)=>dVal(m,pd)));
+  trDrawLine('ch-trend-d',perD.map(x=>x.slice(8)+'/'+x.slice(5,7)),trSeries(perD,(m,pd)=>dVal(m,pd)));
 }
 
 // ── TAB 5: PROGNOSIS (mensual por marca, RAC y ajuste por marca) ──
@@ -1563,7 +1567,7 @@ function renderForecast(){
   const fx=fcFactor();
   const {actEx,actRac,racPrev,mkt,curM}=FCP;
   const mtdMkt=FC.market.mtd_exrac;
-  const target=Number(g('fc-target').value)||0;
+  const target=fcNum(g('fc-target').value);
   const fmt=n=>fN(Math.round(n));
 
   // futuro exRAC de mercado ajustado por escenario/contexto
@@ -1603,7 +1607,7 @@ function renderForecast(){
   const th=g('thead-fc');
   th.innerHTML='<tr><th>Marca</th>'+MESES.map((m,i)=>
     `<th class="${i+1<curM?'':'month-hdr'}">${m}</th>`).join('')
-    +'<th>A&ntilde;o exRAC</th><th>RAC a&ntilde;o</th><th>Total</th><th>RAC 2S (edit)</th><th>Ajuste a&ntilde;o (edit)</th></tr>';
+    +'<th>A&ntilde;o</th><th>RAC 2S (edit)</th><th>Ajuste a&ntilde;o total (edit)</th></tr>';
 
   g('fc-racmode-lbl').textContent=(FCS.rac==='inc')?'Con RAC':'Sin RAC (ex-RAC)';
   const tb=g('tbody-fc');tb.innerHTML='';
@@ -1644,14 +1648,14 @@ function renderForecast(){
     if(FCS.ovYear[name]!=null)tr.style.background='rgba(14,165,233,.10)';
     tr.innerHTML=`<td>${name}${FCS.ovYear[name]!=null?' <span style="color:var(--acc2);font-size:9px">MANUAL</span>':''}</td>`
       +cells
-      +`<td><b>${fmt(yearEx)}</b></td><td>${fmt(yearRac)}</td><td><b>${fmt(yearEx+yearRac)}</b></td>`
-      +`<td><input type="number" class="tf-modelo-input" value="${FCS.ovRac[name]!=null?FCS.ovRac[name]:''}"
+      +`<td><b>${fmt(inc?yearEx+yearRac:yearEx)}</b></td>`
+      +`<td><input type="text" inputmode="numeric" class="tf-modelo-input" value="${FCS.ovRac[name]!=null?fmt(FCS.ovRac[name]):''}"
            placeholder="${fmt(fcRacDefault(name))}" onchange="fcSetRac('${name.replace(/'/g,"\\'")}',this.value)"></td>`
-      +`<td><input type="number" class="tf-modelo-input" value="${FCS.ovYear[name]!=null?FCS.ovYear[name]:''}"
+      +`<td><input type="text" inputmode="numeric" class="tf-modelo-input" value="${FCS.ovYear[name]!=null?fmt(FCS.ovYear[name]):''}"
            placeholder="${fmt(yearEx+yearRac)}" onchange="fcSetYear('${name.replace(/'/g,"\\'")}',this.value)"></td>`;
     tb.appendChild(tr);
   });
-  addTotalRow(tb,['Total',...colTot.slice(0,12).map(fmt),fmt(totEx),fmt(totRac),fmt(totEx+totRac),'','']);
+  addTotalRow(tb,['Total',...colTot.slice(0,12).map(fmt),fmt(FCS.rac==='inc'?totEx+totRac:totEx),'','']);
 
   g('fc-stats').innerHTML=`
     <div class="stat-card"><div class="stat-val">${fmt(colTot[curM-1])}</div>
@@ -1665,14 +1669,19 @@ function renderForecast(){
       <div class="stat-yoy" style="color:var(--text2)">${target>0?'objetivo activo (raking)':'sin objetivo fijado'}</div></div>`;
 }
 
+// Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
+function fcNum(s){
+  const v=parseFloat(String(s||'').replace(/[.\s\u00a0]/g,'').replace(',','.'));
+  return isFinite(v)?v:0;
+}
 function fcSetRac(marca,val){
-  const v=Number(val);
-  if(!val||!isFinite(v)||v<0)delete FCS.ovRac[marca];else FCS.ovRac[marca]=v;
+  const v=fcNum(val);
+  if(!String(val).trim()||v<0)delete FCS.ovRac[marca];else FCS.ovRac[marca]=v;
   renderForecast();
 }
 function fcSetYear(marca,val){
-  const v=Number(val);
-  if(!val||!isFinite(v)||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
+  const v=fcNum(val);
+  if(!String(val).trim()||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
   renderForecast();
 }
 
