@@ -223,6 +223,13 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .tr-pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;
   border:1px solid var(--border);color:var(--text3);user-select:none;transition:.15s}
 .tr-pill.on{color:#fff;border-color:transparent}
+#tbl-fc td.fc-act{color:var(--text3)}
+#tbl-fc td.fc-fc{color:#7dd3fc;font-weight:600}
+#tbl-fc td:first-child{position:sticky;left:0;z-index:2;background:#333e4d;color:#f1f5f9;
+  font-weight:700;border-right:2px solid #64748b}
+#tbl-fc thead th{border-right:1px solid var(--border)}
+#tbl-fc td{border-right:1px solid rgba(255,255,255,.10)}
+#tbl-fc input{width:78px}
 /* Provincias: scroll + cuadricula */
 #pane-prov .tbl-wrap2{max-height:calc(100vh - 200px);overflow:auto}
 #tbl-prov{border-collapse:separate;border-spacing:0}
@@ -559,15 +566,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         <div class="ch-body">
           <div class="tr-controls">
             <span class="tf-lbl">Contexto</span>
-            <input id="fc-ctx" type="range" min="-5" max="5" step="0.5" style="width:110px"
-                   oninput="renderForecast()">
+            <input id="fc-ctx" type="range" min="-5" max="5" step="0.5" style="width:110px" oninput="renderForecast()">
             <b id="fc-ctx-val" style="font-size:11px;min-width:38px"></b>
-            <span class="tf-lbl" style="margin-left:10px">RAC mes</span>
-            <input id="fc-rac-mes" class="tf-modelo-input" type="number" style="width:80px" oninput="renderForecast()">
-            <span class="tf-lbl">RAC resto a&ntilde;o</span>
-            <input id="fc-rac-resto" class="tf-modelo-input" type="number" style="width:80px" oninput="renderForecast()">
-            <span class="tf-lbl" style="margin-left:10px">Objetivo mercado 2026 (total)</span>
-            <input id="fc-target" class="tf-modelo-input" type="number" style="width:100px"
+            <span class="tf-lbl" style="margin-left:14px">Objetivo mercado 2026 (total)</span>
+            <input id="fc-target" class="tf-modelo-input" type="number" style="width:105px"
                    placeholder="opcional" oninput="renderForecast()">
           </div>
           <div class="stat-row" id="fc-stats"></div>
@@ -575,14 +577,12 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <span>Prognosis anual por marca (ex-RAC)</span>
-          <span class="note">edita "Tu ajuste" para fijar una marca; el resto se reequilibra con el objetivo</span>
+          <span>Mensual por marca &middot; actuals (gris) + forecast (azul) &middot; vista <b id="fc-racmode-lbl">Sin RAC</b></span>
+          <span class="note">RAC 2S y Ajuste a&ntilde;o son editables por marca</span>
         </div>
-        <div class="tbl-wrap2" style="max-height:calc(100vh - 330px);overflow:auto">
+        <div class="tbl-wrap2" style="max-height:calc(100vh - 300px);overflow:auto">
           <table id="tbl-fc">
-            <thead><tr>
-              <th>Marca</th><th>YTD 2026</th><th>Prognosis 2026</th><th>vs 2025</th><th>Tu ajuste</th>
-            </tr></thead>
+            <thead id="thead-fc"></thead>
             <tbody id="tbody-fc"></tbody>
           </table>
         </div>
@@ -1483,38 +1483,66 @@ function renderTrend(){
   trDrawLine('ch-trend-d',perD.map(x=>x.slice(5)),trSeries(perD,(m,pd)=>dVal(m,pd)));
 }
 
-// ── TAB 5: PROGNOSIS ─────────────────────────────────────
-let FC=null;
-const FCS={esc:'base',overrides:{}};
+// ── TAB 5: PROGNOSIS (mensual por marca, RAC y ajuste por marca) ──
+let FC=null,FCP=null;
+const FCS={esc:'base',rac:'ex',ovYear:{},ovRac:{}};
 fetch('data/forecast.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{FC=d;initForecast();}).catch(()=>{});
 
+function fcPrep(){
+  // Actuals 2026 por marca/mes (exRAC y RAC) y RAC 2S-2025 por marca, desde records
+  const E=REC.enums,racI=E.canal.indexOf('RAC');
+  const actEx={},actRac={},racPrev={};
+  REC.rows.forEach(r=>{
+    const b=E.marca[r[COL.MARCA]];
+    if(r[COL.Y]===2026){
+      const t=(r[COL.CANAL]===racI)?actRac:actEx;
+      (t[b]=t[b]||{})[r[COL.M]]=((t[b]||{})[r[COL.M]]||0)+r[COL.N];
+    }else if(r[COL.Y]===2025&&r[COL.M]>=7&&r[COL.CANAL]===racI){
+      (racPrev[b]=racPrev[b]||{})[r[COL.M]]=((racPrev[b]||{})[r[COL.M]]||0)+r[COL.N];
+    }
+  });
+  // mercado fc por mes futuro (base, exRAC)
+  const mkt={};
+  const curM=parseInt(FC.target_month.slice(5),10);
+  mkt[curM]=FC.market.f_month_exrac_base;
+  FC.market.months_rest.forEach(r=>{mkt[parseInt(r.ym.slice(5),10)]=r.base;});
+  FCP={actEx,actRac,racPrev,mkt,curM};
+}
+
 function initForecast(){
   if(!FC||FC.status!=='ok')return;
+  if(!REC){setTimeout(initForecast,150);return;}
+  fcPrep();
   [['conservador','Conservador'],['base','Base'],['optimista','Optimista']].forEach(([k,lbl])=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===FCS.esc?' on':'');
     pill.textContent=lbl;
-    pill.onclick=()=>{
-      FCS.esc=k;
+    pill.onclick=()=>{FCS.esc=k;
       [...g('fc-esc').children].forEach(x=>x.classList.toggle('on',x.textContent===lbl));
-      renderForecast();
-    };
+      renderForecast();};
+    g('fc-esc').appendChild(pill);
+  });
+  [['ex','Sin RAC'],['inc','Con RAC']].forEach(([k,lbl])=>{
+    const pill=document.createElement('div');
+    pill.className='sg-pill'+(k===FCS.rac?' on':'');
+    pill.textContent=lbl;
+    pill.style.marginLeft=k==='ex'?'10px':'0';
+    pill.onclick=()=>{FCS.rac=k;
+      [...g('fc-esc').children].forEach(x=>{if(x.textContent===lbl||x.textContent===(k==='ex'?'Con RAC':'Sin RAC'))x.classList.toggle('on',x.textContent===lbl);});
+      renderForecast();};
     g('fc-esc').appendChild(pill);
   });
   g('fc-ctx').value=(FC.context_default*100);
-  g('fc-rac-mes').value=FC.rac.mes_default;
-  g('fc-rac-resto').value=FC.rac.resto_default;
-  g('fc-note').textContent='mes objetivo '+FC.target_month+' · generado '+FC.generated;
+  g('fc-note').textContent='generado '+FC.generated+' · mes en curso '+FC.target_month;
   g('fc-method').innerHTML=
-    'Mercado ex-RAC = 0,10&middot;interanual&times;tendencia12m + 0,50&middot;ritmo3m&times;estacional + 0,40&middot;ritmo mes anterior&times;estacional, '
-    +'con correcci&oacute;n de sesgo adaptativa ('+((FC.weights.bias-1)*100).toFixed(1)+'%) y proyecci&oacute;n intramensual con peso '+(FC.weights.w_d*100).toFixed(0)+'% '
-    +'('+FC.market.mtd_bdays+'/'+FC.market.bdays_month+' d&iacute;as h&aacute;biles). '
-    +'Backtest 24 meses out-of-sample: MAPE 3,4%; bandas emp&iacute;ricas P10/P90 (conservador &times;0,94, optimista &times;1,04). '
-    +'Marcas por cuota 0,6&middot;3m+0,4&middot;12m con momentum acotado. El RAC no se modela (volatilidad interanual 28%): introd&uacute;celo a mano. '
-    +'Contexto (jul-2026): ANFAC H1 +6,2% y previsi&oacute;n anual 1,2&ndash;1,25M turismos; nuestro scope incluye adem&aacute;s N1. '
-    +'<a href="https://anfac.com/el-primer-semestre-de-2026-cierra-con-647-711-ventas-un-62-mas/" target="_blank" style="color:var(--acc2)">Fuente ANFAC</a>. '
-    +'Detalle completo en docs/MODELO_PREDICTIVO.md.';
+    'Mercado ex-RAC: blend 0,10&middot;interanual&times;tend12 + 0,50&middot;ritmo3m + 0,40&middot;ritmo mes anterior, sesgo adaptativo '
+    +((FC.weights.bias-1)*100).toFixed(1)+'% y proyecci&oacute;n intramensual (peso '+(FC.weights.w_d*100).toFixed(0)+'%, '
+    +FC.market.mtd_bdays+'/'+FC.market.bdays_month+' d&iacute;as). Backtest 24m: MAPE 3,4%; bandas P10/P90 (&times;0,94/&times;1,04). '
+    +'Marcas por cuota 0,6&middot;3m+0,4&middot;12m con momentum. RAC editable por marca (default: su 2S-2025, repartido con su estacionalidad). '
+    +'Contexto jul-2026: ANFAC H1 +6,2%, previsi&oacute;n 1,2&ndash;1,25M turismos. '
+    +'<a href="https://anfac.com/el-primer-semestre-de-2026-cierra-con-647-711-ventas-un-62-mas/" target="_blank" style="color:var(--acc2)">Fuente</a>. '
+    +'Detalle en docs/MODELO_PREDICTIVO.md.';
   renderForecast();
 }
 
@@ -1525,69 +1553,126 @@ function fcFactor(){
   return mult*(1+ctx);
 }
 
-function renderForecast(){
-  if(!FC||FC.status!=='ok')return;
-  const fx=fcFactor();
-  const M=FC.market;
-  const racMes=Number(g('fc-rac-mes').value)||0;
-  const racResto=Number(g('fc-rac-resto').value)||0;
-  const mesEx=M.mtd_exrac+(M.f_month_exrac_base-M.mtd_exrac)*fx;
-  const mesTot=mesEx+racMes;
-  const futBase=M.year_base_exrac-M.ytd_exrac;
-  // marcas
-  const futMarket=futBase*fx;
-  let sumOverrideFut=0,sumFreeShare=0;
-  FC.brands.forEach(b=>{
-    const ov=FCS.overrides[b.marca];
-    if(ov!=null)sumOverrideFut+=Math.max(0,ov-b.ytd_exrac);
-    else sumFreeShare+=b.share_hat;
-  });
-  // objetivo total (incluye RAC): reequilibra el futuro de las marcas libres
-  const target=Number(g('fc-target').value)||0;
-  let futFree=futMarket-0; let scale=1;
-  if(target>0){
-    const targetFutEx=target-racMes-racResto-FC.rac.ytd-M.ytd_exrac;
-    scale=sumFreeShare>0?Math.max(0,(targetFutEx-sumOverrideFut))/(futMarket*sumFreeShare):1;
-  }
-  let yearEx=M.ytd_exrac;
-  const rows=FC.brands.map(b=>{
-    const ov=FCS.overrides[b.marca];
-    let year;
-    if(ov!=null)year=ov;
-    else year=b.ytd_exrac+b.share_hat*futMarket*(target>0?scale:1);
-    yearEx+= (ov!=null?Math.max(0,ov-b.ytd_exrac):b.share_hat*futMarket*(target>0?scale:1));
-    return {b,year,ov};
-  });
-  const yearTot=yearEx+FC.rac.ytd+racMes+racResto;
-  const fmt=n=>fN(Math.round(n));
-  g('fc-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-val">${fmt(mesTot)}</div>
-      <div class="stat-sub">${FC.target_month} total (con RAC manual)</div>
-      <div class="stat-yoy" style="color:var(--text2)">ex-RAC ${fmt(mesEx)} &middot; MTD real ${fmt(M.mtd_exrac)}</div></div>
-    <div class="stat-card" style="border-top-color:var(--bev)"><div class="stat-val">${fmt(yearTot)}</div>
-      <div class="stat-sub">A&ntilde;o 2026 total</div>
-      <div class="stat-yoy" style="color:var(--text2)">ex-RAC ${fmt(yearEx)} + RAC ${fmt(FC.rac.ytd+racMes+racResto)}</div></div>
-    <div class="stat-card" style="border-top-color:var(--phev)"><div class="stat-val">${FCS.esc}</div>
-      <div class="stat-sub">Escenario &middot; factor ${fx.toFixed(3)}</div>
-      <div class="stat-yoy" style="color:var(--text2)">${target>0?'objetivo activo: reequilibrando':'sin objetivo fijado'}</div></div>`;
-  const tb=g('tbody-fc');tb.innerHTML='';
-  rows.forEach(({b,year,ov})=>{
-    const tr=document.createElement('tr');
-    if(ov!=null)tr.style.background='rgba(14,165,233,.10)';
-    tr.innerHTML=`<td>${b.marca}${ov!=null?' <span style="color:var(--acc2);font-size:9px">MANUAL</span>':''}</td>
-      <td>${fmt(b.ytd_exrac)}</td><td><b>${fmt(year)}</b></td>
-      <td class="${year>=b.year_base_exrac?'yoy-p':'yoy-n'}">${((year/b.year_base_exrac-1)*100).toFixed(1)}% vs base</td>
-      <td><input type="number" class="tf-modelo-input" style="width:90px" value="${ov!=null?ov:''}"
-           placeholder="${fmt(year)}" onchange="fcOverride('${b.marca.replace(/'/g,"\\'")}',this.value)"></td>`;
-    tb.appendChild(tr);
-  });
-  addTotalRow(tb,['Total ex-RAC',fmt(FC.brands.reduce((s,b)=>s+b.ytd_exrac,0)),fmt(yearEx),'','']);
+function fcRacDefault(b){
+  const rp=FCP.racPrev[b]||{};
+  return Math.round(Object.values(rp).reduce((s,v)=>s+v,0));
 }
 
-function fcOverride(marca,val){
+function renderForecast(){
+  if(!FC||FC.status!=='ok'||!FCP)return;
+  const fx=fcFactor();
+  const {actEx,actRac,racPrev,mkt,curM}=FCP;
+  const mtdMkt=FC.market.mtd_exrac;
+  const target=Number(g('fc-target').value)||0;
+  const fmt=n=>fN(Math.round(n));
+
+  // futuro exRAC de mercado ajustado por escenario/contexto
+  const mktF={};for(const m in mkt)mktF[m]=(m==curM)?(mtdMkt+(mkt[m]-mtdMkt)*fx):mkt[m]*fx;
+
+  // por marca: meses futuros exRAC base
+  const rows=FC.brands.map(b=>{
+    const name=b.marca;
+    const fut={};
+    for(let m=curM;m<=12;m++){
+      const base=(m==curM)?((actEx[name]&&actEx[name][m])||0)+b.share_hat*(mktF[m]-mtdMkt)
+                          :b.share_hat*mktF[m];
+      fut[m]=Math.max(0,base);
+    }
+    return {b,name,fut};
+  });
+
+  // objetivo de mercado: raking del futuro exRAC de marcas sin ajuste anual
+  let scale=1;
+  const racTot=rows.reduce((s,r)=>s+(FCS.ovRac[r.name]!=null?FCS.ovRac[r.name]:fcRacDefault(r.name)),0)
+              +Object.values(actRac).reduce((s,o)=>s+Object.values(o).reduce((a,v)=>a+v,0),0);
+  if(target>0){
+    let futFree=0,futFixed=0,actAll=0;
+    rows.forEach(r=>{
+      const futSum=Object.values(r.fut).reduce((s,v)=>s+v,0)-((actEx[r.name]&&actEx[r.name][curM])||0);
+      const actB=[...Array(12)].reduce((s,_,i)=>s+((actEx[r.name]&&actEx[r.name][i+1])||0),0);
+      actAll+=actB;
+      if(FCS.ovYear[r.name]!=null)futFixed+=Math.max(0,FCS.ovYear[r.name]-actB-(FCS.ovRac[r.name]!=null?FCS.ovRac[r.name]:fcRacDefault(r.name))-Object.values(actRac[r.name]||{}).reduce((a,v)=>a+v,0));
+      else futFree+=futSum;
+    });
+    const targetFut=target-racTot-actAll-Object.keys(FCP).length*0; // exRAC futuro objetivo
+    if(futFree>0)scale=Math.max(0,(targetFut-futFixed))/futFree;
+  }
+
+  // cabecera
+  const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const th=g('thead-fc');
+  th.innerHTML='<tr><th>Marca</th>'+MESES.map((m,i)=>
+    `<th class="${i+1<curM?'':'month-hdr'}">${m}</th>`).join('')
+    +'<th>A&ntilde;o exRAC</th><th>RAC a&ntilde;o</th><th>Total</th><th>RAC 2S (edit)</th><th>Ajuste a&ntilde;o (edit)</th></tr>';
+
+  g('fc-racmode-lbl').textContent=(FCS.rac==='inc')?'Con RAC':'Sin RAC (ex-RAC)';
+  const tb=g('tbody-fc');tb.innerHTML='';
+  const colTot=Array(13).fill(0);let totEx=0,totRac=0;
+  rows.forEach(({b,name,fut})=>{
+    const racIn=FCS.ovRac[name]!=null?FCS.ovRac[name]:fcRacDefault(name);
+    // reparto RAC por estacionalidad propia 2S-2025
+    const rp=racPrev[name]||{};const rpSum=Object.values(rp).reduce((s,v)=>s+v,0);
+    const racM={};for(let m=curM;m<=12;m++)racM[m]=rpSum>0?racIn*((rp[m]||0)/rpSum):racIn/(13-curM);
+    // ajuste anual por marca: reescala su futuro exRAC
+    let bScale=(FCS.ovYear[name]==null)?scale:1;
+    const actB=[...Array(12)].reduce((s,_,i)=>s+((actEx[name]&&actEx[name][i+1])||0),0);
+    const actRacB=Object.values(actRac[name]||{}).reduce((s,v)=>s+v,0);
+    if(FCS.ovYear[name]!=null){
+      const futWant=FCS.ovYear[name]-actB-actRacB-racIn;
+      const futBase=Object.entries(fut).reduce((s,[m,v])=>s+(m==curM?v-((actEx[name]&&actEx[name][curM])||0):v),0);
+      bScale=futBase>0?Math.max(0,futWant)/futBase:1;
+    }
+    let yearEx=0,yearRac=actRacB+racIn;
+    let cells='';
+    const inc=(FCS.rac==='inc');
+    for(let m=1;m<=12;m++){
+      let v,cls;
+      if(m<curM){v=(actEx[name]&&actEx[name][m])||0;cls='fc-act';}
+      else{
+        const mtdB=(m==curM)?((actEx[name]&&actEx[name][m])||0):0;
+        v=mtdB+((fut[m]-(m==curM?mtdB:0))*bScale);
+        cls='fc-fc';
+      }
+      const racPart=(m>=curM)?(racM[m]||0):((actRac[name]&&actRac[name][m])||0);
+      yearEx+=v;
+      const shown=inc?v+racPart:v;
+      colTot[m-1]+=shown;
+      cells+=`<td class="${cls}">${fmt(shown)}</td>`;
+    }
+    totEx+=yearEx;totRac+=yearRac;
+    const tr=document.createElement('tr');
+    if(FCS.ovYear[name]!=null)tr.style.background='rgba(14,165,233,.10)';
+    tr.innerHTML=`<td>${name}${FCS.ovYear[name]!=null?' <span style="color:var(--acc2);font-size:9px">MANUAL</span>':''}</td>`
+      +cells
+      +`<td><b>${fmt(yearEx)}</b></td><td>${fmt(yearRac)}</td><td><b>${fmt(yearEx+yearRac)}</b></td>`
+      +`<td><input type="number" class="tf-modelo-input" value="${FCS.ovRac[name]!=null?FCS.ovRac[name]:''}"
+           placeholder="${fmt(fcRacDefault(name))}" onchange="fcSetRac('${name.replace(/'/g,"\\'")}',this.value)"></td>`
+      +`<td><input type="number" class="tf-modelo-input" value="${FCS.ovYear[name]!=null?FCS.ovYear[name]:''}"
+           placeholder="${fmt(yearEx+yearRac)}" onchange="fcSetYear('${name.replace(/'/g,"\\'")}',this.value)"></td>`;
+    tb.appendChild(tr);
+  });
+  addTotalRow(tb,['Total',...colTot.slice(0,12).map(fmt),fmt(totEx),fmt(totRac),fmt(totEx+totRac),'','']);
+
+  g('fc-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-val">${fmt(colTot[curM-1])}</div>
+      <div class="stat-sub">${FC.target_month} total prognosis</div>
+      <div class="stat-yoy" style="color:var(--text2)">MTD real exRAC ${fmt(mtdMkt)} (${FC.market.mtd_bdays}/${FC.market.bdays_month} d&iacute;as)</div></div>
+    <div class="stat-card" style="border-top-color:var(--bev)"><div class="stat-val">${fmt(totEx+totRac)}</div>
+      <div class="stat-sub">A&ntilde;o 2026 total</div>
+      <div class="stat-yoy" style="color:var(--text2)">exRAC ${fmt(totEx)} + RAC ${fmt(totRac)}</div></div>
+    <div class="stat-card" style="border-top-color:var(--phev)"><div class="stat-val">${FCS.esc}</div>
+      <div class="stat-sub">Escenario &middot; factor ${fx.toFixed(3)}</div>
+      <div class="stat-yoy" style="color:var(--text2)">${target>0?'objetivo activo (raking)':'sin objetivo fijado'}</div></div>`;
+}
+
+function fcSetRac(marca,val){
   const v=Number(val);
-  if(!val||!isFinite(v)||v<=0)delete FCS.overrides[marca];
-  else FCS.overrides[marca]=v;
+  if(!val||!isFinite(v)||v<0)delete FCS.ovRac[marca];else FCS.ovRac[marca]=v;
+  renderForecast();
+}
+function fcSetYear(marca,val){
+  const v=Number(val);
+  if(!val||!isFinite(v)||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
   renderForecast();
 }
 
@@ -1599,11 +1684,15 @@ function showTab(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
   g('pane-'+name).classList.add('on');
   g('tbtn-'+name).classList.add('on');
-  // Los canvas de un pane oculto se crean con anchura 0: re-render al mostrar
-  if(REC&&(name==='overview'||name==='analisis'))requestAnimationFrame(render);
-  if(name==='prov'&&PROV)requestAnimationFrame(renderProv);
-  if(name==='trend'&&TREND)requestAnimationFrame(renderTrend);
-  if(name==='forecast'&&FC)requestAnimationFrame(renderForecast);
+  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
+  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
+  // instante y el recalculo llega un frame despues.
+  setTimeout(()=>{
+    if(REC&&(name==='overview'||name==='analisis'))render();
+    if(name==='prov'&&PROV)renderProv();
+    if(name==='trend'&&TREND)renderTrend();
+    if(name==='forecast'&&FC)renderForecast();
+  },40);
 }
 
 function resetFilters(){
