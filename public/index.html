@@ -217,6 +217,30 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 /* Ranking provincias + trend */
 .rk-ctrls{display:flex;gap:8px;align-items:center}
+.rk-month-filter{position:relative}
+.rk-month-btn{
+  height:30px;min-width:132px;padding:0 10px;border-radius:6px;
+  border:1px solid var(--border);background:#1e293b;color:var(--text);
+  font-size:11px;cursor:pointer;text-align:left;
+}
+.rk-month-btn:hover{border-color:var(--acc)}
+.rk-month-menu{
+  display:none;position:absolute;right:0;top:34px;z-index:20;width:170px;
+  background:#111827;border:1px solid var(--border);border-radius:8px;
+  box-shadow:0 14px 28px rgba(0,0,0,.38);padding:7px 0;
+}
+.rk-month-menu.open{display:block}
+.rk-month-actions{display:flex;gap:8px;padding:2px 10px 6px;border-bottom:1px solid var(--border)}
+.rk-month-actions button{
+  border:none;background:none;color:var(--acc2);font-size:10px;cursor:pointer;
+  padding:0;text-decoration:underline;
+}
+.rk-month-item{
+  display:flex;align-items:center;gap:7px;padding:4px 10px;
+  font-size:11px;color:var(--text3);cursor:pointer;user-select:none;
+}
+.rk-month-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.rk-month-item input{accent-color:var(--acc);width:12px;height:12px}
 #tbl-prov td{font-size:11px}
 #tbl-prov td.rk-cell{text-align:left;color:var(--text3)}
 #tbl-prov td.rk-cell b{color:var(--text);font-weight:600}
@@ -506,7 +530,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           <span class="rk-ctrls">
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
             <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
-            <select id="rk-month" class="tf-sel" onchange="renderProv()"></select>
+            <span class="rk-month-filter">
+              <button type="button" class="rk-month-btn" id="rk-month-btn" onclick="toggleProvMonthMenu()">Meses: Todo el a&ntilde;o</button>
+              <span class="rk-month-menu" id="rk-month-menu"></span>
+            </span>
           </span>
         </div>
         <div class="tbl-wrap2">
@@ -1279,7 +1306,7 @@ function drawVBar(canvasId,wrapId,labels,datasets){
 }
 
 // ── TAB 3: RANKING PROVINCIAS ────────────────────────────
-const RK={gama:0,year:null,month:''};
+const RK={gama:0,year:null,months:new Set()};
 const GAMAS=['Total','ICE','BEV','PHEV'];
 // v = [total, BEV, PHEV]; ICE se deriva: total - BEV - PHEV
 const GAMA_VAL=[v=>v[0], v=>v[0]-v[1]-v[2], v=>v[1], v=>v[2]];
@@ -1314,20 +1341,72 @@ function provMonthsForYear(year){
     .map(ym=>ym.slice(5,7));
 }
 
+function provMonthLabel(mm){
+  return MES[parseInt(mm,10)-1];
+}
+
 function fillProvMonths(){
-  const sel=g('rk-month');
-  const prev=sel.value||RK.month||'';
+  const menu=g('rk-month-menu');
+  const prev=new Set(RK.months);
   const months=provMonthsForYear(RK.year);
-  sel.innerHTML='<option value="">Todo el a&ntilde;o</option>';
+  RK.months=new Set(months.filter(mm=>prev.size?prev.has(mm):true));
+  menu.innerHTML='<div class="rk-month-actions">'
+    +'<button type="button" onclick="setProvMonths(true)">Todos</button>'
+    +'<button type="button" onclick="setProvMonths(false)">Ninguno</button>'
+    +'</div>';
   months.forEach(mm=>{
-    const m=parseInt(mm,10);
-    const o=document.createElement('option');
-    o.value=mm;
-    o.textContent=MES[m-1];
-    sel.appendChild(o);
+    const lbl=document.createElement('label');
+    lbl.className='rk-month-item';
+    const cb=document.createElement('input');
+    cb.type='checkbox';
+    cb.value=mm;
+    cb.checked=RK.months.has(mm);
+    cb.onchange=()=>{
+      if(cb.checked)RK.months.add(mm);
+      else RK.months.delete(mm);
+      updateProvMonthButton();
+      renderProv();
+    };
+    lbl.appendChild(cb);
+    lbl.appendChild(document.createTextNode(provMonthLabel(mm)));
+    menu.appendChild(lbl);
   });
-  RK.month=months.includes(prev)?prev:'';
-  sel.value=RK.month;
+  updateProvMonthButton();
+}
+
+function toggleProvMonthMenu(){
+  g('rk-month-menu').classList.toggle('open');
+}
+
+function setProvMonths(all){
+  const months=provMonthsForYear(RK.year);
+  RK.months=all?new Set(months):new Set();
+  g('rk-month-menu').querySelectorAll('input').forEach(cb=>{cb.checked=RK.months.has(cb.value);});
+  updateProvMonthButton();
+  renderProv();
+}
+
+function updateProvMonthButton(){
+  const months=provMonthsForYear(RK.year);
+  const count=RK.months.size;
+  let label='Meses: Ninguno';
+  if(count===months.length&&months.length)label='Meses: Todo el a&ntilde;o';
+  else if(count>3)label='Meses: '+count+' meses';
+  else if(count>0)label='Meses: '+months.filter(mm=>RK.months.has(mm)).map(provMonthLabel).join(', ');
+  g('rk-month-btn').textContent=label;
+}
+
+function provBrandsForMonths(p, monthKeys){
+  if(!monthKeys.length)return {};
+  if(monthKeys.length===provMonthsForYear(RK.year).length)return p.years[RK.year]||{};
+  const brands={};
+  monthKeys.forEach(ym=>{
+    Object.entries((p.months||{})[ym]||{}).forEach(([m,v])=>{
+      const cell=brands[m]||(brands[m]=[0,0,0]);
+      cell[0]+=v[0];cell[1]+=v[1];cell[2]+=v[2];
+    });
+  });
+  return brands;
 }
 
 function onProvYearChange(){
@@ -1339,12 +1418,13 @@ function onProvYearChange(){
 function renderProv(){
   if(!PROV)return;
   RK.year=g('rk-year').value;
-  RK.month=g('rk-month').value;
   const gi=RK.gama;
-  const ym=RK.month?`${RK.year}-${RK.month}`:null;
+  const monthKeys=provMonthsForYear(RK.year)
+    .filter(mm=>RK.months.has(mm))
+    .map(mm=>`${RK.year}-${mm}`);
   const rows=[];
   PROV.provinces.forEach(p=>{
-    const brands=ym?((p.months||{})[ym]||{}):(p.years[RK.year]||{});
+    const brands=provBrandsForMonths(p,monthKeys);
     const entries=Object.entries(brands)
       .map(([m,v])=>[m,GAMA_VAL[gi](v)])
       .filter(([,v])=>v>0)
