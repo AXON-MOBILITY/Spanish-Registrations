@@ -505,7 +505,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           <span>Ranking marcas Focus + BYD por provincia &middot; Top 5</span>
           <span class="rk-ctrls">
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
-            <select id="rk-year" class="tf-sel" onchange="renderProv()"></select>
+            <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
+            <select id="rk-month" class="tf-sel" onchange="renderProv()"></select>
           </span>
         </div>
         <div class="tbl-wrap2">
@@ -1278,7 +1279,7 @@ function drawVBar(canvasId,wrapId,labels,datasets){
 }
 
 // ── TAB 3: RANKING PROVINCIAS ────────────────────────────
-const RK={gama:0,year:null};
+const RK={gama:0,year:null,month:''};
 const GAMAS=['Total','ICE','BEV','PHEV'];
 // v = [total, BEV, PHEV]; ICE se deriva: total - BEV - PHEV
 const GAMA_VAL=[v=>v[0], v=>v[0]-v[1]-v[2], v=>v[1], v=>v[2]];
@@ -1303,16 +1304,47 @@ function initProv(){
   });
   RK.year=String(PROV.years[PROV.years.length-1]);
   sel.value=RK.year;
+  fillProvMonths();
+  renderProv();
+}
+
+function provMonthsForYear(year){
+  return (PROV.months||[])
+    .filter(ym=>ym.slice(0,4)===String(year))
+    .map(ym=>ym.slice(5,7));
+}
+
+function fillProvMonths(){
+  const sel=g('rk-month');
+  const prev=sel.value||RK.month||'';
+  const months=provMonthsForYear(RK.year);
+  sel.innerHTML='<option value="">Todo el a&ntilde;o</option>';
+  months.forEach(mm=>{
+    const m=parseInt(mm,10);
+    const o=document.createElement('option');
+    o.value=mm;
+    o.textContent=MES[m-1];
+    sel.appendChild(o);
+  });
+  RK.month=months.includes(prev)?prev:'';
+  sel.value=RK.month;
+}
+
+function onProvYearChange(){
+  RK.year=g('rk-year').value;
+  fillProvMonths();
   renderProv();
 }
 
 function renderProv(){
   if(!PROV)return;
   RK.year=g('rk-year').value;
+  RK.month=g('rk-month').value;
   const gi=RK.gama;
+  const ym=RK.month?`${RK.year}-${RK.month}`:null;
   const rows=[];
   PROV.provinces.forEach(p=>{
-    const brands=p.years[RK.year]||{};
+    const brands=ym?((p.months||{})[ym]||{}):(p.years[RK.year]||{});
     const entries=Object.entries(brands)
       .map(([m,v])=>[m,GAMA_VAL[gi](v)])
       .filter(([,v])=>v>0)

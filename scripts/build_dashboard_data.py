@@ -631,7 +631,7 @@ def build_daily_mtd_json(daily_data, cy, cm):
 
 
 def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
-    """province_brands.json: provincia x marca Focus x [total, BEV, PHEV] por anyo.
+    """province_brands.json: provincia x marca Focus x [total, BEV, PHEV] por anyo/mes.
 
     Alimenta el ranking Top-5 provincial del dashboard. Las marcas Focus se
     derivan de los datos (mayoria de volumen en FOCUS SEGMENT), sin listas
@@ -648,6 +648,7 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
 
     out = {}
     years = set()
+    months = set()
     for key, cnt in prov_data.items():
         if len(key) != 7:
             continue
@@ -655,21 +656,29 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
         if canal not in CANALES or marca not in focus:
             continue
         years.add(yr)
-        d = out.setdefault(cod, {"name": nombre, "years": {}})
+        ym = f"{yr}-{mo:02d}"
+        months.add(ym)
+        d = out.setdefault(cod, {"name": nombre, "years": {}, "months": {}})
         d["name"] = nombre
         cell = d["years"].setdefault(yr, {}).setdefault(marca, [0, 0, 0])
+        mcell = d["months"].setdefault(ym, {}).setdefault(marca, [0, 0, 0])
         cell[0] += cnt
+        mcell[0] += cnt
         if fuel == "BEV":
             cell[1] += cnt
+            mcell[1] += cnt
         elif fuel == "PHEV":
             cell[2] += cnt
+            mcell[2] += cnt
 
     provinces = [
         {"cod": cod, "name": d["name"],
-         "years": {str(y): brands for y, brands in sorted(d["years"].items())}}
+         "years": {str(y): brands for y, brands in sorted(d["years"].items())},
+         "months": {ym: brands for ym, brands in sorted(d["months"].items())}}
         for cod, d in sorted(out.items())
     ]
-    return {"years": sorted(years), "focus_brands": sorted(focus), "provinces": provinces}
+    return {"years": sorted(years), "months": sorted(months),
+            "focus_brands": sorted(focus), "provinces": provinces}
 
 def build_daily_brand_trend(base):
     """daily_brands.json: por marca y dia, matriz 3x3 canal x fuel.
