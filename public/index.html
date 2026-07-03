@@ -1600,7 +1600,7 @@ function renderTrend(){
 
 // ── TAB 5: PROGNOSIS (mensual por marca, RAC y ajuste por marca) ──
 let FC=null,FCP=null;
-const FCS={esc:'base',rac:'ex',ovYear:{},ovRac:{}};
+const FCS={esc:'base',rac:'inc',ovYear:{},ovRac:{}};
 fetch('data/forecast.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{FC=d;initForecast();}).catch(()=>{});
 
@@ -1642,15 +1642,22 @@ function initForecast(){
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===FCS.rac?' on':'');
     pill.textContent=lbl;
+    pill.dataset.racMode=k;
     pill.style.marginLeft=k==='ex'?'10px':'0';
     pill.onclick=()=>{FCS.rac=k;
-      [...g('fc-esc').children].forEach(x=>{if(x.textContent===lbl||x.textContent===(k==='ex'?'Con RAC':'Sin RAC'))x.classList.toggle('on',x.textContent===lbl);});
+      fcRefreshRacPills();
       renderForecast();};
     g('fc-esc').appendChild(pill);
   });
   g('fc-ctx').value=(FC.context_default*100);
   g('fc-note').textContent='generado '+FC.generated+' · mes en curso '+FC.target_month;
   renderForecast();
+}
+
+function fcRefreshRacPills(){
+  [...g('fc-esc').children].forEach(x=>{
+    if(x.dataset&&x.dataset.racMode)x.classList.toggle('on',x.dataset.racMode===FCS.rac);
+  });
 }
 
 function fcFactor(){
@@ -1777,6 +1784,8 @@ function fcNum(s){
 function fcSetRac(marca,val){
   const v=fcNum(val);
   if(!String(val).trim()||v<0)delete FCS.ovRac[marca];else FCS.ovRac[marca]=v;
+  FCS.rac='inc';
+  fcRefreshRacPills();
   renderForecast();
 }
 function fcSetYear(marca,val){
