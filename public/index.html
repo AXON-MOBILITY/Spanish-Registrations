@@ -531,7 +531,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
             <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
             <span class="rk-month-filter">
-              <button type="button" class="rk-month-btn" id="rk-month-btn" onclick="toggleProvMonthMenu()">Meses: Todo el a&ntilde;o</button>
+              <button type="button" class="rk-month-btn" id="rk-month-btn" onclick="toggleProvMonthMenu()">Meses: Todos</button>
               <span class="rk-month-menu" id="rk-month-menu"></span>
             </span>
           </span>
@@ -1336,9 +1336,7 @@ function initProv(){
 }
 
 function provMonthsForYear(year){
-  return (PROV.months||[])
-    .filter(ym=>ym.slice(0,4)===String(year))
-    .map(ym=>ym.slice(5,7));
+  return ['01','02','03','04','05','06','07','08','09','10','11','12'];
 }
 
 function provMonthLabel(mm){
@@ -1390,7 +1388,7 @@ function updateProvMonthButton(){
   const months=provMonthsForYear(RK.year);
   const count=RK.months.size;
   let label='Meses: Ninguno';
-  if(count===months.length&&months.length)label='Meses: Todo el a&ntilde;o';
+  if(count===months.length&&months.length)label='Meses: Todos';
   else if(count>3)label='Meses: '+count+' meses';
   else if(count>0)label='Meses: '+months.filter(mm=>RK.months.has(mm)).map(provMonthLabel).join(', ');
   g('rk-month-btn').textContent=label;
