@@ -590,8 +590,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <span>Mensual por marca &middot; actuals (gris) + forecast (azul) &middot; vista <b id="fc-racmode-lbl">Sin RAC</b></span>
-          <span class="note">RAC 2S y Ajuste a&ntilde;o son editables por marca</span>
+          <span>Mensual por marca: Actuals + Forecast</span>
+          <span class="note">RAC y Ajuste a&ntilde;o son editables por marca</span>
         </div>
         <div class="tbl-wrap2" style="max-height:calc(100vh - 300px);overflow:auto">
           <table id="tbl-fc">
@@ -1502,7 +1502,7 @@ fetch('data/forecast.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{FC=d;initForecast();}).catch(()=>{});
 
 function fcPrep(){
-  // Actuals 2026 por marca/mes (exRAC y RAC) y RAC 2S-2025 por marca, desde records
+  // Actuals 2026 por marca/mes (exRAC y RAC) y RAC por marca, desde records
   const E=REC.enums,racI=E.canal.indexOf('RAC');
   const actEx={},actRac={},racPrev={};
   REC.rows.forEach(r=>{
@@ -1607,14 +1607,13 @@ function renderForecast(){
   const th=g('thead-fc');
   th.innerHTML='<tr><th>Marca</th>'+MESES.map((m,i)=>
     `<th class="${i+1<curM?'':'month-hdr'}">${m}</th>`).join('')
-    +'<th>A&ntilde;o</th><th>RAC 2S (edit)</th><th>Ajuste a&ntilde;o total (edit)</th></tr>';
+    +'<th>A&ntilde;o</th><th>RAC (edit)</th><th>Ajuste a&ntilde;o total (edit)</th></tr>';
 
-  g('fc-racmode-lbl').textContent=(FCS.rac==='inc')?'Con RAC':'Sin RAC (ex-RAC)';
   const tb=g('tbody-fc');tb.innerHTML='';
   const colTot=Array(13).fill(0);let totEx=0,totRac=0;
   rows.forEach(({b,name,fut})=>{
     const racIn=FCS.ovRac[name]!=null?FCS.ovRac[name]:fcRacDefault(name);
-    // reparto RAC por estacionalidad propia 2S-2025
+    // reparto RAC por estacionalidad propia
     const rp=racPrev[name]||{};const rpSum=Object.values(rp).reduce((s,v)=>s+v,0);
     const racM={};for(let m=curM;m<=12;m++)racM[m]=rpSum>0?racIn*((rp[m]||0)/rpSum):racIn/(13-curM);
     // ajuste anual por marca: reescala su futuro exRAC
