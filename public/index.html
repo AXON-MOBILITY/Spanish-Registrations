@@ -600,10 +600,6 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           </table>
         </div>
       </div>
-      <div class="card">
-        <div class="card-hdr">Metodolog&iacute;a</div>
-        <div class="ch-body" id="fc-method" style="font-size:11px;color:var(--text3);line-height:1.6"></div>
-      </div>
     </div><!-- /pane-forecast -->
 
   </div><!-- /content -->
@@ -1551,14 +1547,6 @@ function initForecast(){
   });
   g('fc-ctx').value=(FC.context_default*100);
   g('fc-note').textContent='generado '+FC.generated+' · mes en curso '+FC.target_month;
-  g('fc-method').innerHTML=
-    'Mercado ex-RAC: blend 0,10&middot;interanual&times;tend12 + 0,50&middot;ritmo3m + 0,40&middot;ritmo mes anterior, sesgo adaptativo '
-    +((FC.weights.bias-1)*100).toFixed(1)+'% y proyecci&oacute;n intramensual (peso '+(FC.weights.w_d*100).toFixed(0)+'%, '
-    +FC.market.mtd_bdays+'/'+FC.market.bdays_month+' d&iacute;as). Backtest 24m: MAPE 3,4%; bandas P10/P90 (&times;0,94/&times;1,04). '
-    +'Marcas por cuota 0,6&middot;3m+0,4&middot;12m con momentum. RAC editable por marca (default: su 2S-2025, repartido con su estacionalidad). '
-    +'Contexto jul-2026: ANFAC H1 +6,2%, previsi&oacute;n 1,2&ndash;1,25M turismos. '
-    +'<a href="https://anfac.com/el-primer-semestre-de-2026-cierra-con-647-711-ventas-un-62-mas/" target="_blank" style="color:var(--acc2)">Fuente</a>. '
-    +'Detalle en docs/MODELO_PREDICTIVO.md.';
   renderForecast();
 }
 
