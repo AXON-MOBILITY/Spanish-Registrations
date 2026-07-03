@@ -672,25 +672,40 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
     return {"years": sorted(years), "focus_brands": sorted(focus), "provinces": provinces}
 
 def build_daily_brand_trend(base):
-    """daily_brands.json: unidades por marca y dia (ficheros diarios DGT)."""
+    """daily_brands.json: por marca y dia, matriz 3x3 canal x fuel.
+
+    Celda idx = canal_idx*3 + fuel_idx, con canal en orden CANALES
+    (Private, Corporate, RAC) y fuel en orden FUELS (ICE, BEV, PHEV).
+    Permite que el tab Trend respete los filtros de canal y fuel.
+    """
     days = {}
     for f in sorted(glob.glob(str(base / "dgt_canal_daily_[0-9]*.csv"))):
         m = re.match(r"dgt_canal_daily_(\d{4})(\d{2})(\d{2})$", Path(f).stem)
         if not m:
             continue
         day = "{}-{}-{}".format(m.group(1), m.group(2), m.group(3))
-        agg = defaultdict(int)
+        agg = {}
         for row in _read_csv(f):
             try:
                 n = int(row.get("count", 0) or 0)
-                if n > 0:
-                    agg[_normalize_brand(row.get("marca", ""))] += n
+                if n <= 0:
+                    continue
+                canal = row.get("canal", "")
+                if canal not in CANALES:
+                    continue
+                fuel = row.get("fuel_type", "ICE") or "ICE"
+                if fuel not in FUELS:
+                    fuel = "ICE"
+                b = _normalize_brand(row.get("marca", ""))
+                cell = CANALES.index(canal) * 3 + FUELS.index(fuel)
+                agg.setdefault(b, [0] * 9)[cell] += n
             except (ValueError, KeyError):
                 pass
         if agg:
-            days[day] = dict(sorted(agg.items()))
+            days[day] = {b: v for b, v in sorted(agg.items())}
     brands = sorted({b for d in days.values() for b in d})
-    return {"days": [{"day": k, "brands": v} for k, v in sorted(days.items())],
+    return {"canales": CANALES, "fuels": FUELS,
+            "days": [{"day": k, "brands": v} for k, v in sorted(days.items())],
             "brands": brands}
 
 def build_provinces_json(prov_data):
@@ -736,6 +751,55 @@ def build_provinces_json(prov_data):
                     "BEV":cv.get("BEV",0),"PHEV":cv.get("PHEV",0)})
         by_month[ym]=sorted(rows,key=lambda x:-x["total"])
     return {"provinces":provs,"by_month":by_month}
+
+def build_pending_classification(monthly_records, mtd_records):
+    """pending_classification.json — cola diaria de revision manual.
+
+    1. Marcas nuevas: primera aparicion en los ultimos 6 meses y volumen >=50.
+    2. Modelos sin clasificar: sin segmento, >=50 uds en el anyo en curso.
+    Las decisiones se persisten en masters/master_clasificacion_manual.csv.
+    """
+    rows = list(monthly_records) + list(mtd_records)
+    if not rows:
+        return {"new_brands": [], "unclassified_models": []}
+    last = max((r["y"], r["m"]) for r in rows)
+    cur_year = last[0]
+    horizon = (last[0] * 12 + last[1]) - 6
+
+    first_seen = {}
+    vol12 = defaultdict(int)
+    for r in rows:
+        b = r["marca"]
+        ym = r["y"] * 12 + r["m"]
+        if b not in first_seen or ym < first_seen[b]:
+            first_seen[b] = ym
+        if ym > (last[0] * 12 + last[1]) - 12:
+            vol12[b] += r["n"]
+    new_brands = sorted((
+        {"marca": b,
+         "desde": f"{first_seen[b] // 12}-{(first_seen[b] % 12) or 12:02d}"
+                  if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
+         "uds_12m": vol12[b]}
+        for b in vol12
+        if first_seen[b] >= horizon and vol12[b] >= 50
+    ), key=lambda x: -x["uds_12m"])
+
+    pend = defaultdict(int)
+    for r in rows:
+        if r["y"] == cur_year and not (r["seg"] or "").strip():
+            pend[(r["marca"], r["modelo"] or "(sin modelo)")] += r["n"]
+    unclassified = sorted((
+        {"marca": m, "modelo": mo, "uds": n}
+        for (m, mo), n in pend.items() if n >= 50
+    ), key=lambda x: -x["uds"])
+
+    return {
+        "generated": date.today().isoformat(),
+        "year": cur_year,
+        "new_brands": new_brands,
+        "unclassified_models": unclassified[:200],
+        "how_to": "Decidir y anadir fila en masters/master_clasificacion_manual.csv (brand,model,seg,sub,hp,body,fuel_detail); el siguiente run la aplica.",
+    }
 
 def build_pending_classification(monthly_records, mtd_records):
     """pending_classification.json — cola diaria de revision manual.
