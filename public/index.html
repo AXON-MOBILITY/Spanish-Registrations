@@ -149,6 +149,9 @@ input.tf-modelo-input::placeholder{color:var(--text3)}
 #content{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .pane{display:none;flex:1;overflow-y:auto;padding:16px;flex-direction:column;gap:16px}
 .pane.on{display:flex}
+/* CRITICO: sin esto, flexbox COMPRIME las cards para caber en la pestaña
+   (recorta graficas y tarjetas) en vez de dejar que la pestaña scrollee */
+.pane>*{flex-shrink:0}
 
 /* ── STAT CARDS ──────────────────────────────────────── */
 .stat-row{display:flex;gap:16px;flex-wrap:wrap}
