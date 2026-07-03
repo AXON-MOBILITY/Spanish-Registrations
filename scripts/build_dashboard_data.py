@@ -496,15 +496,33 @@ def load_daily(base):
 
 def load_provinces(base):
     data = defaultdict(int)
+    completed = set()
     for f in sorted(glob.glob(str(base/"dgt_prov_[0-9][0-9][0-9][0-9][0-9][0-9].csv"))):
         m = re.match(r"dgt_prov_(\d{4})(\d{2})$", Path(f).stem)
         if not m: continue
         yr, mo = int(m.group(1)), int(m.group(2))
+        completed.add((yr, mo))
         for row in _read_csv(f):
             try:
                 fuel = row.get("fuel_type", "ICE") or "ICE"
                 marca = _normalize_brand(row.get("marca", ""))
                 data[(yr, mo, marca, row["cod_prov"], row["provincia"], row["canal"], fuel)] += int(row.get("count", 0) or 0)
+            except (ValueError, KeyError):
+                pass
+    for f in sorted(glob.glob(str(base/"dgt_prov_daily_[0-9]*.csv"))):
+        m = re.match(r"dgt_prov_daily_(\d{4})(\d{2})(\d{2})$", Path(f).stem)
+        if not m: continue
+        yr, mo = int(m.group(1)), int(m.group(2))
+        if (yr, mo) in completed:
+            continue
+        for row in _read_csv(f):
+            try:
+                canal = row.get("canal", "")
+                if canal not in CANALES:
+                    continue
+                fuel = row.get("fuel_type", "ICE") or "ICE"
+                marca = _normalize_brand(row.get("marca", ""))
+                data[(yr, mo, marca, row["cod_prov"], row["provincia"], canal, fuel)] += int(row.get("count", 0) or 0)
             except (ValueError, KeyError):
                 pass
     return data
