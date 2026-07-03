@@ -47,7 +47,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
   border-right:1px solid var(--border);height:100%;
 }
 .tb-logo .acc{color:var(--acc)}
-.tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px}
+.tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px;overflow-x:auto;scrollbar-width:none;max-width:42vw}
 .tab-btn{
   padding:0 16px;height:100%;border:none;background:transparent;
   color:var(--text3);font-size:12px;font-weight:500;cursor:pointer;
@@ -253,7 +253,15 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .wide-wrap table{min-width:600px}
 
 /* ── RESPONSIVE ──────────────────────────────────────── */
-@media (max-width:1400px){
+/* Portatiles (escala Windows 125-150%): los filtros bajan a su propia fila
+   para no solaparse con pestañas y KPIs */
+@media (max-width:1600px){
+  .tb-filters{flex-basis:100%;order:10;border-left:none;
+    border-top:1px solid var(--border);padding:6px 12px;justify-content:flex-start}
+  .tb-tabs{max-width:none}
+  .tb-right{margin-left:auto}
+}
+@media (max-width:1500px){
   .main-grid{grid-template-columns:minmax(280px,1.2fr) minmax(220px,1fr)}
   .span2{grid-row:auto;grid-column:1/-1}
 }
