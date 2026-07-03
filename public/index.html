@@ -297,6 +297,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="btn-clear" onclick="resetFilters()">Clear Filters</button>
   </div>
   <div class="tb-right">
+    <div class="tb-stat"><b id="hdr-updated">—</b><span>last update</span></div>
+    <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-total">—</b><span>registrations</span></div>
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
@@ -619,6 +621,14 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   buildTopFilters();
   render();
 });
+fetch('data/meta.json?v='+Date.now()).then(r=>r.json()).then(m=>{
+  if(m.updated){
+    const [y,mo,d]=m.updated.split('-');
+    g('hdr-updated').textContent=d+'/'+mo+'/'+y;
+    g('hdr-updated').title='Datos DGT procesados el '+d+'/'+mo+'/'+y
+      +(m.current_mtd?' · MTD: '+m.current_mtd.label:'');
+  }
+}).catch(()=>{});
 let PROV=null, TREND=null;
 let BRAND_CHOICES=[];
 fetch('data/province_brands.json?v='+Date.now()).then(r=>r.json())
