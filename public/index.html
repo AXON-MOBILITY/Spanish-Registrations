@@ -274,6 +274,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Canal &amp; Mensual</button>
     <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provincias</button>
     <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
+    <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
   </div>
   <div class="tb-filters">
     <div class="tf-grp">
@@ -547,6 +548,50 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
       </div>
     </div><!-- /pane-trend -->
+
+    <!-- TAB 5: PROGNOSIS -->
+    <div class="pane" id="pane-forecast">
+      <div class="card">
+        <div class="card-hdr">
+          <span>Prognosis <span class="note" id="fc-note"></span></span>
+          <span class="rk-ctrls"><span class="sg-pills" id="fc-esc" style="padding:0"></span></span>
+        </div>
+        <div class="ch-body">
+          <div class="tr-controls">
+            <span class="tf-lbl">Contexto</span>
+            <input id="fc-ctx" type="range" min="-5" max="5" step="0.5" style="width:110px"
+                   oninput="renderForecast()">
+            <b id="fc-ctx-val" style="font-size:11px;min-width:38px"></b>
+            <span class="tf-lbl" style="margin-left:10px">RAC mes</span>
+            <input id="fc-rac-mes" class="tf-modelo-input" type="number" style="width:80px" oninput="renderForecast()">
+            <span class="tf-lbl">RAC resto a&ntilde;o</span>
+            <input id="fc-rac-resto" class="tf-modelo-input" type="number" style="width:80px" oninput="renderForecast()">
+            <span class="tf-lbl" style="margin-left:10px">Objetivo mercado 2026 (total)</span>
+            <input id="fc-target" class="tf-modelo-input" type="number" style="width:100px"
+                   placeholder="opcional" oninput="renderForecast()">
+          </div>
+          <div class="stat-row" id="fc-stats"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span>Prognosis anual por marca (ex-RAC)</span>
+          <span class="note">edita "Tu ajuste" para fijar una marca; el resto se reequilibra con el objetivo</span>
+        </div>
+        <div class="tbl-wrap2" style="max-height:calc(100vh - 330px);overflow:auto">
+          <table id="tbl-fc">
+            <thead><tr>
+              <th>Marca</th><th>YTD 2026</th><th>Prognosis 2026</th><th>vs 2025</th><th>Tu ajuste</th>
+            </tr></thead>
+            <tbody id="tbody-fc"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Metodolog&iacute;a</div>
+        <div class="ch-body" id="fc-method" style="font-size:11px;color:var(--text3);line-height:1.6"></div>
+      </div>
+    </div><!-- /pane-forecast -->
 
   </div><!-- /content -->
 </div><!-- /shell -->
@@ -1438,6 +1483,114 @@ function renderTrend(){
   trDrawLine('ch-trend-d',perD.map(x=>x.slice(5)),trSeries(perD,(m,pd)=>dVal(m,pd)));
 }
 
+// ── TAB 5: PROGNOSIS ─────────────────────────────────────
+let FC=null;
+const FCS={esc:'base',overrides:{}};
+fetch('data/forecast.json?v='+Date.now()).then(r=>r.json())
+  .then(d=>{FC=d;initForecast();}).catch(()=>{});
+
+function initForecast(){
+  if(!FC||FC.status!=='ok')return;
+  [['conservador','Conservador'],['base','Base'],['optimista','Optimista']].forEach(([k,lbl])=>{
+    const pill=document.createElement('div');
+    pill.className='sg-pill'+(k===FCS.esc?' on':'');
+    pill.textContent=lbl;
+    pill.onclick=()=>{
+      FCS.esc=k;
+      [...g('fc-esc').children].forEach(x=>x.classList.toggle('on',x.textContent===lbl));
+      renderForecast();
+    };
+    g('fc-esc').appendChild(pill);
+  });
+  g('fc-ctx').value=(FC.context_default*100);
+  g('fc-rac-mes').value=FC.rac.mes_default;
+  g('fc-rac-resto').value=FC.rac.resto_default;
+  g('fc-note').textContent='mes objetivo '+FC.target_month+' · generado '+FC.generated;
+  g('fc-method').innerHTML=
+    'Mercado ex-RAC = 0,10&middot;interanual&times;tendencia12m + 0,50&middot;ritmo3m&times;estacional + 0,40&middot;ritmo mes anterior&times;estacional, '
+    +'con correcci&oacute;n de sesgo adaptativa ('+((FC.weights.bias-1)*100).toFixed(1)+'%) y proyecci&oacute;n intramensual con peso '+(FC.weights.w_d*100).toFixed(0)+'% '
+    +'('+FC.market.mtd_bdays+'/'+FC.market.bdays_month+' d&iacute;as h&aacute;biles). '
+    +'Backtest 24 meses out-of-sample: MAPE 3,4%; bandas emp&iacute;ricas P10/P90 (conservador &times;0,94, optimista &times;1,04). '
+    +'Marcas por cuota 0,6&middot;3m+0,4&middot;12m con momentum acotado. El RAC no se modela (volatilidad interanual 28%): introd&uacute;celo a mano. '
+    +'Contexto (jul-2026): ANFAC H1 +6,2% y previsi&oacute;n anual 1,2&ndash;1,25M turismos; nuestro scope incluye adem&aacute;s N1. '
+    +'<a href="https://anfac.com/el-primer-semestre-de-2026-cierra-con-647-711-ventas-un-62-mas/" target="_blank" style="color:var(--acc2)">Fuente ANFAC</a>. '
+    +'Detalle completo en docs/MODELO_PREDICTIVO.md.';
+  renderForecast();
+}
+
+function fcFactor(){
+  const mult={base:1,optimista:FC.bands.optimista,conservador:FC.bands.conservador}[FCS.esc];
+  const ctx=parseFloat(g('fc-ctx').value)/100;
+  g('fc-ctx-val').textContent=(ctx>=0?'+':'')+(ctx*100).toFixed(1)+'%';
+  return mult*(1+ctx);
+}
+
+function renderForecast(){
+  if(!FC||FC.status!=='ok')return;
+  const fx=fcFactor();
+  const M=FC.market;
+  const racMes=Number(g('fc-rac-mes').value)||0;
+  const racResto=Number(g('fc-rac-resto').value)||0;
+  const mesEx=M.mtd_exrac+(M.f_month_exrac_base-M.mtd_exrac)*fx;
+  const mesTot=mesEx+racMes;
+  const futBase=M.year_base_exrac-M.ytd_exrac;
+  // marcas
+  const futMarket=futBase*fx;
+  let sumOverrideFut=0,sumFreeShare=0;
+  FC.brands.forEach(b=>{
+    const ov=FCS.overrides[b.marca];
+    if(ov!=null)sumOverrideFut+=Math.max(0,ov-b.ytd_exrac);
+    else sumFreeShare+=b.share_hat;
+  });
+  // objetivo total (incluye RAC): reequilibra el futuro de las marcas libres
+  const target=Number(g('fc-target').value)||0;
+  let futFree=futMarket-0; let scale=1;
+  if(target>0){
+    const targetFutEx=target-racMes-racResto-FC.rac.ytd-M.ytd_exrac;
+    scale=sumFreeShare>0?Math.max(0,(targetFutEx-sumOverrideFut))/(futMarket*sumFreeShare):1;
+  }
+  let yearEx=M.ytd_exrac;
+  const rows=FC.brands.map(b=>{
+    const ov=FCS.overrides[b.marca];
+    let year;
+    if(ov!=null)year=ov;
+    else year=b.ytd_exrac+b.share_hat*futMarket*(target>0?scale:1);
+    yearEx+= (ov!=null?Math.max(0,ov-b.ytd_exrac):b.share_hat*futMarket*(target>0?scale:1));
+    return {b,year,ov};
+  });
+  const yearTot=yearEx+FC.rac.ytd+racMes+racResto;
+  const fmt=n=>fN(Math.round(n));
+  g('fc-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-val">${fmt(mesTot)}</div>
+      <div class="stat-sub">${FC.target_month} total (con RAC manual)</div>
+      <div class="stat-yoy" style="color:var(--text2)">ex-RAC ${fmt(mesEx)} &middot; MTD real ${fmt(M.mtd_exrac)}</div></div>
+    <div class="stat-card" style="border-top-color:var(--bev)"><div class="stat-val">${fmt(yearTot)}</div>
+      <div class="stat-sub">A&ntilde;o 2026 total</div>
+      <div class="stat-yoy" style="color:var(--text2)">ex-RAC ${fmt(yearEx)} + RAC ${fmt(FC.rac.ytd+racMes+racResto)}</div></div>
+    <div class="stat-card" style="border-top-color:var(--phev)"><div class="stat-val">${FCS.esc}</div>
+      <div class="stat-sub">Escenario &middot; factor ${fx.toFixed(3)}</div>
+      <div class="stat-yoy" style="color:var(--text2)">${target>0?'objetivo activo: reequilibrando':'sin objetivo fijado'}</div></div>`;
+  const tb=g('tbody-fc');tb.innerHTML='';
+  rows.forEach(({b,year,ov})=>{
+    const tr=document.createElement('tr');
+    if(ov!=null)tr.style.background='rgba(14,165,233,.10)';
+    tr.innerHTML=`<td>${b.marca}${ov!=null?' <span style="color:var(--acc2);font-size:9px">MANUAL</span>':''}</td>
+      <td>${fmt(b.ytd_exrac)}</td><td><b>${fmt(year)}</b></td>
+      <td class="${year>=b.year_base_exrac?'yoy-p':'yoy-n'}">${((year/b.year_base_exrac-1)*100).toFixed(1)}% vs base</td>
+      <td><input type="number" class="tf-modelo-input" style="width:90px" value="${ov!=null?ov:''}"
+           placeholder="${fmt(year)}" onchange="fcOverride('${b.marca.replace(/'/g,"\\'")}',this.value)"></td>`;
+    tb.appendChild(tr);
+  });
+  addTotalRow(tb,['Total ex-RAC',fmt(FC.brands.reduce((s,b)=>s+b.ytd_exrac,0)),fmt(yearEx),'','']);
+}
+
+function fcOverride(marca,val){
+  const v=Number(val);
+  if(!val||!isFinite(v)||v<=0)delete FCS.overrides[marca];
+  else FCS.overrides[marca]=v;
+  renderForecast();
+}
+
 // ── UI CONTROLS ──────────────────────────────────────────
 function toggleSg(id){g(id).classList.toggle('open')}
 
@@ -1450,6 +1603,7 @@ function showTab(name){
   if(REC&&(name==='overview'||name==='analisis'))requestAnimationFrame(render);
   if(name==='prov'&&PROV)requestAnimationFrame(renderProv);
   if(name==='trend'&&TREND)requestAnimationFrame(renderTrend);
+  if(name==='forecast'&&FC)requestAnimationFrame(renderForecast);
 }
 
 function resetFilters(){
