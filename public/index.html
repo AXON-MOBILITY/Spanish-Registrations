@@ -573,12 +573,17 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <div class="ch-body">
           <div class="tr-controls">
-            <span class="tf-lbl" title="Ajuste por entorno de mercado: lo que las series aun no reflejan (incentivos anunciados, fiscalidad, aranceles). Default +1% calibrado con ANFAC/Faconauto; se revisa cada lunes.">Contexto &#9432;</span>
+            <span class="tf-lbl">Entorno de mercado</span>
             <input id="fc-ctx" type="range" min="-5" max="5" step="0.5" style="width:110px" oninput="renderForecast()">
             <b id="fc-ctx-val" style="font-size:11px;min-width:38px"></b>
             <span class="tf-lbl" style="margin-left:14px">Objetivo mercado 2026 (total)</span>
             <input id="fc-target" class="tf-modelo-input" type="text" inputmode="numeric" style="width:105px"
                    placeholder="opcional" oninput="renderForecast()">
+          </div>
+          <div class="note" style="margin:2px 0 10px;font-size:10px;color:var(--text2)">
+            <b>Entorno de mercado</b>: sube o baja toda la previsi&oacute;n si esperas algo que los datos a&uacute;n no reflejan
+            (nuevos incentivos al el&eacute;ctrico, cambios de impuestos&hellip;). Se revisa cada lunes con las noticias del sector.
+            &nbsp;&middot;&nbsp; <b>Objetivo</b>: si fijas un total de mercado 2026, las marcas se reajustan para cuadrarlo.
           </div>
           <div class="stat-row" id="fc-stats"></div>
         </div>
@@ -1664,16 +1669,14 @@ function renderForecast(){
   });
   addTotalRow(tb,['Total',...colTot.slice(0,12).map(fmt),fmt(FCS.rac==='inc'?totEx+totRac:totEx),'','']);
 
+  const escLbl={base:'Base',optimista:'Optimista',conservador:'Conservador'}[FCS.esc];
   g('fc-stats').innerHTML=`
     <div class="stat-card"><div class="stat-val">${fmt(colTot[curM-1])}</div>
-      <div class="stat-sub">${FC.target_month} total prognosis</div>
-      <div class="stat-yoy" style="color:var(--text2)">MTD real exRAC ${fmt(mtdMkt)} (${FC.market.mtd_bdays}/${FC.market.bdays_month} d&iacute;as)</div></div>
+      <div class="stat-sub">Prognosis ${MESES[curM-1]} 2026</div></div>
     <div class="stat-card" style="border-top-color:var(--bev)"><div class="stat-val">${fmt(totEx+totRac)}</div>
-      <div class="stat-sub">A&ntilde;o 2026 total</div>
-      <div class="stat-yoy" style="color:var(--text2)">exRAC ${fmt(totEx)} + RAC ${fmt(totRac)}</div></div>
-    <div class="stat-card" style="border-top-color:var(--phev)"><div class="stat-val">${FCS.esc}</div>
-      <div class="stat-sub">Escenario &middot; factor ${fx.toFixed(3)}</div>
-      <div class="stat-yoy" style="color:var(--text2)">${target>0?'objetivo activo (raking)':'sin objetivo fijado'}</div></div>`;
+      <div class="stat-sub">Prognosis a&ntilde;o 2026</div></div>
+    <div class="stat-card" style="border-top-color:var(--phev)"><div class="stat-val">${escLbl}</div>
+      <div class="stat-sub">Escenario</div></div>`;
 }
 
 // Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
