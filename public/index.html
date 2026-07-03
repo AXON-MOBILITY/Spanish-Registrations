@@ -1562,19 +1562,12 @@ function trSeries(per,getter){
 function renderTrend(){
   if(!TREND||!TR.months)return;
   const E=REC.enums;
-  // ── Mensual: respeta canal, fuel, segmento, subsegmento, HP y body ──
+  // Mensual: historico completo de las marcas seleccionadas; el rango lo controlan los selects del tab.
   const selSet=new Set(TR.sel);
   const monthly={};
-  const bIdx=F.body?E.body.indexOf(F.body):-1;
   REC.rows.forEach(r=>{
     const b=E.marca[r[COL.MARCA]];
     if(!selSet.has(b))return;
-    if(!F.canales.has(r[COL.CANAL]))return;
-    if(!F.fuels.has(r[COL.FUEL]))return;
-    if(!F.segs.has(r[COL.SEG]))return;
-    if(!F.subs.has(r[COL.SUB]))return;
-    if(F.hps.size&&!F.hps.has(r[COL.HP]))return;
-    if(bIdx>=0&&r[COL.BODY]!==bIdx)return;
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
     (monthly[b]=monthly[b]||{})[k]=((monthly[b]||{})[k]||0)+r[COL.N];
   });
