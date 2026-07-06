@@ -17,7 +17,9 @@ Uso:
 Tambien genera dgt_alerts_YYYYMM.csv con avisos no bloqueantes de drift.
 """
 
+
 import sys, os, zipfile, urllib.request, collections, tempfile, re, csv, unicodedata, json
+
 
 TMP_DIR = tempfile.gettempdir()
 # Estructura del repo: el script vive en scripts/, los outputs en data/processed/
@@ -35,10 +37,12 @@ LAST_PROCESS_ALERTS = []
 DGT_MONTHLY_PAGE = 'https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-mensual.html'
 DGT_DAILY_PAGE = 'https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-diario.html'
 
+
 def get_url(yyyymm):
     year = yyyymm[:4]
     month = str(int(yyyymm[4:]))   # sin cero inicial
     return "https://www.dgt.es/microdatos/salida/{}/{}/vehiculos/matriculaciones/export_mensual_mat_{}.zip".format(year, month, yyyymm)
+
 
 def fetch_text(url, timeout=120):
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -46,6 +50,7 @@ def fetch_text(url, timeout=120):
         raw = resp.read()
         charset = resp.headers.get_content_charset() or 'utf-8'
     return raw.decode(charset, errors='replace')
+
 
 def discover_monthly_links(start='202601', end=None):
     html = fetch_text(DGT_MONTHLY_PAGE)
@@ -60,6 +65,7 @@ def discover_monthly_links(start='202601', end=None):
         links[yyyymm] = (match.group(1) or 'https://www.dgt.es') + match.group(2)
     return sorted(links.items())
 
+
 def discover_daily_links(start=None, end=None):
     html = fetch_text(DGT_DAILY_PAGE)
     pattern = re.compile(r'(https://www\.dgt\.es)?(/microdatos/salida/\d{4}/\d{1,2}/vehiculos/matriculaciones/export_mat_(\d{8})\.zip)')
@@ -72,6 +78,7 @@ def discover_daily_links(start=None, end=None):
             continue
         links[yyyymmdd] = (match.group(1) or 'https://www.dgt.es') + match.group(2)
     return sorted(links.items())
+
 
 def download_zip(url, zip_path):
     if os.path.exists(zip_path):
@@ -95,6 +102,7 @@ def download_zip(url, zip_path):
             os.remove(zip_path)
         return False
 
+
 # Posiciones campos (0-indexed)
 F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
@@ -109,6 +117,7 @@ F_MMA         = (111, 117)   # Masa Maxima Autorizada en kg  ej: "  1615" = 1615
 F_HOMOLOGACION = (426, 430)   # M1/M1G/N1/N1G/M2/M3/N2/N3...
 F_PROPULSION    = (93,   94)   # 0=gasolina, 1=diesel, 2=electrico, 6=GLP, 7=GNC
 F_CAT_ELECTRICO = (453, 457)   # BEV, HEV, PHEV, REEV o vacio
+
 
 # Mapa código INE provincia (2 dígitos) → nombre
 PROV_NAMES = {
@@ -125,6 +134,7 @@ PROV_NAMES = {
     '51':'Ceuta','52':'Melilla',
 }
 
+
 # Modelos excluidos del scope (no estan en Simmix)
 EXCLUIR_MARCA_MODELO = {}
 EXCLUIR_MARCA_RAW = {
@@ -139,6 +149,7 @@ MERCEDES_EXCLUDED_MODEL_PREFIXES = (
     '280 SL', '250 CE', '190 SL', 'SLK 230', 'MAYBACH GLS', 'MAYBACH EQS',
 )
 
+
 def is_excluded_scope(marca_raw, marca, modelo):
     raw = marca_raw.strip().upper()
     m = marca.strip().upper()
@@ -149,6 +160,7 @@ def is_excluded_scope(marca_raw, marca, modelo):
         return True
     excl = EXCLUIR_MARCA_MODELO.get(m)
     return bool(excl and any(token in mo for token in excl))
+
 
 # ── Regla carroceros/camperizadores → marca del chasis (metodología Simmix) ──
 # Simmix atribuye los vehículos carrozados/camperizados a la marca y modelo del
@@ -190,6 +202,7 @@ _CHASSIS_RULES = [
     (re.compile(r'\bN[LMPQN]R|\bN-?SERIE'),        'ISUZU',           'N-SERIES'),
 ]
 
+
 def reassign_carrocero(marca, modelo):
     """(marca, modelo, unmapped) — reasigna carrozados a la marca del chasis."""
     if marca.strip().upper() not in CARROCERO_BRANDS:
@@ -199,6 +212,7 @@ def reassign_carrocero(marca, modelo):
         if pat.search(texto):
             return m2, mo2, False
     return marca, modelo, True
+
 
 # ── Rescate N2 de derivados de furgoneta (scope Simmix) ─────────────────────
 # Simmix incluye variantes N2 (>3.500 kg) de furgonetas grandes que el filtro
@@ -221,10 +235,12 @@ def n2_van_target(marca, modelo):
         return 'IVECO'
     return None
 
+
 # ── Enriquecimiento modelo → segmento/body_type (desde Simmix) ────────────
 _APPROVAL_RE   = re.compile(r'\s+[A-Z0-9]{6,}\s*$')
 _BMW_SERIE_RE  = re.compile(r'^([1-9])\d{2}[A-Z]')
 _LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
+
 
 _BRAND_NORM = {
     'MERCEDES-BENZ': 'MERCEDES', 'MERCEDES BENZ': 'MERCEDES',
@@ -252,9 +268,11 @@ _MERC_CLASS = {
     'EQS':'EQS','EQT':'EQT','EQV':'EQV','AMG GT':'AMG GT',
 }
 
+
 def _strip_accents(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s)
                    if unicodedata.category(c) != 'Mn')
+
 
 def _model_candidates(sbrand, s):
     """Genera lista de candidatos (sbrand, model_name) para buscar en el lookup."""
@@ -476,8 +494,10 @@ def _model_candidates(sbrand, s):
     if words: cands.append((sbrand, words[0]))
     return cands
 
+
 # Cargado una vez al inicio del proceso
 _ENRICHMENT = {}   # (simmix_brand, simmix_model) → {modelo, seg, sub, hp, body}
+
 
 def _load_enrichment():
     global _ENRICHMENT
@@ -499,6 +519,7 @@ def _load_enrichment():
     fname2 = os.path.join(MASTERS_DIR, 'master_model_segment.csv')
     _load_simmix_bbdd()
     print(f'  -> Enrichment: {len(_ENRICHMENT):,} combos cargados')
+
 
 # Carga lookup brand+model desde Simmix BBDD directamente
 _MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
@@ -529,10 +550,13 @@ _MODEL_LOOKUP_PATCHES = {
     },
 }
 
+
 def _focus_bucket(value):
     return 'FOCUS SEGMENT' if (value or '').strip().upper() == 'FOCUS SEGMENT' else 'REST'
 
+
 _SEG_PREFIX_RE = re.compile(r'^\d+\.')
+
 
 def _canon_seg(value):
     """Canoniza el segmento: '3.UKL2'→'UKL2', '7.GKL++1'→'GKL+', 'MKL'→'MKL'.
@@ -545,11 +569,13 @@ def _canon_seg(value):
         s = 'GKL+'
     return s
 
+
 def _apply_model_lookup_patches():
     for key, row in _MODEL_LOOKUP_PATCHES.items():
         patched = row.copy()
         patched['seg'] = _canon_seg(patched.get('seg', ''))
         _MODEL_LOOKUP[key] = patched
+
 
 def _load_manual_master():
     """masters/master_clasificacion_manual.csv — decisiones propias de clasificacion.
@@ -585,6 +611,7 @@ def _load_manual_master():
         print(f'  WARN: no se pudo cargar maestro manual: {exc}')
     return n
 
+
 def _load_model_lookup_fallback():
     if not os.path.exists(MODEL_LOOKUP_FALLBACK):
         return False
@@ -609,6 +636,7 @@ def _load_model_lookup_fallback():
         print(f'  WARN: no se pudo cargar fallback de modelos Simmix: {exc}')
         return False
 
+
 def _candidate_simmix_2026_product_paths():
     paths = [os.path.join(VALIDATION_DIR, 'BBDD_2026_PRODUCTO_06_30.csv'),
              os.path.join(REPO_ROOT, 'BBDD_2026_PRODUCTO_06_30.csv')]
@@ -622,6 +650,7 @@ def _candidate_simmix_2026_product_paths():
     except OSError:
         pass
     return paths
+
 
 def _load_simmix_2026_product_lookup():
     for fname in _candidate_simmix_2026_product_paths():
@@ -657,6 +686,7 @@ def _load_simmix_2026_product_lookup():
             print(f'  WARN: no se pudo cargar BBDD 2026 producto {fname}: {exc}')
     return False
 
+
 def _save_model_lookup_fallback():
     if not _MODEL_LOOKUP:
         return
@@ -677,6 +707,7 @@ def _save_model_lookup_fallback():
             'source': 'Derived from local Simmix BBDD exports; used by GitHub Actions when BBDD files are absent.',
             'rows': rows,
         }, f, ensure_ascii=False, indent=2)
+
 
 def _load_simmix_bbdd():
     global _MODEL_LOOKUP
@@ -721,12 +752,14 @@ def _load_simmix_bbdd():
         _apply_model_lookup_patches()
         _load_manual_master()
 
+
 _PROP_FUEL_NAME = {
     '0': 'Gasolina', '1': 'Diesel', '2': 'Electrico',
     '3': 'Hidrogeno', '4': 'Hidrogeno',
     '6': 'Gas Licuado con petroleo (GLP)',
     '7': 'Gas natural comprimido (GNC)',
 }
+
 
 def get_fuel_detail_from_dgt(line_s):
     prop = line_s[F_PROPULSION[0]:F_PROPULSION[1]].strip()
@@ -737,6 +770,7 @@ def get_fuel_detail_from_dgt(line_s):
         return 'Diesel/Electrico Enchufable' if prop == '1' else 'Gasolina/Electrico Enchufable'
     return _PROP_FUEL_NAME.get(prop, 'Gasolina')
 
+
 def lookup_enrichment(marca_raw, raw_modelo_field):
     """Devuelve (modelo_canon, seg, sub, hp, body, fuel_detail) o 6x ''."""
     sbrand = _BRAND_NORM.get(marca_raw, marca_raw)
@@ -746,9 +780,11 @@ def lookup_enrichment(marca_raw, raw_modelo_field):
             return r['modelo'], r['seg'], r['sub'], r['hp'], r['body'], r.get('fuel_detail','')
     return '', '', 'REST', '', '', ''
 
+
 def classify_high_performance(marca, modelo_raw, lookup_hp=''):
     m = marca.strip().upper()
     mo = re.sub(r'\s+', ' ', modelo_raw.strip().upper())
+
 
     if m == 'BMW':
         # Full M cars. "M Sport" is a trim package and must remain Standard.
@@ -756,6 +792,7 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
                 re.match(r'^X[3456]\s+M(?:\s+COMPETITION|\s*$)', mo) or
                 mo.startswith('M COMPETICION')):
             return 'M'
+
 
         # M Performance Automobiles: Mxxi/Mxxd, i M50/M60/M70, X M35/M40/M50/M60, Z4 M40.
         if (re.match(r'^M(?:135|140|235|240|340|440|550|760|850)[A-Z]*\b', mo) or
@@ -767,8 +804,10 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
             return 'M Performance'
         return 'Standard'
 
+
     if m == 'MINI':
         return 'JCW' if ('JCW' in mo or 'JOHN COOPER WORKS' in mo or 'JHON COOPER WORKS' in mo) else 'Standard'
+
 
     if m in ('MERCEDES-BENZ','MERCEDES','MERCEDES BENZ','MERCEDES-AMG'):
         if 'AMG' not in mo:
@@ -779,6 +818,7 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
             return 'M'
         return 'M Performance'
 
+
     if m == 'AUDI':
         audi = re.sub(r'^AUDI\s+', '', mo)
         if audi.startswith('RS') or audi.startswith('R8'):
@@ -786,6 +826,7 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
         if re.match(r'^(?:S[0-9]|SQ[0-9]|S\s+E-TRON)', audi):
             return 'M Performance'
         return lookup_hp or 'Standard'
+
 
     if m == 'PORSCHE':
         if ('TURBO' in mo or 'GT3' in mo or 'GT4 RS' in mo or
@@ -799,9 +840,12 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
             return 'M Performance'
         return 'Standard'
 
+
     if not lookup_hp or lookup_hp == 'Standard':
         return lookup_hp or 'Standard'
     return lookup_hp
+
+
 
 
 # Reglas de campa
@@ -813,6 +857,7 @@ CAMPA_VENTURADA_RAC  = {'TOYOTA', 'LEXUS', 'AUDI'}   # estas marcas en Venturada
 CAMPA_MUNICIPIOS_PSA = {'28022'}    # Boadilla
 CAMPA_PSA_MARCAS     = {'OPEL','PEUGEOT','CITROEN','DS','ALFA ROMEO','RENAULT','JEEP'}
 CAMPA_PEUGEOT_RS_MUN = {'38038','35025'}
+
 
 # Municipios concesionario BMW/Volvo: registros B00+D aquí = Km.0 → Corporate
 # Simmix clasifica como Corporate los B00+D cuyo CP coincide con el de un concesionario.
@@ -855,6 +900,7 @@ DEALER_MUN_BMW = {
     '46102',  # Quart de Poblet ~25k (59)
 }
 
+
 DEALER_MUN_VOLVO = {
     # Pequeñas
     '28151',  # Torrelaguna (883 Volvo Km.0/36m)
@@ -872,6 +918,7 @@ DEALER_MUN_VOLVO = {
     '24142',  # San Andrés del Rabanedo (178)
     '08073',  # Cornellà de Llobregat ~87k (143) — zona industrial Volvo
 }
+
 
 # Dealer municipalities by brand for B00+D Km.0 classification.
 # Built from Simmix Corporate Km.0 / Automatr / Excedentes by brand and municipality.
@@ -913,6 +960,7 @@ DEALER_MUN = {
     'VOLKSWAGEN AG': {'08002', '08106', '12103', '24148', '28151', '29074', '30031', '31193'},
     'VOLKSWAGEN V W': {'08002', '08106', '12103', '24148', '28151', '29074', '30031', '31193'},
 }
+
 
 # High-signal small dealer municipalities applied across brands.
 # Excludes campas and larger ambiguous cities.
@@ -974,6 +1022,7 @@ DEALER_MUN_ALL = {
 DEALER_MUN_ALL_EXCLUDED_BRANDS = {'SKODA'}
 NO_DEALER_MUN = set()
 
+
 # Statistical Km.0 fallback for B00+D records that are still Private after the
 # municipality dealer rules. Rates are calibrated on 2023-2025 residual
 # Corporate shortfall divided by remaining B00+D pool by brand.
@@ -1002,6 +1051,7 @@ KM0_BRAND_FALLBACK_RATE = {
     'TOYOTA': 0.00904969,
     'VOLVO': 0.01861878,
 }
+
 
 # Residual scope calibration by brand/channel, learned from Simmix exports
 # after deterministic brand/model/channel rules and Km.0 fallback.
@@ -1077,6 +1127,7 @@ CHANNEL_SCOPE_FACTOR = {
     ('VOLVO', 'RAC'): 0.9989247313,
 }
 
+
 # 2026 Simmix residuals are not always distributed evenly across Focus/Rest.
 # Mercedes is the relevant case: most residual scope appears in commercial Rest
 # models, so a brand+channel factor incorrectly inflates passenger Focus.
@@ -1098,6 +1149,7 @@ CHANNEL_SUBSEG_SCOPE_FACTOR = {
     ('VOLVO', 'RAC', 'FOCUS SEGMENT'): 1.0000000000,
 }
 
+
 ALERT_DRIFT_START_YEAR = 2026
 ALERT_MIN_BASELINE_COUNT = 50
 ALERT_DRIFT_ABS = 250
@@ -1106,6 +1158,7 @@ ALERT_DRIFT_CRITICAL_REL = 0.50
 ALERT_NEW_BRAND_COUNT = 250
 ALERT_KM0_FALLBACK_MOVED = 100
 ALERT_CARROCERO_UNMAPPED = 25
+
 
 def km0_rate_brand(marca):
     m = marca.strip().upper()
@@ -1117,6 +1170,7 @@ def km0_rate_brand(marca):
         return 'LYNK & CO'
     return m
 
+
 def apply_scope_calibration(counts):
     calibrated = collections.Counter()
     for (marca, canal), n in counts.items():
@@ -1126,6 +1180,7 @@ def apply_scope_calibration(counts):
         else:
             calibrated[(marca, canal)] += max(0, int(round(n * factor)))
     return calibrated
+
 
 def scope_group_for_fuel_key(key):
     if len(key) == 9:
@@ -1142,10 +1197,12 @@ def scope_group_for_fuel_key(key):
         return detailed
     return (marca, canal)
 
+
 def allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals):
     grouped = collections.defaultdict(list)
     for key, n in fuel_counts.items():
         grouped[scope_group_for_fuel_key(key)].append((key, n))
+
 
     out = collections.Counter()
     for group, rows in grouped.items():
@@ -1158,6 +1215,7 @@ def allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals):
         if raw <= 0 or target <= 0:
             continue
 
+
         allocations = []
         assigned = 0
         for key, n in rows:
@@ -1166,13 +1224,16 @@ def allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals):
             assigned += base
             allocations.append((ideal - base, repr(key), key, base))
 
+
         remaining = target - assigned
         allocations.sort(key=lambda item: (-item[0], item[1]))
         bonus_keys = {key for _, _, key, _ in allocations[:remaining]} if remaining > 0 else set()
 
+
         for _, _, key, base in allocations:
             out[key] += base + (1 if key in bonus_keys else 0)
     return out
+
 
 def make_alert(severity, kind, marca='', canal='', metric='', value='', threshold='', detail=''):
     return {
@@ -1185,6 +1246,7 @@ def make_alert(severity, kind, marca='', canal='', metric='', value='', threshol
         'threshold': threshold,
         'detail': detail,
     }
+
 
 def iter_output_rows(before_year=None, same_month=None, exclude_yyyymm=None):
     import csv as csv_mod
@@ -1217,6 +1279,7 @@ def iter_output_rows(before_year=None, same_month=None, exclude_yyyymm=None):
         except OSError:
             continue
 
+
 def add_unknown_brand_alerts(yyyymm, counts, alerts):
     year = int(yyyymm[:4])
     if year < ALERT_DRIFT_START_YEAR:
@@ -1239,6 +1302,7 @@ def add_unknown_brand_alerts(yyyymm, counts, alerts):
                 threshold=ALERT_NEW_BRAND_COUNT,
                 detail='Marca con volumen relevante no vista en outputs historicos previos',
             ))
+
 
 def add_drift_alerts(yyyymm, counts, alerts):
     year = int(yyyymm[:4])
@@ -1278,6 +1342,7 @@ def add_drift_alerts(yyyymm, counts, alerts):
             ),
         ))
 
+
 def normalize_marca(marca, modelo=''):
     m = marca.strip().upper()
     mo = modelo.strip().upper()
@@ -1293,6 +1358,7 @@ def normalize_marca(marca, modelo=''):
         # DGT raw F_MODELO: 'T 180 D...', 'CITAN 110...', 'ECITAN...', 'EQT...', 'SPRINTER...'
     return m
 
+
 def get_fuel_type_code(line_s):
     prop = line_s[F_PROPULSION[0]:F_PROPULSION[1]].strip()
     cat  = line_s[F_CAT_ELECTRICO[0]:F_CAT_ELECTRICO[1]].strip().upper()
@@ -1302,12 +1368,14 @@ def get_fuel_type_code(line_s):
         return 'PHEV'
     return 'ICE'
 
+
 def classify(servicio, persona, renting, mun, marca):
     s  = servicio.strip()
     m  = marca.strip().upper()
     r  = renting.strip()
     mu = mun.strip()
     p  = persona.strip()
+
 
     if s == 'A01':
         if mu in CAMPA_MUNICIPIOS_ALL:
@@ -1320,6 +1388,7 @@ def classify(servicio, persona, renting, mun, marca):
             return 'Corporate'
         return 'RAC'
 
+
     if s == 'B00':
         if p == 'X': return 'Corporate'
         # Km.0 en municipio concesionario: B00+D matriculado en CP de dealer → Corporate
@@ -1328,6 +1397,7 @@ def classify(servicio, persona, renting, mun, marca):
         if m not in DEALER_MUN_ALL_EXCLUDED_BRANDS and mu in DEALER_MUN_ALL: return 'Corporate'
         return 'Private'
 
+
     if s in ('A18', 'B18'):
         return 'Corporate'
     if s in ('B17', 'B19', 'B21', 'A04', 'A07', 'A03'):
@@ -1335,7 +1405,10 @@ def classify(servicio, persona, renting, mun, marca):
     if s in ('A02', 'A05', 'A09', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A20'):
         return 'Corporate'
 
+
     return 'Corporate' if p == 'X' else 'Private'
+
+
 
 
 def es_turismo_o_furgoneta(line_s):
@@ -1345,11 +1418,14 @@ def es_turismo_o_furgoneta(line_s):
     if cat_homol:
         return cat_homol.startswith('M1') or cat_homol.startswith('N1')
 
+
     plazas_s = line_s[F_PLAZAS[0]:F_PLAZAS[1]].strip()
     plazas = int(plazas_s) if plazas_s.isdigit() else 0
 
+
     if plazas >= 4:
         return True  # turismo / SUV / MPV: siempre incluir
+
 
     if plazas in (2, 3):
         try:
@@ -1358,7 +1434,10 @@ def es_turismo_o_furgoneta(line_s):
             return False
         return 700 <= mma <= 3500  # furgoneta ligera N1
 
+
     return False  # plazas=0 (trailer), plazas=1 (moto solo-seat)
+
+
 
 
 def fuel_to_canal_counts(fuel_counts):
@@ -1377,6 +1456,7 @@ def fuel_to_canal_counts(fuel_counts):
             marca, canal = key[0], key[1]
         agg[(marca, canal)] += n
     return agg
+
 
 def process_lines(lines_iter):
     global LAST_PROCESS_ALERTS
@@ -1435,6 +1515,7 @@ def process_lines(lines_iter):
             if rate_brand in KM0_BRAND_FALLBACK_RATE:
                 km0_fallback_pool[marca] += 1
 
+
     for marca, n in carrocero_unmapped_pool.items():
         if n >= ALERT_CARROCERO_UNMAPPED:
             alerts.append(make_alert(
@@ -1447,6 +1528,7 @@ def process_lines(lines_iter):
                 threshold=ALERT_CARROCERO_UNMAPPED,
                 detail='ampliar _CHASSIS_RULES o CARROCERO_BRANDS',
             ))
+
 
     for marca, n in km0_fallback_pool.items():
         rate = KM0_BRAND_FALLBACK_RATE[km0_rate_brand(marca)]
@@ -1484,6 +1566,8 @@ def process_lines(lines_iter):
     return calibrated_fuel, prov_counts
 
 
+
+
 def process_zip(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zf:
         names = zf.namelist()
@@ -1494,9 +1578,13 @@ def process_zip(zip_path):
             return process_lines(f)
 
 
+
+
 def process_raw_txt(txt_path):
     with open(txt_path, 'rb') as f:
         return process_lines(f)
+
+
 
 
 def save_csv(counts, yyyymm):
@@ -1520,6 +1608,7 @@ def save_csv(counts, yyyymm):
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
 
+
 def save_prov_csv(prov_counts, yyyymm):
     """prov_counts: {(cod_prov, marca, canal, fuel_type): n}"""
     import csv as csv_mod
@@ -1538,6 +1627,7 @@ def save_prov_csv(prov_counts, yyyymm):
             w.writerow([year, month, marca, cod_prov, nombre, canal, fuel_type, n])
     print("  -> {}  ({} combos provincia)".format(path, len(prov_counts)))
     return path
+
 
 def save_daily_csv(counts, yyyymmdd):
     """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
@@ -1560,6 +1650,7 @@ def save_daily_csv(counts, yyyymmdd):
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
 
+
 def save_prov_daily_csv(prov_counts, yyyymmdd):
     import csv as csv_mod
     year, month, day = yyyymmdd[:4], yyyymmdd[4:6], yyyymmdd[6:]
@@ -1576,6 +1667,7 @@ def save_prov_daily_csv(prov_counts, yyyymmdd):
             nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
             w.writerow([year, month, day, marca, cod_prov, nombre, canal, fuel_type, n])
     return path
+
 
 def read_channel_counts(path):
     """Lee CSV daily → {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
@@ -1599,6 +1691,7 @@ def read_channel_counts(path):
                 continue
             counts[(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body)] += n
     return counts
+
 
 def save_mtd_from_daily(yyyymm):
     import csv as csv_mod
@@ -1627,6 +1720,7 @@ def save_mtd_from_daily(yyyymm):
     print("  -> {}  ({:,} registros MTD)".format(path, sum(counts.values())))
     return path
 
+
 def save_alerts(alerts, yyyymm):
     import csv as csv_mod
     path = os.path.join(OUT_DIR, "dgt_alerts_{}.csv".format(yyyymm))
@@ -1646,6 +1740,7 @@ def save_alerts(alerts, yyyymm):
         print("  -> alertas {}: 0".format(yyyymm))
     return path
 
+
 def finalize_month(result, yyyymm):
     fuel_counts, prov_counts = result
     save_csv(fuel_counts, yyyymm)
@@ -1656,16 +1751,19 @@ def finalize_month(result, yyyymm):
     add_drift_alerts(yyyymm, canal_counts, alerts)
     save_alerts(alerts, yyyymm)
 
+
 def finalize_day(result, yyyymmdd):
     fuel_counts, prov_counts = result
     save_daily_csv(fuel_counts, yyyymmdd)
     save_prov_daily_csv(prov_counts, yyyymmdd)
     save_alerts(list(LAST_PROCESS_ALERTS), yyyymmdd)
 
+
 def download_and_process(yyyymm, keep_raw=False, force=False):
     out_csv  = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
     zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
     txt_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.txt".format(yyyymm))
+
 
     if os.path.exists(out_csv) and not force:
         if os.path.getsize(out_csv) > 100:
@@ -1678,6 +1776,7 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
             except Exception as e:
                 print("  WARN no pudo borrar CSV vacio: {}".format(e))
 
+
     # procesar TXT legacy (ya descomprimido en /tmp/)
     if os.path.exists(txt_path):
         print("[{}] TXT raw en /tmp, procesando...".format(yyyymm))
@@ -1688,6 +1787,7 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
             print("  -> txt borrado")
         return
 
+
     # descargar ZIP si no esta
     if not os.path.exists(zip_path):
         url = get_url(yyyymm)
@@ -1696,6 +1796,7 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
             return
     else:
         print("[{}] ZIP ya en /tmp, procesando...".format(yyyymm))
+
 
     # procesar ZIP
     print("[{}] Procesando ZIP...".format(yyyymm))
@@ -1706,9 +1807,12 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
         return
     finalize_month(counts, yyyymm)
 
+
     if not keep_raw:
         os.remove(zip_path)
         print("  -> zip borrado")
+
+
 
 
 def download_and_process_month_url(yyyymm, url, keep_raw=False, force=False):
@@ -1730,6 +1834,8 @@ def download_and_process_month_url(yyyymm, url, keep_raw=False, force=False):
         os.remove(zip_path)
         print("  -> zip borrado")
     return counts
+
+
 
 
 def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
@@ -1757,11 +1863,15 @@ def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
     return counts
 
 
+
+
 def sync_monthly_2026(keep_raw=False, force=False):
     links = discover_monthly_links(start='202601')
     print("Mensuales 2026 publicados: {}".format(len(links)))
     for yyyymm, url in links:
         download_and_process_month_url(yyyymm, url, keep_raw=keep_raw, force=force)
+
+
 
 
 def sync_daily_current(keep_raw=False, force=False):
@@ -1775,9 +1885,13 @@ def sync_daily_current(keep_raw=False, force=False):
         save_mtd_from_daily(yyyymm)
 
 
+
+
 def sync_auto(keep_raw=False, force=False):
     sync_monthly_2026(keep_raw=keep_raw, force=False)
     sync_daily_current(keep_raw=keep_raw, force=force)
+
+
 
 
 def all_months(start='202301', end='202512'):
@@ -1793,16 +1907,30 @@ def all_months(start='202301', end='202512'):
     return months
 
 
+
+
 if __name__ == '__main__':
     # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
     _load_simmix_bbdd()
     print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
 
+
     arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
     keep  = '--keep'  in sys.argv
     force = '--force' in sys.argv
+
 
     if arg == 'all':
         import datetime as _dt
         _now = _dt.date.today()
         _end = '{:04d}{:02d}'.format(_now.year, _now.month)
+        for yyyymm in all_months():
+            download_and_process(yyyymm, keep_raw=keep, force=force)
+    elif arg == 'monthly-2026':
+        sync_monthly_2026(keep_raw=keep, force=force)
+    elif arg == 'daily-current':
+        sync_daily_current(keep_raw=keep, force=force)
+    elif arg == 'auto':
+        sync_auto(keep_raw=keep, force=force)
+    else:
+        download_and_process(arg, keep_raw=keep, force=force)
