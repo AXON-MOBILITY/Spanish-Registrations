@@ -5,7 +5,7 @@ on:
     inputs:
       mode:
         description: "Modo: auto (diario+MTD), all (todos los meses históricos)"
-        required: falseh
+        required: false
         default: "auto"
         type: choice
         options:
