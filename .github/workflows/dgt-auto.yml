@@ -5,7 +5,7 @@ on:
     inputs:
       mode:
         description: "Modo: auto (diario+MTD), all (todos los meses históricos)"
-        required: false
+        required: falseh
         default: "auto"
         type: choice
         options:
@@ -22,10 +22,10 @@ on:
   schedule:
     # GitHub Actions usa UTC. Ejecutamos varias ventanas para cubrir CET/CEST
     # y el retraso habitual de algunos lunes de la tercera semana.
-    - cron: "35 7 * * 1-5"
-    - cron: "35 8 * * 1-5"
-    - cron: "5 10 * * 1-5"
-    - cron: "5 11 * * 1-5"
+    - cron: "35 7 * * *"
+    - cron: "35 8 * * *"
+    - cron: "5 10 * * *"
+    - cron: "5 11 * * *"
 
 permissions:
   contents: write
