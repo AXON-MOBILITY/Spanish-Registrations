@@ -1931,9 +1931,15 @@ function renderTrendPct(){
       return t>0?+((cnM[pd]||0)/t*100).toFixed(2):null;
     });
     // Prior-year reference line (same months -1 year)
+    const restData=perM.map(pd=>{
+      const t=totM[pd]||0;
+      return t>0?+((t-(cnM[pd]||0))/t*100).toFixed(2):null;
+    });
     datasets=[
       {label:'Chinese Brands %',data:shareData,borderColor:'#f97316',backgroundColor:'#f9731633',
-       borderWidth:2.5,fill:true,pointRadius:perM.length>60?0:3,tension:.3}
+       borderWidth:2.5,fill:true,pointRadius:perM.length>60?0:3,tension:.3},
+      {label:'Non-Chinese %',data:restData,borderColor:'#60a5fa',backgroundColor:'#60a5fa11',
+       borderWidth:1.5,fill:true,pointRadius:0,tension:.3}
     ];
   } else {
     // YoY: only months where same month prior year exists
