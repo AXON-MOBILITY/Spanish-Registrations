@@ -386,6 +386,12 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="sg-body" id="sb-subs"></div>
     </div>
+    <div class="sg" id="sg-oem">
+      <div class="sg-hdr" onclick="toggleSg('sg-oem')">
+        <span>OEM</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-oem"></div>
+    </div>
     <div class="sg" id="sg-segs">
       <div class="sg-hdr" onclick="toggleSg('sg-segs')">
         <span>Segment <span class="sg-count" id="cnt-segs"></span></span>
@@ -677,6 +683,28 @@ const _BRAND_CONCEPT={
   'Voyah':'NEW PLAYERS & TESLA',
 };
 const CONCEPTS=['TRAD. COMP.','NEW PLAYERS & TESLA'];
+const _CHINESE_BRANDS=new Set([
+  'Aion','Aiways','Arcfox',
+  'Baic','Baw','Baojun','BYD','BydDidi','Byvin',
+  'Changan','Chery',
+  'Dayun','Deepal','Dongfeng','DR',
+  'Ebro',
+  'Faw','Foton Motors','Foton Motor','Funky Cat',
+  'Geely','Great Wall','GWM',
+  'Huanghai',
+  'JAC','Jaecoo','Jetour','Jiyue','JMC',
+  'Leapmotor','Li','Livan','Lotus','Lynk & Co','Lynk & Co.',
+  'Maxus','MG',
+  'Neta','NIO',
+  'Omoda',
+  'Polestar',
+  'Qiantu',
+  'Seres','Shineray','Skywell','Smart',
+  'Tiggo',
+  'VGV','Voyah',
+  'Xpeng',
+  'Zeekr',
+]);
 
 // Lista de EXCLUSIÓN (scope de mercado): carroceros/camperizadores aún no
 // reasignados por la ETL, buses, quads/microcoches y ruido. Todo lo demás se
@@ -723,7 +751,7 @@ let REC=null;
 let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
-  segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),
+  segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
   marca:'',modelo:'',body:''
 };
 const CHARTS={};
@@ -828,28 +856,73 @@ function buildSidebar(){
     g('sb-canales').appendChild(pill);
   });
 
-  // Subsegment
+  // Subsegment — with parent-child logic for FOCUS SEGMENT concepts
   const allSubs=[...E.sub.keys()];
+  const focusIdx=E.sub.indexOf('FOCUS SEGMENT');
+  let focusCbEl=null;        // <input> ref for FOCUS SEGMENT checkbox
+  const conceptCbEls={};     // concept → <input> ref
+
   CONCEPTS.forEach(c=>F.concepts.add(c));
   addQuickSel('sb-subs',
-    ()=>{ allSubs.forEach(i=>F.subs.add(i)); CONCEPTS.forEach(c=>F.concepts.add(c)); g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
-    ()=>{ F.subs.clear(); F.concepts.clear(); g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
+    ()=>{ allSubs.forEach(i=>F.subs.add(i)); CONCEPTS.forEach(c=>F.concepts.add(c));
+          g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
+    ()=>{ F.subs.clear(); F.concepts.clear();
+          g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
   );
   E.sub.forEach((s,i)=>{
     F.subs.add(i);
-    g('sb-subs').appendChild(mkCb(s||'(Todas)',true,on=>{
-      if(on)F.subs.add(i);else F.subs.delete(i);render();
-    }));
+    const el=mkCb(s||'(Todas)',true,on=>{
+      if(on){
+        F.subs.add(i);
+        if(s==='FOCUS SEGMENT'){
+          // Re-enable concept children
+          CONCEPTS.forEach(c=>{ F.concepts.add(c); if(conceptCbEls[c])conceptCbEls[c].checked=true; });
+        }
+      } else {
+        F.subs.delete(i);
+        if(s==='FOCUS SEGMENT'){
+          // Disable concept children
+          F.concepts.clear();
+          CONCEPTS.forEach(c=>{ if(conceptCbEls[c])conceptCbEls[c].checked=false; });
+        }
+      }
+      render();
+    });
+    if(s==='FOCUS SEGMENT') focusCbEl=el.querySelector('input');
+    g('sb-subs').appendChild(el);
   });
   // Sub-concepts within FOCUS SEGMENT (indented)
   CONCEPTS.forEach(c=>{
-    const el=mkCb('   '+c,true,on=>{
-      if(on)F.concepts.add(c);else F.concepts.delete(c);render();
+    const el=mkCb('\u00a0\u00a0\u00a0\u00a0'+c,true,on=>{
+      if(on){
+        F.concepts.add(c);
+        // Auto-activate parent FOCUS SEGMENT if needed
+        if(focusIdx>=0){ F.subs.add(focusIdx); if(focusCbEl)focusCbEl.checked=true; }
+      } else {
+        F.concepts.delete(c);
+        // If no concepts remain, deactivate FOCUS SEGMENT parent
+        if(F.concepts.size===0&&focusIdx>=0){ F.subs.delete(focusIdx); if(focusCbEl)focusCbEl.checked=false; }
+      }
+      render();
     });
+    conceptCbEls[c]=el.querySelector('input');
     el.style.paddingLeft='10px';
     el.style.fontSize='11px';
     el.style.opacity='0.8';
     g('sb-subs').appendChild(el);
+  });
+
+  // OEM filter
+  const OEM_OPTS=[['CHINESE','Chinese Brands'],['REST','Rest']];
+  OEM_OPTS.forEach(([key])=>F.oem.add(key));
+  addQuickSel('sb-oem',
+    ()=>{ OEM_OPTS.forEach(([k])=>F.oem.add(k)); g('sb-oem').querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
+    ()=>{ F.oem.clear(); g('sb-oem').querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
+  );
+  OEM_OPTS.forEach(([key,label])=>{
+    g('sb-oem').appendChild(mkCb(label,true,on=>{
+      if(on)F.oem.add(key);else F.oem.delete(key);render();
+    }));
   });
 
   // Segments — agrupados por etiqueta canónica ('3.UKL2' cuenta como 'UKL2').
@@ -986,6 +1059,11 @@ function applyFiltersBase(){
     if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){
       const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];
       if(bc&&!F.concepts.has(bc))return false;
+    }
+    if(F.oem.size<2){
+      const isChinese=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);
+      if(isChinese&&!F.oem.has('CHINESE'))return false;
+      if(!isChinese&&!F.oem.has('REST'))return false;
     }
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
     if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
@@ -1923,6 +2001,7 @@ function resetFilters(){
   F.canales=new Set(E.canal.map((_,i)=>i));
   F.segs=new Set(E.seg.map((_,i)=>i));
   F.subs=new Set(E.sub.map((_,i)=>i));
+  F.oem=new Set(['CHINESE','REST']);
   CONCEPTS.forEach(c=>F.concepts.add(c));
   F.hps.clear();
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
