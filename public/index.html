@@ -843,7 +843,7 @@ function buildSidebar(){
   });
   // Sub-concepts within FOCUS SEGMENT (indented)
   CONCEPTS.forEach(c=>{
-    const el=mkCb('   '+c,true,on=>{
+    const el=mkCb('   '+c,true,on=>{
       if(on)F.concepts.add(c);else F.concepts.delete(c);render();
     });
     el.style.paddingLeft='10px';
@@ -1885,4 +1885,46 @@ function toggleModelRows(btn,brand){
     const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
     const prev=byMoPrev[mo]||0;
     const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d
+    const yDelta=prev?d.ref-prev:null;
+    const share=brandTotal?d.total/brandTotal*100:0;
+    const sub=document.createElement('tr');
+    sub.className='model-sub';
+    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
+      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
+      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'â€”'}</td>
+      <td>${fP2(share)}</td>`;
+    ins.after(sub);ins=sub;
+  });
+}
+
+function showTab(name){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  g('pane-'+name).classList.add('on');
+  g('tbtn-'+name).classList.add('on');
+  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
+  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
+  // instante y el recalculo llega un frame despues.
+  setTimeout(()=>{
+    if(REC&&(name==='overview'||name==='analisis'))render();
+    if(name==='prov'&&PROV)renderProv();
+    if(name==='trend'&&TREND)renderTrend();
+    if(name==='forecast'&&FC)renderForecast();
+  },40);
+}
+
+function resetFilters(){
+  const E=REC.enums;
+  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
+  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
+  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
+  F.fuels=new Set(E.fuel.map((_,i)=>i));
+  F.canales=new Set(E.canal.map((_,i)=>i));
+  F.segs=new Set(E.seg.map((_,i)=>i));
+  F.subs=new Set(E.sub.map((_,i)=>i));
+  CONCEPTS.forEach(c=>F.concepts.add(c));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body=''
