@@ -6,6 +6,11 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202605,INFO,INVALID_ITV_SCOPE_EXCLUDED,JAGUAR,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=SAJBP4FX1M; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
 202605,INFO,INVALID_ITV_SCOPE_EXCLUDED,DAIMLER,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=WDD2040071; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
 202605,INFO,INVALID_ITV_SCOPE_EXCLUDED,FERRARI,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=3CMB00; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+202605,INFO,ITV_QUALITY_SUSPECT,JEEP,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=1C4RJXSJ2S; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202605,INFO,ITV_QUALITY_SUSPECT,CADILLAC,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=1GYS98KL5T; ficha ITV con MMA invalida pendiente de revision (homologacion=M1G, mma=0)"
+202605,INFO,ITV_QUALITY_SUSPECT,DR.ING HCF PORSCHE,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WP1ZZZ9YZL; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202605,INFO,ITV_QUALITY_SUSPECT,MERCEDES,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=049841; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202605,INFO,ITV_QUALITY_SUSPECT,AUDI,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=TX9; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202605,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,104,100,pool_b00d_private=1113; rate=0.0939
 202605,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,117,100,pool_b00d_private=1459; rate=0.0802
 202605,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,166,100,pool_b00d_private=2899; rate=0.0573

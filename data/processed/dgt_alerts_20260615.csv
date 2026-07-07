@@ -1,3 +1,5 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 20260615,INFO,INVALID_ITV_SCOPE_EXCLUDED,BMW,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=1020; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
 20260615,INFO,INVALID_ITV_SCOPE_EXCLUDED,MINI,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=WMWRE31010; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+20260615,INFO,ITV_QUALITY_SUSPECT,MINI,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WMWZD31010; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+20260615,INFO,ITV_QUALITY_SUSPECT,AUDI,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WAUZZZ8V9K; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"

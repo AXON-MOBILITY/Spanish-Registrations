@@ -189,6 +189,11 @@ def _has_useful_itv_tech_code(line_s):
             return True
     return False
 
+def _has_known_itv_variant(line_s, marca):
+    sbrand = _BRAND_NORM.get(marca, marca)
+    va = line_s[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
+    return bool(va and _EEA_LOOKUP.get((sbrand, va)))
+
 def invalid_itv_scope_reason(line_s, marca, canal, servicio, persona, renting):
     """Devuelve motivo si un registro DGT tiene ficha ITV no explotable."""
     if _has_useful_itv_tech_code(line_s):
@@ -201,6 +206,21 @@ def invalid_itv_scope_reason(line_s, marca, canal, servicio, persona, renting):
     if fabricante in ('', '-', 'ND'):
         details.append('fabricante={}'.format(fabricante or 'vacio'))
     return 'ficha ITV sin codigos tipo/variante/version utiles ({})'.format(', '.join(details))
+
+def itv_quality_warning_reason(line_s, marca):
+    """Devuelve motivo no bloqueante para registros tecnicamente sospechosos."""
+    mma_s = line_s[F_MMA[0]:F_MMA[1]].strip()
+    homol = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
+    if not homol.startswith(('M1', 'N1')):
+        return ''
+    if mma_s and mma_s.isdigit() and int(mma_s) > 0:
+        return ''
+    if _has_known_itv_variant(line_s, marca):
+        return ''
+    return 'ficha ITV con MMA invalida pendiente de revision (homologacion={}, mma={})'.format(
+        homol or 'vacio',
+        mma_s or 'vacio',
+    )
 
 # ── Regla carroceros/camperizadores → marca del chasis (metodología Simmix) ──
 # Simmix atribuye los vehículos carrozados/camperizados a la marca y modelo del
@@ -1584,6 +1604,7 @@ def process_lines(lines_iter):
     km0_fallback_pool = collections.Counter()
     carrocero_unmapped_pool = collections.Counter()
     invalid_scope_pool = collections.Counter()
+    itv_quality_pool = collections.Counter()
     alerts = []
     for raw in lines_iter:
         line = raw.rstrip(b'\r\n')
@@ -1624,6 +1645,9 @@ def process_lines(lines_iter):
         if invalid_reason:
             invalid_scope_pool[(marca, canal, visible_dgt_vin10(line_s), invalid_reason)] += 1
             continue
+        itv_warning = itv_quality_warning_reason(line_s, marca)
+        if itv_warning:
+            itv_quality_pool[(marca, canal, visible_dgt_vin10(line_s), itv_warning)] += 1
         fuel_code = get_fuel_type_code(line_s)
         cod_prov  = mun[:2].strip()
         # Enriquecimiento: obtener modelo canónico y dimensiones de segmento
@@ -1663,6 +1687,18 @@ def process_lines(lines_iter):
             marca=marca,
             canal=canal,
             metric='registros_excluidos_ficha_itv_invalida',
+            value=n,
+            threshold=1,
+            detail='vin10={}; {}'.format(vin10, reason),
+        ))
+
+    for (marca, canal, vin10, reason), n in itv_quality_pool.items():
+        alerts.append(make_alert(
+            'INFO',
+            'ITV_QUALITY_SUSPECT',
+            marca=marca,
+            canal=canal,
+            metric='registros_ficha_itv_sospechosa_no_excluidos',
             value=n,
             threshold=1,
             detail='vin10={}; {}'.format(vin10, reason),

@@ -1,2 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 20260602,INFO,INVALID_ITV_SCOPE_EXCLUDED,VOLKSWAGEN,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WVWZZZAUZE; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+20260602,INFO,ITV_QUALITY_SUSPECT,MOKE INTERNATIONAL LTD,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=SD8EV1UK7S; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+20260602,INFO,ITV_QUALITY_SUSPECT,MOKE INTERNATIONAL LTD,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=SD8EV1UK2S; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"

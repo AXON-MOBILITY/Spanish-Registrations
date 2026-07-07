@@ -1,3 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 20260706,INFO,INVALID_ITV_SCOPE_EXCLUDED,VOLKSWAGEN,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WVWZZZAUZE; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
 20260706,INFO,INVALID_ITV_SCOPE_EXCLUDED,"VOLKSWAGEN, VW",Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=PZD; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+20260706,INFO,ITV_QUALITY_SUSPECT,BMW,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WBAUY11090; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"

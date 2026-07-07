@@ -7,6 +7,9 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202601,INFO,INVALID_ITV_SCOPE_EXCLUDED,NISSAN,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=2U1; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
 202601,INFO,INVALID_ITV_SCOPE_EXCLUDED,PEUGEOT,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=VF37JHNZ6H; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
 202601,INFO,INVALID_ITV_SCOPE_EXCLUDED,VOLKSWAGEN BEETLE,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WVGZZZ1TZK; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202601,INFO,ITV_QUALITY_SUSPECT,"VOLKSWAGEN, VW",Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202601,INFO,ITV_QUALITY_SUSPECT,BMW,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WBAJN91080; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202601,INFO,ITV_QUALITY_SUSPECT,MERCEDES,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WDF4478131; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202601,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,158,100,pool_b00d_private=2756; rate=0.0573
 202601,WARN,CHANNEL_DRIFT,BMW,Private,count_vs_same_month_history,-298,+/-250 and +/-25%,"actual=577; media_mismo_mes=875.3; historico=595,1238,793; rel=-34.1%"
 202601,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,634,+/-250 and +/-25%,"actual=751; media_mismo_mes=117.0; historico=22,212; rel=+541.9%"

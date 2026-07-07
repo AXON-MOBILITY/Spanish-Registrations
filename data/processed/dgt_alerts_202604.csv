@@ -5,6 +5,10 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202604,INFO,CARROCERO_UNMAPPED,BERGADANA,,registros_carrocero_sin_chasis_detectado,79,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
 202604,INFO,INVALID_ITV_SCOPE_EXCLUDED,MERCEDES,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WDD1760011; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
 202604,INFO,INVALID_ITV_SCOPE_EXCLUDED,BMW,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WBAMX11020; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202604,INFO,ITV_QUALITY_SUSPECT,ROLLS-ROYCE,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=SCATK4104T; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202604,INFO,ITV_QUALITY_SUSPECT,MITSUBISHI,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=JMBXNCW4WB; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202604,INFO,ITV_QUALITY_SUSPECT,ISUZU,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=MPATFR87JP; ficha ITV con MMA invalida pendiente de revision (homologacion=N1, mma=0)"
+202604,INFO,ITV_QUALITY_SUSPECT,AUDI,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WAUZZZ8V2H; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202604,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,100,100,pool_b00d_private=1244; rate=0.0802
 202604,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,107,100,pool_b00d_private=1141; rate=0.0939
 202604,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,167,100,pool_b00d_private=2919; rate=0.0573

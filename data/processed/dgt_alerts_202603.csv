@@ -6,6 +6,12 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202603,INFO,INVALID_ITV_SCOPE_EXCLUDED,ASTON MARTIN,Corporate,registros_excluidos_ficha_itv_invalida,1,1,vin10=SCFUMCHV6T; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
 202603,INFO,INVALID_ITV_SCOPE_EXCLUDED,BMW,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WBA21GE0X0; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
 202603,INFO,INVALID_ITV_SCOPE_EXCLUDED,SKODA,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=TMBJY46Y13; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202603,INFO,ITV_QUALITY_SUSPECT,MERCEDES,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WDD2462431; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202603,INFO,ITV_QUALITY_SUSPECT,SKODA,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=TMBKT61Z8C; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202603,INFO,ITV_QUALITY_SUSPECT,CITROEN,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=VF7YC2MFB1; ficha ITV con MMA invalida pendiente de revision (homologacion=N1, mma=0)"
+202603,INFO,ITV_QUALITY_SUSPECT,MERCEDES,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WDD2073031; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202603,INFO,ITV_QUALITY_SUSPECT,FIAT,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=ZFA250008S; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202603,INFO,ITV_QUALITY_SUSPECT,VOLKSWAGEN V W,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=NZC; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202603,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,110,100,pool_b00d_private=1370; rate=0.0802
 202603,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,122,100,pool_b00d_private=1304; rate=0.0939
 202603,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,190,100,pool_b00d_private=3307; rate=0.0573

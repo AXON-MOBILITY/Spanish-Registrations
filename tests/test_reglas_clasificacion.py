@@ -77,17 +77,25 @@ def _scope_line(
     renting='N',
     mun='99999',
     plazas='0',
+    mma='002000',
+    homol='M1',
     tech='',
+    variante='',
     fabricante='ND',
 ):
     line = [' '] * 714
     line[pm.F_MODELO[0]:110] = list(modelo_itv[:63].ljust(63))
     line[pm.F_PLAZAS[0]:pm.F_PLAZAS[1]] = list(plazas[:1])
+    line[pm.F_MMA[0]:pm.F_MMA[1]] = list(mma[:6].rjust(6))
+    line[pm.F_HOMOLOGACION[0]:pm.F_HOMOLOGACION[1]] = list(homol[:4].ljust(4))
     line[pm.F_SERVICIO[0]:pm.F_SERVICIO[1]] = list(servicio[:3].ljust(3))
     line[pm.F_PERSONA_FJ[0]:pm.F_PERSONA_FJ[1]] = list(persona[:1])
     line[pm.F_RENTING[0]:pm.F_RENTING[1]] = list(renting[:1])
     line[pm.F_MUNICIPIO[0]:pm.F_MUNICIPIO[1]] = list(mun[:5].ljust(5))
     line[250:330] = list(tech[:80].ljust(80))
+    if variante:
+        width = pm.F_VARIANTE_ITV[1] - pm.F_VARIANTE_ITV[0]
+        line[pm.F_VARIANTE_ITV[0]:pm.F_VARIANTE_ITV[1]] = list(variante[:width].ljust(width))
     line[330:390] = list(fabricante[:60].ljust(60))
     return ''.join(line)
 
@@ -131,6 +139,36 @@ def test_bmw_version_confirmada_por_eplate_no_se_excluye():
     assert not pm.invalid_itv_scope_reason(
         line, 'BMW', 'Private', 'B00', 'D', 'N'
     )
+
+def test_ficha_itv_m1_con_mma_cero_genera_alerta_no_bloqueante():
+    line = _scope_line(
+        '320D                  3WBAUY11090***********400',
+        plazas='5',
+        mma='0',
+        tech='UY11                     FAA500L0',
+        variante='UY11',
+        fabricante='BAYERISCHE MOTOREN WERKE AG',
+    )
+    assert not pm.invalid_itv_scope_reason(
+        line, 'BMW', 'Private', 'B00', 'D', 'N'
+    )
+    reason = pm.itv_quality_warning_reason(line, 'BMW')
+    assert 'MMA invalida' in reason
+
+def test_ficha_itv_m1_con_mma_cero_y_variante_conocida_no_se_excluye(monkeypatch):
+    monkeypatch.setitem(pm._EEA_LOOKUP, ('BMW', '21GM'), 'X2 SDRIVE20I')
+    line = _scope_line(
+        'X2 SDRIVE20I          3WBA21GM010***********400',
+        plazas='5',
+        mma='0',
+        tech='21GM                     FAV508L0',
+        variante='21GM',
+        fabricante='BAYERISCHE MOTOREN WERKE AG',
+    )
+    assert not pm.invalid_itv_scope_reason(
+        line, 'BMW', 'Private', 'B00', 'D', 'N'
+    )
+    assert not pm.itv_quality_warning_reason(line, 'BMW')
 
 def test_eea_bmw_118d_cae_a_serie_1_si_existe_modelo_canonico(monkeypatch):
     line = _scope_line('118D                  3WBA11GF')
