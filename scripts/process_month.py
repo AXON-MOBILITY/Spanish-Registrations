@@ -161,6 +161,45 @@ def is_excluded_scope(marca_raw, marca, modelo):
     excl = EXCLUIR_MARCA_MODELO.get(m)
     return bool(excl and any(token in mo for token in excl))
 
+def visible_dgt_vin10(line_s):
+    """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
+    m = re.search(r'([0-9][A-Z0-9*]{9,24})', line_s[47:110])
+    if not m:
+        return ''
+    token = m.group(1)
+    if len(token) < 11 or not token[0].isdigit():
+        return ''
+    return token[1:11].replace('*', '').upper()
+
+_TECH_CODE_NOISE = {
+    'BMW', 'GMBH', 'BAYERISCHE', 'MOTOREN', 'WERKE', 'AG', 'ND',
+    'SA', 'SAS', 'SL', 'AUTO', 'AUTOMOBILES', 'AUTOMOBILI',
+}
+
+def _has_useful_itv_tech_code(line_s):
+    """True si el area tipo/variante/version contiene codigos homologados utiles."""
+    tech_area = line_s[250:330].upper()
+    tokens = re.findall(r'[A-Z0-9]{3,}', tech_area)
+    for token in tokens:
+        if token in _TECH_CODE_NOISE:
+            continue
+        if len(token) >= 4 and re.search(r'[A-Z]', token) and re.search(r'\d', token):
+            return True
+    return False
+
+def invalid_itv_scope_reason(line_s, marca, canal, servicio, persona, renting):
+    """Devuelve motivo si un registro DGT tiene ficha ITV no explotable."""
+    if _has_useful_itv_tech_code(line_s):
+        return ''
+    plazas_s = line_s[F_PLAZAS[0]:F_PLAZAS[1]].strip()
+    if plazas_s not in ('', '0'):
+        return ''
+    fabricante = line_s[330:390].strip().upper()
+    details = ['plazas={}'.format(plazas_s or 'vacio')]
+    if fabricante in ('', '-', 'ND'):
+        details.append('fabricante={}'.format(fabricante or 'vacio'))
+    return 'ficha ITV sin codigos tipo/variante/version utiles ({})'.format(', '.join(details))
+
 
 # ── Regla carroceros/camperizadores → marca del chasis (metodología Simmix) ──
 # Simmix atribuye los vehículos carrozados/camperizados a la marca y modelo del
@@ -1465,6 +1504,7 @@ def process_lines(lines_iter):
     prov_counts = collections.Counter()
     km0_fallback_pool = collections.Counter()
     carrocero_unmapped_pool = collections.Counter()
+    invalid_scope_pool = collections.Counter()
     alerts = []
     for raw in lines_iter:
         line = raw.rstrip(b'\r\n')
@@ -1499,6 +1539,12 @@ def process_lines(lines_iter):
         renting   = line_s[F_RENTING[0]:F_RENTING[1]]
         mun       = line_s[F_MUNICIPIO[0]:F_MUNICIPIO[1]]
         canal     = classify(servicio, persona, renting, mun, marca)
+        invalid_reason = invalid_itv_scope_reason(
+            line_s, marca, canal, servicio, persona, renting
+        )
+        if invalid_reason:
+            invalid_scope_pool[(marca, canal, visible_dgt_vin10(line_s), invalid_reason)] += 1
+            continue
         fuel_code = get_fuel_type_code(line_s)
         cod_prov  = mun[:2].strip()
         # Enriquecimiento: obtener modelo canónico y dimensiones de segmento
@@ -1529,6 +1575,17 @@ def process_lines(lines_iter):
                 detail='ampliar _CHASSIS_RULES o CARROCERO_BRANDS',
             ))
 
+    for (marca, canal, vin10, reason), n in invalid_scope_pool.items():
+        alerts.append(make_alert(
+            'INFO',
+            'INVALID_ITV_SCOPE_EXCLUDED',
+            marca=marca,
+            canal=canal,
+            metric='registros_excluidos_ficha_itv_invalida',
+            value=n,
+            threshold=1,
+            detail='vin10={}; {}'.format(vin10, reason),
+        ))
 
     for marca, n in km0_fallback_pool.items():
         rate = KM0_BRAND_FALLBACK_RATE[km0_rate_brand(marca)]
