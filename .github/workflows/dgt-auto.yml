@@ -20,12 +20,11 @@ on:
           - "true"
           - "false"
   schedule:
-    # GitHub Actions usa UTC. Ejecutamos varias ventanas para cubrir CET/CEST
-    # y el retraso habitual de algunos lunes de la tercera semana.
-    - cron: "35 7 * * 1-5"
-    - cron: "35 8 * * 1-5"
-    - cron: "5 10 * * 1-5"
-    - cron: "5 11 * * 1-5"
+    # GitHub Actions usa UTC. La DGT publica con horario variable y los
+    # schedules de GitHub pueden retrasarse o saltarse; dejamos varias ventanas
+    # horarias sin hacer polling excesivo. En schedule no usamos --force, asi
+    # que si no hay fichero nuevo termina sin commit tras saltar los ya procesados.
+    - cron: "15 7-12,14,16 * * *"
 
 permissions:
   contents: write
@@ -66,7 +65,7 @@ jobs:
         run: |
           set -euo pipefail
           MODE="${{ inputs.mode || 'auto' }}"
-          FORCE="${{ inputs.force || 'true' }}"
+          FORCE="${{ inputs.force || 'false' }}"
           FORCE_FLAG=""
           if [ "$FORCE" = "true" ]; then FORCE_FLAG="--force"; fi
           if [ "$MODE" = "all" ]; then
@@ -76,6 +75,26 @@ jobs:
             echo "Modo: auto (diario + mensual 2026)"
             python scripts/process_month.py auto $FORCE_FLAG
           fi
+
+      - name: Verify latest DGT daily was processed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import sys
+          sys.path.insert(0, "scripts")
+          import process_month as pm
+
+          links = pm.discover_daily_links()
+          if not links:
+              raise SystemExit("No se encontraron enlaces diarios DGT")
+          latest = links[-1][0]
+          path = os.path.join("data", "processed", f"dgt_canal_daily_{latest}.csv")
+          if not os.path.exists(path) or os.path.getsize(path) == 0:
+              raise SystemExit(f"DGT publico {latest}, pero no se genero {path}")
+          print(f"Ultimo diario DGT procesado: {latest} ({path})")
+          PY
 
       - name: Build dashboard data
         shell: bash

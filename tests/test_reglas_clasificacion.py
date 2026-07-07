@@ -64,6 +64,68 @@ def test_marca_normal_no_se_toca():
     marca, modelo, unmapped = pm.reassign_carrocero('BMW', 'TRANSIT')  # nombre casual
     assert (marca, modelo, unmapped) == ('BMW', 'TRANSIT', False)
 
+def _scope_line(
+    modelo_itv,
+    servicio='B00',
+    persona='D',
+    renting='N',
+    mun='99999',
+    plazas='0',
+    tech='',
+    fabricante='ND',
+):
+    line = [' '] * 714
+    line[pm.F_MODELO[0]:110] = list(modelo_itv[:63].ljust(63))
+    line[pm.F_PLAZAS[0]:pm.F_PLAZAS[1]] = list(plazas[:1])
+    line[pm.F_SERVICIO[0]:pm.F_SERVICIO[1]] = list(servicio[:3].ljust(3))
+    line[pm.F_PERSONA_FJ[0]:pm.F_PERSONA_FJ[1]] = list(persona[:1])
+    line[pm.F_RENTING[0]:pm.F_RENTING[1]] = list(renting[:1])
+    line[pm.F_MUNICIPIO[0]:pm.F_MUNICIPIO[1]] = list(mun[:5].ljust(5))
+    line[250:330] = list(tech[:80].ljust(80))
+    line[330:390] = list(fabricante[:60].ljust(60))
+    return ''.join(line)
+
+def test_ficha_itv_incompleta_se_excluye_en_cualquier_canal():
+    line = _scope_line('BMW 318D              3WBAUX11060***********400')
+    assert pm.visible_dgt_vin10(line) == 'WBAUX11060'
+    reason = pm.invalid_itv_scope_reason(
+        line, 'BMW', 'Private', 'B00', 'D', 'N'
+    )
+    assert 'sin codigos' in reason
+
+def test_ficha_itv_incompleta_tambien_excluye_corporate():
+    line = _scope_line('X3                    3WBAPA91060***********401', persona='X')
+    assert pm.visible_dgt_vin10(line) == 'WBAPA91060'
+    reason = pm.invalid_itv_scope_reason(
+        line, 'BMW', 'Corporate', 'B00', 'X', 'N'
+    )
+    assert 'sin codigos' in reason
+
+def test_ficha_sin_codigo_itv_con_plazas_validas_no_se_excluye():
+    line = _scope_line(
+        'X1                    1WBXJG9C01M***********400',
+        persona='X',
+        plazas='5',
+        tech='N                                         TURISMO                  ---',
+        fabricante='ND',
+    )
+    assert pm.visible_dgt_vin10(line) == 'WBXJG9C01M'
+    assert not pm.invalid_itv_scope_reason(
+        line, 'BMW', 'Corporate', 'B00', 'X', 'N'
+    )
+
+def test_bmw_version_confirmada_por_eplate_no_se_excluye():
+    line = _scope_line(
+        'X2 SDRIVE20I          3WBA21GM010***********400',
+        plazas='5',
+        tech='21GM                     FAV508L0',
+        fabricante='BAYERISCHE MOTOREN WERKE AG',
+    )
+    assert pm.visible_dgt_vin10(line) == 'WBA21GM010'
+    assert not pm.invalid_itv_scope_reason(
+        line, 'BMW', 'Private', 'B00', 'D', 'N'
+    )
+
 
 # ── Rescate N2 de derivados de furgoneta ────────────────────────────────────
 

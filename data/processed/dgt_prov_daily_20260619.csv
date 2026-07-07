@@ -13,7 +13,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,TOYOTA,01,Álava,Private,BEV,2
 2026,06,19,TOYOTA,01,Álava,Private,ICE,1
 2026,06,19,AUDI,02,Albacete,Private,ICE,1
-2026,06,19,CODETRANS,02,Albacete,Corporate,ICE,1
 2026,06,19,CUPRA,02,Albacete,Corporate,ICE,1
 2026,06,19,DACIA,02,Albacete,Private,ICE,1
 2026,06,19,EVO,02,Albacete,Private,ICE,1
@@ -28,6 +27,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,PEUGEOT,02,Albacete,Private,ICE,2
 2026,06,19,RENAULT,02,Albacete,Corporate,ICE,2
 2026,06,19,RENAULT,02,Albacete,Private,ICE,1
+2026,06,19,RENAULT TRUCKS,02,Albacete,Corporate,ICE,1
 2026,06,19,TOYOTA,02,Albacete,Private,ICE,3
 2026,06,19,VOLKSWAGEN,02,Albacete,Private,ICE,2
 2026,06,19,AUDI,03,Alicante,Private,PHEV,3
@@ -231,7 +231,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,EBRO,08,Barcelona,Private,ICE,7
 2026,06,19,EBRO,08,Barcelona,Private,PHEV,4
 2026,06,19,EQUIPFRED,08,Barcelona,RAC,ICE,1
-2026,06,19,ERKE,08,Barcelona,Corporate,BEV,1
 2026,06,19,EVO,08,Barcelona,Private,ICE,1
 2026,06,19,FERRARI,08,Barcelona,Private,PHEV,1
 2026,06,19,FIAT,08,Barcelona,Private,ICE,3
@@ -282,6 +281,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,OPEL,08,Barcelona,Corporate,ICE,1
 2026,06,19,OPEL,08,Barcelona,Private,BEV,1
 2026,06,19,OPEL,08,Barcelona,Private,ICE,1
+2026,06,19,PEUGEOT,08,Barcelona,Corporate,BEV,1
 2026,06,19,PEUGEOT,08,Barcelona,Corporate,ICE,15
 2026,06,19,PEUGEOT,08,Barcelona,Private,ICE,10
 2026,06,19,POLESTAR,08,Barcelona,Private,BEV,1
@@ -472,7 +472,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,BMW,15,A Coruña,Private,BEV,1
 2026,06,19,BMW,15,A Coruña,Private,ICE,4
 2026,06,19,BYD,15,A Coruña,Private,BEV,4
-2026,06,19,"CARROCERIAS SANCA, S.A.",15,A Coruña,Corporate,ICE,1
 2026,06,19,CUPRA,15,A Coruña,Private,BEV,1
 2026,06,19,DACIA,15,A Coruña,Private,ICE,5
 2026,06,19,HONDA,15,A Coruña,Private,ICE,2
@@ -494,7 +493,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,RENAULT,15,A Coruña,Private,BEV,2
 2026,06,19,RENAULT,15,A Coruña,Private,ICE,1
 2026,06,19,TESLA,15,A Coruña,Private,BEV,5
-2026,06,19,TOYOTA,15,A Coruña,Corporate,ICE,5
+2026,06,19,TOYOTA,15,A Coruña,Corporate,ICE,6
 2026,06,19,TOYOTA,15,A Coruña,Private,ICE,6
 2026,06,19,TOYOTA,15,A Coruña,Private,PHEV,1
 2026,06,19,VOLKSWAGEN,15,A Coruña,Private,ICE,2
@@ -794,7 +793,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,CARROCERIAS JANKAR,28,Madrid,Corporate,ICE,1
 2026,06,19,CHANGAN,28,Madrid,Private,BEV,1
 2026,06,19,CITROEN,28,Madrid,Corporate,BEV,2
-2026,06,19,CITROEN,28,Madrid,Corporate,ICE,86
+2026,06,19,CITROEN,28,Madrid,Corporate,ICE,88
 2026,06,19,CITROEN,28,Madrid,Private,BEV,3
 2026,06,19,CITROEN,28,Madrid,Private,ICE,6
 2026,06,19,CITROEN,28,Madrid,RAC,ICE,43
@@ -819,7 +818,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,FIAT,28,Madrid,Corporate,ICE,24
 2026,06,19,FIAT,28,Madrid,RAC,ICE,1
 2026,06,19,FORD,28,Madrid,Corporate,BEV,7
-2026,06,19,FORD,28,Madrid,Corporate,ICE,62
+2026,06,19,FORD,28,Madrid,Corporate,ICE,75
 2026,06,19,FORD,28,Madrid,Corporate,PHEV,11
 2026,06,19,FORD,28,Madrid,Private,BEV,1
 2026,06,19,FORD,28,Madrid,Private,ICE,8
@@ -834,7 +833,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,HYUNDAI,28,Madrid,Private,BEV,1
 2026,06,19,HYUNDAI,28,Madrid,Private,ICE,21
 2026,06,19,HYUNDAI,28,Madrid,Private,PHEV,4
-2026,06,19,IGLUVAN,28,Madrid,Corporate,ICE,2
 2026,06,19,INEOS,28,Madrid,Corporate,ICE,2
 2026,06,19,IVECO,28,Madrid,Corporate,ICE,5
 2026,06,19,JAECOO,28,Madrid,Corporate,ICE,3
@@ -919,7 +917,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,PORSCHE,28,Madrid,Corporate,PHEV,2
 2026,06,19,PORSCHE,28,Madrid,Private,BEV,1
 2026,06,19,PORSCHE,28,Madrid,Private,PHEV,1
-2026,06,19,RECAPOL,28,Madrid,Corporate,ICE,2
 2026,06,19,REHATRANS,28,Madrid,Corporate,ICE,2
 2026,06,19,RENAULT,28,Madrid,Corporate,BEV,34
 2026,06,19,RENAULT,28,Madrid,Corporate,ICE,101
@@ -929,6 +926,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,RENAULT,28,Madrid,Private,PHEV,2
 2026,06,19,RENAULT,28,Madrid,RAC,BEV,30
 2026,06,19,RENAULT,28,Madrid,RAC,ICE,41
+2026,06,19,RENAULT TRUCKS,28,Madrid,Corporate,ICE,2
 2026,06,19,SEAT,28,Madrid,Corporate,ICE,113
 2026,06,19,SEAT,28,Madrid,Private,ICE,7
 2026,06,19,SEAT,28,Madrid,RAC,ICE,78
@@ -938,7 +936,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,SKODA,28,Madrid,Private,ICE,7
 2026,06,19,SKODA,28,Madrid,Private,PHEV,1
 2026,06,19,SKODA,28,Madrid,RAC,ICE,30
-2026,06,19,SORTIMO,28,Madrid,Corporate,ICE,13
 2026,06,19,SUBARU,28,Madrid,Corporate,ICE,1
 2026,06,19,SUBARU,28,Madrid,Private,ICE,1
 2026,06,19,SUZUKI,28,Madrid,Corporate,BEV,1
@@ -998,8 +995,8 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,LEXUS,29,Málaga,Corporate,PHEV,1
 2026,06,19,MAN,29,Málaga,Corporate,ICE,1
 2026,06,19,MAZDA,29,Málaga,Private,ICE,2
-2026,06,19,MEBAUTO,29,Málaga,Private,ICE,1
 2026,06,19,MERCEDES,29,Málaga,Corporate,ICE,3
+2026,06,19,MERCEDES,29,Málaga,Private,ICE,1
 2026,06,19,MERCEDES,29,Málaga,Private,PHEV,1
 2026,06,19,MG,29,Málaga,Private,ICE,9
 2026,06,19,MINI,29,Málaga,Private,BEV,1
@@ -1137,7 +1134,6 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,EBRO,33,Asturias,Private,PHEV,1
 2026,06,19,FORD,33,Asturias,Corporate,ICE,1
 2026,06,19,HONDA,33,Asturias,Private,PHEV,1
-2026,06,19,IGLUVAN,33,Asturias,Corporate,ICE,1
 2026,06,19,KIA,33,Asturias,Corporate,ICE,12
 2026,06,19,KIA,33,Asturias,Private,BEV,1
 2026,06,19,MAZDA,33,Asturias,Private,ICE,2
@@ -1152,6 +1148,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,RENAULT,33,Asturias,Corporate,ICE,2
 2026,06,19,RENAULT,33,Asturias,Private,ICE,4
 2026,06,19,RENAULT,33,Asturias,Private,PHEV,1
+2026,06,19,RENAULT TRUCKS,33,Asturias,Corporate,ICE,1
 2026,06,19,SEAT,33,Asturias,Corporate,ICE,1
 2026,06,19,SEAT,33,Asturias,Private,ICE,1
 2026,06,19,SKODA,33,Asturias,Private,BEV,2
@@ -1183,8 +1180,7 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,DACIA,35,Las Palmas,Private,ICE,8
 2026,06,19,DR,35,Las Palmas,Corporate,ICE,1
 2026,06,19,EBRO,35,Las Palmas,Private,PHEV,2
-2026,06,19,ERKE,35,Las Palmas,Corporate,ICE,1
-2026,06,19,FORD,35,Las Palmas,Corporate,ICE,1
+2026,06,19,FORD,35,Las Palmas,Corporate,ICE,2
 2026,06,19,FORD,35,Las Palmas,Private,PHEV,2
 2026,06,19,GIOTTILINE,35,Las Palmas,Corporate,ICE,2
 2026,06,19,HONDA,35,Las Palmas,Private,ICE,2
@@ -1520,9 +1516,9 @@ anyo,mes,dia,marca,cod_prov,provincia,canal,fuel_type,count
 2026,06,19,LEAPMOTOR,46,Valencia,Private,BEV,3
 2026,06,19,LEXUS,46,Valencia,Private,ICE,2
 2026,06,19,LEXUS,46,Valencia,Private,PHEV,2
+2026,06,19,MAN,46,Valencia,Corporate,ICE,1
 2026,06,19,MAXUS,46,Valencia,Corporate,ICE,1
 2026,06,19,MAZDA,46,Valencia,Private,ICE,3
-2026,06,19,MEBAUTO,46,Valencia,Corporate,ICE,1
 2026,06,19,MERCEDES,46,Valencia,Private,BEV,1
 2026,06,19,MG,46,Valencia,Private,ICE,2
 2026,06,19,MG,46,Valencia,Private,PHEV,1
