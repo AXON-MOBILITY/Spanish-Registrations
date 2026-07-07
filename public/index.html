@@ -804,7 +804,9 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   buildTopFilters();
   render();
 });
+let LAST_COMPLETED_MONTH=null;
 fetch('data/meta.json?v='+Date.now()).then(r=>r.json()).then(m=>{
+  if(m.last_completed_month)LAST_COMPLETED_MONTH=m.last_completed_month;
   if(m.updated){
     const [y,mo,d]=m.updated.split('-');
     g('hdr-updated').textContent=d+'/'+mo+'/'+y;
@@ -1908,8 +1910,10 @@ function renderTrend(){
 
   renderTrendPct(totM,cnM);
 
-  // KPI cards — YoY % for most recent month with prior year data
+  // KPI cards — use last COMPLETED month (not MTD) for fair YoY comparison
+  const kpiCeil=LAST_COMPLETED_MONTH||TR.months[TR.months.length-2]||TR.months[TR.months.length-1];
   const kpiMonths=TR.months.filter(pd=>{
+    if(pd>kpiCeil)return false;
     const prev=(parseInt(pd.slice(0,4),10)-1)+pd.slice(4);
     return (totM[prev]||0)>0;
   });
@@ -1992,7 +1996,9 @@ function renderTrendPct(totM,cnM){
     ];
   } else {
     // YoY: only months where same month prior year exists
+    const yoyCeil=LAST_COMPLETED_MONTH||perM[perM.length-2]||perM[perM.length-1];
     const yoyM=perM.filter(pd=>{
+      if(pd>yoyCeil)return false;
       const prev=(parseInt(pd.slice(0,4),10)-1)+pd.slice(4);
       return totM[prev]>0;
     });
