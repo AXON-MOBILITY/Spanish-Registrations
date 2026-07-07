@@ -1897,41 +1897,47 @@ function renderTrend(){
     });
   }
   trDrawLine('ch-trend-d',perD.map(x=>x.slice(8)+'/'+x.slice(5,7)),[...mktSeriesD,...trSeries(perD,(m,pd)=>dVal(m,pd))]);
-  renderTrendPct();
+
+  // Compute totM/cnM here (shared by KPI cards + renderTrendPct)
+  const totM={},cnM={};
+  applyFiltersBase().forEach(r=>{
+    const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
+    totM[k]=(totM[k]||0)+r[COL.N];
+    if(_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]))cnM[k]=(cnM[k]||0)+r[COL.N];
+  });
+
+  renderTrendPct(totM,cnM);
 
   // KPI cards — YoY % for most recent month with prior year data
-  (()=>{
-    const allM=TR.months.filter(pd=>{
-      const prev=(parseInt(pd.slice(0,4),10)-1)+pd.slice(4);
-      return (totM[prev]||0)>0;
-    });
-    if(!allM.length)return;
-    const last=allM[allM.length-1];
+  const kpiMonths=TR.months.filter(pd=>{
+    const prev=(parseInt(pd.slice(0,4),10)-1)+pd.slice(4);
+    return (totM[prev]||0)>0;
+  });
+  if(kpiMonths.length){
+    const last=kpiMonths[kpiMonths.length-1];
     const prev=(parseInt(last.slice(0,4),10)-1)+last.slice(4);
     const cnCur=cnM[last]||0, cnPre=cnM[prev]||0;
     const totCur=totM[last]||0, totPre=totM[prev]||0;
     const ncCur=totCur-cnCur, ncPre=totPre-cnPre;
     const pct=(cur,pre)=>pre>0?((cur-pre)/pre*100):null;
-    const fmt=(v)=>v!==null?(v>=0?'+':'')+v.toFixed(1)+'%':'—';
+    const fmt=v=>v!==null?(v>=0?'+':'')+v.toFixed(1)+'%':'—';
     const lbl=MES3[parseInt(last.slice(5),10)-1]+'-'+last.slice(2,4);
     const cnYoy=pct(cnCur,cnPre), ncYoy=pct(ncCur,ncPre);
     g('tr-kpi-cn-val').textContent=fmt(cnYoy);
     g('tr-kpi-cn-val').className='stat-val '+(cnYoy>=0?'pos':'neg');
-    g('tr-kpi-cn-val').style.fontSize='22px';
-    g('tr-kpi-cn-val').style.color='#f97316';
+    g('tr-kpi-cn-val').style.cssText='font-size:22px;color:#f97316';
     g('tr-kpi-cn-vol').textContent=fN(cnCur)+' uds · '+lbl;
     g('tr-kpi-nc-val').textContent=fmt(ncYoy);
     g('tr-kpi-nc-val').className='stat-val '+(ncYoy>=0?'pos':'neg');
-    g('tr-kpi-nc-val').style.fontSize='22px';
-    g('tr-kpi-nc-val').style.color='#60a5fa';
+    g('tr-kpi-nc-val').style.cssText='font-size:22px;color:#60a5fa';
     g('tr-kpi-nc-vol').textContent=fN(ncCur)+' uds · '+lbl;
-  })();
+  }
 }
 
 function initTrendPct(){
   if(g('tr-pct-SHARE'))return;
   const OPTS=[['SHARE','Cuota %'],['YOY','Crecimiento YoY %']];
-  TR.pctMode=TR.pctMode||'SHARE';
+  TR.pctMode=TR.pctMode||'YOY';
   OPTS.forEach(([key,label])=>{
     const pill=document.createElement('div');
     pill.id='tr-pct-'+key;
@@ -1941,29 +1947,30 @@ function initTrendPct(){
       TR.pctMode=key;
       g('tr-pct-SHARE').classList.toggle('on',key==='SHARE');
       g('tr-pct-YOY').classList.toggle('on',key==='YOY');
-      g('tr-pct-title').textContent=key==='SHARE'?'Cuota Chinese Brands (%)':'Crecimiento interanual YoY (%)';
+      g('tr-pct-title').textContent=key==='YOY'?'Crecimiento interanual YoY (%)':'Cuota Chinese Brands (%)';
       renderTrendPct();
     };
     g('tr-pct-mode').appendChild(pill);
   });
 }
 
-function renderTrendPct(){
+function renderTrendPct(totM,cnM){
   if(!TR.months)return;
+  // If called standalone (e.g. mode toggle), recompute totals
+  if(!totM){
+    totM={};cnM={};
+    const E2=REC.enums;
+    applyFiltersBase().forEach(r=>{
+      const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
+      totM[k]=(totM[k]||0)+r[COL.N];
+      if(_CHINESE_BRANDS.has(E2.marca[r[COL.MARCA]]))cnM[k]=(cnM[k]||0)+r[COL.N];
+    });
+  }
   initTrendPct();
   const E=REC.enums;
   let fm=g('tr-from-m').value,tm=g('tr-to-m').value;
   if(fm>tm){const x=fm;fm=tm;tm=x;}
   const perM=TR.months.filter(pd=>pd>=fm&&pd<=tm);
-
-  // Build monthly totals from filtered rows
-  const totM={},cnM={};
-  applyFiltersBase().forEach(r=>{
-    const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
-    const n=r[COL.N];
-    totM[k]=(totM[k]||0)+n;
-    if(_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]))cnM[k]=(cnM[k]||0)+n;
-  });
 
   let labels,datasets;
   if(TR.pctMode==='SHARE'){
