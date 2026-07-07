@@ -1832,14 +1832,16 @@ function toggleModelRows(btn,brand){
   });
   const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
   let ins=tr;
+  const _BMW_I={'I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
   sorted.forEach(([mo,d])=>{
+    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
     const prev=byMoPrev[mo]||0;
     const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
     const yDelta=prev?d.ref-prev:null;
     const share=brandTotal?d.total/brandTotal*100:0;
     const sub=document.createElement('tr');
     sub.className='model-sub';
-    sub.innerHTML=`<td>${mo}</td><td>${fN(d.total)}</td>
+    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
       <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'â€”'}</td>
       <td>${fP2(share)}</td>`;
