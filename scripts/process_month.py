@@ -639,8 +639,15 @@ _MODEL_LOOKUP_PATCHES = {
 }
 
 
+_FOCUS_SUBSEGMENTS = {
+    'FOCUS SEGMENT',
+    'TRADITIONAL COMPETITION',
+    'NEW PLAYERS & TESLA',
+}
+
+
 def _focus_bucket(value):
-    return 'FOCUS SEGMENT' if (value or '').strip().upper() == 'FOCUS SEGMENT' else 'REST'
+    return 'FOCUS SEGMENT' if (value or '').strip().upper() in _FOCUS_SUBSEGMENTS else 'REST'
 
 
 _SEG_PREFIX_RE = re.compile(r'^\d+\.')
@@ -861,18 +868,6 @@ def get_fuel_detail_from_dgt(line_s):
 def lookup_enrichment(marca_raw, raw_modelo_field, raw_line=None):
     """Devuelve (modelo_canon, seg, sub, hp, body, fuel_detail) o 6x ''."""
     sbrand = _BRAND_NORM.get(marca_raw, marca_raw)
-    # L0: EEA type approval variante code (independent of Simmix)
-    if raw_line is not None and _EEA_LOOKUP:
-        va = raw_line[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
-        if va:
-            eea_modelo = _EEA_LOOKUP.get((sbrand, va))
-            if eea_modelo:
-                # EEA gives only model name; get seg/sub/hp/body from _MODEL_LOOKUP
-                meta = _MODEL_LOOKUP.get((sbrand, eea_modelo), {})
-                return (eea_modelo,
-                        meta.get('seg', ''), meta.get('sub', ''),
-                        meta.get('hp', ''),  meta.get('body', ''),
-                        meta.get('fuel_detail', ''))
     # L1: exact match en _ENRICHMENT (version_dgt exacto → modelo)
     enr_key = (sbrand, raw_modelo_field.strip().upper())
     if enr_key in _ENRICHMENT:
@@ -883,6 +878,24 @@ def lookup_enrichment(marca_raw, raw_modelo_field, raw_line=None):
         r = _MODEL_LOOKUP.get(cand)
         if r:
             return r['modelo'], r['seg'], r['sub'], r['hp'], r['body'], r.get('fuel_detail','')
+    # Variante EEA como ultimo recurso. La variante tecnica no siempre
+    # identifica el modelo comercial, asi que no debe pisar el texto DGT.
+    if raw_line is not None and _EEA_LOOKUP:
+        va = raw_line[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
+        if va:
+            eea_modelo = _EEA_LOOKUP.get((sbrand, va))
+            if eea_modelo:
+                meta = _MODEL_LOOKUP.get((sbrand, eea_modelo), {})
+                if not meta:
+                    for cand_brand, cand_model in _model_candidates(sbrand, eea_modelo):
+                        meta = _MODEL_LOOKUP.get((cand_brand, cand_model), {})
+                        if meta:
+                            eea_modelo = cand_model
+                            break
+                return (eea_modelo,
+                        meta.get('seg', ''), meta.get('sub', ''),
+                        meta.get('hp', ''),  meta.get('body', ''),
+                        meta.get('fuel_detail', ''))
     return '', '', 'REST', '', '', ''
 
 
@@ -958,7 +971,7 @@ def classify_high_performance(marca, modelo_raw, lookup_hp=''):
 # 28093 Navacerrada = deposito RAC (Skoda ya no va como Corporate)
 # 28022 Boadilla = campa fabricante PSA (Corporate)
 CAMPA_MUNICIPIOS_ALL = {'28169'}    # Venturada
-CAMPA_VENTURADA_RAC  = {'TOYOTA', 'LEXUS', 'AUDI'}   # estas marcas en Venturada = RAC
+CAMPA_VENTURADA_RAC  = {'TOYOTA', 'LEXUS', 'AUDI', 'BMW'}   # estas marcas en Venturada = RAC
 CAMPA_MUNICIPIOS_PSA = {'28022'}    # Boadilla
 CAMPA_PSA_MARCAS     = {'OPEL','PEUGEOT','CITROEN','DS','ALFA ROMEO','RENAULT','JEEP'}
 CAMPA_PEUGEOT_RS_MUN = {'38038','35025'}
@@ -2037,6 +2050,8 @@ def all_months(start='202301', end='202512'):
 if __name__ == '__main__':
     # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
     _load_simmix_bbdd()
+    _load_enrichment()
+    _load_eea_lookup()
     print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
 
 

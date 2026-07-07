@@ -33,6 +33,12 @@ def test_b00_dealer_mun_marca_excluida_sigue_private():
 def test_a01_es_rac():
     assert pm.classify('A01', 'X', ' ', '99999', 'KIA') == 'RAC'
 
+def test_a01_bmw_venturada_renting_es_rac():
+    assert pm.classify('A01', 'X', 'S', '28169', 'BMW') == 'RAC'
+
+def test_a01_marca_no_rac_venturada_sigue_corporate():
+    assert pm.classify('A01', 'X', 'S', '28169', 'MERCEDES') == 'Corporate'
+
 def test_a18_actividad_economica_es_corporate():
     assert pm.classify('A18', 'X', ' ', '99999', 'SEAT') == 'Corporate'
 
@@ -125,6 +131,23 @@ def test_bmw_version_confirmada_por_eplate_no_se_excluye():
     assert not pm.invalid_itv_scope_reason(
         line, 'BMW', 'Private', 'B00', 'D', 'N'
     )
+
+def test_eea_bmw_118d_cae_a_serie_1_si_existe_modelo_canonico(monkeypatch):
+    line = _scope_line('118D                  3WBA11GF')
+    line = list(line)
+    line[pm.F_VARIANTE_ITV[0]:pm.F_VARIANTE_ITV[1]] = list('11GF'.ljust(pm.F_VARIANTE_ITV[1] - pm.F_VARIANTE_ITV[0]))
+    line = ''.join(line)
+    monkeypatch.setitem(pm._EEA_LOOKUP, ('BMW', '11GF'), '118D')
+    monkeypatch.setitem(pm._MODEL_LOOKUP, ('BMW', 'SERIE 1'), {
+        'modelo': 'SERIE 1',
+        'seg': 'UKL2',
+        'sub': 'FOCUS SEGMENT',
+        'hp': 'Standard',
+        'body': 'HACH 5P',
+        'fuel_detail': 'Diesel',
+    })
+    modelo, seg, sub, hp, body, fuel_detail = pm.lookup_enrichment('BMW', '118D', line)
+    assert (modelo, seg, sub, body) == ('SERIE 1', 'UKL2', 'FOCUS SEGMENT', 'HACH 5P')
 
 
 # ── Rescate N2 de derivados de furgoneta ────────────────────────────────────

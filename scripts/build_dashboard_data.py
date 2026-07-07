@@ -76,8 +76,15 @@ def _normalize_brand(raw):
     canon = _BRAND_NORM.get(s.upper())
     return canon if canon else (s.title() if s else s)
 
+_FOCUS_SUBSEGMENTS = {
+    "FOCUS SEGMENT",
+    "TRADITIONAL COMPETITION",
+    "NEW PLAYERS & TESLA",
+}
+
+
 def _focus_bucket(raw):
-    return "FOCUS SEGMENT" if (raw or "").strip().upper() == "FOCUS SEGMENT" else "REST"
+    return "FOCUS SEGMENT" if (raw or "").strip().upper() in _FOCUS_SUBSEGMENTS else "REST"
 
 def _read_csv(path):
     with open(path, encoding="utf-8-sig", newline="") as fh:

@@ -1,27 +1,34 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202602,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,167,100,pool_b00d_private=2908; rate=0.0573
+202602,INFO,CARROCERO_UNMAPPED,SORTIMO,,registros_carrocero_sin_chasis_detectado,26,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202602,INFO,CARROCERO_UNMAPPED,EUROCARROCERA,,registros_carrocero_sin_chasis_detectado,73,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202602,INFO,INVALID_ITV_SCOPE_EXCLUDED,BMW,Corporate,registros_excluidos_ficha_itv_invalida,1,1,vin10=WBS21GB050; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202602,INFO,INVALID_ITV_SCOPE_EXCLUDED,MERCEDES,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=WDD2193221; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+202602,INFO,INVALID_ITV_SCOPE_EXCLUDED,AUDI,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=WAZZZF58MA; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+202602,INFO,INVALID_ITV_SCOPE_EXCLUDED,KIA,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=KNAC481CPP; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202602,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,101,100,pool_b00d_private=1081; rate=0.0939
+202602,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,167,100,pool_b00d_private=2909; rate=0.0573
 202602,CRITICAL,CHANNEL_DRIFT,AUDI,RAC,count_vs_same_month_history,582,+/-250 and +/-25%,"actual=1361; media_mismo_mes=779.3; historico=669,843,826; rel=+74.6%"
-202602,CRITICAL,CHANNEL_DRIFT,BMW,RAC,count_vs_same_month_history,741,+/-250 and +/-25%,"actual=1143; media_mismo_mes=401.7; historico=28,767,410; rel=+184.6%"
+202602,CRITICAL,CHANNEL_DRIFT,BMW,RAC,count_vs_same_month_history,742,+/-250 and +/-25%,"actual=1144; media_mismo_mes=401.7; historico=28,767,410; rel=+184.8%"
 202602,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,641,+/-250 and +/-25%,"actual=707; media_mismo_mes=66.0; historico=1,22,175; rel=+971.2%"
 202602,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,1000,+/-250 and +/-25%,"actual=1489; media_mismo_mes=489.0; historico=164,814; rel=+204.5%"
-202602,WARN,CHANNEL_DRIFT,CITROEN,RAC,count_vs_same_month_history,394,+/-250 and +/-25%,"actual=1642; media_mismo_mes=1247.7; historico=807,2165,771; rel=+31.6%"
+202602,WARN,CHANNEL_DRIFT,CITROEN,Private,count_vs_same_month_history,-392,+/-250 and +/-25%,"actual=1049; media_mismo_mes=1441.3; historico=1694,1337,1293; rel=-27.2%"
+202602,WARN,CHANNEL_DRIFT,CITROEN,RAC,count_vs_same_month_history,420,+/-250 and +/-25%,"actual=1668; media_mismo_mes=1247.7; historico=807,2165,771; rel=+33.7%"
 202602,CRITICAL,CHANNEL_DRIFT,CUPRA,RAC,count_vs_same_month_history,706,+/-250 and +/-25%,"actual=794; media_mismo_mes=88.3; historico=7,93,165; rel=+798.9%"
 202602,CRITICAL,CHANNEL_DRIFT,DACIA,RAC,count_vs_same_month_history,541,+/-250 and +/-25%,"actual=935; media_mismo_mes=393.7; historico=108,315,758; rel=+137.5%"
-202602,CRITICAL,CHANNEL_DRIFT,FIAT,Corporate,count_vs_same_month_history,-828,+/-250 and +/-25%,"actual=557; media_mismo_mes=1384.7; historico=2104,1551,499; rel=-59.8%"
-202602,WARN,CHANNEL_DRIFT,FORD,Private,count_vs_same_month_history,-548,+/-250 and +/-25%,"actual=1240; media_mismo_mes=1787.7; historico=1633,1549,2181; rel=-30.6%"
+202602,CRITICAL,CHANNEL_DRIFT,FIAT,Corporate,count_vs_same_month_history,-799,+/-250 and +/-25%,"actual=586; media_mismo_mes=1384.7; historico=2104,1551,499; rel=-57.7%"
+202602,WARN,CHANNEL_DRIFT,FORD,Private,count_vs_same_month_history,-718,+/-250 and +/-25%,"actual=1070; media_mismo_mes=1787.7; historico=1633,1549,2181; rel=-40.1%"
 202602,WARN,CHANNEL_DRIFT,HYUNDAI,Private,count_vs_same_month_history,-711,+/-250 and +/-25%,"actual=2124; media_mismo_mes=2834.7; historico=3166,2918,2420; rel=-25.1%"
 202602,CRITICAL,CHANNEL_DRIFT,HYUNDAI,RAC,count_vs_same_month_history,-552,+/-250 and +/-25%,"actual=34; media_mismo_mes=586.0; historico=93,699,966; rel=-94.2%"
 202602,WARN,CHANNEL_DRIFT,KIA,RAC,count_vs_same_month_history,285,+/-250 and +/-25%,"actual=859; media_mismo_mes=574.0; historico=420,111,1191; rel=+49.7%"
-202602,CRITICAL,CHANNEL_DRIFT,MERCEDES,RAC,count_vs_same_month_history,1403,+/-250 and +/-25%,"actual=2022; media_mismo_mes=619.0; historico=356,843,658; rel=+226.7%"
+202602,CRITICAL,CHANNEL_DRIFT,MERCEDES,RAC,count_vs_same_month_history,1418,+/-250 and +/-25%,"actual=2037; media_mismo_mes=619.0; historico=356,843,658; rel=+229.1%"
 202602,CRITICAL,CHANNEL_DRIFT,MG,RAC,count_vs_same_month_history,879,+/-250 and +/-25%,"actual=1476; media_mismo_mes=597.3; historico=54,54,1684; rel=+147.1%"
 202602,CRITICAL,CHANNEL_DRIFT,NISSAN,RAC,count_vs_same_month_history,502,+/-250 and +/-25%,"actual=880; media_mismo_mes=378.3; historico=292,744,99; rel=+132.6%"
 202602,CRITICAL,CHANNEL_DRIFT,OMODA,Private,count_vs_same_month_history,1420,+/-250 and +/-25%,"actual=1771; media_mismo_mes=350.5; historico=53,648; rel=+405.3%"
-202602,WARN,CHANNEL_DRIFT,PEUGEOT,Private,count_vs_same_month_history,-537,+/-250 and +/-25%,"actual=1272; media_mismo_mes=1809.0; historico=1971,1749,1707; rel=-29.7%"
-202602,WARN,CHANNEL_DRIFT,PEUGEOT,RAC,count_vs_same_month_history,784,+/-250 and +/-25%,"actual=2684; media_mismo_mes=1899.7; historico=1098,2712,1889; rel=+41.3%"
-202602,WARN,CHANNEL_DRIFT,RENAULT,Private,count_vs_same_month_history,677,+/-250 and +/-25%,"actual=3047; media_mismo_mes=2369.7; historico=2231,2160,2718; rel=+28.6%"
+202602,WARN,CHANNEL_DRIFT,PEUGEOT,Private,count_vs_same_month_history,-520,+/-250 and +/-25%,"actual=1289; media_mismo_mes=1809.0; historico=1971,1749,1707; rel=-28.7%"
+202602,WARN,CHANNEL_DRIFT,PEUGEOT,RAC,count_vs_same_month_history,796,+/-250 and +/-25%,"actual=2696; media_mismo_mes=1899.7; historico=1098,2712,1889; rel=+41.9%"
 202602,CRITICAL,CHANNEL_DRIFT,SKODA,RAC,count_vs_same_month_history,673,+/-250 and +/-25%,"actual=1612; media_mismo_mes=938.7; historico=349,1370,1097; rel=+71.7%"
 202602,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,629,+/-250 and +/-25%,"actual=1287; media_mismo_mes=658.0; historico=499,776,699; rel=+95.6%"
 202602,WARN,CHANNEL_DRIFT,TOYOTA,Private,count_vs_same_month_history,1208,+/-250 and +/-25%,"actual=5827; media_mismo_mes=4619.0; historico=3832,4455,5570; rel=+26.2%"
-202602,CRITICAL,CHANNEL_DRIFT,TOYOTA,RAC,count_vs_same_month_history,589,+/-250 and +/-25%,"actual=910; media_mismo_mes=321.0; historico=186,176,601; rel=+183.5%"
-202602,WARN,CHANNEL_DRIFT,VOLKSWAGEN,Private,count_vs_same_month_history,706,+/-250 and +/-25%,"actual=2716; media_mismo_mes=2010.3; historico=1614,1789,2628; rel=+35.1%"
+202602,CRITICAL,CHANNEL_DRIFT,TOYOTA,RAC,count_vs_same_month_history,590,+/-250 and +/-25%,"actual=911; media_mismo_mes=321.0; historico=186,176,601; rel=+183.8%"
+202602,WARN,CHANNEL_DRIFT,VOLKSWAGEN,Private,count_vs_same_month_history,713,+/-250 and +/-25%,"actual=2723; media_mismo_mes=2010.3; historico=1614,1789,2628; rel=+35.5%"
 202602,WARN,CHANNEL_DRIFT,VOLKSWAGEN,RAC,count_vs_same_month_history,351,+/-250 and +/-25%,"actual=1624; media_mismo_mes=1272.7; historico=722,1944,1152; rel=+27.6%"

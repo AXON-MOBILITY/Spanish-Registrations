@@ -4,7 +4,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,ALFA ROMEO,JUNIOR,Corporate,BEV,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,1
 2026,06,11,ALFA ROMEO,JUNIOR,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,7
 2026,06,11,ALFA ROMEO,TONALE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,1
-2026,06,11,ALPINE,,Private,BEV,Electrico,,REST,Standard,,2
+2026,06,11,ALPINE,A290,Private,BEV,Electrico,,,Standard,,2
 2026,06,11,ARB ARBUCIES,,Corporate,ICE,Diesel,,REST,Standard,,1
 2026,06,11,AUDI,A1,Corporate,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,HACH 5P,28
 2026,06,11,AUDI,A1,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,HACH 5P,6
@@ -160,8 +160,8 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,DIGAL,,Corporate,ICE,Diesel,,REST,Standard,,1
 2026,06,11,DONGFENG,BOX,Corporate,BEV,Electrico,UKL0,REST,Standard,HACH 5P,1
 2026,06,11,DONGFENG,BOX,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,1
-2026,06,11,DR,,Private,ICE,Gasolina,,REST,Standard,,1
 2026,06,11,DR,DR6,Corporate,ICE,Gasolina,UKL2,REST,Standard,SAV,1
+2026,06,11,DR,EVO,Private,ICE,Gasolina,,,Standard,,1
 2026,06,11,DR,G3,RAC,ICE,Gasolina,UKL1,REST,Standard,SAV,5
 2026,06,11,DS,DS7 CROSSBACK,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,6
 2026,06,11,DS,DS7 CROSSBACK,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,2
@@ -178,8 +178,8 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,EBRO,S900,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,3
 2026,06,11,ELNAGH,,Private,ICE,Diesel,,REST,Standard,,1
 2026,06,11,ELNAGH,,RAC,ICE,Diesel,,REST,Standard,,1
-2026,06,11,EVO,,Corporate,ICE,Gas Licuado con petroleo (GLP),,REST,Standard,,1
-2026,06,11,EVO,,Private,ICE,Gasolina,,REST,Standard,,2
+2026,06,11,EVO,CUATRO,Corporate,ICE,Gas Licuado con petroleo (GLP),,,Standard,,1
+2026,06,11,EVO,CUATRO,Private,ICE,Gasolina,,,Standard,,2
 2026,06,11,EVO,EVO 7,Private,ICE,Gasolina,UKL2,REST,Standard,SAV,2
 2026,06,11,EVO,SPAZIO,RAC,ICE,Gas Licuado con petroleo (GLP),KKL,REST,Standard,MPV,2
 2026,06,11,FERRARI,296,Private,PHEV,Gasolina/Electrico Enchufable,GKL+,FOCUS SEGMENT,Standard,COUPE,1
@@ -273,13 +273,12 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,IVECO,DAILY,Corporate,ICE,Gas natural comprimido (GNC),SKL,REST,Standard,TRANSPORTER,5
 2026,06,11,IVECO,DAILY,Private,ICE,Gas natural comprimido (GNC),SKL,REST,Standard,TRANSPORTER,1
 2026,06,11,IVECO,DAILY,RAC,ICE,Gas natural comprimido (GNC),SKL,REST,Standard,TRANSPORTER,9
-2026,06,11,JAECOO,,Private,ICE,Gasolina,,REST,Standard,,3
 2026,06,11,JAECOO,JAECOO 5,Corporate,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,2
 2026,06,11,JAECOO,JAECOO 5,Private,BEV,Gasolina/Electrico,UKL1,REST,Standard,SAV,2
 2026,06,11,JAECOO,JAECOO 5,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,10
 2026,06,11,JAECOO,JAECOO 7,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,2
 2026,06,11,JAECOO,JAECOO 7,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,3
-2026,06,11,JAECOO,JAECOO 7,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,1
+2026,06,11,JAECOO,JAECOO 7,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,4
 2026,06,11,JAECOO,JAECOO 7,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,6
 2026,06,11,JAECOO,JAECOO 8,Corporate,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,5
 2026,06,11,JAECOO,JAECOO 8,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,4
@@ -350,7 +349,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,MAXUS,DELIVER 7,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,1
 2026,06,11,MAXUS,DELIVER 9,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,1
 2026,06,11,MAXUS,T60,Corporate,ICE,Diesel,SKL,REST,Standard,PICKUP,1
-2026,06,11,MAZDA,,Private,BEV,Electrico,,REST,Standard,,4
+2026,06,11,MAZDA,6E,Private,BEV,Electrico,,,Standard,,4
 2026,06,11,MAZDA,CX30,Corporate,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,SAV,2
 2026,06,11,MAZDA,CX30,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,SAV,17
 2026,06,11,MAZDA,CX5,Corporate,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,SAV,6
@@ -472,11 +471,11 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,NISSAN,TOWNSTAR,Private,BEV,Gasolina,SKL,REST,Standard,TRANSPORTER,1
 2026,06,11,NISSAN,X-TRAIL,Corporate,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,4
 2026,06,11,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,3
-2026,06,11,OMODA,,Corporate,PHEV,Gasolina/Electrico Enchufable,,REST,Standard,,3
-2026,06,11,OMODA,,Private,PHEV,Gasolina/Electrico Enchufable,,REST,Standard,,3
 2026,06,11,OMODA,OMODA 5,Corporate,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,6
 2026,06,11,OMODA,OMODA 5,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,19
 2026,06,11,OMODA,OMODA 7,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,13
+2026,06,11,OMODA,OMODA 9,Corporate,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,3
+2026,06,11,OMODA,OMODA 9,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,3
 2026,06,11,OPEL,ASTRA,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,2
 2026,06,11,OPEL,COMBO,Corporate,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,4
 2026,06,11,OPEL,COMBO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,1
@@ -493,7 +492,6 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,OPEL,MOVANO,RAC,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,2
 2026,06,11,OPEL,VIVARO,Corporate,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,5
 2026,06,11,OPEL,VIVARO,Corporate,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,1
-2026,06,11,PEUGEOT,,Private,BEV,Electrico,,REST,Standard,,7
 2026,06,11,PEUGEOT,2008,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,18
 2026,06,11,PEUGEOT,2008,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,29
 2026,06,11,PEUGEOT,2008,RAC,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,15
@@ -503,6 +501,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,PEUGEOT,3008,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,11
 2026,06,11,PEUGEOT,3008,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,1
 2026,06,11,PEUGEOT,308,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,2
+2026,06,11,PEUGEOT,308,Private,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,1
 2026,06,11,PEUGEOT,308,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,1
 2026,06,11,PEUGEOT,308,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,1
 2026,06,11,PEUGEOT,408,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SEDAN,2
@@ -510,18 +509,20 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,PEUGEOT,5008,Private,ICE,Gasolina/Electrico Enchufable,KKL,REST,Standard,SUV,3
 2026,06,11,PEUGEOT,5008,RAC,ICE,Gasolina/Electrico Enchufable,KKL,REST,Standard,SUV,35
 2026,06,11,PEUGEOT,BOXER,Corporate,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,5
+2026,06,11,PEUGEOT,E-2008 ALLURE ELECTRICO,Private,BEV,Electrico,,,Standard,,2
+2026,06,11,PEUGEOT,E-208,Private,BEV,Electrico,,,Standard,,3
 2026,06,11,PEUGEOT,EXPERT,Corporate,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,8
 2026,06,11,PEUGEOT,PARTNER,Corporate,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,2
 2026,06,11,PEUGEOT,PARTNER,Corporate,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,10
 2026,06,11,PEUGEOT,PARTNER,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,2
 2026,06,11,PEUGEOT,RIFTER,Corporate,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,11
-2026,06,11,PEUGEOT,RIFTER,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,1
+2026,06,11,PEUGEOT,RIFTER,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,2
 2026,06,11,PEUGEOT,RIFTER,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,10
 2026,06,11,PEUGEOT,TRAVELLER,Corporate,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,1
 2026,06,11,PEUGEOT,TRAVELLER,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,3
 2026,06,11,PILOTE,,Private,ICE,Diesel,,REST,Standard,,1
-2026,06,11,POLESTAR,,Corporate,BEV,Electrico,,REST,Standard,,1
-2026,06,11,POLESTAR,,Private,BEV,Electrico,,REST,Standard,,3
+2026,06,11,POLESTAR,POLESTAR 4,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,1
+2026,06,11,POLESTAR,POLESTAR 4,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,3
 2026,06,11,PORSCHE,911,Private,ICE,Gasolina/Electrico,GKL,FOCUS SEGMENT,Standard,COUPE,1
 2026,06,11,PORSCHE,CAYENNE,Corporate,ICE,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,1
 2026,06,11,PORSCHE,CAYENNE,Corporate,PHEV,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,M Performance,SAV,2
@@ -608,8 +609,6 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,TESLA,MODEL Y,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,4
 2026,06,11,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,24
 2026,06,11,THERMOEUROP,,Corporate,ICE,Diesel,,REST,Standard,,1
-2026,06,11,TOYOTA,,Corporate,ICE,Gasolina,,REST,Standard,,1
-2026,06,11,TOYOTA,,Private,ICE,Gasolina,,REST,Standard,,1
 2026,06,11,TOYOTA,AYGO X,Corporate,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,4
 2026,06,11,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,16
 2026,06,11,TOYOTA,AYGO X,RAC,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,24
@@ -626,6 +625,8 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,TOYOTA,COROLLA,Corporate,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,25
 2026,06,11,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,80
 2026,06,11,TOYOTA,COROLLA,RAC,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,2
+2026,06,11,TOYOTA,GR YARIS,Corporate,ICE,Gasolina,,,Standard,,1
+2026,06,11,TOYOTA,GR YARIS,Private,ICE,Gasolina,,,Standard,,1
 2026,06,11,TOYOTA,HI LUX,Corporate,ICE,Electrico,SKL,REST,Standard,PICKUP,5
 2026,06,11,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,1
 2026,06,11,TOYOTA,HIGHLANDER,Corporate,ICE,Gasolina/Electrico,MKL,REST,Standard,SUV,1
@@ -715,8 +716,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,06,11,VOLVO,XC90,Corporate,ICE,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,2
 2026,06,11,VOLVO,XC90,Corporate,PHEV,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,3
 2026,06,11,VOLVO,XC90,Private,ICE,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,1
-2026,06,11,XPENG,,Corporate,BEV,Electrico,,REST,Standard,,1
-2026,06,11,XPENG,G6,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,2
+2026,06,11,XPENG,G6,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,3
 2026,06,11,XPENG,G6,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,6
 2026,06,11,ZEEKR,,Corporate,BEV,Electrico,,REST,Standard,,1
 2026,06,11,ZEEKR,7X,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,1
