@@ -109,6 +109,8 @@ F_MMA         = (111, 117)   # Masa Maxima Autorizada en kg  ej: "  1615" = 1615
 F_HOMOLOGACION = (426, 430)   # M1/M1G/N1/N1G/M2/M3/N2/N3...
 F_PROPULSION    = (93,   94)   # 0=gasolina, 1=diesel, 2=electrico, 6=GLP, 7=GNC
 F_CAT_ELECTRICO = (453, 457)   # BEV, HEV, PHEV, REEV o vacio
+F_VARIANTE_ITV  = (284, 309)   # EU type approval variant code (homologacion)
+F_VERSION_ITV   = (309, 344)   # EU type approval version code
 
 # Mapa código INE provincia (2 dígitos) → nombre
 PROV_NAMES = {
@@ -150,26 +152,71 @@ def is_excluded_scope(marca_raw, marca, modelo):
     excl = EXCLUIR_MARCA_MODELO.get(m)
     return bool(excl and any(token in mo for token in excl))
 
+def visible_dgt_vin10(line_s):
+    """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
+    m = re.search(r'([0-9][A-Z0-9*]{9,24})', line_s[47:110])
+    if not m:
+        return ''
+    token = m.group(1)
+    if len(token) < 11 or not token[0].isdigit():
+        return ''
+    return token[1:11].replace('*', '').upper()
+
+_TECH_CODE_NOISE = {
+    'BMW', 'GMBH', 'BAYERISCHE', 'MOTOREN', 'WERKE', 'AG', 'ND',
+    'SA', 'SAS', 'SL', 'AUTO', 'AUTOMOBILES', 'AUTOMOBILI',
+}
+
+def _has_useful_itv_tech_code(line_s):
+    """True si el area tipo/variante/version contiene codigos homologados utiles."""
+    tech_area = line_s[250:330].upper()
+    tokens = re.findall(r'[A-Z0-9]{3,}', tech_area)
+    useful = []
+    for token in tokens:
+        if token in _TECH_CODE_NOISE:
+            continue
+        if len(token) >= 4 and re.search(r'[A-Z]', token) and re.search(r'\d', token):
+            useful.append(token)
+    return bool(useful)
+
+def invalid_itv_scope_reason(line_s, marca, canal, servicio, persona, renting):
+    """Devuelve motivo si un registro DGT tiene ficha ITV no explotable."""
+    if _has_useful_itv_tech_code(line_s):
+        return ''
+    plazas_s = line_s[F_PLAZAS[0]:F_PLAZAS[1]].strip()
+    fabricante = line_s[330:390].strip().upper()
+    plazas_invalidas = plazas_s in ('', '0')
+    if plazas_invalidas:
+        details = []
+        details.append('plazas={}'.format(plazas_s or 'vacio'))
+        if fabricante in ('', '-', 'ND'):
+            details.append('fabricante={}'.format(fabricante or 'vacio'))
+        return 'ficha ITV sin codigos tipo/variante/version utiles ({})'.format(', '.join(details))
+    return ''
+
 # ── Regla carroceros/camperizadores → marca del chasis (metodología Simmix) ──
 # Simmix atribuye los vehículos carrozados/camperizados a la marca y modelo del
 # chasis base. En DGT aparecen con la marca del carrocero. Detectamos el chasis
 # por palabras clave en el MODELO_ITV; si no se detecta, se mantiene la marca
 # original y se emite alerta CARROCERO_UNMAPPED para ampliar el mapeo.
 CARROCERO_BRANDS = {
-    '3 CARROCEROS', 'A.A. AIRBUS', 'ADRIA', 'BENIMAR', 'BERGADANA', 'CAPRON',
+    '3 CARROCEROS', 'A.A. AIRBUS', 'ADRIA', 'BENIMAR', 'BERGADANA', 'C.I.', 'CAPRON',
     'CARROCERIAS SANCA, S.A.', 'CARROCERIAS SEVILLA', 'CARROZADOS TECAI',
     'CHALLENGER', 'CHT', 'CODETRANS', 'COINPOL', 'DETHLEFFS', 'ERKE',
     'EUROCARROCERA', 'EUROGAZA', 'GIOTTILINE', 'GRAU', 'IGLUVAN', 'INDUSAUTO',
     'JEANJE', 'MC LOUIS', 'MCLOUIS', 'MEBAUTO', 'RECAPOL', 'RODRIGUEZ LOPEZ AUTO',
     'ROLLER TEAM', 'ROMU', 'SEMICARFRAN,S.L', 'SOCAGE', 'SORIBERICA', 'SORTIMO',
-    'STIL CONVERSION', 'SUBIELA', 'TECNOVE', 'TECNOVE FIBERGLASS', 'ULTRAND',
+    'STIL CONVERSION', 'SUBIELA', 'TECNOVE', 'TECNOVE FIBERGLASS', 'TSD', 'ULTRAND',
     'VSVE', 'ZAGO AUTOMOTIVE',
+    'MULTITEL', 'WEINSBERG',
 }
 _CHASSIS_RULES = [
     (re.compile(r'\bDUCATO'),                      'FIAT',            'DUCATO'),
     (re.compile(r'\bBOXER'),                       'PEUGEOT',         'BOXER'),
     (re.compile(r'\bJUMPER'),                      'CITROEN',         'JUMPER'),
     (re.compile(r'\bJUMPY'),                       'CITROEN',         'JUMPY'),
+    (re.compile(r'\bBERLINGO'),                    'CITROEN',         'BERLINGO'),
+    (re.compile(r'\bPARTNER'),                     'PEUGEOT',         'PARTNER'),
     (re.compile(r'\bTRANSIT\s*CUSTOM'),            'FORD',            'TRANSIT CUSTOM'),
     (re.compile(r'\bTRANSIT\s*COURIER'),           'FORD',            'TRANSIT COURIER'),
     (re.compile(r'\bTRANSIT|\bTOURNEO'),           'FORD',            'TRANSIT'),
@@ -179,14 +226,26 @@ _CHASSIS_RULES = [
     (re.compile(r'\bCANTER|\bFUSO'),               'MITSUBISHI-FUSO', 'CANTER'),
     (re.compile(r'\bSPRINTER'),                    'MERCEDES',        'SPRINTER'),
     (re.compile(r'\bCRAFTER'),                     'VOLKSWAGEN',      'CRAFTER'),
+    (re.compile(r'\bAMAROK'),                      'VOLKSWAGEN',      'AMAROK'),
     (re.compile(r'\bDAILY'),                       'IVECO',           'DAILY'),
+    (re.compile(r'\b(?:35|50|70)[CS]\d*|\b120E\b'), 'IVECO',          'DAILY'),
     (re.compile(r'\bMOVANO'),                      'OPEL',            'MOVANO'),
     (re.compile(r'\bVIVARO'),                      'OPEL',            'VIVARO'),
+    (re.compile(r'\bCORSA'),                       'OPEL',            'CORSA'),
     (re.compile(r'\bINTERSTAR|\bNV400'),           'NISSAN',          'INTERSTAR'),
     (re.compile(r'\bPROACE'),                      'TOYOTA',          'PROACE'),
+    (re.compile(r'\bHILUX|\bHI\s*LUX'),            'TOYOTA',          'HI LUX'),
     (re.compile(r'\bEXPERT'),                      'PEUGEOT',         'EXPERT'),
     (re.compile(r'\bSCUDO'),                       'FIAT',            'SCUDO'),
+    (re.compile(r'\bSANDERO'),                     'DACIA',           'SANDERO'),
     (re.compile(r'\bCADDY'),                       'VOLKSWAGEN',      'CADDY'),
+    (re.compile(r'\bREXTON|\bKG\s+MOBILITY'),      'SSANGYONG',       'REXTON'),
+    (re.compile(r'\b[0-9]?ZFA'),                    'FIAT',            'DUCATO'),
+    (re.compile(r'\b[0-9]?WF0'),                    'FORD',            'TRANSIT'),
+    (re.compile(r'\b[0-9]?VF7'),                    'CITROEN',         'JUMPER'),
+    (re.compile(r'\b[0-9]?VF3'),                    'PEUGEOT',         'BOXER'),
+    (re.compile(r'\b[0-9]?VF1'),                    'RENAULT',         'MASTER'),
+    (re.compile(r'\b[0-9]?W1V'),                    'MERCEDES',        'SPRINTER'),
     (re.compile(r'\bN[LMPQN]R|\bN-?SERIE'),        'ISUZU',           'N-SERIES'),
 ]
 
@@ -225,6 +284,11 @@ def n2_van_target(marca, modelo):
 _APPROVAL_RE   = re.compile(r'\s+[A-Z0-9]{6,}\s*$')
 _BMW_SERIE_RE  = re.compile(r'^([1-9])\d{2}[A-Z]')
 _LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
+# BMW electric/PHEV models use lowercase 'i' prefix — restore after upper() normalization
+_BMW_IMODEL_FIX = {
+    'I4': 'i4', 'I5': 'i5', 'I7': 'i7', 'I8': 'i8',
+    'IX': 'iX', 'IX1': 'iX1', 'IX2': 'iX2', 'IX3': 'iX3',
+}
 
 _BRAND_NORM = {
     'MERCEDES-BENZ': 'MERCEDES', 'MERCEDES BENZ': 'MERCEDES',
@@ -412,9 +476,22 @@ def _model_candidates(sbrand, s):
         elif 'PROACE' in s2: cands.append((sbrand, 'PROACE'))
         cands += [(sbrand, s2), (sbrand, s2.split()[0] if s2.split() else s2)]
     if sbrand == 'OMODA':
-        if s.replace(' ', '').startswith('OMODA5'): cands.append((sbrand, 'OMODA 5'))
+        sx = s.replace(' ', '')
+        for n in ('5', '7', '9'):
+            if sx.startswith('OMODA' + n):
+                cands.append((sbrand, 'OMODA ' + n)); break
+        # También el string original sin strip de marca (por si DGT pone "OMODA 7 PHEV")
+        cands.append((sbrand, s_probe.strip()))
     if sbrand == 'JAECOO':
-        if s.replace(' ', '').startswith('JAECOO7'): cands.append((sbrand, 'JAECOO 7'))
+        sx = s.replace(' ', '')
+        for n in ('5', '7', '8'):
+            if sx.startswith('JAECOO' + n):
+                cands.append((sbrand, 'JAECOO ' + n)); break
+        cands.append((sbrand, s_probe.strip()))
+    if sbrand == 'EBRO':
+        for code in ('S400', 'S700', 'S800', 'S900'):
+            if s.startswith(code) or s_probe.strip().upper().startswith(code):
+                cands.append((sbrand, code)); break
     if sbrand == 'EVO':
         sx = s.replace(' ', '')
         if sx.startswith('EVOCROSS4') or sx.startswith('CROSS4'): cands.append((sbrand, 'CROSS 4'))
@@ -495,10 +572,26 @@ def _load_enrichment():
                     'hp'    : row.get('high_perf','').strip(),
                     'body'  : row.get('body_type','').strip(),
                 }
-    # También cargar brand+model lookup si existe (master_model_segment.csv)
-    fname2 = os.path.join(MASTERS_DIR, 'master_model_segment.csv')
-    _load_simmix_bbdd()
     print(f'  -> Enrichment: {len(_ENRICHMENT):,} combos cargados')
+
+# EEA type approval lookup: (brand, variante_code) → modelo canónico
+_EEA_LOOKUP = {}  # (brand, variante_itv_stripped) → modelo
+
+def _load_eea_lookup():
+    global _EEA_LOOKUP
+    fname = os.path.join(MASTERS_DIR, 'master_eea_model_lookup.csv')
+    if not os.path.exists(fname):
+        return
+    with open(fname, encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            brand  = row['brand'].strip().upper()
+            va     = row['variante'].strip().upper()
+            modelo = row['modelo'].strip().upper()
+            if brand and va and modelo:
+                key = (brand, va)
+                if key not in _EEA_LOOKUP:
+                    _EEA_LOOKUP[key] = modelo
+    print(f'  -> EEA lookup: {len(_EEA_LOOKUP):,} variante codes cargados')
 
 # Carga lookup brand+model desde Simmix BBDD directamente
 _MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
@@ -737,9 +830,27 @@ def get_fuel_detail_from_dgt(line_s):
         return 'Diesel/Electrico Enchufable' if prop == '1' else 'Gasolina/Electrico Enchufable'
     return _PROP_FUEL_NAME.get(prop, 'Gasolina')
 
-def lookup_enrichment(marca_raw, raw_modelo_field):
+def lookup_enrichment(marca_raw, raw_modelo_field, raw_line=None):
     """Devuelve (modelo_canon, seg, sub, hp, body, fuel_detail) o 6x ''."""
     sbrand = _BRAND_NORM.get(marca_raw, marca_raw)
+    # L0: EEA type approval variante code (independent of Simmix)
+    if raw_line is not None and _EEA_LOOKUP:
+        va = raw_line[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
+        if va:
+            eea_modelo = _EEA_LOOKUP.get((sbrand, va))
+            if eea_modelo:
+                # EEA gives only model name; get seg/sub/hp/body from _MODEL_LOOKUP
+                meta = _MODEL_LOOKUP.get((sbrand, eea_modelo), {})
+                return (eea_modelo,
+                        meta.get('seg', ''), meta.get('sub', ''),
+                        meta.get('hp', ''),  meta.get('body', ''),
+                        meta.get('fuel_detail', ''))
+    # L1: exact match en _ENRICHMENT (version_dgt exacto → modelo)
+    enr_key = (sbrand, raw_modelo_field.strip().upper())
+    if enr_key in _ENRICHMENT:
+        enr = _ENRICHMENT[enr_key]
+        return enr['modelo'], enr['seg'], enr['sub'], enr['hp'], enr['body'], enr.get('fuel_detail', '')
+    # L2: candidates por patrones sobre F_MODELO
     for cand in _model_candidates(sbrand, raw_modelo_field):
         r = _MODEL_LOOKUP.get(cand)
         if r:
@@ -1385,6 +1496,7 @@ def process_lines(lines_iter):
     prov_counts = collections.Counter()
     km0_fallback_pool = collections.Counter()
     carrocero_unmapped_pool = collections.Counter()
+    invalid_scope_pool = collections.Counter()
     alerts = []
     for raw in lines_iter:
         line = raw.rstrip(b'\r\n')
@@ -1419,10 +1531,18 @@ def process_lines(lines_iter):
         renting   = line_s[F_RENTING[0]:F_RENTING[1]]
         mun       = line_s[F_MUNICIPIO[0]:F_MUNICIPIO[1]]
         canal     = classify(servicio, persona, renting, mun, marca)
+        invalid_reason = invalid_itv_scope_reason(
+            line_s, marca, canal, servicio, persona, renting
+        )
+        if invalid_reason:
+            invalid_scope_pool[(marca, canal, visible_dgt_vin10(line_s), invalid_reason)] += 1
+            continue
         fuel_code = get_fuel_type_code(line_s)
         cod_prov  = mun[:2].strip()
         # Enriquecimiento: obtener modelo canónico y dimensiones de segmento
-        modelo_canon, seg, sub, hp, body, fuel_detail = lookup_enrichment(marca, modelo)
+        modelo_canon, seg, sub, hp, body, fuel_detail = lookup_enrichment(marca, modelo, line_s)
+        if marca == 'BMW' and modelo_canon in _BMW_IMODEL_FIX:
+            modelo_canon = _BMW_IMODEL_FIX[modelo_canon]
         if not fuel_detail:
             fuel_detail = get_fuel_detail_from_dgt(line_s)
         hp = classify_high_performance(marca, modelo, hp)
@@ -1447,6 +1567,18 @@ def process_lines(lines_iter):
                 threshold=ALERT_CARROCERO_UNMAPPED,
                 detail='ampliar _CHASSIS_RULES o CARROCERO_BRANDS',
             ))
+
+    for (marca, canal, vin10, reason), n in invalid_scope_pool.items():
+        alerts.append(make_alert(
+            'INFO',
+            'INVALID_ITV_SCOPE_EXCLUDED',
+            marca=marca,
+            canal=canal,
+            metric='registros_excluidos_ficha_itv_invalida',
+            value=n,
+            threshold=1,
+            detail='vin10={}; {}'.format(vin10, reason),
+        ))
 
     for marca, n in km0_fallback_pool.items():
         rate = KM0_BRAND_FALLBACK_RATE[km0_rate_brand(marca)]
@@ -1797,6 +1929,8 @@ if __name__ == '__main__':
     # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
     _load_simmix_bbdd()
     print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
+    _load_enrichment()
+    _load_eea_lookup()
 
     arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
     keep  = '--keep'  in sys.argv
@@ -1806,3 +1940,19 @@ if __name__ == '__main__':
         import datetime as _dt
         _now = _dt.date.today()
         _end = '{:04d}{:02d}'.format(_now.year, _now.month)
+        for yyyymm in all_months('202301', _end):
+            download_and_process(yyyymm, keep_raw=keep, force=force)
+    elif arg == 'monthly-2026':
+        sync_monthly_2026(keep_raw=keep, force=force)
+    elif arg == 'daily-current':
+        sync_daily_current(keep_raw=keep, force=force)
+    elif arg == 'auto':
+        sync_auto(keep_raw=keep, force=force)
+    elif re.fullmatch(r'\d{8}', arg):
+        download_and_process_daily(arg, keep_raw=keep, force=force)
+        save_mtd_from_daily(arg[:6])
+    elif re.fullmatch(r'\d{6}', arg):
+        download_and_process(arg, keep_raw=keep, force=force)
+    else:
+        print("Uso: python process_month.py YYYYMM|YYYYMMDD|all|monthly-2026|daily-current|auto [--keep] [--force]")
+        sys.exit(2)
