@@ -565,26 +565,40 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
           <span>Tendencia por marca</span>
           <span class="rk-ctrls"><span class="sg-pills" id="tr-mode" style="padding:0"></span></span>
         </div>
-        <div class="ch-body">
-          <div class="tr-controls">
-            <span class="tf-lbl">Marca</span>
-            <input id="tr-brand-input" class="tf-modelo-input" list="tr-brand-list"
-                   placeholder="A&ntilde;adir marca&hellip;" autocomplete="off"
-                   onchange="trAddBrand()">
-            <datalist id="tr-brand-list"></datalist>
-            <span id="tr-brands" class="tr-brands" style="margin:0"></span>
+        <div class="ch-body" style="display:flex;gap:16px;align-items:flex-start">
+          <div style="flex:1;min-width:0">
+            <div class="tr-controls">
+              <span class="tf-lbl">Marca</span>
+              <input id="tr-brand-input" class="tf-modelo-input" list="tr-brand-list"
+                     placeholder="A&ntilde;adir marca&hellip;" autocomplete="off"
+                     onchange="trAddBrand()">
+              <datalist id="tr-brand-list"></datalist>
+              <span id="tr-brands" class="tr-brands" style="margin:0"></span>
+            </div>
+            <div class="tr-controls" style="margin-top:6px">
+              <span class="tf-lbl">Modelo</span>
+              <input id="tr-model-input" class="tf-modelo-input" list="tr-model-list"
+                     placeholder="A&ntilde;adir modelo&hellip;" autocomplete="off"
+                     onchange="trAddModel()">
+              <datalist id="tr-model-list"></datalist>
+              <span id="tr-models" class="tr-brands" style="margin:0"></span>
+            </div>
+            <div class="tr-controls" style="margin-top:6px">
+              <span class="tf-lbl">Mercado</span>
+              <span class="sg-pills" id="tr-mkt" style="padding:0"></span>
+            </div>
           </div>
-          <div class="tr-controls" style="margin-top:6px">
-            <span class="tf-lbl">Modelo</span>
-            <input id="tr-model-input" class="tf-modelo-input" list="tr-model-list"
-                   placeholder="A&ntilde;adir modelo&hellip;" autocomplete="off"
-                   onchange="trAddModel()">
-            <datalist id="tr-model-list"></datalist>
-            <span id="tr-models" class="tr-brands" style="margin:0"></span>
-          </div>
-          <div class="tr-controls" style="margin-top:6px">
-            <span class="tf-lbl">Mercado</span>
-            <span class="sg-pills" id="tr-mkt" style="padding:0"></span>
+          <div style="display:flex;gap:10px;flex-shrink:0">
+            <div class="stat-card" id="tr-kpi-cn" style="min-width:140px;padding:12px 16px;border-top-color:#f97316">
+              <div class="stat-val" id="tr-kpi-cn-val" style="font-size:22px;color:#f97316">—</div>
+              <div class="stat-sub">Chinese Brands YoY</div>
+              <div class="stat-yoy" id="tr-kpi-cn-vol" style="color:var(--text2)">—</div>
+            </div>
+            <div class="stat-card" id="tr-kpi-nc" style="min-width:140px;padding:12px 16px;border-top-color:#60a5fa">
+              <div class="stat-val" id="tr-kpi-nc-val" style="font-size:22px;color:#60a5fa">—</div>
+              <div class="stat-sub">Non-Chinese YoY</div>
+              <div class="stat-yoy" id="tr-kpi-nc-vol" style="color:var(--text2)">—</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1884,6 +1898,34 @@ function renderTrend(){
   }
   trDrawLine('ch-trend-d',perD.map(x=>x.slice(8)+'/'+x.slice(5,7)),[...mktSeriesD,...trSeries(perD,(m,pd)=>dVal(m,pd))]);
   renderTrendPct();
+
+  // KPI cards — YoY % for most recent month with prior year data
+  (()=>{
+    const allM=TR.months.filter(pd=>{
+      const prev=(parseInt(pd.slice(0,4),10)-1)+pd.slice(4);
+      return (totM[prev]||0)>0;
+    });
+    if(!allM.length)return;
+    const last=allM[allM.length-1];
+    const prev=(parseInt(last.slice(0,4),10)-1)+last.slice(4);
+    const cnCur=cnM[last]||0, cnPre=cnM[prev]||0;
+    const totCur=totM[last]||0, totPre=totM[prev]||0;
+    const ncCur=totCur-cnCur, ncPre=totPre-cnPre;
+    const pct=(cur,pre)=>pre>0?((cur-pre)/pre*100):null;
+    const fmt=(v)=>v!==null?(v>=0?'+':'')+v.toFixed(1)+'%':'—';
+    const lbl=MES3[parseInt(last.slice(5),10)-1]+'-'+last.slice(2,4);
+    const cnYoy=pct(cnCur,cnPre), ncYoy=pct(ncCur,ncPre);
+    g('tr-kpi-cn-val').textContent=fmt(cnYoy);
+    g('tr-kpi-cn-val').className='stat-val '+(cnYoy>=0?'pos':'neg');
+    g('tr-kpi-cn-val').style.fontSize='22px';
+    g('tr-kpi-cn-val').style.color='#f97316';
+    g('tr-kpi-cn-vol').textContent=fN(cnCur)+' uds · '+lbl;
+    g('tr-kpi-nc-val').textContent=fmt(ncYoy);
+    g('tr-kpi-nc-val').className='stat-val '+(ncYoy>=0?'pos':'neg');
+    g('tr-kpi-nc-val').style.fontSize='22px';
+    g('tr-kpi-nc-val').style.color='#60a5fa';
+    g('tr-kpi-nc-vol').textContent=fN(ncCur)+' uds · '+lbl;
+  })();
 }
 
 function initTrendPct(){
