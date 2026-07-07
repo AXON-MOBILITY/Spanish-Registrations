@@ -1617,6 +1617,7 @@ function trAddBrand(){
   if(!b||!BRAND_CHOICES.includes(b)||TR.sel.includes(b))return;
   TR.sel.push(b);inp.value='';
   // Market aggregate pills
+  if(g('tr-mkt-TOTAL'))g('tr-mkt').innerHTML='';
   const MKT_OPTS=[['TOTAL','Total Mercado','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
   TR.mkt=new Set();
   MKT_OPTS.forEach(([key,label,color])=>{
@@ -1676,6 +1677,7 @@ function initTrend(){
   const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
   g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
   // Market aggregate pills
+  if(g('tr-mkt-TOTAL'))g('tr-mkt').innerHTML='';
   const MKT_OPTS=[['TOTAL','Total Mercado','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
   TR.mkt=new Set();
   MKT_OPTS.forEach(([key,label,color])=>{
