@@ -1931,15 +1931,9 @@ function renderTrendPct(){
       return t>0?+((cnM[pd]||0)/t*100).toFixed(2):null;
     });
     // Prior-year reference line (same months -1 year)
-    const restData=perM.map(pd=>{
-      const t=totM[pd]||0;
-      return t>0?+((t-(cnM[pd]||0))/t*100).toFixed(2):null;
-    });
     datasets=[
       {label:'Chinese Brands %',data:shareData,borderColor:'#f97316',backgroundColor:'#f9731633',
-       borderWidth:2.5,fill:false,pointRadius:perM.length>60?0:3,tension:.3,yAxisID:'yCN'},
-      {label:'Non-Chinese %',data:restData,borderColor:'#60a5fa',backgroundColor:'#60a5fa11',
-       borderWidth:1.5,fill:false,pointRadius:0,tension:.3,yAxisID:'yNC'}
+       borderWidth:2.5,fill:true,pointRadius:perM.length>60?0:3,tension:.3}
     ];
   } else {
     // YoY: only months where same month prior year exists
@@ -1980,13 +1974,10 @@ function renderTrendPct(){
       scales:{
         x:{display:true,ticks:{font:{size:11},color:'#cbd5e1',maxRotation:0,autoSkip:true,maxTicksLimit:14},
            grid:{display:false},border:{color:'rgba(255,255,255,.25)'}},
-        ...(TR.pctMode==='SHARE'?{
-          yCN:{type:'linear',position:'left',ticks:{font:{size:10},color:'#f97316',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'}},
-          yNC:{type:'linear',position:'right',ticks:{font:{size:10},color:'#60a5fa',callback:v=>v+'%'},grid:{display:false}}
-        }:{
-          y:{ticks:{font:{size:10},color:'#94a3b8',callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.05)'},
-             afterDataLimits:ax=>{const m=Math.max(Math.abs(ax.min),Math.abs(ax.max));ax.min=-m;ax.max=m;}}
-        })
+        y:{beginAtZero:true,suggestedMax:20,
+           ticks:{font:{size:10},color:'#94a3b8',callback:v=>v+'%'},
+           grid:{color:'rgba(255,255,255,.05)'},
+           ...(TR.pctMode==='YOY'?{afterDataLimits:ax=>{const m=Math.max(Math.abs(ax.min),Math.abs(ax.max));ax.min=-m;ax.max=m;}}:{})}
       },
       plugins:{
         legend:{display:true,labels:{color:'#94a3b8',font:{size:10},boxWidth:12,boxHeight:3}},
