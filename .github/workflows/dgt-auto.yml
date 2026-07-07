@@ -21,10 +21,10 @@ on:
           - "false"
   schedule:
     # GitHub Actions usa UTC. La DGT publica con horario variable y los
-    # schedules de GitHub pueden retrasarse o saltarse; hacemos polling barato.
-    # En schedule no usamos --force, asi que si no hay fichero nuevo termina
-    # sin commit tras saltar los diarios ya procesados.
-    - cron: "*/30 7-16 * * *"
+    # schedules de GitHub pueden retrasarse o saltarse; dejamos varias ventanas
+    # horarias sin hacer polling excesivo. En schedule no usamos --force, asi
+    # que si no hay fichero nuevo termina sin commit tras saltar los ya procesados.
+    - cron: "15 7-12,14,16 * * *"
 
 permissions:
   contents: write
