@@ -906,9 +906,11 @@ function buildSidebar(){
       render();
     });
     conceptCbEls[c]=el.querySelector('input');
-    el.style.paddingLeft='10px';
+    el.style.paddingLeft='18px';
+    el.style.borderLeft='2px solid var(--border)';
+    el.style.marginLeft='8px';
     el.style.fontSize='11px';
-    el.style.opacity='0.8';
+    el.style.opacity='0.85';
     g('sb-subs').appendChild(el);
   });
 
