@@ -1910,31 +1910,35 @@ function renderTrend(){
 
   renderTrendPct(totM,cnM);
 
-  // KPI cards — use last COMPLETED month (not MTD) for fair YoY comparison
-  const kpiCeil=LAST_COMPLETED_MONTH||TR.months[TR.months.length-2]||TR.months[TR.months.length-1];
-  const kpiMonths=TR.months.filter(pd=>{
-    if(pd>kpiCeil)return false;
-    const prev=(parseInt(pd.slice(0,4),10)-1)+pd.slice(4);
-    return (totM[prev]||0)>0;
-  });
-  if(kpiMonths.length){
-    const last=kpiMonths[kpiMonths.length-1];
-    const prev=(parseInt(last.slice(0,4),10)-1)+last.slice(4);
-    const cnCur=cnM[last]||0, cnPre=cnM[prev]||0;
-    const totCur=totM[last]||0, totPre=totM[prev]||0;
-    const ncCur=totCur-cnCur, ncPre=totPre-cnPre;
-    const pct=(cur,pre)=>pre>0?((cur-pre)/pre*100):null;
-    const fmt=v=>v!==null?(v>=0?'+':'')+v.toFixed(1)+'%':'—';
-    const lbl=MES3[parseInt(last.slice(5),10)-1]+'-'+last.slice(2,4);
-    const cnYoy=pct(cnCur,cnPre), ncYoy=pct(ncCur,ncPre);
-    g('tr-kpi-cn-val').textContent=fmt(cnYoy);
-    g('tr-kpi-cn-val').className='stat-val '+(cnYoy>=0?'pos':'neg');
-    g('tr-kpi-cn-val').style.cssText='font-size:22px;color:#f97316';
-    g('tr-kpi-cn-vol').textContent=fN(cnCur)+' uds · '+lbl;
-    g('tr-kpi-nc-val').textContent=fmt(ncYoy);
-    g('tr-kpi-nc-val').className='stat-val '+(ncYoy>=0?'pos':'neg');
-    g('tr-kpi-nc-val').style.cssText='font-size:22px;color:#60a5fa';
-    g('tr-kpi-nc-vol').textContent=fN(ncCur)+' uds · '+lbl;
+  // KPI cards — sincronizadas con el mes HASTA del selector
+  {
+    let tm2=g('tr-to-m').value;
+    // Use selected TO month; if no prior year data, step back until we find one
+    let kpiMonth=tm2;
+    while(kpiMonth&&!(totM[(parseInt(kpiMonth.slice(0,4),10)-1)+kpiMonth.slice(4)]>0)){
+      const idx=TR.months.indexOf(kpiMonth);
+      if(idx<=0)break;
+      kpiMonth=TR.months[idx-1];
+    }
+    if(kpiMonth){
+      const prev=(parseInt(kpiMonth.slice(0,4),10)-1)+kpiMonth.slice(4);
+      const cnCur=cnM[kpiMonth]||0, cnPre=cnM[prev]||0;
+      const totCur=totM[kpiMonth]||0, totPre=totM[prev]||0;
+      const ncCur=totCur-cnCur, ncPre=totPre-cnPre;
+      const pct=(cur,pre)=>pre>0?((cur-pre)/pre*100):null;
+      const fmt=v=>v!==null?(v>=0?'+':'')+v.toFixed(1)+'%':'—';
+      const isMtd=LAST_COMPLETED_MONTH&&kpiMonth>LAST_COMPLETED_MONTH;
+      const lbl=MES3[parseInt(kpiMonth.slice(5),10)-1]+'-'+kpiMonth.slice(2,4)+(isMtd?' MTD':'');
+      const cnYoy=pct(cnCur,cnPre), ncYoy=pct(ncCur,ncPre);
+      g('tr-kpi-cn-val').textContent=fmt(cnYoy);
+      g('tr-kpi-cn-val').className='stat-val '+(cnYoy>=0?'pos':'neg');
+      g('tr-kpi-cn-val').style.cssText='font-size:22px;color:#f97316';
+      g('tr-kpi-cn-vol').textContent=fN(cnCur)+' uds · '+lbl;
+      g('tr-kpi-nc-val').textContent=fmt(ncYoy);
+      g('tr-kpi-nc-val').className='stat-val '+(ncYoy>=0?'pos':'neg');
+      g('tr-kpi-nc-val').style.cssText='font-size:22px;color:#60a5fa';
+      g('tr-kpi-nc-vol').textContent=fN(ncCur)+' uds · '+lbl;
+    }
   }
 }
 
