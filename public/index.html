@@ -645,6 +645,39 @@ const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Se
 const MES3=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const SEG_ORDER=['UKL0','UKL1','UKL2','KKL','MKL','SKL','GKL','GKL+'];
 
+// Sub-concept mapping for FOCUS SEGMENT brands
+const _BRAND_CONCEPT={
+  'BMW':'TRAD. COMP.','Bmw Ag':'TRAD. COMP.','Alpina':'TRAD. COMP.',
+  'Audi':'TRAD. COMP.','T.R.Audi':'TRAD. COMP.',
+  'Mercedes':'TRAD. COMP.','Mercedes-V':'TRAD. COMP.',
+  'MINI':'TRAD. COMP.',
+  'Porsche':'TRAD. COMP.',
+  'Volvo':'TRAD. COMP.',
+  'Lexus':'TRAD. COMP.',
+  'Jaguar':'TRAD. COMP.',
+  'Land Rover':'TRAD. COMP.','Land Rover Santana':'TRAD. COMP.','Land  Rover':'TRAD. COMP.',
+  'Genesis':'TRAD. COMP.',
+  'Maserati':'TRAD. COMP.',
+  'Ferrari':'TRAD. COMP.',
+  'Lamborghini':'TRAD. COMP.',
+  'Bentley':'TRAD. COMP.',
+  'Rolls-Royce':'TRAD. COMP.',
+  'McLaren':'TRAD. COMP.',
+  'Aston Martin':'TRAD. COMP.',
+  'Cadillac':'TRAD. COMP.',
+  'Bugatti':'TRAD. COMP.',
+  'Donkervoort':'TRAD. COMP.',
+  'Tesla':'NEW PLAYERS & TESLA','Tesla Motors':'NEW PLAYERS & TESLA',
+  'Polestar':'NEW PLAYERS & TESLA',
+  'Lotus':'NEW PLAYERS & TESLA','Lotus Cars Ltd':'NEW PLAYERS & TESLA',
+  'Smart':'NEW PLAYERS & TESLA',
+  'Xpeng':'NEW PLAYERS & TESLA',
+  'Zeekr':'NEW PLAYERS & TESLA',
+  'Lucid Motors':'NEW PLAYERS & TESLA',
+  'Voyah':'NEW PLAYERS & TESLA',
+};
+const CONCEPTS=['TRAD. COMP.','NEW PLAYERS & TESLA'];
+
 // Lista de EXCLUSIÓN (scope de mercado): carroceros/camperizadores aún no
 // reasignados por la ETL, buses, quads/microcoches y ruido. Todo lo demás se
 // incluye automáticamente — las marcas nuevas del mercado aparecen solas.
@@ -690,7 +723,7 @@ let REC=null;
 let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
-  segs:new Set(),subs:new Set(),hps:new Set(),
+  segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),
   marca:'',modelo:'',body:''
 };
 const CHARTS={};
@@ -797,15 +830,26 @@ function buildSidebar(){
 
   // Subsegment
   const allSubs=[...E.sub.keys()];
+  CONCEPTS.forEach(c=>F.concepts.add(c));
   addQuickSel('sb-subs',
-    ()=>{ allSubs.forEach(i=>F.subs.add(i)); g('sb-subs').querySelectorAll('input').forEach(c=>c.checked=true); render(); },
-    ()=>{ F.subs.clear(); g('sb-subs').querySelectorAll('input').forEach(c=>c.checked=false); render(); }
+    ()=>{ allSubs.forEach(i=>F.subs.add(i)); CONCEPTS.forEach(c=>F.concepts.add(c)); g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
+    ()=>{ F.subs.clear(); F.concepts.clear(); g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
   );
   E.sub.forEach((s,i)=>{
     F.subs.add(i);
     g('sb-subs').appendChild(mkCb(s||'(Todas)',true,on=>{
       if(on)F.subs.add(i);else F.subs.delete(i);render();
     }));
+  });
+  // Sub-concepts within FOCUS SEGMENT (indented)
+  CONCEPTS.forEach(c=>{
+    const el=mkCb('   '+c,true,on=>{
+      if(on)F.concepts.add(c);else F.concepts.delete(c);render();
+    });
+    el.style.paddingLeft='10px';
+    el.style.fontSize='11px';
+    el.style.opacity='0.8';
+    g('sb-subs').appendChild(el);
   });
 
   // Segments — agrupados por etiqueta canónica ('3.UKL2' cuenta como 'UKL2').
@@ -939,6 +983,10 @@ function applyFiltersBase(){
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(r[COL.SUB]))return false;
+    if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){
+      const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];
+      if(bc&&!F.concepts.has(bc))return false;
+    }
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
     if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
     if(moIdx>=0&&r[COL.MODELO]!==moIdx)return false;
@@ -1837,45 +1885,4 @@ function toggleModelRows(btn,brand){
     const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
     const prev=byMoPrev[mo]||0;
     const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d.ref-prev:null;
-    const share=brandTotal?d.total/brandTotal*100:0;
-    const sub=document.createElement('tr');
-    sub.className='model-sub';
-    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
-      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
-      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'â€”'}</td>
-      <td>${fP2(share)}</td>`;
-    ins.after(sub);ins=sub;
-  });
-}
-
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-  },40);
-}
-
-function resetFilters(){
-  const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body=''
+    const yDelta=prev?d
