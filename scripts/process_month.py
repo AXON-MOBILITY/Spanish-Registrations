@@ -297,7 +297,7 @@ _BMW_SERIE_RE  = re.compile(r'^([1-9])\d{2}[A-Z]')
 _LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
 # BMW electric/PHEV models use lowercase 'i' prefix — restore after upper() normalization
 _BMW_IMODEL_FIX = {
-    'I4': 'i4', 'I5': 'i5', 'I7': 'i7', 'I8': 'i8',
+    'I3': 'i3', 'I4': 'i4', 'I5': 'i5', 'I7': 'i7', 'I8': 'i8',
     'IX': 'iX', 'IX1': 'iX1', 'IX2': 'iX2', 'IX3': 'iX3',
 }
 

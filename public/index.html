@@ -1832,7 +1832,7 @@ function toggleModelRows(btn,brand){
   });
   const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
   let ins=tr;
-  const _BMW_I={'I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
+  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
   sorted.forEach(([mo,d])=>{
     const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
     const prev=byMoPrev[mo]||0;
@@ -1878,10 +1878,4 @@ function resetFilters(){
   F.hps.clear();
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  ['cnt-months','cnt-years','cnt-segs'].forEach(id=>{const el=g(id);if(el)el.style.display='none';});
-  refreshModels();render();
-}
-</script>
-</body>
-</html>
+  F.marca='';F.modelo='';F.body=''
