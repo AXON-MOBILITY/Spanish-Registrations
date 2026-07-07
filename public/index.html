@@ -575,6 +575,14 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
             <span id="tr-brands" class="tr-brands" style="margin:0"></span>
           </div>
           <div class="tr-controls" style="margin-top:6px">
+            <span class="tf-lbl">Modelo</span>
+            <input id="tr-model-input" class="tf-modelo-input" list="tr-model-list"
+                   placeholder="A&ntilde;adir modelo&hellip;" autocomplete="off"
+                   onchange="trAddModel()">
+            <datalist id="tr-model-list"></datalist>
+            <span id="tr-models" class="tr-brands" style="margin:0"></span>
+          </div>
+          <div class="tr-controls" style="margin-top:6px">
             <span class="tf-lbl">Mercado</span>
             <span class="sg-pills" id="tr-mkt" style="padding:0"></span>
           </div>
@@ -1616,25 +1624,37 @@ function trAddBrand(){
   const b=inp.value.trim();
   if(!b||!BRAND_CHOICES.includes(b)||TR.sel.includes(b))return;
   TR.sel.push(b);inp.value='';
-  // Market aggregate pills
-  if(g('tr-mkt-TOTAL'))g('tr-mkt').innerHTML='';
-  const MKT_OPTS=[['TOTAL','Total Mercado','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
-  TR.mkt=new Set();
-  MKT_OPTS.forEach(([key,label,color])=>{
-    const pill=document.createElement('div');
-    pill.id='tr-mkt-'+key;
-    pill.className='sg-pill';pill.textContent=label;
-    pill.style.borderColor=color;
-    pill.onclick=()=>{
-      if(TR.mkt.has(key))TR.mkt.delete(key);else TR.mkt.add(key);
-      pill.classList.toggle('on',TR.mkt.has(key));
-      if(pill.classList.contains('on'))pill.style.background=color+'33';
-      else pill.style.background='';
-      renderTrend();
-    };
-    g('tr-mkt').appendChild(pill);
-  });
   trChips();renderTrend();
+}
+
+function trAddModel(){
+  const inp=g('tr-model-input');
+  const m=inp.value.trim();
+  if(!m||(TR.modSel||[]).includes(m))return;
+  const opts=[...g('tr-model-list').options].map(o=>o.value);
+  if(!opts.includes(m))return;
+  if(!TR.modSel)TR.modSel=[];
+  TR.modSel.push(m);inp.value='';
+  trModelChips();renderTrend();
+}
+
+function trModelChips(){
+  const box=g('tr-models');box.innerHTML='';
+  (TR.modSel||[]).forEach(m=>{
+    const pill=document.createElement('div');
+    pill.className='tr-pill on';
+    pill.style.background=trModelColor(m);
+    pill.innerHTML=m+'<span class="x">&times;</span>';
+    pill.title='Quitar';
+    pill.onclick=()=>{TR.modSel=TR.modSel.filter(x=>x!==m);trModelChips();renderTrend();};
+    box.appendChild(pill);
+  });
+}
+
+function trModelColor(m){
+  if(!TR.modelColors)TR.modelColors={};
+  if(!TR.modelColors[m])TR.modelColors[m]=TR_COLORS[(Object.keys(TR.modelColors).length+4)%TR_COLORS.length];
+  return TR.modelColors[m];
 }
 
 function trChips(){
@@ -1659,6 +1679,17 @@ function initTrend(){
   TR.days=TREND.days.map(d=>d.day);
   TR.sel=['BMW'].filter(b=>BRAND_CHOICES.includes(b));
   BRAND_CHOICES.forEach(b=>g('tr-brand-list').appendChild(new Option(b,b)));
+  // Model choices: "Marca / Modelo" for models with ≥50 units
+  TR.modSel=TR.modSel||[];
+  if(!g('tr-model-list').options.length){
+    const mc={};
+    REC.rows.forEach(r=>{
+      const k=REC.enums.marca[r[COL.MARCA]]+' / '+REC.enums.modelo[r[COL.MODELO]];
+      if(k.includes(' / '))mc[k]=(mc[k]||0)+r[COL.N];
+    });
+    Object.entries(mc).filter(([,v])=>v>=50).sort((a,b)=>b[1]-a[1])
+      .forEach(([k])=>g('tr-model-list').appendChild(new Option(k,k)));
+  }
   [['units','Unidades'],['cumul','Acumulado']].forEach(([k,lbl],i)=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===TR.mode?' on':'');
@@ -1677,7 +1708,7 @@ function initTrend(){
   const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
   g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
   // Market aggregate pills
-  if(g('tr-mkt-TOTAL'))g('tr-mkt').innerHTML='';
+  if(g('tr-mkt-TOTAL'))return; // already initialised — don't duplicate pills
   const MKT_OPTS=[['TOTAL','Total Mercado','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
   TR.mkt=new Set();
   MKT_OPTS.forEach(([key,label,color])=>{
@@ -1776,7 +1807,30 @@ function renderTrend(){
         pointRadius:perM.length>60?0:2,pointHoverRadius:4,tension:.25});
     });
   }
-  trDrawLine('ch-trend-m',labM,[...mktSeriesM,...trSeries(perM,(m,pd)=>(monthly[m]||{})[pd]||0)]);
+  // Model series (monthly only — daily JSON has no model breakdown)
+  const modelSeriesM=[];
+  if(TR.modSel&&TR.modSel.length>0){
+    const modMo={};
+    TR.modSel.forEach(mk=>{modMo[mk]={};});
+    applyFiltersBase().forEach(r=>{
+      const mk=E.marca[r[COL.MARCA]]+' / '+E.modelo[r[COL.MODELO]];
+      if(!modMo[mk])return;
+      const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
+      modMo[mk][k]=(modMo[mk][k]||0)+r[COL.N];
+    });
+    TR.modSel.forEach(mk=>{
+      let acc=0;
+      const data=perM.map(pd=>{
+        const v=(modMo[mk][pd]||0);
+        return TR.mode==='cumul'?(acc+=v):v;
+      });
+      const c=trModelColor(mk);
+      modelSeriesM.push({label:mk,data,borderColor:c,backgroundColor:c,
+        borderWidth:1.8,borderDash:[3,2],
+        pointRadius:perM.length>60?0:2,pointHoverRadius:4,tension:.25});
+    });
+  }
+  trDrawLine('ch-trend-m',labM,[...mktSeriesM,...modelSeriesM,...trSeries(perM,(m,pd)=>(monthly[m]||{})[pd]||0)]);
   // ── Diario: respeta canal y fuel (matriz 3x3 del JSON) ──
   const canalSel=new Set([...F.canales].map(i=>E.canal[i]));
   const fuelSel=new Set([...F.fuels].map(i=>E.fuel[i]));
