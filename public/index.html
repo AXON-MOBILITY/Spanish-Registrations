@@ -1811,8 +1811,6 @@ function toggleModelRows(btn,brand){
   while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
   btn.classList.toggle('open',!wasOpen);
   if(wasOpen)return;
-<<<<<<< HEAD
-=======
   const E=REC.enums;
   const mIdx=E.marca.indexOf(brand);
   const {rows,prevRows,refYear,commonM}=_RC;
@@ -1866,20 +1864,22 @@ function showTab(name){
 }
 
 function resetFilters(){
->>>>>>> 0bef2d9ff0b29907d273605e001607c065597d3d
   const E=REC.enums;
-  const mIdx=E.marca.indexOf(brand);
-  const {rows,prevRows,refYear,commonM}=_RC;
-  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
-  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
-  // Aggregate ref counts per model
-  const byMo={};
-  brandRows.forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    if(!byMo[mo])byMo[mo]={total:0,ref:0};
-    byMo[mo].total+=r[COL.N];
-    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
-  });
-  // Prev counts per model
-  const byMoPrev={};
-  prevRo
+  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
+  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
+  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
+  F.fuels=new Set(E.fuel.map((_,i)=>i));
+  F.canales=new Set(E.canal.map((_,i)=>i));
+  F.segs=new Set(E.seg.map((_,i)=>i));
+  F.subs=new Set(E.sub.map((_,i)=>i));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body='';
+  ['cnt-months','cnt-years','cnt-segs'].forEach(id=>{const el=g(id);if(el)el.style.display='none';});
+  refreshModels();render();
+}
+</script>
+</body>
+</html>
