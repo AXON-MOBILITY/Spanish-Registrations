@@ -77,6 +77,10 @@ select.tf-sel:focus{outline:none;border-color:var(--acc)}
 input.tf-modelo-input{background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:3px 8px;font-size:11px;min-width:110px;max-width:155px;outline:none;height:24px;}
 input.tf-modelo-input:focus{border-color:var(--acc)}
 input.tf-modelo-input::placeholder{color:var(--text3)}
+.btn-xpd{background:none;border:none;cursor:pointer;color:var(--text3);font-size:9px;padding:0 4px 0 0;line-height:1;display:inline-block;transition:transform .15s;vertical-align:middle}
+.btn-xpd.open{transform:rotate(90deg);color:var(--acc)}
+tr.model-sub td{padding:2px 6px 2px 22px;font-size:10px;color:var(--text2);background:rgba(255,255,255,.03);border-bottom:none}
+tr.model-sub td:first-child{color:var(--text)}
 .hp-row{display:flex;gap:5px;align-items:center}
 .hp-lbl{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text3);cursor:pointer}
 .hp-lbl input{accent-color:var(--acc);width:12px;height:12px;cursor:pointer}
@@ -683,6 +687,7 @@ function segCanon(label){
 }
 
 let REC=null;
+let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),
@@ -965,6 +970,7 @@ function render(){
   const prevM=new Set(prevRows.map(r=>r[COL.M]));
   const commonM=new Set([...refM].filter(m=>prevM.has(m)));
   const hasPrev=prevRows.length>0&&commonM.size>0;
+  _RC={rows,refRows,prevRows,refYear,prevYear,commonM,hasPrev};
 
   // Aggregate by brand
   const byBrand={};
@@ -1066,7 +1072,7 @@ function render(){
     const share=total?d.total/total*100:0;
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td>${brand}</td><td>${fN(d.total)}</td>
+      <td><button class="btn-xpd" onclick="toggleModelRows(this,'${brand.replace(/'/g,"\\'")}')">▶</button>${brand}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
       <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
       <td>${fP2(share)}</td>`;
@@ -1797,39 +1803,27 @@ function fcSetYear(marca,val){
 // ── UI CONTROLS ──────────────────────────────────────────
 function toggleSg(id){g(id).classList.toggle('open')}
 
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-  },40);
-}
-
-function resetFilters(){
+function toggleModelRows(btn,brand){
+  const tr=btn.closest('tr');
+  const wasOpen=btn.classList.contains('open');
+  // Remove existing sub-rows
+  let nx=tr.nextElementSibling;
+  while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
+  btn.classList.toggle('open',!wasOpen);
+  if(wasOpen)return;
   const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  ['cnt-months','cnt-years','cnt-segs'].forEach(id=>{const el=g(id);if(el)el.style.display='none';});
-  refreshModels();render();
-}
-</script>
-</body>
-</html>
+  const mIdx=E.marca.indexOf(brand);
+  const {rows,prevRows,refYear,commonM}=_RC;
+  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
+  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
+  // Aggregate ref counts per model
+  const byMo={};
+  brandRows.forEach(r=>{
+    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
+    if(!byMo[mo])byMo[mo]={total:0,ref:0};
+    byMo[mo].total+=r[COL.N];
+    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
+  });
+  // Prev counts per model
+  const byMoPrev={};
+  prevRo
