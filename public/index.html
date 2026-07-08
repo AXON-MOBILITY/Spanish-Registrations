@@ -1728,12 +1728,12 @@ function initTrendSubFilters(){
     pill.className='sg-pill on';
     pill.textContent=label;
     pill.onclick=()=>{
-      if(TR.subs.has(key)){
-        TR.subs.delete(key);
-        if(key==='FOCUS')TR.concepts.clear();
+      if(TR.subs.size===1&&TR.subs.has(key)){
+        TR.subs=new Set(['REST','FOCUS']);
+        TR.concepts=new Set(CONCEPTS);
       } else {
-        TR.subs.add(key);
-        if(key==='FOCUS'&&TR.concepts.size===0)CONCEPTS.forEach(c=>TR.concepts.add(c));
+        TR.subs=new Set([key]);
+        TR.concepts=key==='FOCUS'?new Set(CONCEPTS):new Set();
       }
       trRefreshSubPills();
       renderTrend();
@@ -1746,9 +1746,16 @@ function initTrendSubFilters(){
     pill.className='sg-pill on';
     pill.textContent=c;
     pill.onclick=()=>{
-      if(TR.concepts.has(c))TR.concepts.delete(c);
-      else{TR.concepts.add(c);TR.subs.add('FOCUS');}
-      if(TR.concepts.size===0)TR.subs.delete('FOCUS');
+      const allFocus=TR.subs.size!==1||!TR.subs.has('FOCUS')||TR.concepts.size===CONCEPTS.length;
+      if(allFocus){
+        TR.subs=new Set(['FOCUS']);
+        TR.concepts=new Set([c]);
+      } else if(TR.concepts.has(c)){
+        TR.concepts.delete(c);
+        if(TR.concepts.size===0)TR.concepts=new Set(CONCEPTS);
+      } else {
+        TR.concepts.add(c);
+      }
       trRefreshSubPills();
       renderTrend();
     };
