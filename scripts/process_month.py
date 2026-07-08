@@ -105,6 +105,8 @@ def download_zip(url, zip_path):
 
 # Posiciones campos (0-indexed)
 F_CLAVE_TRAMITE = (156, 157)   # 1=matriculación ordinaria, 2=transferencia, 5=rematriculación...
+F_CLASE_MAT = (8, 9)          # COD_CLASE_MAT: 0=ordinaria
+F_COD_TIPO  = (91, 93)        # COD_TIPO / COD_TIPO_VEHICULO
 F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
 F_SERVICIO    = (189, 192)
@@ -120,6 +122,8 @@ F_PROPULSION    = (93,   94)   # 0=gasolina, 1=diesel, 2=electrico, 6=GLP, 7=GNC
 F_CAT_ELECTRICO = (453, 457)   # BEV, HEV, PHEV, REEV o vacio
 F_VARIANTE_ITV  = (284, 309)   # EU type approval variant code (homologacion)
 F_VERSION_ITV   = (309, 344)   # EU type approval version code
+
+DGT_SCOPE_COD_TIPO = {'25', '40'}
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -1579,6 +1583,19 @@ def es_turismo_o_furgoneta(line_s):
     return False  # plazas=0 (trailer), plazas=1 (moto solo-seat)
 
 
+def passes_dgt_scope_filters(line_s):
+    """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
+    if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
+        return False
+    if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N':
+        return False
+    if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
+        return False
+    if line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip() not in DGT_SCOPE_COD_TIPO:
+        return False
+    return True
+
+
 
 
 def fuel_to_canal_counts(fuel_counts):
@@ -1617,9 +1634,7 @@ def process_lines(lines_iter):
             line_s = line.decode('latin-1')
         except Exception:
             continue
-        if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]] != '1':
-            continue
-        if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N':
+        if not passes_dgt_scope_filters(line_s):
             continue
         marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
         modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()

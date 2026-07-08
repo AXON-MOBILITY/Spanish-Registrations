@@ -10,6 +10,36 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 import process_month as pm
 
 
+def _scope_filter_line(clase='0', nuevo='N', tramite='1', cod_tipo='40'):
+    line = [' '] * 714
+    line[pm.F_CLASE_MAT[0]:pm.F_CLASE_MAT[1]] = list(clase[:1])
+    line[pm.F_NUEVO_USADO[0]:pm.F_NUEVO_USADO[1]] = list(nuevo[:1])
+    line[pm.F_CLAVE_TRAMITE[0]:pm.F_CLAVE_TRAMITE[1]] = list(tramite[:1])
+    line[pm.F_COD_TIPO[0]:pm.F_COD_TIPO[1]] = list(cod_tipo[:2].rjust(2))
+    return ''.join(line)
+
+
+def test_filtros_scope_dgt_aceptan_criterio_simmix():
+    assert pm.passes_dgt_scope_filters(_scope_filter_line())
+    assert pm.passes_dgt_scope_filters(_scope_filter_line(cod_tipo='25'))
+
+
+def test_filtros_scope_dgt_excluyen_clase_no_ordinaria():
+    assert not pm.passes_dgt_scope_filters(_scope_filter_line(clase='1'))
+
+
+def test_filtros_scope_dgt_excluyen_usados():
+    assert not pm.passes_dgt_scope_filters(_scope_filter_line(nuevo='U'))
+
+
+def test_filtros_scope_dgt_excluyen_rematriculaciones():
+    assert not pm.passes_dgt_scope_filters(_scope_filter_line(tramite='5'))
+
+
+def test_filtros_scope_dgt_excluyen_cod_tipo_fuera_de_scope():
+    assert not pm.passes_dgt_scope_filters(_scope_filter_line(cod_tipo='30'))
+
+
 # ── Canal (SERVICIO + persona física/jurídica) ──────────────────────────────
 
 def test_b00_empresa_es_corporate():
