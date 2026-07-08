@@ -21,8 +21,11 @@ def _scope_filter_line(clase='0', nuevo='N', tramite='1', cod_tipo='40'):
 
 def test_filtros_scope_dgt_aceptan_criterio_simmix():
     assert pm.passes_dgt_scope_filters(_scope_filter_line())
-    assert pm.passes_dgt_scope_filters(_scope_filter_line(clase='1'))
     assert pm.passes_dgt_scope_filters(_scope_filter_line(cod_tipo='25'))
+
+
+def test_filtros_scope_dgt_excluyen_clase_no_ordinaria():
+    assert not pm.passes_dgt_scope_filters(_scope_filter_line(clase='1'))
 
 
 def test_filtros_scope_dgt_excluyen_matriculas_diplomaticas():

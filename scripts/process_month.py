@@ -105,7 +105,7 @@ def download_zip(url, zip_path):
 
 # Posiciones campos (0-indexed)
 F_CLAVE_TRAMITE = (156, 157)   # 1=matriculación ordinaria, 2=transferencia, 5=rematriculación...
-F_CLASE_MAT = (8, 9)          # COD_CLASE_MAT: 3=diplomatica
+F_CLASE_MAT = (8, 9)          # COD_CLASE_MAT: 0=ordinaria
 F_COD_TIPO  = (91, 93)        # COD_TIPO / COD_TIPO_VEHICULO
 F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
@@ -1585,7 +1585,7 @@ def es_turismo_o_furgoneta(line_s):
 
 def passes_dgt_scope_filters(line_s):
     """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
-    if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() == '3':
+    if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
         return False
     if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N':
         return False
@@ -1616,7 +1616,7 @@ def fuel_to_canal_counts(fuel_counts):
     return agg
 
 
-def process_lines(lines_iter):
+def process_lines(lines_iter, apply_calibration=True):
     global LAST_PROCESS_ALERTS
     counts      = collections.Counter()
     fuel_counts = collections.Counter()
@@ -1743,7 +1743,7 @@ def process_lines(lines_iter):
                 detail='pool_b00d_private={}; rate={:.4f}'.format(n, rate),
             ))
     LAST_PROCESS_ALERTS = alerts
-    calibrated = apply_scope_calibration(counts)
+    calibrated = apply_scope_calibration(counts) if apply_calibration else counts
     raw_totals = {}
     for key, n in fuel_counts.items():
         marca = key[0]
@@ -1762,21 +1762,21 @@ def process_lines(lines_iter):
 
 
 
-def process_zip(zip_path):
+def process_zip(zip_path, apply_calibration=True):
     with zipfile.ZipFile(zip_path, 'r') as zf:
         names = zf.namelist()
         txt_names = [n for n in names if n.lower().endswith('.txt')]
         if not txt_names:
             raise ValueError("ZIP sin .txt: {}".format(names))
         with zf.open(txt_names[0]) as f:
-            return process_lines(f)
+            return process_lines(f, apply_calibration=apply_calibration)
 
 
 
 
-def process_raw_txt(txt_path):
+def process_raw_txt(txt_path, apply_calibration=True):
     with open(txt_path, 'rb') as f:
-        return process_lines(f)
+        return process_lines(f, apply_calibration=apply_calibration)
 
 
 
@@ -2046,7 +2046,7 @@ def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
     if not download_zip(url, zip_path):
         return None
     try:
-        counts = process_zip(zip_path)
+        counts = process_zip(zip_path, apply_calibration=False)
     except Exception as e:
         print("  ERROR procesando ZIP: {}".format(e))
         return None
