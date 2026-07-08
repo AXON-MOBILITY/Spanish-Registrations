@@ -1,4 +1,6 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
+202409,INFO,CARROCERO_UNMAPPED,EUROCARROCERA,,registros_carrocero_sin_chasis_detectado,30,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202409,INFO,CARROCERO_UNMAPPED,ERKE,,registros_carrocero_sin_chasis_detectado,28,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
 202409,INFO,KM0_FALLBACK,OPEL,Corporate,b00d_private_moved_to_corporate,107,100,pool_b00d_private=722; rate=0.1484
-202409,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,116,100,pool_b00d_private=1237; rate=0.0939
-202409,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,128,100,pool_b00d_private=2238; rate=0.0573
+202409,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,118,100,pool_b00d_private=1258; rate=0.0939
+202409,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,128,100,pool_b00d_private=2240; rate=0.0573

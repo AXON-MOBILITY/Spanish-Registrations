@@ -1,2 +1,6 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202408,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,118,100,pool_b00d_private=2050; rate=0.0573
+202408,INFO,CARROCERO_UNMAPPED,EUROCARROCERA,,registros_carrocero_sin_chasis_detectado,39,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202408,INFO,CARROCERO_UNMAPPED,SOCAGE,,registros_carrocero_sin_chasis_detectado,28,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202408,INFO,INVALID_ITV_SCOPE_EXCLUDED,CITROEN,Corporate,registros_excluidos_ficha_itv_invalida,2,1,vin10=VF7SYYHTUR; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202408,INFO,ITV_QUALITY_SUSPECT,MG,Private,registros_ficha_itv_sospechosa_no_excluidos,2,1,"vin10=HDK4362233; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202408,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,118,100,pool_b00d_private=2053; rate=0.0573

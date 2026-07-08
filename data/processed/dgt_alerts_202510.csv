@@ -1,5 +1,7 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202510,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,124,100,pool_b00d_private=1321; rate=0.0939
-202510,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,100,100,pool_b00d_private=1243; rate=0.0802
-202510,INFO,KM0_FALLBACK,PEUGEOT,Corporate,b00d_private_moved_to_corporate,111,100,pool_b00d_private=2015; rate=0.0553
-202510,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,199,100,pool_b00d_private=3463; rate=0.0573
+202510,INFO,CARROCERO_UNMAPPED,SORTIMO,,registros_carrocero_sin_chasis_detectado,52,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202510,INFO,CARROCERO_UNMAPPED,A.A. AIRBUS,,registros_carrocero_sin_chasis_detectado,38,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202510,INFO,CARROCERO_UNMAPPED,TSD,,registros_carrocero_sin_chasis_detectado,34,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202510,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,127,100,pool_b00d_private=1355; rate=0.0939
+202510,INFO,KM0_FALLBACK,PEUGEOT,Corporate,b00d_private_moved_to_corporate,112,100,pool_b00d_private=2020; rate=0.0553
+202510,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,199,100,pool_b00d_private=3464; rate=0.0573

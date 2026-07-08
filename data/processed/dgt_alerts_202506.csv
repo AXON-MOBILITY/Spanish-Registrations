@@ -1,4 +1,5 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202506,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,142,100,pool_b00d_private=1509; rate=0.0939
-202506,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,106,100,pool_b00d_private=1327; rate=0.0802
+202506,INFO,CARROCERO_UNMAPPED,SORTIMO,,registros_carrocero_sin_chasis_detectado,27,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202506,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,146,100,pool_b00d_private=1560; rate=0.0939
+202506,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,105,100,pool_b00d_private=1310; rate=0.0802
 202506,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,202,100,pool_b00d_private=3514; rate=0.0573
