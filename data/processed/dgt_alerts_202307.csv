@@ -1,3 +1,7 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
+202307,INFO,INVALID_ITV_SCOPE_EXCLUDED,PEUGEOT,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=8BRHZF8164; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202307,INFO,INVALID_ITV_SCOPE_EXCLUDED,CHEVROLET,Corporate,registros_excluidos_ficha_itv_invalida,1,1,"vin10=1G1Y93D49P; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+202307,INFO,ITV_QUALITY_SUSPECT,PEUGEOT,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=VF37J9HP0B; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202307,INFO,ITV_QUALITY_SUSPECT,MERCEDES-V,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WDF6396031; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202307,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,132,100,pool_b00d_private=2297; rate=0.0573
 202307,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,116,100,pool_b00d_private=1234; rate=0.0939

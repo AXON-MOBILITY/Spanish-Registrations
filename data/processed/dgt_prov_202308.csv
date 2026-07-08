@@ -1,4 +1,13 @@
 anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
+2023,08,BMW,00,Desconocida,Private,ICE,2
+2023,08,CUPRA,00,Desconocida,Private,ICE,1
+2023,08,HYUNDAI,00,Desconocida,Private,PHEV,1
+2023,08,MAZDA,00,Desconocida,Private,ICE,1
+2023,08,MERCEDES,00,Desconocida,Private,ICE,1
+2023,08,TOYOTA,00,Desconocida,Private,ICE,1
+2023,08,TOYOTA,00,Desconocida,Private,PHEV,1
+2023,08,VOLKSWAGEN,00,Desconocida,Private,ICE,1
+2023,08,VOLVO,00,Desconocida,Private,PHEV,1
 2023,08,ALFA ROMEO,01,Álava,Corporate,PHEV,1
 2023,08,AUDI,01,Álava,Private,ICE,1
 2023,08,BMW,01,Álava,Corporate,ICE,2
@@ -253,7 +262,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,BMW,04,Almería,Corporate,BEV,1
 2023,08,BMW,04,Almería,Corporate,ICE,3
 2023,08,BMW,04,Almería,Private,ICE,18
-2023,08,BMW,04,Almería,Private,PHEV,1
+2023,08,BMW,04,Almería,Private,PHEV,2
 2023,08,CHEVROLET,04,Almería,RAC,ICE,1
 2023,08,CITROEN,04,Almería,Corporate,BEV,3
 2023,08,CITROEN,04,Almería,Corporate,ICE,14
@@ -664,11 +673,13 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,OPEL,08,Barcelona,Private,ICE,80
 2023,08,OPEL,08,Barcelona,Private,PHEV,1
 2023,08,PEUGEOT,08,Barcelona,Corporate,BEV,8
-2023,08,PEUGEOT,08,Barcelona,Corporate,ICE,86
+2023,08,PEUGEOT,08,Barcelona,Corporate,ICE,87
 2023,08,PEUGEOT,08,Barcelona,Corporate,PHEV,5
 2023,08,PEUGEOT,08,Barcelona,Private,BEV,4
 2023,08,PEUGEOT,08,Barcelona,Private,ICE,124
 2023,08,PEUGEOT,08,Barcelona,Private,PHEV,1
+2023,08,POLARIS,08,Barcelona,Corporate,ICE,1
+2023,08,POLARIS,08,Barcelona,Private,ICE,1
 2023,08,POLESTAR,08,Barcelona,Corporate,BEV,1
 2023,08,PORSCHE,08,Barcelona,Corporate,ICE,7
 2023,08,PORSCHE,08,Barcelona,Private,ICE,8
@@ -1991,7 +2002,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,AUDI,28,Madrid,Corporate,ICE,797
 2023,08,AUDI,28,Madrid,Corporate,PHEV,132
 2023,08,AUDI,28,Madrid,Private,BEV,10
-2023,08,AUDI,28,Madrid,Private,ICE,96
+2023,08,AUDI,28,Madrid,Private,ICE,97
 2023,08,AUDI,28,Madrid,Private,PHEV,17
 2023,08,AUDI,28,Madrid,RAC,BEV,1
 2023,08,AUDI,28,Madrid,RAC,ICE,302
@@ -2366,7 +2377,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,HYUNDAI,30,Murcia,Corporate,ICE,28
 2023,08,HYUNDAI,30,Murcia,Corporate,PHEV,1
 2023,08,HYUNDAI,30,Murcia,Private,BEV,1
-2023,08,HYUNDAI,30,Murcia,Private,ICE,82
+2023,08,HYUNDAI,30,Murcia,Private,ICE,83
 2023,08,HYUNDAI,30,Murcia,Private,PHEV,1
 2023,08,HYUNDAI,30,Murcia,RAC,ICE,5
 2023,08,JEEP,30,Murcia,Corporate,BEV,1
@@ -2571,12 +2582,12 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,AUDI,33,Asturias,Corporate,ICE,7
 2023,08,AUDI,33,Asturias,Corporate,PHEV,4
 2023,08,AUDI,33,Asturias,Private,BEV,1
-2023,08,AUDI,33,Asturias,Private,ICE,21
+2023,08,AUDI,33,Asturias,Private,ICE,22
 2023,08,AUDI,33,Asturias,Private,PHEV,1
 2023,08,BMW,33,Asturias,Corporate,BEV,2
 2023,08,BMW,33,Asturias,Corporate,ICE,16
 2023,08,BMW,33,Asturias,Private,BEV,2
-2023,08,BMW,33,Asturias,Private,ICE,12
+2023,08,BMW,33,Asturias,Private,ICE,13
 2023,08,CITROEN,33,Asturias,Corporate,PHEV,1
 2023,08,CITROEN,33,Asturias,Private,BEV,1
 2023,08,CITROEN,33,Asturias,Private,ICE,41
@@ -2824,6 +2835,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,SSANGYONG,35,Las Palmas,Private,ICE,1
 2023,08,SUZUKI,35,Las Palmas,Private,ICE,4
 2023,08,SUZUKI,35,Las Palmas,RAC,ICE,40
+2023,08,TESLA,35,Las Palmas,Private,BEV,1
 2023,08,TOYOTA,35,Las Palmas,Corporate,BEV,1
 2023,08,TOYOTA,35,Las Palmas,Corporate,ICE,40
 2023,08,TOYOTA,35,Las Palmas,Corporate,PHEV,1
@@ -3072,6 +3084,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,SSANGYONG,38,S.C. Tenerife,Private,ICE,1
 2023,08,SUBARU,38,S.C. Tenerife,Private,ICE,2
 2023,08,SUZUKI,38,S.C. Tenerife,Private,ICE,1
+2023,08,TESLA,38,S.C. Tenerife,Private,BEV,1
 2023,08,TOYOTA,38,S.C. Tenerife,Corporate,ICE,17
 2023,08,TOYOTA,38,S.C. Tenerife,Corporate,PHEV,1
 2023,08,TOYOTA,38,S.C. Tenerife,Private,ICE,94
@@ -3234,7 +3247,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,JEEP,41,Sevilla,Private,ICE,12
 2023,08,KIA,41,Sevilla,Corporate,ICE,10
 2023,08,KIA,41,Sevilla,Corporate,PHEV,22
-2023,08,KIA,41,Sevilla,Private,ICE,88
+2023,08,KIA,41,Sevilla,Private,ICE,89
 2023,08,KIA,41,Sevilla,Private,PHEV,3
 2023,08,LAND ROVER,41,Sevilla,Corporate,ICE,3
 2023,08,LAND ROVER,41,Sevilla,Corporate,PHEV,1
@@ -3546,7 +3559,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,BMW,46,Valencia,Corporate,ICE,20
 2023,08,BMW,46,Valencia,Corporate,PHEV,2
 2023,08,BMW,46,Valencia,Private,BEV,3
-2023,08,BMW,46,Valencia,Private,ICE,24
+2023,08,BMW,46,Valencia,Private,ICE,25
 2023,08,BMW,46,Valencia,Private,PHEV,2
 2023,08,BYD,46,Valencia,Corporate,BEV,2
 2023,08,BYD,46,Valencia,Private,BEV,2
@@ -3644,7 +3657,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,PORSCHE,46,Valencia,Private,ICE,8
 2023,08,RENAULT,46,Valencia,Corporate,BEV,1
 2023,08,RENAULT,46,Valencia,Corporate,ICE,34
-2023,08,RENAULT,46,Valencia,Private,ICE,91
+2023,08,RENAULT,46,Valencia,Private,ICE,92
 2023,08,RENAULT,46,Valencia,Private,PHEV,4
 2023,08,SEAT,46,Valencia,Corporate,ICE,16
 2023,08,SEAT,46,Valencia,Private,ICE,55
@@ -3788,7 +3801,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,MERCEDES,48,Bizkaia,Corporate,BEV,1
 2023,08,MERCEDES,48,Bizkaia,Corporate,ICE,18
 2023,08,MERCEDES,48,Bizkaia,Corporate,PHEV,2
-2023,08,MERCEDES,48,Bizkaia,Private,ICE,12
+2023,08,MERCEDES,48,Bizkaia,Private,ICE,13
 2023,08,MERCEDES,48,Bizkaia,Private,PHEV,1
 2023,08,MERCEDES,48,Bizkaia,RAC,PHEV,2
 2023,08,MG,48,Bizkaia,Corporate,ICE,1
@@ -3975,7 +3988,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,DACIA,51,Ceuta,Private,ICE,8
 2023,08,FORD,51,Ceuta,Private,ICE,2
 2023,08,HYUNDAI,51,Ceuta,Corporate,ICE,2
-2023,08,HYUNDAI,51,Ceuta,Private,ICE,5
+2023,08,HYUNDAI,51,Ceuta,Private,ICE,6
 2023,08,KIA,51,Ceuta,Private,ICE,10
 2023,08,MERCEDES,51,Ceuta,Corporate,ICE,1
 2023,08,MERCEDES,51,Ceuta,Private,ICE,1
@@ -3987,6 +4000,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,SEAT,51,Ceuta,Private,ICE,2
 2023,08,TOYOTA,51,Ceuta,Private,ICE,4
 2023,08,VOLKSWAGEN,51,Ceuta,Private,ICE,7
+2023,08,VOLVO,51,Ceuta,Private,PHEV,1
 2023,08,AUDI,52,Melilla,Corporate,ICE,2
 2023,08,AUDI,52,Melilla,Private,ICE,1
 2023,08,DACIA,52,Melilla,Corporate,ICE,2
@@ -4010,6 +4024,7 @@ anyo,mes,marca,cod_prov,provincia,canal,fuel_type,count
 2023,08,SEAT,52,Melilla,Corporate,ICE,2
 2023,08,SEAT,52,Melilla,Private,ICE,2
 2023,08,SSANGYONG,52,Melilla,Private,ICE,3
+2023,08,TESLA,52,Melilla,Private,BEV,1
 2023,08,TOYOTA,52,Melilla,Private,ICE,21
 2023,08,VOLKSWAGEN,52,Melilla,Corporate,ICE,1
 2023,08,VOLKSWAGEN,52,Melilla,Private,ICE,8

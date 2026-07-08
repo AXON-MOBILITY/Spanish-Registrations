@@ -1,3 +1,12 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
+202405,INFO,INVALID_ITV_SCOPE_EXCLUDED,MG,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=LSJA24393N; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202405,INFO,INVALID_ITV_SCOPE_EXCLUDED,FIAT,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=ZFA1700000; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202405,INFO,INVALID_ITV_SCOPE_EXCLUDED,MERCEDES,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WDD2452081; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202405,INFO,INVALID_ITV_SCOPE_EXCLUDED,NISSAN,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=JN1GAAZ33U; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202405,INFO,INVALID_ITV_SCOPE_EXCLUDED,AUDI,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WAUZZZ8P9A; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202405,INFO,INVALID_ITV_SCOPE_EXCLUDED,PEUGEOT,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=VF3WC8FSC3; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202405,INFO,ITV_QUALITY_SUSPECT,BMW,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WBAUK31030; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202405,INFO,ITV_QUALITY_SUSPECT,DODGE,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=C3CDZBTXKH; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202405,INFO,ITV_QUALITY_SUSPECT,TOYOTA,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=SB1ER56L50; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202405,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,146,100,pool_b00d_private=2551; rate=0.0573
 202405,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,132,100,pool_b00d_private=1409; rate=0.0939

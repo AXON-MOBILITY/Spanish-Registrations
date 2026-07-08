@@ -1,3 +1,5 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202502,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,168,100,pool_b00d_private=1788; rate=0.0939
+202502,INFO,ITV_QUALITY_SUSPECT,VOLKSWAGEN,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WVGZZZ1TZ9; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202502,INFO,ITV_QUALITY_SUSPECT,FIAT,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=ZFA3120000; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202502,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,168,100,pool_b00d_private=1789; rate=0.0939
 202502,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,144,100,pool_b00d_private=2511; rate=0.0573

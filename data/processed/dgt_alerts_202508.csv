@@ -1,2 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202508,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,121,100,pool_b00d_private=2109; rate=0.0573
+202508,INFO,INVALID_ITV_SCOPE_EXCLUDED,AUDI,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=T6F; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+202508,INFO,ITV_QUALITY_SUSPECT,MERCEDES,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=W1K1183841; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202508,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,121,100,pool_b00d_private=2111; rate=0.0573

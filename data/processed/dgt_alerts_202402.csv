@@ -1,3 +1,5 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202402,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,119,100,pool_b00d_private=1264; rate=0.0939
+202402,INFO,INVALID_ITV_SCOPE_EXCLUDED,BMW,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WBS3R9C58F; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202402,INFO,ITV_QUALITY_SUSPECT,VOLKSWAGEN V W,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WVWZZZ1KZ9; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
+202402,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,119,100,pool_b00d_private=1265; rate=0.0939
 202402,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,112,100,pool_b00d_private=1945; rate=0.0573

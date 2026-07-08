@@ -1,3 +1,8 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
+202505,INFO,INVALID_ITV_SCOPE_EXCLUDED,MERCEDES,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=050041; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202505,INFO,INVALID_ITV_SCOPE_EXCLUDED,VOLKSWAGEN,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WVWZZZAUZE; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202505,INFO,INVALID_ITV_SCOPE_EXCLUDED,RENAULT,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=VF15RSN0A5; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202505,INFO,INVALID_ITV_SCOPE_EXCLUDED,SIN MARCA,Corporate,registros_excluidos_ficha_itv_invalida,1,1,"vin10=W1V3K2FZ1S; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
+202505,INFO,ITV_QUALITY_SUSPECT,MINI,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WMWMH31060; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202505,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,122,100,pool_b00d_private=1296; rate=0.0939
-202505,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,125,100,pool_b00d_private=2184; rate=0.0573
+202505,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,125,100,pool_b00d_private=2185; rate=0.0573
