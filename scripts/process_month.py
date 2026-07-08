@@ -159,6 +159,8 @@ def is_excluded_scope(marca_raw, marca, modelo):
     mo = modelo.strip().upper()
     if raw in EXCLUIR_MARCA_RAW:
         return True
+    if m.endswith(' AG'):  # Marcas con sufijo AG (BMW AG, Audi AG, Mercedes-Benz AG…) - excluidas por Simmix
+        return True
     if m == 'MERCEDES' and mo.startswith(MERCEDES_EXCLUDED_MODEL_PREFIXES):
         return True
     excl = EXCLUIR_MARCA_MODELO.get(m)
