@@ -1,7 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202510,INFO,CARROCERO_UNMAPPED,A.A. AIRBUS,,registros_carrocero_sin_chasis_detectado,27,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
-202510,INFO,INVALID_ITV_SCOPE_EXCLUDED,VOLKSWAGEN,Private,registros_excluidos_ficha_itv_invalida,1,1,"vin10=WVGZZZ1TZ6; ficha ITV sin codigos tipo/variante/version utiles (plazas=0, fabricante=ND)"
-202510,INFO,ITV_QUALITY_SUSPECT,BMW,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WBABR31050; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
-202510,INFO,ITV_QUALITY_SUSPECT,CITROEN,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=VF7SC8HR4B; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
-202510,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,115,100,pool_b00d_private=1222; rate=0.0939
+202510,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,115,100,pool_b00d_private=1221; rate=0.0939
 202510,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,192,100,pool_b00d_private=3344; rate=0.0573

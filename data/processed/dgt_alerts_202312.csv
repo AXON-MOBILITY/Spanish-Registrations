@@ -1,8 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202312,INFO,CARROCERO_UNMAPPED,BERGADANA,,registros_carrocero_sin_chasis_detectado,94,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
-202312,INFO,INVALID_ITV_SCOPE_EXCLUDED,AUDI,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WUAZZZF1XL; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
-202312,INFO,INVALID_ITV_SCOPE_EXCLUDED,PEUGEOT,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=VF3XDAHZ4E; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
-202312,INFO,INVALID_ITV_SCOPE_EXCLUDED,OPEL,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=W0LJ7AMA67; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
-202312,INFO,ITV_QUALITY_SUSPECT,VOLKSWAGEN V W,Corporate,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=WVWZZZCDZM; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
 202312,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,109,100,pool_b00d_private=1157; rate=0.0939
 202312,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,107,100,pool_b00d_private=1860; rate=0.0573
