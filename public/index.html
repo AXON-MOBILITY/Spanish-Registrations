@@ -584,6 +584,14 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
               <span id="tr-models" class="tr-brands" style="margin:0"></span>
             </div>
             <div class="tr-controls" style="margin-top:6px">
+              <span class="tf-lbl">Subsegment</span>
+              <span class="sg-pills" id="tr-sub" style="padding:0"></span>
+            </div>
+            <div class="tr-controls" id="tr-focus-wrap" style="margin-top:6px;display:none">
+              <span class="tf-lbl">Focus</span>
+              <span class="sg-pills" id="tr-focus" style="padding:0"></span>
+            </div>
+            <div class="tr-controls" style="margin-top:6px">
               <span class="tf-lbl">Mercado</span>
               <span class="sg-pills" id="tr-mkt" style="padding:0"></span>
             </div>
@@ -1695,6 +1703,101 @@ function trChips(){
   });
 }
 
+function trSafeId(s){return String(s).replace(/[^A-Za-z0-9_-]+/g,'-');}
+
+function trRefreshSubPills(){
+  ['REST','FOCUS'].forEach(k=>{
+    const pill=g('tr-sub-'+k);
+    if(pill)pill.classList.toggle('on',TR.subs.has(k));
+  });
+  CONCEPTS.forEach(c=>{
+    const pill=g('tr-focus-'+trSafeId(c));
+    if(pill)pill.classList.toggle('on',TR.concepts.has(c));
+  });
+  const wrap=g('tr-focus-wrap');
+  if(wrap)wrap.style.display=TR.subs.has('FOCUS')?'flex':'none';
+}
+
+function initTrendSubFilters(){
+  TR.subs=TR.subs||new Set(['REST','FOCUS']);
+  TR.concepts=TR.concepts||new Set(CONCEPTS);
+  if(g('tr-sub-REST')){trRefreshSubPills();return;}
+  [['REST','REST'],['FOCUS','FOCUS SEGMENT']].forEach(([key,label])=>{
+    const pill=document.createElement('div');
+    pill.id='tr-sub-'+key;
+    pill.className='sg-pill on';
+    pill.textContent=label;
+    pill.onclick=()=>{
+      if(TR.subs.has(key)){
+        TR.subs.delete(key);
+        if(key==='FOCUS')TR.concepts.clear();
+      } else {
+        TR.subs.add(key);
+        if(key==='FOCUS'&&TR.concepts.size===0)CONCEPTS.forEach(c=>TR.concepts.add(c));
+      }
+      trRefreshSubPills();
+      renderTrend();
+    };
+    g('tr-sub').appendChild(pill);
+  });
+  CONCEPTS.forEach(c=>{
+    const pill=document.createElement('div');
+    pill.id='tr-focus-'+trSafeId(c);
+    pill.className='sg-pill on';
+    pill.textContent=c;
+    pill.onclick=()=>{
+      if(TR.concepts.has(c))TR.concepts.delete(c);
+      else{TR.concepts.add(c);TR.subs.add('FOCUS');}
+      if(TR.concepts.size===0)TR.subs.delete('FOCUS');
+      trRefreshSubPills();
+      renderTrend();
+    };
+    g('tr-focus').appendChild(pill);
+  });
+  trRefreshSubPills();
+}
+
+function trendSubOk(r){
+  const E=REC.enums;
+  const sub=E.sub[r[COL.SUB]]||'';
+  const key=sub==='FOCUS SEGMENT'?'FOCUS':'REST';
+  if(!TR.subs.has(key))return false;
+  if(key==='FOCUS'){
+    const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];
+    if(bc&&!TR.concepts.has(bc))return false;
+  }
+  return true;
+}
+
+function trendSubRows(){
+  return REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])&&trendSubOk(r));
+}
+
+function trendBaseRows(){
+  const E=REC.enums;
+  const mIdx=F.marca?E.marca.indexOf(F.marca):-1;
+  const moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
+  const bIdx=F.body?E.body.indexOf(F.body):-1;
+  return REC.rows.filter(r=>{
+    if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
+    if(!F.months.has(r[COL.M]))return false;
+    if(!F.fuels.has(r[COL.FUEL]))return false;
+    if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.segs.has(r[COL.SEG]))return false;
+    if(!trendSubOk(r))return false;
+    if(F.oem.size<2){
+      const isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);
+      if(F.oem.has('CHINESE')&&!isCN)return false;
+      if(F.oem.has('REST')&&isCN)return false;
+    }
+    if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
+    if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
+    if(moIdx>=0&&r[COL.MODELO]!==moIdx)return false;
+    if(bIdx>=0&&r[COL.BODY]!==bIdx)return false;
+    return true;
+  });
+}
+
 function initTrend(){
   if(!TREND)return;
   if(!REC||!BRAND_CHOICES.length){setTimeout(initTrend,150);return;}
@@ -1732,6 +1835,7 @@ function initTrend(){
   trFillRange('tr-from-d','tr-to-d',TR.days,null);
   const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
   g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
+  initTrendSubFilters();
   // Market aggregate pills
   if(g('tr-mkt-TOTAL'))return; // already initialised — don't duplicate pills
   const MKT_OPTS=[['TOTAL','Total Mercado','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
@@ -1792,10 +1896,11 @@ function trSeries(per,getter){
 function renderTrend(){
   if(!TREND||!TR.months)return;
   const E=REC.enums;
+  const trendRows=trendBaseRows();
   // Mensual: historico completo de las marcas seleccionadas; el rango lo controlan los selects del tab.
   const selSet=new Set(TR.sel);
   const monthly={};
-  REC.rows.forEach(r=>{
+  trendSubRows().forEach(r=>{
     const b=E.marca[r[COL.MARCA]];
     if(!selSet.has(b))return;
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
@@ -1808,9 +1913,8 @@ function renderTrend(){
   // Market aggregate series (monthly)
   const mktSeriesM=[];
   if(TR.mkt&&TR.mkt.size>0){
-    const baseRows=applyFiltersBase();
     const mktMo={TOTAL:{},CHINESE:{},REST:{}};
-    baseRows.forEach(r=>{
+    trendRows.forEach(r=>{
       const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
       const n=r[COL.N];
       const isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);
@@ -1837,7 +1941,7 @@ function renderTrend(){
   if(TR.modSel&&TR.modSel.length>0){
     const modMo={};
     TR.modSel.forEach(mk=>{modMo[mk]={};});
-    applyFiltersBase().forEach(r=>{
+    trendRows.forEach(r=>{
       const mk=E.marca[r[COL.MARCA]]+' / '+E.modelo[r[COL.MODELO]];
       if(!modMo[mk])return;
       const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
@@ -1902,7 +2006,7 @@ function renderTrend(){
 
   // Compute totM/cnM here (shared by KPI cards + renderTrendPct)
   const totM={},cnM={};
-  applyFiltersBase().forEach(r=>{
+  trendRows.forEach(r=>{
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
     totM[k]=(totM[k]||0)+r[COL.N];
     if(_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]))cnM[k]=(cnM[k]||0)+r[COL.N];
@@ -1968,7 +2072,7 @@ function renderTrendPct(totM,cnM){
   if(!totM){
     totM={};cnM={};
     const E2=REC.enums;
-    applyFiltersBase().forEach(r=>{
+    trendBaseRows().forEach(r=>{
       const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
       totM[k]=(totM[k]||0)+r[COL.N];
       if(_CHINESE_BRANDS.has(E2.marca[r[COL.MARCA]]))cnM[k]=(cnM[k]||0)+r[COL.N];
