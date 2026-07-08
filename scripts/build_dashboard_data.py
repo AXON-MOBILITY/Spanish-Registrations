@@ -82,9 +82,32 @@ _FOCUS_SUBSEGMENTS = {
     "NEW PLAYERS & TESLA",
 }
 
+_BRAND_CONCEPT = {
+    "BMW": "TRAD. COMP.", "Bmw Ag": "TRAD. COMP.", "Alpina": "TRAD. COMP.",
+    "Audi": "TRAD. COMP.", "T.R.Audi": "TRAD. COMP.",
+    "Mercedes": "TRAD. COMP.", "Mercedes-V": "TRAD. COMP.",
+    "MINI": "TRAD. COMP.", "Porsche": "TRAD. COMP.", "Volvo": "TRAD. COMP.",
+    "Lexus": "TRAD. COMP.", "Jaguar": "TRAD. COMP.",
+    "Land Rover": "TRAD. COMP.", "Land Rover Santana": "TRAD. COMP.",
+    "Land  Rover": "TRAD. COMP.", "Genesis": "TRAD. COMP.",
+    "Maserati": "TRAD. COMP.", "Ferrari": "TRAD. COMP.",
+    "Lamborghini": "TRAD. COMP.", "Bentley": "TRAD. COMP.",
+    "Rolls-Royce": "TRAD. COMP.", "McLaren": "TRAD. COMP.",
+    "Aston Martin": "TRAD. COMP.", "Cadillac": "TRAD. COMP.",
+    "Bugatti": "TRAD. COMP.", "Donkervoort": "TRAD. COMP.",
+    "Tesla": "NEW PLAYERS & TESLA", "Tesla Motors": "NEW PLAYERS & TESLA",
+    "Polestar": "NEW PLAYERS & TESLA", "Lotus": "NEW PLAYERS & TESLA",
+    "Lotus Cars Ltd": "NEW PLAYERS & TESLA", "Smart": "NEW PLAYERS & TESLA",
+    "Xpeng": "NEW PLAYERS & TESLA", "Zeekr": "NEW PLAYERS & TESLA",
+    "Lucid Motors": "NEW PLAYERS & TESLA", "Voyah": "NEW PLAYERS & TESLA",
+}
+
 
 def _focus_bucket(raw):
     return "FOCUS SEGMENT" if (raw or "").strip().upper() in _FOCUS_SUBSEGMENTS else "REST"
+
+def _focus_concept(brand):
+    return _BRAND_CONCEPT.get(brand, "FOCUS OTHER")
 
 def _read_csv(path):
     with open(path, encoding="utf-8-sig", newline="") as fh:
@@ -710,15 +733,17 @@ def build_daily_brand_trend(base):
 
     Celda idx = canal_idx*3 + fuel_idx, con canal en orden CANALES
     (Private, Corporate, RAC) y fuel en orden FUELS (ICE, BEV, PHEV).
-    Permite que el tab Trend respete los filtros de canal y fuel.
+    Permite que el tab Trend respete los filtros de canal, fuel y subsegmento.
     """
     days = {}
+    sub_days = {}
     for f in sorted(glob.glob(str(base / "dgt_canal_daily_[0-9]*.csv"))):
         m = re.match(r"dgt_canal_daily_(\d{4})(\d{2})(\d{2})$", Path(f).stem)
         if not m:
             continue
         day = "{}-{}-{}".format(m.group(1), m.group(2), m.group(3))
         agg = {}
+        sub_agg = {}
         for row in _read_csv(f):
             try:
                 n = int(row.get("count", 0) or 0)
@@ -733,13 +758,23 @@ def build_daily_brand_trend(base):
                 b = _normalize_brand(row.get("marca", ""))
                 cell = CANALES.index(canal) * 3 + FUELS.index(fuel)
                 agg.setdefault(b, [0] * 9)[cell] += n
+                sub = _focus_bucket(row.get("subseg", ""))
+                sub_key = "REST" if sub == "REST" else _focus_concept(b)
+                by_brand = sub_agg.setdefault(b, {})
+                by_brand.setdefault(sub_key, [0] * 9)[cell] += n
+                if sub != "REST":
+                    by_brand.setdefault("FOCUS", [0] * 9)[cell] += n
             except (ValueError, KeyError):
                 pass
         if agg:
             days[day] = {b: v for b, v in sorted(agg.items())}
+            sub_days[day] = {
+                b: {k: vv for k, vv in sorted(v.items())}
+                for b, v in sorted(sub_agg.items())
+            }
     brands = sorted({b for d in days.values() for b in d})
     return {"canales": CANALES, "fuels": FUELS,
-            "days": [{"day": k, "brands": v} for k, v in sorted(days.items())],
+            "days": [{"day": k, "brands": v, "subBrands": sub_days.get(k, {})} for k, v in sorted(days.items())],
             "brands": brands}
 
 def build_provinces_json(prov_data):

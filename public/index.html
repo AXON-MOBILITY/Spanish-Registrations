@@ -1976,12 +1976,29 @@ function renderTrend(){
       if(canalSel.has(c)&&fuelSel.has(fu))cells.push(ci*3+fi);
     });
   });
-  const dailyMap={};TREND.days.forEach(d=>dailyMap[d.day]=d.brands);
-  const dVal=(m,pd)=>{
-    const v=(dailyMap[pd]||{})[m];
+  const dailyMap={},dailySubMap={};
+  TREND.days.forEach(d=>{dailyMap[d.day]=d.brands;dailySubMap[d.day]=d.subBrands||null;});
+  const dailyCellSum=(v)=>{
     if(!v)return 0;
     if(Array.isArray(v))return cells.reduce((s,i)=>s+(v[i]||0),0);
-    return v; // compat con formato antiguo (numero)
+    return v;
+  };
+  const dVal=(m,pd)=>{
+    const bySub=(dailySubMap[pd]||{})[m];
+    if(bySub){
+      let total=0;
+      if(TR.subs.has('REST'))total+=dailyCellSum(bySub.REST);
+      if(TR.subs.has('FOCUS')){
+        if(TR.concepts.size===CONCEPTS.length&&bySub.FOCUS)total+=dailyCellSum(bySub.FOCUS);
+        else{
+          CONCEPTS.forEach(c=>{if(TR.concepts.has(c))total+=dailyCellSum(bySub[c]);});
+          if(bySub['FOCUS OTHER'])total+=dailyCellSum(bySub['FOCUS OTHER']);
+        }
+      }
+      return total;
+    }
+    const v=(dailyMap[pd]||{})[m];
+    return dailyCellSum(v); // compat con formato antiguo
   };
   let fd=g('tr-from-d').value,td=g('tr-to-d').value;
   if(fd>td){const x=fd;fd=td;td=x;g('tr-from-d').value=fd;g('tr-to-d').value=td;}
@@ -1997,7 +2014,7 @@ function renderTrend(){
         const brands=dailyMap[pd]||{};
         let v=0;
         Object.entries(brands).forEach(([b,val])=>{
-          const n=Array.isArray(val)?cells.reduce((s,i)=>s+(val[i]||0),0):val;
+          const n=dailySubMap[pd]?dVal(b,pd):dailyCellSum(val);
           const isCN=_CHINESE_BRANDS.has(b);
           if(key==='TOTAL'||(key==='CHINESE'&&isCN)||(key==='REST'&&!isCN))v+=n;
         });
