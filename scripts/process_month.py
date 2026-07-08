@@ -104,6 +104,7 @@ def download_zip(url, zip_path):
 
 
 # Posiciones campos (0-indexed)
+F_CLAVE_TRAMITE = (156, 157)   # 1=matriculación ordinaria, 2=transferencia, 5=rematriculación...
 F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
 F_SERVICIO    = (189, 192)
@@ -1613,6 +1614,8 @@ def process_lines(lines_iter):
         try:
             line_s = line.decode('latin-1')
         except Exception:
+            continue
+        if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]] != '1':
             continue
         if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N':
             continue
