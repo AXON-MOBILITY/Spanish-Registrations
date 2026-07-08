@@ -105,7 +105,7 @@ def download_zip(url, zip_path):
 
 # Posiciones campos (0-indexed)
 F_CLAVE_TRAMITE = (156, 157)   # 1=matriculación ordinaria, 2=transferencia, 5=rematriculación...
-F_CLASE_MAT = (8, 9)          # COD_CLASE_MAT: 0=ordinaria
+F_CLASE_MAT = (8, 9)          # COD_CLASE_MAT: 3=diplomatica
 F_COD_TIPO  = (91, 93)        # COD_TIPO / COD_TIPO_VEHICULO
 F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
@@ -1585,7 +1585,7 @@ def es_turismo_o_furgoneta(line_s):
 
 def passes_dgt_scope_filters(line_s):
     """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
-    if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
+    if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() == '3':
         return False
     if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N':
         return False
