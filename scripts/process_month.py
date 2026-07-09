@@ -134,6 +134,10 @@ MERCEDES_REST_SCOPE_SPRINTER_VARIANTS = {
     ('20', '3W1V3FBF'),
 }
 TOYOTA_REST_SCOPE_CITY_VERSO_PREFIX = 'PROACE CITY VERSO'
+PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
+    'YHT2-42E4AJ',
+    'YHT2-42E4BJ',
+}
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -216,6 +220,21 @@ def is_toyota_rest_scope_cod_tipo_exception(line_s):
         mma = line_s[F_MMA[0]:F_MMA[1]].strip()
         return plazas == '2' and mma == '3500'
     return False
+
+def is_peugeot_rest_scope_cod_tipo_exception(line_s):
+    """Peugeot Partner REST vans that provider scope includes outside 25/40."""
+    cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
+    marca_raw = line_s[F_MARCA[0]:F_MARCA[1]].strip().upper()
+    if marca_raw != 'PEUGEOT' or cod_tipo != '20':
+        return False
+    modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    modelo_norm = modelo.replace('Ó', 'O')
+    if not modelo_norm.startswith('PARTNER - FURGON M DIE'):
+        return False
+    homologacion = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
+    variante = line_s[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
+    version = line_s[F_VERSION_ITV[0]:F_VERSION_ITV[1]].strip().upper()
+    return homologacion == 'N1' and variante == 'D' and version in PEUGEOT_REST_SCOPE_PARTNER_VERSIONS
 
 def visible_dgt_vin10(line_s):
     """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
@@ -1641,7 +1660,8 @@ def passes_dgt_scope_filters(line_s):
     cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
     if (cod_tipo not in DGT_SCOPE_COD_TIPO
             and not is_mercedes_rest_scope_cod_tipo_exception(line_s)
-            and not is_toyota_rest_scope_cod_tipo_exception(line_s)):
+            and not is_toyota_rest_scope_cod_tipo_exception(line_s)
+            and not is_peugeot_rest_scope_cod_tipo_exception(line_s)):
         return False
     return True
 

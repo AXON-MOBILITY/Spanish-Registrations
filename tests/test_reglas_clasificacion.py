@@ -18,6 +18,7 @@ def _scope_filter_line(
     marca='',
     modelo='',
     variante='',
+    version='',
     homologacion='',
     plazas='',
     mma='',
@@ -31,6 +32,8 @@ def _scope_filter_line(
     line[pm.F_MODELO[0]:pm.F_MODELO[1]] = list(modelo[:30].ljust(30))
     width = pm.F_VARIANTE_ITV[1] - pm.F_VARIANTE_ITV[0]
     line[pm.F_VARIANTE_ITV[0]:pm.F_VARIANTE_ITV[1]] = list(variante[:width].ljust(width))
+    width = pm.F_VERSION_ITV[1] - pm.F_VERSION_ITV[0]
+    line[pm.F_VERSION_ITV[0]:pm.F_VERSION_ITV[1]] = list(version[:width].ljust(width))
     line[pm.F_HOMOLOGACION[0]:pm.F_HOMOLOGACION[1]] = list(homologacion[:4].ljust(4))
     line[pm.F_PLAZAS[0]:pm.F_PLAZAS[1]] = list(plazas[:1].ljust(1))
     line[pm.F_MMA[0]:pm.F_MMA[1]] = list(mma[:6].rjust(6))
@@ -107,6 +110,34 @@ def test_filtros_scope_dgt_no_abren_toyota_proace_city_furgon_20():
         homologacion='N1',
         plazas='2',
         mma='2370',
+    )
+    assert not pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_peugeot_partner_n1_version_permitida():
+    line = _scope_filter_line(
+        cod_tipo='20',
+        marca='PEUGEOT',
+        modelo='PARTNER - FURGÓN M DIE',
+        variante='D',
+        version='YHT2-42E4AJ',
+        homologacion='N1',
+        plazas='2',
+        mma='2020',
+    )
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_no_abren_peugeot_partner_version_no_permitida():
+    line = _scope_filter_line(
+        cod_tipo='20',
+        marca='PEUGEOT',
+        modelo='PARTNER - FURGÓN M DIE',
+        variante='D',
+        version='YHT2-42E4AL',
+        homologacion='N1',
+        plazas='2',
+        mma='2025',
     )
     assert not pm.passes_dgt_scope_filters(line)
 
