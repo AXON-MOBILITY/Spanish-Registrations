@@ -124,6 +124,15 @@ F_VARIANTE_ITV  = (284, 309)   # EU type approval variant code (homologacion)
 F_VERSION_ITV   = (309, 344)   # EU type approval version code
 
 DGT_SCOPE_COD_TIPO = {'25', '40'}
+MERCEDES_REST_SCOPE_MPV_MODELS = (
+    'CITAN TOURER', 'CLASE T', 'T 180', 'T180', 'EQV',
+    'CLASE V', 'V 220', 'V 250', 'V 300',
+)
+MERCEDES_REST_SCOPE_SPRINTER_VARIANTS = {
+    ('0G', '3W1V3HGF'),
+    ('0G', '3W1V3FBF'),
+    ('20', '3W1V3FBF'),
+}
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -169,6 +178,27 @@ def is_excluded_scope(marca_raw, marca, modelo):
         return True
     excl = EXCLUIR_MARCA_MODELO.get(m)
     return bool(excl and any(token in mo for token in excl))
+
+def is_mercedes_rest_scope_cod_tipo_exception(line_s):
+    """Mercedes REST vans/MPVs that provider scope includes outside 25/40."""
+    cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
+    marca_raw = line_s[F_MARCA[0]:F_MARCA[1]].strip().upper()
+    if marca_raw not in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ'):
+        return False
+    modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    if cod_tipo == '0G':
+        if modelo.startswith(MERCEDES_REST_SCOPE_MPV_MODELS):
+            return True
+        if modelo.startswith('SPRINTER'):
+            variante = line_s[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
+            return (cod_tipo, variante) in MERCEDES_REST_SCOPE_SPRINTER_VARIANTS
+        return False
+    if cod_tipo == '20':
+        if modelo.startswith('SPRINTER'):
+            variante = line_s[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
+            return (cod_tipo, variante) in MERCEDES_REST_SCOPE_SPRINTER_VARIANTS
+        return False
+    return False
 
 def visible_dgt_vin10(line_s):
     """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
@@ -1591,7 +1621,8 @@ def passes_dgt_scope_filters(line_s):
         return False
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
         return False
-    if line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip() not in DGT_SCOPE_COD_TIPO:
+    cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
+    if cod_tipo not in DGT_SCOPE_COD_TIPO and not is_mercedes_rest_scope_cod_tipo_exception(line_s):
         return False
     return True
 

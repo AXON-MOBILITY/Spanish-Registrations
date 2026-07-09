@@ -10,12 +10,24 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 import process_month as pm
 
 
-def _scope_filter_line(clase='0', nuevo='N', tramite='1', cod_tipo='40'):
+def _scope_filter_line(
+    clase='0',
+    nuevo='N',
+    tramite='1',
+    cod_tipo='40',
+    marca='',
+    modelo='',
+    variante='',
+):
     line = [' '] * 714
     line[pm.F_CLASE_MAT[0]:pm.F_CLASE_MAT[1]] = list(clase[:1])
     line[pm.F_NUEVO_USADO[0]:pm.F_NUEVO_USADO[1]] = list(nuevo[:1])
     line[pm.F_CLAVE_TRAMITE[0]:pm.F_CLAVE_TRAMITE[1]] = list(tramite[:1])
     line[pm.F_COD_TIPO[0]:pm.F_COD_TIPO[1]] = list(cod_tipo[:2].rjust(2))
+    line[pm.F_MARCA[0]:pm.F_MARCA[1]] = list(marca[:30].ljust(30))
+    line[pm.F_MODELO[0]:pm.F_MODELO[1]] = list(modelo[:30].ljust(30))
+    width = pm.F_VARIANTE_ITV[1] - pm.F_VARIANTE_ITV[0]
+    line[pm.F_VARIANTE_ITV[0]:pm.F_VARIANTE_ITV[1]] = list(variante[:width].ljust(width))
     return ''.join(line)
 
 
@@ -45,6 +57,31 @@ def test_filtros_scope_dgt_excluyen_cod_tipo_fuera_de_scope():
 
 
 # ── Canal (SERVICIO + persona física/jurídica) ──────────────────────────────
+
+def test_filtros_scope_dgt_aceptan_mercedes_rest_mpv_0g():
+    line = _scope_filter_line(cod_tipo='0G', marca='MERCEDES', modelo='CITAN TOURER')
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_sprinter_rest_variante_permitida():
+    line = _scope_filter_line(
+        cod_tipo='20',
+        marca='MERCEDES',
+        modelo='SPRINTER',
+        variante='3W1V3FBF',
+    )
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_excluyen_sprinter_20_no_permitido():
+    line = _scope_filter_line(
+        cod_tipo='20',
+        marca='MERCEDES',
+        modelo='SPRINTER',
+        variante='3W1V3HCF',
+    )
+    assert not pm.passes_dgt_scope_filters(line)
+
 
 def test_b00_empresa_es_corporate():
     assert pm.classify('B00', 'X', ' ', '99999', 'TOYOTA') == 'Corporate'
