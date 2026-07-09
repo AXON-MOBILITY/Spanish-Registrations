@@ -1774,6 +1774,8 @@ def process_lines(lines_iter, apply_calibration=True):
                 detail='pool_b00d_private={}; rate={:.4f}'.format(n, rate),
             ))
     LAST_PROCESS_ALERTS = alerts
+    if not apply_calibration:
+        return fuel_counts, prov_counts
     calibrated = apply_scope_calibration(counts) if apply_calibration else counts
     raw_totals = {}
     for key, n in fuel_counts.items():
