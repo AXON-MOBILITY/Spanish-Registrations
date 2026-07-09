@@ -18,6 +18,9 @@ def _scope_filter_line(
     marca='',
     modelo='',
     variante='',
+    homologacion='',
+    plazas='',
+    mma='',
 ):
     line = [' '] * 714
     line[pm.F_CLASE_MAT[0]:pm.F_CLASE_MAT[1]] = list(clase[:1])
@@ -28,6 +31,9 @@ def _scope_filter_line(
     line[pm.F_MODELO[0]:pm.F_MODELO[1]] = list(modelo[:30].ljust(30))
     width = pm.F_VARIANTE_ITV[1] - pm.F_VARIANTE_ITV[0]
     line[pm.F_VARIANTE_ITV[0]:pm.F_VARIANTE_ITV[1]] = list(variante[:width].ljust(width))
+    line[pm.F_HOMOLOGACION[0]:pm.F_HOMOLOGACION[1]] = list(homologacion[:4].ljust(4))
+    line[pm.F_PLAZAS[0]:pm.F_PLAZAS[1]] = list(plazas[:1].ljust(1))
+    line[pm.F_MMA[0]:pm.F_MMA[1]] = list(mma[:6].rjust(6))
     return ''.join(line)
 
 
@@ -79,6 +85,28 @@ def test_filtros_scope_dgt_excluyen_sprinter_20_no_permitido():
         marca='MERCEDES',
         modelo='SPRINTER',
         variante='3W1V3HCF',
+    )
+    assert not pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_toyota_proace_city_verso_m1_0g():
+    line = _scope_filter_line(
+        cod_tipo='0G',
+        marca='TOYOTA',
+        modelo='PROACE CITY VERSO',
+        homologacion='M1',
+    )
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_no_abren_toyota_proace_city_furgon_20():
+    line = _scope_filter_line(
+        cod_tipo='20',
+        marca='TOYOTA',
+        modelo='PROACE CITY',
+        homologacion='N1',
+        plazas='2',
+        mma='2370',
     )
     assert not pm.passes_dgt_scope_filters(line)
 

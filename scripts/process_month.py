@@ -133,6 +133,7 @@ MERCEDES_REST_SCOPE_SPRINTER_VARIANTS = {
     ('0G', '3W1V3FBF'),
     ('20', '3W1V3FBF'),
 }
+TOYOTA_REST_SCOPE_CITY_VERSO_PREFIX = 'PROACE CITY VERSO'
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -198,6 +199,22 @@ def is_mercedes_rest_scope_cod_tipo_exception(line_s):
             variante = line_s[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
             return (cod_tipo, variante) in MERCEDES_REST_SCOPE_SPRINTER_VARIANTS
         return False
+    return False
+
+def is_toyota_rest_scope_cod_tipo_exception(line_s):
+    """Toyota REST MPVs/off-road variants that provider scope includes outside 25/40."""
+    cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
+    marca_raw = line_s[F_MARCA[0]:F_MARCA[1]].strip().upper()
+    if marca_raw != 'TOYOTA':
+        return False
+    modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    homologacion = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
+    if cod_tipo == '0G':
+        return modelo.startswith(TOYOTA_REST_SCOPE_CITY_VERSO_PREFIX) and homologacion.startswith('M1')
+    if cod_tipo == '02' and modelo.startswith('LAND CRUISER') and homologacion == 'N1G':
+        plazas = line_s[F_PLAZAS[0]:F_PLAZAS[1]].strip()
+        mma = line_s[F_MMA[0]:F_MMA[1]].strip()
+        return plazas == '2' and mma == '3500'
     return False
 
 def visible_dgt_vin10(line_s):
@@ -1622,7 +1639,9 @@ def passes_dgt_scope_filters(line_s):
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
         return False
     cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
-    if cod_tipo not in DGT_SCOPE_COD_TIPO and not is_mercedes_rest_scope_cod_tipo_exception(line_s):
+    if (cod_tipo not in DGT_SCOPE_COD_TIPO
+            and not is_mercedes_rest_scope_cod_tipo_exception(line_s)
+            and not is_toyota_rest_scope_cod_tipo_exception(line_s)):
         return False
     return True
 
