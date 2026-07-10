@@ -2,10 +2,10 @@
   "status": "computed",
   "source": "BBDD_2026_PRODUCTO_06_30.csv",
   "year": 2026,
-  "total_etl": 733561,
+  "total_etl": 734043,
   "total_simmix": 749707,
-  "total_delta": -16146,
-  "total_delta_pct": -2.15,
+  "total_delta": -15664,
+  "total_delta_pct": -2.09,
   "groups_evaluated": 142,
   "groups_within_2pct": 89,
   "worst": [
@@ -42,14 +42,6 @@
       "delta_pct": -6.5
     },
     {
-      "marca": "PEUGEOT",
-      "canal": "Corporate",
-      "etl": 19188,
-      "simmix": 20508,
-      "delta": -1320,
-      "delta_pct": -6.44
-    },
-    {
       "marca": "RENAULT",
       "canal": "Private",
       "etl": 17647,
@@ -58,20 +50,28 @@
       "delta_pct": -6.9
     },
     {
-      "marca": "TOYOTA",
-      "canal": "Corporate",
-      "etl": 19569,
-      "simmix": 20645,
-      "delta": -1076,
-      "delta_pct": -5.21
-    },
-    {
       "marca": "FIAT",
       "canal": "Private",
       "etl": 1633,
       "simmix": 2622,
       "delta": -989,
       "delta_pct": -37.72
+    },
+    {
+      "marca": "PEUGEOT",
+      "canal": "Corporate",
+      "etl": 19533,
+      "simmix": 20508,
+      "delta": -975,
+      "delta_pct": -4.75
+    },
+    {
+      "marca": "TOYOTA",
+      "canal": "Corporate",
+      "etl": 19675,
+      "simmix": 20645,
+      "delta": -970,
+      "delta_pct": -4.7
     },
     {
       "marca": "CITROEN",
@@ -250,20 +250,20 @@
       "delta_pct": -20.13
     },
     {
-      "marca": "TOYOTA",
-      "canal": "Private",
-      "etl": 35720,
-      "simmix": 35927,
-      "delta": -207,
-      "delta_pct": -0.58
-    },
-    {
       "marca": "SORTIMO",
       "canal": "Corporate",
       "etl": 206,
       "simmix": 0,
       "delta": 206,
       "delta_pct": null
+    },
+    {
+      "marca": "TOYOTA",
+      "canal": "Private",
+      "etl": 35737,
+      "simmix": 35927,
+      "delta": -190,
+      "delta_pct": -0.53
     },
     {
       "marca": "MERCEDES",
