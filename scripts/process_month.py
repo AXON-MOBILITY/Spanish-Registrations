@@ -19,6 +19,7 @@ Tambien genera dgt_alerts_YYYYMM.csv con avisos no bloqueantes de drift.
 
 
 import sys, os, zipfile, urllib.request, collections, tempfile, re, csv, unicodedata, json
+from datetime import datetime
 
 
 TMP_DIR = tempfile.gettempdir()
@@ -106,7 +107,9 @@ def download_zip(url, zip_path):
 # Posiciones campos (0-indexed)
 F_CLAVE_TRAMITE = (156, 157)   # 1=matriculación ordinaria, 2=transferencia, 5=rematriculación...
 F_CLASE_MAT = (8, 9)          # COD_CLASE_MAT: 0=ordinaria
+F_FEC_MATRICULA = (0, 8)
 F_COD_TIPO  = (91, 93)        # COD_TIPO / COD_TIPO_VEHICULO
+F_FEC_PRIM_MATRICULACION = (170, 178)
 F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
 F_SERVICIO    = (189, 192)
@@ -138,6 +141,7 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
     'YHT2-42E4AJ',
     'YHT2-42E4BJ',
 }
+RECENT_TEMP_TO_FINAL_MAX_DAYS = 60
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -235,6 +239,30 @@ def is_peugeot_rest_scope_cod_tipo_exception(line_s):
     variante = line_s[F_VARIANTE_ITV[0]:F_VARIANTE_ITV[1]].strip().upper()
     version = line_s[F_VERSION_ITV[0]:F_VERSION_ITV[1]].strip().upper()
     return homologacion == 'N1' and variante == 'D' and version in PEUGEOT_REST_SCOPE_PARTNER_VERSIONS
+
+def _parse_dgt_date(raw):
+    raw = (raw or '').strip()
+    if not raw or len(raw) != 8 or not raw.isdigit():
+        return None
+    try:
+        return datetime.strptime(raw, '%d%m%Y').date()
+    except ValueError:
+        return None
+
+def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS):
+    """Simmix counts some recent temporary-to-final registrations marked U by DGT."""
+    if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
+        return False
+    if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'U':
+        return False
+    fec_mat = _parse_dgt_date(line_s[F_FEC_MATRICULA[0]:F_FEC_MATRICULA[1]])
+    fec_prim = _parse_dgt_date(
+        line_s[F_FEC_PRIM_MATRICULACION[0]:F_FEC_PRIM_MATRICULACION[1]]
+    )
+    if not fec_mat or not fec_prim:
+        return False
+    days = (fec_mat - fec_prim).days
+    return 0 <= days <= max_days
 
 def visible_dgt_vin10(line_s):
     """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
@@ -464,6 +492,8 @@ def _model_candidates(sbrand, s):
             cands.append((sbrand, 'CLASE GLC COUPE'))
         if re.search(r'\bGLE\b', s_probe) and 'COUP' in s_probe:
             cands.append((sbrand, 'CLASE GLE COUPE'))
+        if re.search(r'\bMAYBACH\s+SL\b', s_probe):
+            cands.append((sbrand, 'CLASE SL'))
         for code, name in sorted(_MERC_CLASS.items(), key=lambda x: -len(x[0])):
             if s == code or s.startswith(code + ' '):
                 cands.append((sbrand, name)); break
@@ -1653,7 +1683,8 @@ def passes_dgt_scope_filters(line_s):
     """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
     if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
         return False
-    if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N':
+    if (line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N'
+            and not is_recent_temp_to_final_used(line_s)):
         return False
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
         return False

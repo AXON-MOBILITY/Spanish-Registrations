@@ -22,9 +22,13 @@ def _scope_filter_line(
     homologacion='',
     plazas='',
     mma='',
+    fec_matricula='',
+    fec_primera='',
 ):
     line = [' '] * 714
+    line[pm.F_FEC_MATRICULA[0]:pm.F_FEC_MATRICULA[1]] = list(fec_matricula[:8].ljust(8))
     line[pm.F_CLASE_MAT[0]:pm.F_CLASE_MAT[1]] = list(clase[:1])
+    line[pm.F_FEC_PRIM_MATRICULACION[0]:pm.F_FEC_PRIM_MATRICULACION[1]] = list(fec_primera[:8].ljust(8))
     line[pm.F_NUEVO_USADO[0]:pm.F_NUEVO_USADO[1]] = list(nuevo[:1])
     line[pm.F_CLAVE_TRAMITE[0]:pm.F_CLAVE_TRAMITE[1]] = list(tramite[:1])
     line[pm.F_COD_TIPO[0]:pm.F_COD_TIPO[1]] = list(cod_tipo[:2].rjust(2))
@@ -55,6 +59,26 @@ def test_filtros_scope_dgt_excluyen_matriculas_diplomaticas():
 
 def test_filtros_scope_dgt_excluyen_usados():
     assert not pm.passes_dgt_scope_filters(_scope_filter_line(nuevo='U'))
+
+
+def test_filtros_scope_dgt_aceptan_paso_temporal_a_definitiva_reciente():
+    line = _scope_filter_line(
+        nuevo='U',
+        tramite='B',
+        fec_matricula='08072026',
+        fec_primera='18062026',
+    )
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_no_abren_paso_temporal_a_definitiva_antiguo():
+    line = _scope_filter_line(
+        nuevo='U',
+        tramite='B',
+        fec_matricula='08072026',
+        fec_primera='22012018',
+    )
+    assert not pm.passes_dgt_scope_filters(line)
 
 
 def test_filtros_scope_dgt_excluyen_rematriculaciones():
@@ -316,6 +340,22 @@ def test_eea_bmw_118d_cae_a_serie_1_si_existe_modelo_canonico(monkeypatch):
     })
     modelo, seg, sub, hp, body, fuel_detail = pm.lookup_enrichment('BMW', '118D', line)
     assert (modelo, seg, sub, body) == ('SERIE 1', 'UKL2', 'FOCUS SEGMENT', 'HACH 5P')
+
+
+def test_mercedes_maybach_sl_cae_a_clase_sl(monkeypatch):
+    monkeypatch.setitem(pm._MODEL_LOOKUP, ('MERCEDES', 'CLASE SL'), {
+        'modelo': 'CLASE SL',
+        'seg': 'GKL',
+        'sub': 'FOCUS SEGMENT',
+        'hp': 'Standard',
+        'body': 'ROADSTER',
+        'fuel_detail': 'Gasolina',
+    })
+    modelo, seg, sub, hp, body, fuel_detail = pm.lookup_enrichment(
+        'MERCEDES',
+        'MAYBACH SL 680        3W1KVX8B',
+    )
+    assert (modelo, seg, sub, body) == ('CLASE SL', 'GKL', 'FOCUS SEGMENT', 'ROADSTER')
 
 
 # ── Rescate N2 de derivados de furgoneta ────────────────────────────────────
