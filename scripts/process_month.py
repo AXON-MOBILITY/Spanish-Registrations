@@ -302,6 +302,19 @@ def invalid_itv_scope_reason(line_s, marca, canal, servicio, persona, renting):
     plazas_s = line_s[F_PLAZAS[0]:F_PLAZAS[1]].strip()
     if plazas_s not in ('', '0'):
         return ''
+    # Furgonetas eléctricas Mercedes (e-Sprinter, eVito, eCitan, EQT): DGT no rellena
+    # siempre los campos ITV para eléctricos pero son N1 válidas en scope Simmix.
+    _MERCEDES_ELEC_VANS = {'E-SPRINTER', 'EVITO', 'ECITAN', 'EQT'}
+    _modelo_first = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    _modelo_first = _modelo_first.split()[0] if _modelo_first else ''
+    if marca.upper() == 'MERCEDES' and _modelo_first in _MERCEDES_ELEC_VANS:
+        return ''  # No excluir — furgoneta eléctrica N1 válida en scope Simmix
+    # Furgonetas N1 de marcas comerciales: algunas tienen plazas=0 en DGT
+    # pero homologación N1 explícita → deben incluirse (ISUZU N-series, DFSK C35/Glory)
+    homol = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
+    _FURGONETA_N1_BRANDS = {'ISUZU', 'DFSK'}
+    if homol.startswith('N1') and marca.upper() in _FURGONETA_N1_BRANDS:
+        return ''  # No excluir — N1 válido con plazas=0 (cabina carga)
     fabricante = line_s[330:390].strip().upper()
     details = ['plazas={}'.format(plazas_s or 'vacio')]
     if fabricante in ('', '-', 'ND'):
@@ -403,12 +416,12 @@ def n2_van_target(marca, modelo):
         return 'RENAULT TRUCKS'
     if m == 'MAN' and 'TGE' in mo:
         return 'MAN'
-    if m in ('MITSUBISHI-FUSO', 'FUSO') and ('CANTER' in mo or not mo):
-        return 'MITSUBISHI-FUSO'
+    if m in ('MITSUBISHI-FUSO', 'FUSO'):
+        return 'MITSUBISHI-FUSO'  # Canter y variantes con código numérico (35F15, FE…)
     if m == 'ISUZU':
         return 'ISUZU'
-    if m == 'IVECO' and 'DAILY' in mo:
-        return 'IVECO'
+    if m == 'IVECO':
+        return 'IVECO'  # Daily y variantes (35C17, 40C15, 50C18, 70C17…)
     return None
 
 
@@ -1299,9 +1312,9 @@ KM0_BRAND_FALLBACK_RATE = {
 # This handles small remaining scope differences between the DGT microdata and
 # Simmix business rules while keeping the adjustment tied to source exports.
 CHANNEL_SCOPE_FACTOR = {
-    ('AUDI', 'Corporate'): 0.9939793579,
-    ('AUDI', 'Private'): 1.0138427465,
-    ('AUDI', 'RAC'): 0.9923413568,
+    ('AUDI', 'Corporate'): 1.0303030303,  # recalibrado jul-2026: S=306, D=297 → 306/297
+    ('AUDI', 'Private'): 0.9536082474,    # recalibrado jul-2026: S=185, D=194 → 185/194
+    ('AUDI', 'RAC'): 1.0000000000,        # RAC cuadra exacto
     ('BMW', 'Corporate'): 0.9971098267,
     ('BMW', 'Private'): 0.9895104896,
     ('BMW', 'RAC'): 1.0012953369,
