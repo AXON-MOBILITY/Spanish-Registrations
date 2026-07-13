@@ -141,7 +141,12 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
     'YHT2-42E4AJ',
     'YHT2-42E4BJ',
 }
-RECENT_TEMP_TO_FINAL_MAX_DAYS = 60
+RECENT_TEMP_TO_FINAL_MAX_DAYS = 60  # legacy; no longer used as a limit
+RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
+RETRO_CORRECTIONS_HEADER = [
+    'processed_date', 'target_yyyymm', 'marca', 'modelo', 'canal',
+    'fuel_type', 'fuel', 'segmento', 'subseg', 'hp', 'body_type', 'delta',
+]
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -255,27 +260,45 @@ def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS)
     BMW is excluded: BMW always issues an initial N/U=N registration in the prior
     month before finalising with tram=B N/U=U.  Simmix deduplicates by VIN and
     counts the vehicle in the first-registration month, so including the tram=B
-    record would double-count it.  Other brands (SHINERAY, VOLVO, AUDI…) only
-    appear once in DGT with the tram=B record, so they must be included here.
+    record would double-count it.
+
+    For all other brands the 60-day window has been removed.  Instead,
+    process_lines() generates a retroactive correction (−1) for the provisional
+    month whenever fec_prim falls in a different month than fec_mat.  This
+    mirrors Simmix's VIN-deduplication logic: the vehicle is counted once, in
+    the month of the definitive registration.
     """
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
         return False
     if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'U':
         return False
     # BMW: tram=B finalisation is always preceded by an N/U=N record counted in
-    # the prior month — exclude to avoid double-counting.
+    # the prior month — exclude entirely (no retroactive correction needed).
     _marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
     _modelo_raw = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
     if normalize_marca(_marca_raw, _modelo_raw) == 'BMW':
         return False
-    fec_mat = _parse_dgt_date(line_s[F_FEC_MATRICULA[0]:F_FEC_MATRICULA[1]])
+    return True
+
+
+def _tram_b_retro_yyyymm(line_s, current_yyyymm):
+    """Return the provisional month (YYYYMM) to correct when a tram=B vehicle's
+    fec_prim falls in a different month than the current processing month.
+
+    Returns None when:
+      • dates cannot be parsed
+      • fec_prim is in the same month (no cross-month correction needed)
+      • fec_prim is in the future (data anomaly)
+    """
     fec_prim = _parse_dgt_date(
         line_s[F_FEC_PRIM_MATRICULACION[0]:F_FEC_PRIM_MATRICULACION[1]]
     )
-    if not fec_mat or not fec_prim:
-        return False
-    days = (fec_mat - fec_prim).days
-    return 0 <= days <= max_days
+    if not fec_prim:
+        return None
+    prim_yyyymm = fec_prim.strftime('%Y%m')
+    if prim_yyyymm >= current_yyyymm:
+        return None  # same month or future — no cross-month correction
+    return prim_yyyymm
 
 def visible_dgt_vin10(line_s):
     """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
@@ -1743,11 +1766,12 @@ def fuel_to_canal_counts(fuel_counts):
     return agg
 
 
-def process_lines(lines_iter, apply_calibration=True):
+def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
     global LAST_PROCESS_ALERTS
     counts      = collections.Counter()
     fuel_counts = collections.Counter()
     prov_counts = collections.Counter()
+    retro_corrections = collections.Counter()  # (target_yyyymm, *bucket) → -1 each
     km0_fallback_pool = collections.Counter()
     carrocero_unmapped_pool = collections.Counter()
     invalid_scope_pool = collections.Counter()
@@ -1808,6 +1832,19 @@ def process_lines(lines_iter, apply_calibration=True):
         fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
             prov_counts[(cod_prov, marca, canal, fuel_code)] += 1
+
+        # Retroactive correction: when a tram=B vehicle's provisional was in a
+        # prior month, we must subtract that provisional count from that month so
+        # the vehicle is counted only once (in the definitive month), matching
+        # Simmix's VIN-deduplication behaviour.
+        if (current_yyyymm is not None
+                and line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == 'B'
+                and line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() == 'U'):
+            retro_month = _tram_b_retro_yyyymm(line_s, current_yyyymm)
+            if retro_month:
+                retro_key = (retro_month, marca, modelo_canon, canal,
+                             fuel_code, fuel_detail, seg, sub, hp, body)
+                retro_corrections[retro_key] -= 1
         if canal == 'Private' and servicio.strip() == 'B00' and persona.strip() == 'D':
             rate_brand = km0_rate_brand(marca)
             if rate_brand in KM0_BRAND_FALLBACK_RATE:
@@ -1871,7 +1908,7 @@ def process_lines(lines_iter, apply_calibration=True):
             ))
     LAST_PROCESS_ALERTS = alerts
     if not apply_calibration:
-        return fuel_counts, prov_counts
+        return fuel_counts, prov_counts, retro_corrections
     calibrated = apply_scope_calibration(counts) if apply_calibration else counts
     raw_totals = {}
     for key, n in fuel_counts.items():
@@ -1886,26 +1923,28 @@ def process_lines(lines_iter, apply_calibration=True):
         cal = calibrated.get((marca, canal), raw)
         calibrated[(marca, canal)] = cal
     calibrated_fuel = allocate_calibrated_fuel(fuel_counts, calibrated, raw_totals)
-    return calibrated_fuel, prov_counts
+    return calibrated_fuel, prov_counts, retro_corrections
 
 
 
 
-def process_zip(zip_path, apply_calibration=True):
+def process_zip(zip_path, apply_calibration=True, current_yyyymm=None):
     with zipfile.ZipFile(zip_path, 'r') as zf:
         names = zf.namelist()
         txt_names = [n for n in names if n.lower().endswith('.txt')]
         if not txt_names:
             raise ValueError("ZIP sin .txt: {}".format(names))
         with zf.open(txt_names[0]) as f:
-            return process_lines(f, apply_calibration=apply_calibration)
+            return process_lines(f, apply_calibration=apply_calibration,
+                                 current_yyyymm=current_yyyymm)
 
 
 
 
-def process_raw_txt(txt_path, apply_calibration=True):
+def process_raw_txt(txt_path, apply_calibration=True, current_yyyymm=None):
     with open(txt_path, 'rb') as f:
-        return process_lines(f, apply_calibration=apply_calibration)
+        return process_lines(f, apply_calibration=apply_calibration,
+                             current_yyyymm=current_yyyymm)
 
 
 
@@ -2064,198 +2103,30 @@ def save_alerts(alerts, yyyymm):
     return path
 
 
-def finalize_month(result, yyyymm):
-    fuel_counts, prov_counts = result
-    save_csv(fuel_counts, yyyymm)
-    save_prov_csv(prov_counts, yyyymm)
-    canal_counts = fuel_to_canal_counts(fuel_counts)
-    alerts = list(LAST_PROCESS_ALERTS)
-    add_unknown_brand_alerts(yyyymm, canal_counts, alerts)
-    add_drift_alerts(yyyymm, canal_counts, alerts)
-    save_alerts(alerts, yyyymm)
+def apply_retro_corrections_to_csv(target_yyyymm, corrections):
+    """Subtract provisional-month counts from a completed monthly CSV.
 
+    corrections: {(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body): delta}
+                 delta values are negative (−1 per vehicle).
 
-def finalize_day(result, yyyymmdd):
-    fuel_counts, prov_counts = result
-    save_daily_csv(fuel_counts, yyyymmdd)
-    save_prov_daily_csv(prov_counts, yyyymmdd)
-    save_alerts(list(LAST_PROCESS_ALERTS), yyyymmdd)
-
-
-def download_and_process(yyyymm, keep_raw=False, force=False):
-    out_csv  = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
-    zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
-    txt_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.txt".format(yyyymm))
-
-
-    if os.path.exists(out_csv) and not force:
-        if os.path.getsize(out_csv) > 100:
-            print("[{}] Ya procesado, skip.".format(yyyymm))
-            return
-        else:
-            print("[{}] CSV vacio, reprocesando...".format(yyyymm))
-            try:
-                os.remove(out_csv)
-            except Exception as e:
-                print("  WARN no pudo borrar CSV vacio: {}".format(e))
-
-
-    # procesar TXT legacy (ya descomprimido en /tmp/)
-    if os.path.exists(txt_path):
-        print("[{}] TXT raw en /tmp, procesando...".format(yyyymm))
-        counts = process_raw_txt(txt_path)
-        finalize_month(counts, yyyymm)
-        if not keep_raw:
-            os.remove(txt_path)
-            print("  -> txt borrado")
-        return
-
-
-    # descargar ZIP si no esta
-    if not os.path.exists(zip_path):
-        url = get_url(yyyymm)
-        print("[{}] ZIP no encontrado, descargando...".format(yyyymm))
-        if not download_zip(url, zip_path):
-            return
-    else:
-        print("[{}] ZIP ya en /tmp, procesando...".format(yyyymm))
-
-
-    # procesar ZIP
-    print("[{}] Procesando ZIP...".format(yyyymm))
-    try:
-        counts = process_zip(zip_path)
-    except Exception as e:
-        print("  ERROR procesando ZIP: {}".format(e))
-        return
-    finalize_month(counts, yyyymm)
-
-
-    if not keep_raw:
-        os.remove(zip_path)
-        print("  -> zip borrado")
-
-
-
-
-def download_and_process_month_url(yyyymm, url, keep_raw=False, force=False):
-    out_csv = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
-    zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
-    if os.path.exists(out_csv) and not force and os.path.getsize(out_csv) > 100:
-        print("[{}] Mensual ya procesado, skip.".format(yyyymm))
-        return None
-    print("[{}] Procesando mensual publicado...".format(yyyymm))
-    if not download_zip(url, zip_path):
-        return None
-    try:
-        counts = process_zip(zip_path)
-    except Exception as e:
-        print("  ERROR procesando ZIP: {}".format(e))
-        return None
-    finalize_month(counts, yyyymm)
-    if not keep_raw:
-        os.remove(zip_path)
-        print("  -> zip borrado")
-    return counts
-
-
-
-
-def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
-    out_csv = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
-    zip_path = os.path.join(TMP_DIR, "export_mat_{}.zip".format(yyyymmdd))
-    if os.path.exists(out_csv) and not force and os.path.getsize(out_csv) > 100:
-        print("[{}] Diario ya procesado, skip.".format(yyyymmdd))
-        return None
-    if url is None:
-        url = "https://www.dgt.es/microdatos/salida/{}/{}/vehiculos/matriculaciones/export_mat_{}.zip".format(
-            yyyymmdd[:4], int(yyyymmdd[4:6]), yyyymmdd
-        )
-    print("[{}] Procesando diario publicado...".format(yyyymmdd))
-    if not download_zip(url, zip_path):
-        return None
-    try:
-        counts = process_zip(zip_path, apply_calibration=False)
-    except Exception as e:
-        print("  ERROR procesando ZIP: {}".format(e))
-        return None
-    finalize_day(counts, yyyymmdd)
-    if not keep_raw:
-        os.remove(zip_path)
-        print("  -> zip borrado")
-    return counts
-
-
-
-
-def sync_monthly_2026(keep_raw=False, force=False):
-    links = discover_monthly_links(start='202601')
-    print("Mensuales 2026 publicados: {}".format(len(links)))
-    for yyyymm, url in links:
-        download_and_process_month_url(yyyymm, url, keep_raw=keep_raw, force=force)
-
-
-
-
-def sync_daily_current(keep_raw=False, force=False):
-    links = discover_daily_links()
-    print("Diarios publicados en pagina DGT: {}".format(len(links)))
-    months = set()
-    for yyyymmdd, url in links:
-        months.add(yyyymmdd[:6])
-        download_and_process_daily(yyyymmdd, url=url, keep_raw=keep_raw, force=force)
-    for yyyymm in sorted(months):
-        save_mtd_from_daily(yyyymm)
-
-
-
-
-def sync_auto(keep_raw=False, force=False):
-    sync_monthly_2026(keep_raw=keep_raw, force=False)
-    sync_daily_current(keep_raw=keep_raw, force=force)
-
-
-
-
-def all_months(start='202301', end='202512'):
-    months = []
-    y, m = int(start[:4]), int(start[4:])
-    ey, em = int(end[:4]), int(end[4:])
-    while (y, m) <= (ey, em):
-        months.append("{:04d}{:02d}".format(y, m))
-        m += 1
-        if m > 12:
-            m = 1
-            y += 1
-    return months
-
-
-
-
-if __name__ == '__main__':
-    # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
-    _load_simmix_bbdd()
-    _load_enrichment()
-    _load_eea_lookup()
-    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
-
-
-    arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
-    keep  = '--keep'  in sys.argv
-    force = '--force' in sys.argv
-
-
-    if arg == 'all':
-        import datetime as _dt
-        _now = _dt.date.today()
-        _end = '{:04d}{:02d}'.format(_now.year, _now.month)
-        for yyyymm in all_months():
-            download_and_process(yyyymm, keep_raw=keep, force=force)
-    elif arg == 'monthly-2026':
-        sync_monthly_2026(keep_raw=keep, force=force)
-    elif arg == 'daily-current':
-        sync_daily_current(keep_raw=keep, force=force)
-    elif arg == 'auto':
-        sync_auto(keep_raw=keep, force=force)
-    else:
-        download_and_process(arg, keep_raw=keep, force=force)
+    Only modifies buckets that exist and have count > 0.  Buckets not found
+    in the CSV are silently skipped (the vehicle may have been imported without
+    a prior N/U=N DGT record — no correction needed).
+    """
+    path = os.path.join(OUT_DIR, 'dgt_canal_{}.csv'.format(target_yyyymm))
+    if not os.path.exists(path):
+        print('  WARN retro: no CSV mensual para {}, correcciones omitidas'.format(target_yyyymm))
+        return 0
+    counts = read_channel_counts(path)
+    applied = 0
+    for bucket, delta in corrections.items():
+        if counts.get(bucket, 0) > 0:
+            counts[bucket] = max(0, counts[bucket] + delta)
+            applied += 1
+        # else: bucket not present or already 0 — vehicle had no prior N/U=N DGT
+        # record (imported / single-entry); the tram=B count in the current month
+        # is the only record, so no subtraction is needed.
+    if applied:
+        save_csv(counts, target_yyyymm)
+        print('  -> retro {}: {} buckets corregidos'.format(target_yyyymm, applied))
+    re
