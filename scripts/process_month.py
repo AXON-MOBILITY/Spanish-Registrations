@@ -142,8 +142,7 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
     'YHT2-42E4BJ',
 }
 RECENT_TEMP_TO_FINAL_MAX_DAYS = 60        # legacy constant kept for reference
-TRAM_B_MAX_PROVISIONAL_DAYS = 730         # 2 years: allows same-year and prior-year
-                                          # provisionals; excludes true anomalies
+TRAM_B_MAX_PROVISIONAL_DAYS = 60         # same as RECENT_TEMP_TO_FINAL_MAX_DAYS
 RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
 RETRO_CORRECTIONS_HEADER = [
     'processed_date', 'target_yyyymm', 'marca', 'modelo', 'canal',
@@ -292,23 +291,16 @@ def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS)
 
 
 def _tram_b_retro_yyyymm(line_s, current_yyyymm):
-    """Return the provisional month (YYYYMM) to correct when a tram=B vehicle's
-    fec_prim falls in a different month than the current processing month.
+    """Retroactive cross-month correction — disabled.
 
-    Returns None when:
-      • dates cannot be parsed
-      • fec_prim is in the same month (no cross-month correction needed)
-      • fec_prim is in the future (data anomaly)
+    The correction mechanism moved tram=B counts from the provisional month to
+    the finalisation month, but Simmix assigns vehicles to the *first*
+    registration month, not the finalisation month.  Applying the correction
+    therefore creates a monthly mismatch vs Simmix even though the yearly total
+    stays the same.  Keeping the function signature so callers don't need to
+    change; it always returns None so no corrections are ever generated.
     """
-    fec_prim = _parse_dgt_date(
-        line_s[F_FEC_PRIM_MATRICULACION[0]:F_FEC_PRIM_MATRICULACION[1]]
-    )
-    if not fec_prim:
-        return None
-    prim_yyyymm = fec_prim.strftime('%Y%m')
-    if prim_yyyymm >= current_yyyymm:
-        return None  # same month or future — no cross-month correction
-    return prim_yyyymm
+    return None  # disabled — see comment above
 
 def visible_dgt_vin10(line_s):
     """Prefijo de bastidor visible en DGT: WBA15GR000, WBAUX11060, etc."""
