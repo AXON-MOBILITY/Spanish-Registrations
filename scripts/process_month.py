@@ -2323,7 +2323,7 @@ def sync_daily_current(keep_raw=False, force=False):
 
 
 def sync_auto(keep_raw=False, force=False):
-    sync_monthly_2026(keep_raw=keep_raw, force=False)
+    sync_monthly_2026(keep_raw=keep_raw, force=force)
     sync_daily_current(keep_raw=keep_raw, force=force)
 
 
