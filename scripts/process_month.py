@@ -141,7 +141,9 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
     'YHT2-42E4AJ',
     'YHT2-42E4BJ',
 }
-RECENT_TEMP_TO_FINAL_MAX_DAYS = 60  # legacy; no longer used as a limit
+RECENT_TEMP_TO_FINAL_MAX_DAYS = 60        # legacy constant kept for reference
+TRAM_B_MAX_PROVISIONAL_DAYS = 730         # 2 years: allows same-year and prior-year
+                                          # provisionals; excludes true anomalies
 RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
 RETRO_CORRECTIONS_HEADER = [
     'processed_date', 'target_yyyymm', 'marca', 'modelo', 'canal',
@@ -262,11 +264,12 @@ def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS)
     counts the vehicle in the first-registration month, so including the tram=B
     record would double-count it.
 
-    For all other brands the 60-day window has been removed.  Instead,
-    process_lines() generates a retroactive correction (−1) for the provisional
-    month whenever fec_prim falls in a different month than fec_mat.  This
-    mirrors Simmix's VIN-deduplication logic: the vehicle is counted once, in
-    the month of the definitive registration.
+    For all other brands the old 60-day window is replaced by a 2-year window
+    (TRAM_B_MAX_PROVISIONAL_DAYS = 730).  This passes all legitimate same-year
+    and prior-year provisionals while still blocking DGT data anomalies such as
+    8-year-old provisional dates.  process_lines() generates a retroactive
+    correction (−1) for the provisional month whenever fec_prim falls in a
+    different month, mirroring Simmix's VIN-deduplication logic.
     """
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
         return False
@@ -278,7 +281,14 @@ def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS)
     _modelo_raw = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
     if normalize_marca(_marca_raw, _modelo_raw) == 'BMW':
         return False
-    return True
+    fec_mat = _parse_dgt_date(line_s[F_FEC_MATRICULA[0]:F_FEC_MATRICULA[1]])
+    fec_prim = _parse_dgt_date(
+        line_s[F_FEC_PRIM_MATRICULACION[0]:F_FEC_PRIM_MATRICULACION[1]]
+    )
+    if not fec_mat or not fec_prim:
+        return False
+    days = (fec_mat - fec_prim).days
+    return 0 <= days <= TRAM_B_MAX_PROVISIONAL_DAYS
 
 
 def _tram_b_retro_yyyymm(line_s, current_yyyymm):
@@ -2117,16 +2127,4 @@ def apply_retro_corrections_to_csv(target_yyyymm, corrections):
     if not os.path.exists(path):
         print('  WARN retro: no CSV mensual para {}, correcciones omitidas'.format(target_yyyymm))
         return 0
-    counts = read_channel_counts(path)
-    applied = 0
-    for bucket, delta in corrections.items():
-        if counts.get(bucket, 0) > 0:
-            counts[bucket] = max(0, counts[bucket] + delta)
-            applied += 1
-        # else: bucket not present or already 0 — vehicle had no prior N/U=N DGT
-        # record (imported / single-entry); the tram=B count in the current month
-        # is the only record, so no subtraction is needed.
-    if applied:
-        save_csv(counts, target_yyyymm)
-        print('  -> retro {}: {} buckets corregidos'.format(target_yyyymm, applied))
-    re
+    
