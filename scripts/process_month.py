@@ -2127,4 +2127,247 @@ def apply_retro_corrections_to_csv(target_yyyymm, corrections):
     if not os.path.exists(path):
         print('  WARN retro: no CSV mensual para {}, correcciones omitidas'.format(target_yyyymm))
         return 0
-    
+    counts = read_channel_counts(path)
+    applied = 0
+    for bucket, delta in corrections.items():
+        if counts.get(bucket, 0) > 0:
+            counts[bucket] = max(0, counts[bucket] + delta)
+            applied += 1
+        # else: bucket not present or already 0 — vehicle had no prior N/U=N DGT
+        # record (imported / single-entry); the tram=B count in the current month
+        # is the only record, so no subtraction is needed.
+    if applied:
+        save_csv(counts, target_yyyymm)
+        print('  -> retro {}: {} buckets corregidos'.format(target_yyyymm, applied))
+    return applied
+
+
+def save_retro_corrections_log(retro_corrections, processed_date):
+    """Append retroactive corrections to the audit log."""
+    file_exists = os.path.exists(RETRO_CORRECTIONS_FILE)
+    with open(RETRO_CORRECTIONS_FILE, 'a', encoding='utf-8', newline='') as f:
+        w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
+        if not file_exists:
+            w.writerow(RETRO_CORRECTIONS_HEADER)
+        for (target_yyyymm, marca, modelo, canal,
+             fuel_type, fuel_det, seg, sub, hp, body), delta in retro_corrections.items():
+            w.writerow([processed_date, target_yyyymm, marca, modelo, canal,
+                        fuel_type, fuel_det, seg, sub, hp, body, delta])
+
+
+def _apply_retro_dict(retro_corrections):
+    """Group retro_corrections Counter by target_yyyymm and apply to each CSV."""
+    by_month = collections.defaultdict(collections.Counter)
+    for (target_yyyymm, marca, modelo, canal,
+         fuel_type, fuel_det, seg, sub, hp, body), delta in retro_corrections.items():
+        bucket = (marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body)
+        by_month[target_yyyymm][bucket] += delta
+    total = 0
+    for target_yyyymm, corrections in by_month.items():
+        total += apply_retro_corrections_to_csv(target_yyyymm, corrections)
+    return total
+
+
+def finalize_month(result, yyyymm):
+    fuel_counts, prov_counts, retro_corrections = result
+    save_csv(fuel_counts, yyyymm)
+    save_prov_csv(prov_counts, yyyymm)
+    canal_counts = fuel_to_canal_counts(fuel_counts)
+    alerts = list(LAST_PROCESS_ALERTS)
+    add_unknown_brand_alerts(yyyymm, canal_counts, alerts)
+    add_drift_alerts(yyyymm, canal_counts, alerts)
+    save_alerts(alerts, yyyymm)
+    if retro_corrections:
+        _apply_retro_dict(retro_corrections)
+        save_retro_corrections_log(retro_corrections, yyyymm)
+
+
+def finalize_day(result, yyyymmdd):
+    fuel_counts, prov_counts, retro_corrections = result
+    save_daily_csv(fuel_counts, yyyymmdd)
+    save_prov_daily_csv(prov_counts, yyyymmdd)
+    save_alerts(list(LAST_PROCESS_ALERTS), yyyymmdd)
+    if retro_corrections:
+        _apply_retro_dict(retro_corrections)
+        save_retro_corrections_log(retro_corrections, yyyymmdd)
+
+
+def download_and_process(yyyymm, keep_raw=False, force=False):
+    out_csv  = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
+    zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
+    txt_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.txt".format(yyyymm))
+
+
+    if os.path.exists(out_csv) and not force:
+        if os.path.getsize(out_csv) > 100:
+            print("[{}] Ya procesado, skip.".format(yyyymm))
+            return
+        else:
+            print("[{}] CSV vacio, reprocesando...".format(yyyymm))
+            try:
+                os.remove(out_csv)
+            except Exception as e:
+                print("  WARN no pudo borrar CSV vacio: {}".format(e))
+
+
+    # procesar TXT legacy (ya descomprimido en /tmp/)
+    if os.path.exists(txt_path):
+        print("[{}] TXT raw en /tmp, procesando...".format(yyyymm))
+        counts = process_raw_txt(txt_path, current_yyyymm=yyyymm)
+        finalize_month(counts, yyyymm)
+        if not keep_raw:
+            os.remove(txt_path)
+            print("  -> txt borrado")
+        return
+
+
+    # descargar ZIP si no esta
+    if not os.path.exists(zip_path):
+        url = get_url(yyyymm)
+        print("[{}] ZIP no encontrado, descargando...".format(yyyymm))
+        if not download_zip(url, zip_path):
+            return
+    else:
+        print("[{}] ZIP ya en /tmp, procesando...".format(yyyymm))
+
+
+    # procesar ZIP
+    print("[{}] Procesando ZIP...".format(yyyymm))
+    try:
+        counts = process_zip(zip_path, current_yyyymm=yyyymm)
+    except Exception as e:
+        print("  ERROR procesando ZIP: {}".format(e))
+        return
+    finalize_month(counts, yyyymm)
+
+
+    if not keep_raw:
+        os.remove(zip_path)
+        print("  -> zip borrado")
+
+
+
+
+def download_and_process_month_url(yyyymm, url, keep_raw=False, force=False):
+    out_csv = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
+    zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
+    if os.path.exists(out_csv) and not force and os.path.getsize(out_csv) > 100:
+        print("[{}] Mensual ya procesado, skip.".format(yyyymm))
+        return None
+    print("[{}] Procesando mensual publicado...".format(yyyymm))
+    if not download_zip(url, zip_path):
+        return None
+    try:
+        counts = process_zip(zip_path, current_yyyymm=yyyymm)
+    except Exception as e:
+        print("  ERROR procesando ZIP: {}".format(e))
+        return None
+    finalize_month(counts, yyyymm)
+    if not keep_raw:
+        os.remove(zip_path)
+        print("  -> zip borrado")
+    return counts
+
+
+
+
+def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
+    out_csv = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
+    zip_path = os.path.join(TMP_DIR, "export_mat_{}.zip".format(yyyymmdd))
+    if os.path.exists(out_csv) and not force and os.path.getsize(out_csv) > 100:
+        print("[{}] Diario ya procesado, skip.".format(yyyymmdd))
+        return None
+    if url is None:
+        url = "https://www.dgt.es/microdatos/salida/{}/{}/vehiculos/matriculaciones/export_mat_{}.zip".format(
+            yyyymmdd[:4], int(yyyymmdd[4:6]), yyyymmdd
+        )
+    print("[{}] Procesando diario publicado...".format(yyyymmdd))
+    if not download_zip(url, zip_path):
+        return None
+    current_yyyymm = yyyymmdd[:6]
+    try:
+        counts = process_zip(zip_path, apply_calibration=False,
+                             current_yyyymm=current_yyyymm)
+    except Exception as e:
+        print("  ERROR procesando ZIP: {}".format(e))
+        return None
+    finalize_day(counts, yyyymmdd)
+    if not keep_raw:
+        os.remove(zip_path)
+        print("  -> zip borrado")
+    return counts
+
+
+
+
+def sync_monthly_2026(keep_raw=False, force=False):
+    links = discover_monthly_links(start='202601')
+    print("Mensuales 2026 publicados: {}".format(len(links)))
+    for yyyymm, url in links:
+        download_and_process_month_url(yyyymm, url, keep_raw=keep_raw, force=force)
+
+
+
+
+def sync_daily_current(keep_raw=False, force=False):
+    links = discover_daily_links()
+    print("Diarios publicados en pagina DGT: {}".format(len(links)))
+    months = set()
+    for yyyymmdd, url in links:
+        months.add(yyyymmdd[:6])
+        download_and_process_daily(yyyymmdd, url=url, keep_raw=keep_raw, force=force)
+    for yyyymm in sorted(months):
+        save_mtd_from_daily(yyyymm)
+
+
+
+
+def sync_auto(keep_raw=False, force=False):
+    sync_monthly_2026(keep_raw=keep_raw, force=False)
+    sync_daily_current(keep_raw=keep_raw, force=force)
+
+
+
+
+def all_months(start='202301', end='202512'):
+    months = []
+    y, m = int(start[:4]), int(start[4:])
+    ey, em = int(end[:4]), int(end[4:])
+    while (y, m) <= (ey, em):
+        months.append("{:04d}{:02d}".format(y, m))
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+    return months
+
+
+
+
+if __name__ == '__main__':
+    # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
+    _load_simmix_bbdd()
+    _load_enrichment()
+    _load_eea_lookup()
+    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
+
+
+    arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
+    keep  = '--keep'  in sys.argv
+    force = '--force' in sys.argv
+
+
+    if arg == 'all':
+        import datetime as _dt
+        _now = _dt.date.today()
+        _end = '{:04d}{:02d}'.format(_now.year, _now.month)
+        for yyyymm in all_months():
+            download_and_process(yyyymm, keep_raw=keep, force=force)
+    elif arg == 'monthly-2026':
+        sync_monthly_2026(keep_raw=keep, force=force)
+    elif arg == 'daily-current':
+        sync_daily_current(keep_raw=keep, force=force)
+    elif arg == 'auto':
+        sync_auto(keep_raw=keep, force=force)
+    else:
+        download_and_process(arg, keep_raw=keep, force=force)
