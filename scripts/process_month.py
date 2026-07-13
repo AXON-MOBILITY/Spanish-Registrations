@@ -250,10 +250,23 @@ def _parse_dgt_date(raw):
         return None
 
 def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS):
-    """Simmix counts some recent temporary-to-final registrations marked U by DGT."""
+    """Simmix counts some recent temporary-to-final registrations marked U by DGT.
+
+    BMW is excluded: BMW always issues an initial N/U=N registration in the prior
+    month before finalising with tram=B N/U=U.  Simmix deduplicates by VIN and
+    counts the vehicle in the first-registration month, so including the tram=B
+    record would double-count it.  Other brands (SHINERAY, VOLVO, AUDI…) only
+    appear once in DGT with the tram=B record, so they must be included here.
+    """
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
         return False
     if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'U':
+        return False
+    # BMW: tram=B finalisation is always preceded by an N/U=N record counted in
+    # the prior month — exclude to avoid double-counting.
+    _marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
+    _modelo_raw = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    if normalize_marca(_marca_raw, _modelo_raw) == 'BMW':
         return False
     fec_mat = _parse_dgt_date(line_s[F_FEC_MATRICULA[0]:F_FEC_MATRICULA[1]])
     fec_prim = _parse_dgt_date(
@@ -2224,25 +2237,4 @@ if __name__ == '__main__':
     _load_simmix_bbdd()
     _load_enrichment()
     _load_eea_lookup()
-    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
-
-
-    arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
-    keep  = '--keep'  in sys.argv
-    force = '--force' in sys.argv
-
-
-    if arg == 'all':
-        import datetime as _dt
-        _now = _dt.date.today()
-        _end = '{:04d}{:02d}'.format(_now.year, _now.month)
-        for yyyymm in all_months():
-            download_and_process(yyyymm, keep_raw=keep, force=force)
-    elif arg == 'monthly-2026':
-        sync_monthly_2026(keep_raw=keep, force=force)
-    elif arg == 'daily-current':
-        sync_daily_current(keep_raw=keep, force=force)
-    elif arg == 'auto':
-        sync_auto(keep_raw=keep, force=force)
-    else:
-        download_and_process(arg, keep_raw=keep, force=force)
+    print(f"  -> Model looku
