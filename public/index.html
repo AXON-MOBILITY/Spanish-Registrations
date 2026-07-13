@@ -21,7 +21,7 @@
   --acc2:#38bdf8;
   --bev:#10b981;
   --ice:#3b82f6;
-  --phev:#8b5cf6;
+  --phev:#ef4444;
   --corp:#06b6d4;
   --priv:#6366f1;
   --rac:#f97316;
@@ -1272,7 +1272,7 @@ function render(){
   drawHBar('ch-fuel','wrap-fuel',labels,[
     {label:'BEV',data:top20.map(([,d])=>d.total?+(d.BEV/d.total*100).toFixed(2):0),bg:'#10b981'},
     {label:'ICE',data:top20.map(([,d])=>d.total?+(d.ICE/d.total*100).toFixed(2):0),bg:'#3b82f6'},
-    {label:'PHEV',data:top20.map(([,d])=>d.total?+(d.PHEV/d.total*100).toFixed(2):0),bg:'#8b5cf6'}
+    {label:'PHEV',data:top20.map(([,d])=>d.total?+(d.PHEV/d.total*100).toFixed(2):0),bg:'#ef4444'}
   ]);
   drawHBar('ch-canal','wrap-canal',labels,[
     {label:'Corp',data:top20.map(([,d])=>d.total?+(d.Corporate/d.total*100).toFixed(2):0),bg:'#06b6d4'},
@@ -1423,7 +1423,7 @@ function render(){
   drawVBar('ch-fuelv','wrap-fuelv',labels,[
     {label:'BEV',data:top20.map(([,d])=>d.total?+(d.BEV/d.total*100).toFixed(2):0),bg:'#10b981'},
     {label:'ICE',data:top20.map(([,d])=>d.total?+(d.ICE/d.total*100).toFixed(2):0),bg:'#3b82f6'},
-    {label:'PHEV',data:top20.map(([,d])=>d.total?+(d.PHEV/d.total*100).toFixed(2):0),bg:'#8b5cf6'}
+    {label:'PHEV',data:top20.map(([,d])=>d.total?+(d.PHEV/d.total*100).toFixed(2):0),bg:'#ef4444'}
   ]);
 }
 
