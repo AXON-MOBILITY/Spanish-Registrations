@@ -1601,6 +1601,18 @@ function renderProv(){
   const selectedYear=parseInt(RK.year,10);
   const allFuelNames=new Set([...F.fuels].map(i=>E.fuel[i]));
   const provValue=(v)=>{
+    if(v.length>3){
+      let total=0;
+      REC.enums.canal.forEach((canal,ci)=>{
+        if(!F.canales.has(ci))return;
+        REC.enums.fuel.forEach((fuel,fi)=>{
+          if(!allFuelNames.has(fuel))return;
+          if(gi>0&&fuel!==GAMAS[gi])return;
+          total+=v[3+ci*REC.enums.fuel.length+fi]||0;
+        });
+      });
+      return total;
+    }
     const parts={ICE:Math.max(0,(v[0]||0)-(v[1]||0)-(v[2]||0)),BEV:v[1]||0,PHEV:v[2]||0};
     if(gi===0)return [...allFuelNames].reduce((s,k)=>s+(parts[k]||0),0);
     const k=GAMAS[gi];
@@ -1807,6 +1819,7 @@ function trendBaseRows(){
   const bIdx=F.body?E.body.indexOf(F.body):-1;
   return REC.rows.filter(r=>{
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
+    if(!F.years.has(r[COL.Y]))return false;
     if(!F.months.has(r[COL.M]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
@@ -1814,8 +1827,8 @@ function trendBaseRows(){
     if(!trendSubOk(r))return false;
     if(F.oem.size<2){
       const isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);
-      if(F.oem.has('CHINESE')&&!isCN)return false;
-      if(F.oem.has('REST')&&isCN)return false;
+      if(isCN&&!F.oem.has('CHINESE'))return false;
+      if(!isCN&&!F.oem.has('REST'))return false;
     }
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
     if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
@@ -1823,6 +1836,19 @@ function trendBaseRows(){
     if(bIdx>=0&&r[COL.BODY]!==bIdx)return false;
     return true;
   });
+}
+
+function trendSelectedBrands(){
+  const brandOk=(b)=>{
+    if(F.marca&&b!==F.marca)return false;
+    if(F.oem.size<2){
+      const isCN=_CHINESE_BRANDS.has(b);
+      if(isCN&&!F.oem.has('CHINESE'))return false;
+      if(!isCN&&!F.oem.has('REST'))return false;
+    }
+    return true;
+  };
+  return (F.marca?[F.marca]:TR.sel).filter(brandOk);
 }
 
 function initTrend(){
@@ -1907,8 +1933,8 @@ function trDrawLine(canvasId,labels,datasets,manyPoints){
   });
 }
 
-function trSeries(per,getter){
-  return TR.sel.map(m=>{
+function trSeries(brands,per,getter){
+  return brands.map(m=>{
     let acc=0;
     const data=per.map(pd=>{
       const v=getter(m,pd);
@@ -1925,7 +1951,8 @@ function renderTrend(){
   const E=REC.enums;
   const trendRows=trendBaseRows();
   // Mensual: historico completo de las marcas seleccionadas; el rango lo controlan los selects del tab.
-  const selSet=new Set(TR.sel);
+  const selectedBrands=trendSelectedBrands();
+  const selSet=new Set(selectedBrands);
   const monthly={};
   trendRows.forEach(r=>{
     const b=E.marca[r[COL.MARCA]];
@@ -1935,7 +1962,10 @@ function renderTrend(){
   });
   let fm=g('tr-from-m').value,tm=g('tr-to-m').value;
   if(fm>tm){const x=fm;fm=tm;tm=x;g('tr-from-m').value=fm;g('tr-to-m').value=tm;}
-  const perM=TR.months.filter(pd=>pd>=fm&&pd<=tm);
+  const perM=TR.months.filter(pd=>{
+    const y=parseInt(pd.slice(0,4),10),m=parseInt(pd.slice(5,7),10);
+    return pd>=fm&&pd<=tm&&F.years.has(y)&&F.months.has(m);
+  });
   const labM=perM.map(pd=>MES3[parseInt(pd.slice(5),10)-1]+'-'+pd.slice(2,4));
   // Market aggregate series (monthly)
   const mktSeriesM=[];
@@ -1986,7 +2016,7 @@ function renderTrend(){
         pointRadius:perM.length>60?0:2,pointHoverRadius:4,tension:.25});
     });
   }
-  trDrawLine('ch-trend-m',labM,[...mktSeriesM,...modelSeriesM,...trSeries(perM,(m,pd)=>(monthly[m]||{})[pd]||0)]);
+  trDrawLine('ch-trend-m',labM,[...mktSeriesM,...modelSeriesM,...trSeries(selectedBrands,perM,(m,pd)=>(monthly[m]||{})[pd]||0)]);
   // ── Diario: respeta canal y fuel (matriz 3x3 del JSON) ──
   const canalSel=new Set([...F.canales].map(i=>E.canal[i]));
   const fuelSel=new Set([...F.fuels].map(i=>E.fuel[i]));
@@ -2022,7 +2052,10 @@ function renderTrend(){
   };
   let fd=g('tr-from-d').value,td=g('tr-to-d').value;
   if(fd>td){const x=fd;fd=td;td=x;g('tr-from-d').value=fd;g('tr-to-d').value=td;}
-  const perD=TR.days.filter(pd=>pd>=fd&&pd<=td);
+  const perD=TR.days.filter(pd=>{
+    const y=parseInt(pd.slice(0,4),10),m=parseInt(pd.slice(5,7),10);
+    return pd>=fd&&pd<=td&&F.years.has(y)&&F.months.has(m);
+  });
   // Market aggregate series (daily)
   const mktSeriesD=[];
   if(TR.mkt&&TR.mkt.size>0){
@@ -2034,6 +2067,12 @@ function renderTrend(){
         const brands=dailyMap[pd]||{};
         let v=0;
         Object.entries(brands).forEach(([b,val])=>{
+          if(!selectedBrands.includes(b)&&F.marca)return;
+          if(F.oem.size<2){
+            const isBrandCN=_CHINESE_BRANDS.has(b);
+            if(isBrandCN&&!F.oem.has('CHINESE'))return;
+            if(!isBrandCN&&!F.oem.has('REST'))return;
+          }
           const n=dailySubMap[pd]?dVal(b,pd):dailyCellSum(val);
           const isCN=_CHINESE_BRANDS.has(b);
           if(key==='TOTAL'||(key==='CHINESE'&&isCN)||(key==='REST'&&!isCN))v+=n;
@@ -2046,7 +2085,7 @@ function renderTrend(){
         pointRadius:perD.length>60?0:2,pointHoverRadius:4,tension:.25});
     });
   }
-  trDrawLine('ch-trend-d',perD.map(x=>x.slice(8)+'/'+x.slice(5,7)),[...mktSeriesD,...trSeries(perD,(m,pd)=>dVal(m,pd))]);
+  trDrawLine('ch-trend-d',perD.map(x=>x.slice(8)+'/'+x.slice(5,7)),[...mktSeriesD,...trSeries(selectedBrands,perD,(m,pd)=>dVal(m,pd))]);
 
   // Compute totM/cnM here (shared by KPI cards + renderTrendPct)
   const totM={},cnM={};

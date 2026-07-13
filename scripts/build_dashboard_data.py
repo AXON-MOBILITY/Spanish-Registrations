@@ -679,7 +679,7 @@ def build_daily_mtd_json(daily_data, cy, cm):
 
 
 def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
-    """province_brands.json: provincia x marca Focus x [total, BEV, PHEV] por anyo/mes.
+    """province_brands.json: provincia x marca Focus x [total, BEV, PHEV, canal*fuel...].
 
     Alimenta el ranking Top-5 provincial del dashboard. Las marcas Focus se
     derivan de los datos (mayoria de volumen en FOCUS SEGMENT), sin listas
@@ -708,8 +708,8 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
         months.add(ym)
         d = out.setdefault(cod, {"name": nombre, "years": {}, "months": {}})
         d["name"] = nombre
-        cell = d["years"].setdefault(yr, {}).setdefault(marca, [0, 0, 0])
-        mcell = d["months"].setdefault(ym, {}).setdefault(marca, [0, 0, 0])
+        cell = d["years"].setdefault(yr, {}).setdefault(marca, [0] * 12)
+        mcell = d["months"].setdefault(ym, {}).setdefault(marca, [0] * 12)
         cell[0] += cnt
         mcell[0] += cnt
         if fuel == "BEV":
@@ -718,6 +718,8 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
         elif fuel == "PHEV":
             cell[2] += cnt
             mcell[2] += cnt
+        cell[3 + CANALES.index(canal) * len(FUELS) + FUELS.index(fuel)] += cnt
+        mcell[3 + CANALES.index(canal) * len(FUELS) + FUELS.index(fuel)] += cnt
 
     provinces = [
         {"cod": cod, "name": d["name"],
