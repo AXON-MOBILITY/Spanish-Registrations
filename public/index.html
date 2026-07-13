@@ -1415,7 +1415,8 @@ function render(){
   });
   totMRow.innerHTML=totCells;monthBody.appendChild(totMRow);
 
-  // Si el tab Trend esta visible, sus graficas siguen los filtros laterales
+  // Si estos tabs estan visibles, sus vistas siguen los filtros laterales
+  if(PROV&&g('pane-prov').classList.contains('on'))renderProv();
   if(TREND&&TR.months&&g('pane-trend').classList.contains('on'))renderTrend();
 
   // ── TAB 2: FUEL MIX VERTICAL CHART ──
@@ -1596,14 +1597,33 @@ function renderProv(){
   if(!PROV)return;
   RK.year=g('rk-year').value;
   const gi=RK.gama;
+  const E=REC.enums;
+  const selectedYear=parseInt(RK.year,10);
+  const allFuelNames=new Set([...F.fuels].map(i=>E.fuel[i]));
+  const provValue=(v)=>{
+    const parts={ICE:Math.max(0,(v[0]||0)-(v[1]||0)-(v[2]||0)),BEV:v[1]||0,PHEV:v[2]||0};
+    if(gi===0)return [...allFuelNames].reduce((s,k)=>s+(parts[k]||0),0);
+    const k=GAMAS[gi];
+    return allFuelNames.has(k)?parts[k]:0;
+  };
+  const provBrandAllowed=(brand)=>{
+    if(F.marca&&brand!==F.marca)return false;
+    if(F.oem.size<2){
+      const isChinese=_CHINESE_BRANDS.has(brand);
+      if(isChinese&&!F.oem.has('CHINESE'))return false;
+      if(!isChinese&&!F.oem.has('REST'))return false;
+    }
+    return true;
+  };
   const monthKeys=provMonthsForYear(RK.year)
-    .filter(mm=>RK.months.has(mm))
+    .filter(mm=>RK.months.has(mm)&&F.months.has(parseInt(mm,10))&&F.years.has(selectedYear))
     .map(mm=>`${RK.year}-${mm}`);
   const rows=[];
   PROV.provinces.forEach(p=>{
     const brands=provBrandsForMonths(p,monthKeys);
     const entries=Object.entries(brands)
-      .map(([m,v])=>[m,GAMA_VAL[gi](v)])
+      .filter(([m])=>provBrandAllowed(m))
+      .map(([m,v])=>[m,provValue(v)])
       .filter(([,v])=>v>0)
       .sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
     if(!entries.length)return;
@@ -1907,7 +1927,7 @@ function renderTrend(){
   // Mensual: historico completo de las marcas seleccionadas; el rango lo controlan los selects del tab.
   const selSet=new Set(TR.sel);
   const monthly={};
-  trendSubRows().forEach(r=>{
+  trendRows.forEach(r=>{
     const b=E.marca[r[COL.MARCA]];
     if(!selSet.has(b))return;
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
@@ -2476,7 +2496,8 @@ function resetFilters(){
   F.hps.clear();
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body=''
+  F.marca='';F.modelo='';F.body='';
+  render();
 }
 </script>
 </body>
