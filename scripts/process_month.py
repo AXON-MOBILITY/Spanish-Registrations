@@ -2237,4 +2237,25 @@ if __name__ == '__main__':
     _load_simmix_bbdd()
     _load_enrichment()
     _load_eea_lookup()
-    print(f"  -> Model looku
+    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
+
+
+    arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'
+    keep  = '--keep'  in sys.argv
+    force = '--force' in sys.argv
+
+
+    if arg == 'all':
+        import datetime as _dt
+        _now = _dt.date.today()
+        _end = '{:04d}{:02d}'.format(_now.year, _now.month)
+        for yyyymm in all_months():
+            download_and_process(yyyymm, keep_raw=keep, force=force)
+    elif arg == 'monthly-2026':
+        sync_monthly_2026(keep_raw=keep, force=force)
+    elif arg == 'daily-current':
+        sync_daily_current(keep_raw=keep, force=force)
+    elif arg == 'auto':
+        sync_auto(keep_raw=keep, force=force)
+    else:
+        download_and_process(arg, keep_raw=keep, force=force)
