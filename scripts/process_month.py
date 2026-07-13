@@ -142,7 +142,9 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
     'YHT2-42E4BJ',
 }
 RECENT_TEMP_TO_FINAL_MAX_DAYS = 60        # legacy constant kept for reference
-TRAM_B_MAX_PROVISIONAL_DAYS = 60         # same as RECENT_TEMP_TO_FINAL_MAX_DAYS
+TRAM_B_MAX_PROVISIONAL_DAYS = 60         # gate for is_recent_temp_to_final_used (no VIN check)
+TRAM_B_VIN_DEDUP_MAX_DAYS   = 730        # extended window: include if VIN not seen as N/U=N before
+VIN10_INDEX_FILE = os.path.join(DATA_DIR, 'dgt_vin10_index.txt')
 RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
 RETRO_CORRECTIONS_HEADER = [
     'processed_date', 'target_yyyymm', 'marca', 'modelo', 'canal',
@@ -1730,12 +1732,66 @@ def es_turismo_o_furgoneta(line_s):
     return False  # plazas=0 (trailer), plazas=1 (moto solo-seat)
 
 
+# ---------------------------------------------------------------------------
+# VIN10 deduplication index
+# Stores the first 10 useful chars of the bastidor for every N/U=N vehicle that
+# passes scope.  Used to decide whether a tram=B record in the 61-730 day window
+# is a genuine first-time registration (VIN not seen before → include) or a
+# finalisation of an already-counted provisional plate (VIN in index → exclude).
+# ---------------------------------------------------------------------------
+_VIN10_NU_N_INDEX: set = set()
+
+
+def _load_vin10_index():
+    """Load the persisted VIN10 index into the global set at process start."""
+    global _VIN10_NU_N_INDEX
+    if os.path.exists(VIN10_INDEX_FILE):
+        with open(VIN10_INDEX_FILE, 'r', encoding='ascii') as _f:
+            _VIN10_NU_N_INDEX = {_l.strip() for _l in _f if _l.strip()}
+        print('  -> vin10 index cargado: {:,} entradas'.format(len(_VIN10_NU_N_INDEX)))
+    else:
+        _VIN10_NU_N_INDEX = set()
+        print('  -> vin10 index: fichero no encontrado, empezando vacío')
+
+
+def _save_vin10_index():
+    """Persist the in-memory VIN10 index to disk."""
+    with open(VIN10_INDEX_FILE, 'w', encoding='ascii') as _f:
+        for _v in sorted(_VIN10_NU_N_INDEX):
+            _f.write(_v + '\n')
+    print('  -> vin10 index guardado: {:,} entradas'.format(len(_VIN10_NU_N_INDEX)))
+
+
+def _is_tram_b_extended_window(line_s):
+    """True for non-BMW tram=B records with fec_prim between 61 and 730 days
+    before fec_mat.  These are candidates for VIN-dedup inclusion in
+    process_lines(); the final decision is made there against _VIN10_NU_N_INDEX.
+    """
+    if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
+        return False
+    if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'U':
+        return False
+    _marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
+    _modelo_raw = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    if normalize_marca(_marca_raw, _modelo_raw) == 'BMW':
+        return False
+    fec_mat  = _parse_dgt_date(line_s[F_FEC_MATRICULA[0]:F_FEC_MATRICULA[1]])
+    fec_prim = _parse_dgt_date(
+        line_s[F_FEC_PRIM_MATRICULACION[0]:F_FEC_PRIM_MATRICULACION[1]]
+    )
+    if not fec_mat or not fec_prim:
+        return False
+    days = (fec_mat - fec_prim).days
+    return TRAM_B_MAX_PROVISIONAL_DAYS < days <= TRAM_B_VIN_DEDUP_MAX_DAYS
+
+
 def passes_dgt_scope_filters(line_s):
     """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
     if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
         return False
     if (line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N'
-            and not is_recent_temp_to_final_used(line_s)):
+            and not is_recent_temp_to_final_used(line_s)
+            and not _is_tram_b_extended_window(line_s)):
         return False
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
         return False
@@ -1830,10 +1886,30 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
         if not fuel_detail:
             fuel_detail = get_fuel_detail_from_dgt(line_s)
         hp = classify_high_performance(marca, modelo, hp)
+        # ── VIN-dedup gate for extended-window tram=B (61-730 days) ──────────
+        # For records that passed scope via _is_tram_b_extended_window(), check
+        # whether the VIN was already seen as N/U=N in a prior month.
+        #   • vin10 empty → can't verify → conservative: skip (no overcount)
+        #   • vin10 in _VIN10_NU_N_INDEX → prior N/U=N record exists → skip
+        #   • vin10 not in index → genuine first registration → count it
+        _nu_field   = line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip()
+        _tram_field = line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip()
+        if _nu_field == 'U' and _tram_field == 'B' and _is_tram_b_extended_window(line_s):
+            _vin10_ext = visible_dgt_vin10(line_s)
+            if not _vin10_ext or _vin10_ext in _VIN10_NU_N_INDEX:
+                continue  # skip: was already counted or VIN unreadable
+        # ─────────────────────────────────────────────────────────────────────
+
         counts[(marca, canal)] += 1
         fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
             prov_counts[(cod_prov, marca, canal, fuel_code)] += 1
+
+        # Collect vin10 for N/U=N records so future tram=B dedup checks work
+        if _nu_field == 'N':
+            _vin10_n = visible_dgt_vin10(line_s)
+            if _vin10_n:
+                _VIN10_NU_N_INDEX.add(_vin10_n)
 
         # Retroactive correction: when a tram=B vehicle's provisional was in a
         # prior month, we must subtract that provisional count from that month so
@@ -2172,6 +2248,7 @@ def finalize_month(result, yyyymm):
     if retro_corrections:
         _apply_retro_dict(retro_corrections)
         save_retro_corrections_log(retro_corrections, yyyymm)
+    _save_vin10_index()
 
 
 def finalize_day(result, yyyymmdd):
@@ -2182,6 +2259,7 @@ def finalize_day(result, yyyymmdd):
     if retro_corrections:
         _apply_retro_dict(retro_corrections)
         save_retro_corrections_log(retro_corrections, yyyymmdd)
+    _save_vin10_index()
 
 
 def download_and_process(yyyymm, keep_raw=False, force=False):
@@ -2341,6 +2419,7 @@ if __name__ == '__main__':
     _load_simmix_bbdd()
     _load_enrichment()
     _load_eea_lookup()
+    _load_vin10_index()
     print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
 
 
