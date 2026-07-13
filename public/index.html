@@ -672,7 +672,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <div class="card">
         <div class="card-hdr">
           <span>Mensual por marca: Actuals + Forecast</span>
-          <span class="note">RAC y Ajuste a&ntilde;o son editables por marca</span>
+          <span class="note">RAC mes actual y Ajuste a&ntilde;o total son editables por marca</span>
         </div>
         <div class="tbl-wrap2" style="max-height:calc(100vh - 300px);overflow:auto">
           <table id="tbl-fc">
@@ -2186,7 +2186,7 @@ function renderTrendPct(totM,cnM){
 
 // ── TAB 5: PROGNOSIS (mensual por marca, RAC y ajuste por marca) ──
 let FC=null,FCP=null;
-const FCS={esc:'base',rac:'inc',ovYear:{},ovRac:{}};
+const FCS={esc:'base',rac:'inc',ovYear:{},ovRac:{},ovRacM:{}};
 fetch('data/forecast.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{FC=d;initForecast();}).catch(()=>{});
 
@@ -2257,6 +2257,12 @@ function fcRacDefault(b){
   const rp=FCP.racPrev[b]||{};
   return Math.round(Object.values(rp).reduce((s,v)=>s+v,0));
 }
+function fcRacMonthDefault(b){
+  const rp=FCP.racPrev[b]||{};
+  const rpSum=Object.values(rp).reduce((s,v)=>s+v,0);
+  const ann=fcRacDefault(b);const m=FCP.curM;
+  return Math.round(rpSum>0?ann*((rp[m]||0)/rpSum):ann/(13-m));
+}
 
 function renderForecast(){
   if(!FC||FC.status!=='ok'||!FCP)return;
@@ -2283,7 +2289,14 @@ function renderForecast(){
 
   // objetivo de mercado: raking del futuro exRAC de marcas sin ajuste anual
   let scale=1;
-  const racTot=rows.reduce((s,r)=>s+(FCS.ovRac[r.name]!=null?FCS.ovRac[r.name]:fcRacDefault(r.name)),0)
+  function _brandRacFut(name){
+    const _rp=racPrev[name]||{};const _rpSum=Object.values(_rp).reduce((s,v)=>s+v,0);
+    const _ann=fcRacDefault(name);
+    const _cm=FCS.ovRacM[name]!=null?FCS.ovRacM[name]:Math.round(_rpSum>0?_ann*((_rp[curM]||0)/_rpSum):_ann/(13-curM));
+    let _rest=0;for(let _m=curM+1;_m<=12;_m++)_rest+=_rpSum>0?_ann*((_rp[_m]||0)/_rpSum):_ann/(13-curM);
+    return _cm+_rest;
+  }
+  const racTot=rows.reduce((s,r)=>s+_brandRacFut(r.name),0)
               +Object.values(actRac).reduce((s,o)=>s+Object.values(o).reduce((a,v)=>a+v,0),0);
   if(target>0){
     let futFree=0,futFixed=0,actAll=0;
@@ -2291,7 +2304,7 @@ function renderForecast(){
       const futSum=Object.values(r.fut).reduce((s,v)=>s+v,0)-((actEx[r.name]&&actEx[r.name][curM])||0);
       const actB=[...Array(12)].reduce((s,_,i)=>s+((actEx[r.name]&&actEx[r.name][i+1])||0),0);
       actAll+=actB;
-      if(FCS.ovYear[r.name]!=null)futFixed+=Math.max(0,FCS.ovYear[r.name]-actB-(FCS.ovRac[r.name]!=null?FCS.ovRac[r.name]:fcRacDefault(r.name))-Object.values(actRac[r.name]||{}).reduce((a,v)=>a+v,0));
+      if(FCS.ovYear[r.name]!=null)futFixed+=Math.max(0,FCS.ovYear[r.name]-actB-_brandRacFut(r.name)-Object.values(actRac[r.name]||{}).reduce((a,v)=>a+v,0));
       else futFree+=futSum;
     });
     const targetFut=target-racTot-actAll-Object.keys(FCP).length*0; // exRAC futuro objetivo
@@ -2303,15 +2316,18 @@ function renderForecast(){
   const th=g('thead-fc');
   th.innerHTML='<tr><th>Marca</th>'+MESES.map((m,i)=>
     `<th class="${i+1<curM?'':'month-hdr'}">${m}</th>`).join('')
-    +'<th>A&ntilde;o</th><th>RAC (edit)</th><th>Ajuste a&ntilde;o total (edit)</th></tr>';
+    +'<th>A&ntilde;o</th><th>RAC '+MESES[curM-1]+' (edit)</th><th>Ajuste a&ntilde;o total (edit)</th></tr>';
 
   const tb=g('tbody-fc');tb.innerHTML='';
   const colTot=Array(13).fill(0);let totEx=0,totRac=0;
   rows.forEach(({b,name,fut})=>{
-    const racIn=FCS.ovRac[name]!=null?FCS.ovRac[name]:fcRacDefault(name);
-    // reparto RAC por estacionalidad propia
+    // RAC mensual: mes actual = override o auto; meses siguientes = estacionalidad H2-anterior
     const rp=racPrev[name]||{};const rpSum=Object.values(rp).reduce((s,v)=>s+v,0);
-    const racM={};for(let m=curM;m<=12;m++)racM[m]=rpSum>0?racIn*((rp[m]||0)/rpSum):racIn/(13-curM);
+    const _ann=fcRacDefault(name);
+    const racM={};
+    racM[curM]=FCS.ovRacM[name]!=null?FCS.ovRacM[name]:Math.round(rpSum>0?_ann*((rp[curM]||0)/rpSum):_ann/(13-curM));
+    for(let m=curM+1;m<=12;m++)racM[m]=rpSum>0?_ann*((rp[m]||0)/rpSum):_ann/(13-curM);
+    const racIn=Object.values(racM).reduce((s,v)=>s+v,0);
     // ajuste anual por marca: reescala su futuro exRAC
     let bScale=(FCS.ovYear[name]==null)?scale:1;
     const actB=[...Array(12)].reduce((s,_,i)=>s+((actEx[name]&&actEx[name][i+1])||0),0);
@@ -2344,8 +2360,8 @@ function renderForecast(){
     tr.innerHTML=`<td>${name}${FCS.ovYear[name]!=null?' <span style="color:var(--acc2);font-size:9px">MANUAL</span>':''}</td>`
       +cells
       +`<td><b>${fmt(inc?yearEx+yearRac:yearEx)}</b></td>`
-      +`<td><input type="text" inputmode="numeric" class="tf-modelo-input" value="${FCS.ovRac[name]!=null?fmt(FCS.ovRac[name]):''}"
-           placeholder="${fmt(fcRacDefault(name))}" onchange="fcSetRac('${name.replace(/'/g,"\\'")}',this.value)"></td>`
+      +`<td><input type="text" inputmode="numeric" class="tf-modelo-input" value="${FCS.ovRacM[name]!=null?fmt(FCS.ovRacM[name]):''}"
+           placeholder="${fmt(Math.round(rpSum>0?_ann*((rp[curM]||0)/rpSum):_ann/(13-curM)))}" onchange="fcSetRacM('${name.replace(/'/g,"\\'")}',this.value)"></td>`
       +`<td><input type="text" inputmode="numeric" class="tf-modelo-input" value="${FCS.ovYear[name]!=null?fmt(FCS.ovYear[name]):''}"
            placeholder="${fmt(yearEx+yearRac)}" onchange="fcSetYear('${name.replace(/'/g,"\\'")}',this.value)"></td>`;
     tb.appendChild(tr);
@@ -2367,9 +2383,9 @@ function fcNum(s){
   const v=parseFloat(String(s||'').replace(/[.\s\u00a0]/g,'').replace(',','.'));
   return isFinite(v)?v:0;
 }
-function fcSetRac(marca,val){
+function fcSetRacM(marca,val){
   const v=fcNum(val);
-  if(!String(val).trim()||v<0)delete FCS.ovRac[marca];else FCS.ovRac[marca]=v;
+  if(!String(val).trim()||v<0)delete FCS.ovRacM[marca];else FCS.ovRacM[marca]=v;
   FCS.rac='inc';
   fcRefreshRacPills();
   renderForecast();
@@ -2463,5 +2479,3 @@ function resetFilters(){
   F.marca='';F.modelo='';F.body=''
 }
 </script>
-</body>
-</html>
