@@ -24,6 +24,7 @@ def _scope_filter_line(
     mma='',
     fec_matricula='',
     fec_primera='',
+    vin10='',
 ):
     line = [' '] * 714
     line[pm.F_FEC_MATRICULA[0]:pm.F_FEC_MATRICULA[1]] = list(fec_matricula[:8].ljust(8))
@@ -34,6 +35,9 @@ def _scope_filter_line(
     line[pm.F_COD_TIPO[0]:pm.F_COD_TIPO[1]] = list(cod_tipo[:2].rjust(2))
     line[pm.F_MARCA[0]:pm.F_MARCA[1]] = list(marca[:30].ljust(30))
     line[pm.F_MODELO[0]:pm.F_MODELO[1]] = list(modelo[:30].ljust(30))
+    if vin10:
+        line[77:110] = list(('3' + vin10 + '*' * 20)[:33].ljust(33))
+        line[pm.F_COD_TIPO[0]:pm.F_COD_TIPO[1]] = list(cod_tipo[:2].rjust(2))
     width = pm.F_VARIANTE_ITV[1] - pm.F_VARIANTE_ITV[0]
     line[pm.F_VARIANTE_ITV[0]:pm.F_VARIANTE_ITV[1]] = list(variante[:width].ljust(width))
     width = pm.F_VERSION_ITV[1] - pm.F_VERSION_ITV[0]
@@ -77,6 +81,32 @@ def test_filtros_scope_dgt_no_abren_paso_temporal_a_definitiva_antiguo():
         tramite='B',
         fec_matricula='08072026',
         fec_primera='22012018',
+    )
+    assert not pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_tram_b_allowlist_exacta():
+    line = _scope_filter_line(
+        nuevo='U',
+        tramite='B',
+        marca='MERCEDES-AMG',
+        modelo='AMG GLC 43 4MATIC',
+        fec_matricula='08072026',
+        fec_primera='01072025',
+        vin10='W1NKM8HB5R',
+    )
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_no_abren_tram_b_largo_no_allowlisted():
+    line = _scope_filter_line(
+        nuevo='U',
+        tramite='B',
+        marca='MERCEDES-BENZ',
+        modelo='GLC 300 D 4MATIC',
+        fec_matricula='06072026',
+        fec_primera='26032025',
+        vin10='W1NKM0HB7S',
     )
     assert not pm.passes_dgt_scope_filters(line)
 

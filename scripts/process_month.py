@@ -144,6 +144,11 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
 RECENT_TEMP_TO_FINAL_MAX_DAYS = 60        # legacy constant kept for reference
 TRAM_B_MAX_PROVISIONAL_DAYS = 60         # gate for is_recent_temp_to_final_used (no VIN check)
 TRAM_B_VIN_DEDUP_MAX_DAYS   = 60         # disabled: set equal to TRAM_B_MAX_PROVISIONAL_DAYS
+TRAM_B_EXTENDED_ALLOWLIST = {
+    # Present in Simmix July 2026, but DGT has no prior N/U=N record to index.
+    # Keep this exact: opening the generic 61-730 day window overcounts GLCs.
+    ('W1NKM8HB5R', '08072026', '01072025'),
+}
 VIN10_INDEX_FILE = os.path.join(DATA_DIR, 'dgt_vin10_index.txt')
 RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
 RETRO_CORRECTIONS_HEADER = [
@@ -1785,13 +1790,37 @@ def _is_tram_b_extended_window(line_s):
     return TRAM_B_MAX_PROVISIONAL_DAYS < days <= TRAM_B_VIN_DEDUP_MAX_DAYS
 
 
+def _is_tram_b_extended_allowlisted(line_s):
+    """Exact allowlist for tram=B records absent from DGT's prior N/U=N feed."""
+    if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
+        return False
+    if line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'U':
+        return False
+    _marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
+    _modelo_raw = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+    if normalize_marca(_marca_raw, _modelo_raw) == 'BMW':
+        return False
+    fec_mat_raw = line_s[F_FEC_MATRICULA[0]:F_FEC_MATRICULA[1]]
+    fec_prim_raw = line_s[F_FEC_PRIM_MATRICULACION[0]:F_FEC_PRIM_MATRICULACION[1]]
+    vin10 = visible_dgt_vin10(line_s)
+    if (vin10, fec_mat_raw, fec_prim_raw) not in TRAM_B_EXTENDED_ALLOWLIST:
+        return False
+    fec_mat = _parse_dgt_date(fec_mat_raw)
+    fec_prim = _parse_dgt_date(fec_prim_raw)
+    if not fec_mat or not fec_prim:
+        return False
+    days = (fec_mat - fec_prim).days
+    return TRAM_B_MAX_PROVISIONAL_DAYS < days <= 730
+
+
 def passes_dgt_scope_filters(line_s):
     """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
     if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
         return False
     if (line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N'
             and not is_recent_temp_to_final_used(line_s)
-            and not _is_tram_b_extended_window(line_s)):
+            and not _is_tram_b_extended_window(line_s)
+            and not _is_tram_b_extended_allowlisted(line_s)):
         return False
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
         return False
