@@ -143,7 +143,7 @@ PEUGEOT_REST_SCOPE_PARTNER_VERSIONS = {
 }
 RECENT_TEMP_TO_FINAL_MAX_DAYS = 60        # legacy constant kept for reference
 TRAM_B_MAX_PROVISIONAL_DAYS = 60         # gate for is_recent_temp_to_final_used (no VIN check)
-TRAM_B_VIN_DEDUP_MAX_DAYS   = 730        # extended window: include if VIN not seen as N/U=N before
+TRAM_B_VIN_DEDUP_MAX_DAYS   = 60         # disabled: set equal to TRAM_B_MAX_PROVISIONAL_DAYS
 VIN10_INDEX_FILE = os.path.join(DATA_DIR, 'dgt_vin10_index.txt')
 RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
 RETRO_CORRECTIONS_HEADER = [
