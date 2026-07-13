@@ -1,3 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202404,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,153,100,pool_b00d_private=2675; rate=0.0573
-202404,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,129,100,pool_b00d_private=1375; rate=0.0939
+202404,INFO,INVALID_ITV_SCOPE_EXCLUDED,POLARIS,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=3NSRGD2K7R; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202404,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,153,100,pool_b00d_private=2676; rate=0.0573
+202404,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,129,100,pool_b00d_private=1377; rate=0.0939
