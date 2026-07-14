@@ -2606,6 +2606,8 @@ function downloadInforme(){
 
     // ── Periodo label ──────────────────────────────────────────────────────
     const mths=[..._OVD.months].sort((a,b)=>a-b);
+    const curM=Math.max(...mths);
+    const mLabelPer=MES[curM-1]+' '+_OVD.refYear;   // e.g. "Julio 2026"
     const mLabel=mths.length===12?'A\xF1o completo '+_OVD.refYear
       :mths.map(m=>MES[m-1]).join('-')+' '+_OVD.refYear;
     const now=new Date();
@@ -2613,19 +2615,59 @@ function downloadInforme(){
                +' '+now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
 
     // ── Datos base ────────────────────────────────────────────────────────
-    const fT=_OVD.fuelTots, tot=_OVD.total, fYY=_OVD.fuelYoY;
     const _E=REC.enums;
-    const {refRows,prevRows,commonM,hasPrev}=_RC;
 
-    // YTD (todos los meses acumulados del año)
+    // Override F.months para calcular periodo (curM) y YTD (Ene-curM)
+    const _origMonths=F.months;
+    F.months=new Set([curM]);
+    const perR=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear);
+    const perP=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear-1);
+    F.months=new Set(Array.from({length:curM},(_,i)=>i+1));
     const ytdR=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear);
     const ytdP=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear-1);
+    F.months=_origMonths;
+
+    // Agregados periodo por marca + fuel breakdown
+    const perB={},perBP={},perBFuel={};
+    perR.forEach(r=>{
+      const b=_E.marca[r[COL.MARCA]];
+      perB[b]=(perB[b]||0)+r[COL.N];
+      if(!perBFuel[b])perBFuel[b]={BEV:0,PHEV:0,ICE:0};
+      const f=_E.fuel[r[COL.FUEL]];if(f in perBFuel[b])perBFuel[b][f]+=r[COL.N];
+    });
+    perP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];perBP[b]=(perBP[b]||0)+r[COL.N];});
+    const perTot=Object.values(perB).reduce((s,v)=>s+v,0);
+    const perTotPrev=Object.values(perBP).reduce((s,v)=>s+v,0);
+    const perTotYoY=perTotPrev?(perTot-perTotPrev)/perTotPrev*100:null;
+    const perSv=Object.entries(perB).map(([b,n])=>[b,{total:n,...(perBFuel[b]||{BEV:0,PHEV:0,ICE:0})}])
+      .sort((a,b)=>b[1].total-a[1].total);
+
+    // Fuel totals del periodo y YoY
+    const fT={BEV:0,PHEV:0,ICE:0},fTP={BEV:0,PHEV:0,ICE:0};
+    perR.forEach(r=>{const f=_E.fuel[r[COL.FUEL]];if(f in fT)fT[f]+=r[COL.N];});
+    perP.forEach(r=>{const f=_E.fuel[r[COL.FUEL]];if(f in fTP)fTP[f]+=r[COL.N];});
+    const fYY={
+      BEV:fTP.BEV?(fT.BEV-fTP.BEV)/fTP.BEV*100:null,
+      PHEV:fTP.PHEV?(fT.PHEV-fTP.PHEV)/fTP.PHEV*100:null,
+      ICE:fTP.ICE?(fT.ICE-fTP.ICE)/fTP.ICE*100:null,
+    };
+
+    // Agregados YTD por marca
     const ytdB={},ytdBP={};
     ytdR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdB[b]=(ytdB[b]||0)+r[COL.N];});
     ytdP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdBP[b]=(ytdBP[b]||0)+r[COL.N];});
     const ytdTot=Object.values(ytdB).reduce((s,v)=>s+v,0);
     const ytdTotPrev=Object.values(ytdBP).reduce((s,v)=>s+v,0);
     const ytdTotYoY=ytdTotPrev?(ytdTot-ytdTotPrev)/ytdTotPrev*100:null;
+
+    // YoY map builder generico
+    function buildYoYMap(rR,pR){
+      const m={};
+      rR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!m[b])m[b]={ref:0,prev:0};m[b].ref+=r[COL.N];});
+      pR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!m[b])m[b]={ref:0,prev:0};m[b].prev+=r[COL.N];});
+      return m;
+    }
+    const perYoYMap=buildYoYMap(perR,perP);
 
     // YTD por combustible
     function fuelYtd(fuel){
@@ -2636,14 +2678,12 @@ function downloadInforme(){
       const tp=Object.values(bP).reduce((s,v)=>s+v,0);
       return{bC,bP,t,yoy:tp?(t-tp)/tp*100:null};
     }
-    // YoY periodo por marca y combustible (sobre commonM)
+    // YoY periodo por combustible (usa datos del periodo curM)
     function fuelYoYMap(fuel){
-      const m={};
-      refRows.filter(r=>commonM.has(r[COL.M])&&_E.fuel[r[COL.FUEL]]===fuel)
-        .forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!m[b])m[b]={ref:0,prev:0};m[b].ref+=r[COL.N];});
-      if(hasPrev)prevRows.filter(r=>commonM.has(r[COL.M])&&_E.fuel[r[COL.FUEL]]===fuel)
-        .forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!m[b])m[b]={ref:0,prev:0};m[b].prev+=r[COL.N];});
-      return m;
+      return buildYoYMap(
+        perR.filter(r=>_E.fuel[r[COL.FUEL]]===fuel),
+        perP.filter(r=>_E.fuel[r[COL.FUEL]]===fuel)
+      );
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
@@ -2679,8 +2719,8 @@ function downloadInforme(){
       const rows=mkRows(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN);
       doc.autoTable({
         head:[
-          ['Pos','Marca',mLabel,'','','Acumulado YTD '+_OVD.refYear,'',''],
-          ['','','Unidades','Var. %','Cuota','Unidades','Var. %','Cuota'],
+          ['','',mLabelPer,'','','Acumulado YTD '+_OVD.refYear,'',''],
+          ['Pos','Marca','Unidades','Var. %','Cuota','Unidades','Var. %','Cuota'],
         ],
         body:rows,startY,
         margin:{left:M,right:M},
@@ -2811,170 +2851,13 @@ function downloadInforme(){
     // ══ PORTADA (pagina 1, fondo blanco) ══════════════════════════════════
     // Eyebrow
     doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(118,130,148);
-    doc.text('INFORME INTERNO \xB7 PARQUE AUTOMOTOR ESPA\xD1A',M,95);
+    doc.text('INFORME INTERNO',M,95);
     // Titulo principal
     doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(18,28,44);
     doc.text('Ranking de marcas',M,109);
     // Subtitulo azul
     doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(26,96,196);
-    doc.text('Matriculaciones \xB7 '+mLabel,M,122);
+    doc.text('Matriculaciones \xB7 '+mLabelPer,M,122);
     // Descripcion
     doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(88,102,120);
-    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,133,{maxWidth:CW});
-    // Separador
-    doc.setDrawColor(215,222,232);doc.setLineWidth(0.25);doc.line(M,140,W-M,140);
-    // 4 cajas KPI con borde
-    const bw=(CW-9)/4;
-    [
-      {n:fN(tot),     lbl:'Mercado Total',              yoy:_OVD.totYoY},
-      {n:fN(fT.BEV),  lbl:'BEV \xB7 El\xE9ctricos',        yoy:fYY.BEV},
-      {n:fN(fT.PHEV), lbl:'PHEV \xB7 H\xEDbridos enchufables',yoy:fYY.PHEV},
-      {n:fN(fT.ICE),  lbl:'ICE \xB7 Combusti\xF3n',         yoy:fYY.ICE},
-    ].forEach((k,i)=>{
-      const bx=M+i*(bw+3), by=148;
-      doc.setFillColor(255,255,255);doc.setDrawColor(208,216,228);doc.setLineWidth(0.25);
-      doc.roundedRect(bx,by,bw,30,1.2,1.2,'FD');
-      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(18,28,44);
-      doc.text(k.n,bx+5,by+10);
-      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
-      doc.text(k.lbl,bx+5,by+16.5);
-      if(k.yoy!=null){
-        const pos=k.yoy>=0;
-        doc.setFont('helvetica','bold');doc.setFontSize(8);
-        doc.setTextColor(pos?14:198,pos?128:42,pos?78:42);
-        doc.text((pos?'+':'')+k.yoy.toFixed(1)+'% interanual',bx+5,by+24.5);
-      }
-    });
-    // Pie de portada
-    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(142,155,170);
-    doc.text('Elaborado a partir de datos de matriculaciones totales de turismos y todoterrenos (Passenger Cars + 4x4). Los simbolos de marca son marcadores de color propios de este informe, no logotipos oficiales.',M,265,{maxWidth:CW});
-    doc.text('Generado automaticamente el '+nowStr+'.',M,271);
-
-    // ══ MERCADO TOTAL ═════════════════════════════════════════════════════
-    drawSection('Mercado Total',_OVD.sv,tot,_OVD.yoy,ytdB,ytdBP,ytdTot,_OVD.totYoY,ytdTotYoY);
-
-    // ══ BEV ═══════════════════════════════════════════════════════════════
-    const bevSv=_OVD.sv.map(([b,d])=>[b,{total:d.BEV}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
-    if(bevSv.length){const fd=fuelYtd('BEV');drawSection('BEV \xB7 El\xE9ctricos',bevSv,fT.BEV,fuelYoYMap('BEV'),fd.bC,fd.bP,fd.t,fYY.BEV,fd.yoy);}
-
-    // ══ PHEV ══════════════════════════════════════════════════════════════
-    const phevSv=_OVD.sv.map(([b,d])=>[b,{total:d.PHEV}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
-    if(phevSv.length){const fd=fuelYtd('PHEV');drawSection('PHEV \xB7 H\xEDbridos enchufables',phevSv,fT.PHEV,fuelYoYMap('PHEV'),fd.bC,fd.bP,fd.t,fYY.PHEV,fd.yoy);}
-
-    // ══ ICE ═══════════════════════════════════════════════════════════════
-    const iceSv=_OVD.sv.map(([b,d])=>[b,{total:d.ICE}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
-    if(iceSv.length){const fd=fuelYtd('ICE');drawSection('ICE \xB7 Combusti\xF3n',iceSv,fT.ICE,fuelYoYMap('ICE'),fd.bC,fd.bP,fd.t,fYY.ICE,fd.yoy);}
-
-    const fname='Informe_Matriculaciones_'+mths.map(m=>MES3[m-1]).join('-')+'_'+_OVD.refYear+'.pdf';
-    doc.save(fname);
-  }catch(err){
-    console.error('PDF error:',err);
-    alert('Error generando PDF: '+err.message);
-  }
-}
-
-// Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
-function fcNum(s){
-  const v=parseFloat(String(s||'').replace(/[.\s\u00a0]/g,'').replace(',','.'));
-  return isFinite(v)?v:0;
-}
-function fcSetRacM(marca,val){
-  const v=fcNum(val);
-  if(!String(val).trim()||v<0)delete FCS.ovRacM[marca];else FCS.ovRacM[marca]=v;
-  FCS.rac='inc';
-  fcRefreshRacPills();
-  renderForecast();
-}
-function fcSetYear(marca,val){
-  const v=fcNum(val);
-  if(!String(val).trim()||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
-  renderForecast();
-}
-
-// ── UI CONTROLS ──────────────────────────────────────────
-function toggleSg(id){g(id).classList.toggle('open')}
-
-function toggleModelRows(btn,brand){
-  const tr=btn.closest('tr');
-  const wasOpen=btn.classList.contains('open');
-  // Remove existing sub-rows
-  let nx=tr.nextElementSibling;
-  while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
-  btn.classList.toggle('open',!wasOpen);
-  if(wasOpen)return;
-  const E=REC.enums;
-  const mIdx=E.marca.indexOf(brand);
-  const {rows,prevRows,refYear,commonM}=_RC;
-  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
-  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
-  // Aggregate ref counts per model
-  const byMo={};
-  brandRows.forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    if(!byMo[mo])byMo[mo]={total:0,ref:0};
-    byMo[mo].total+=r[COL.N];
-    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
-  });
-  // Prev counts per model
-  const byMoPrev={};
-  prevRows.filter(r=>r[COL.MARCA]===mIdx&&commonM.has(r[COL.M])).forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    byMoPrev[mo]=(byMoPrev[mo]||0)+r[COL.N];
-  });
-  const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
-  let ins=tr;
-  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
-  sorted.forEach(([mo,d])=>{
-    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
-    const prev=byMoPrev[mo]||0;
-    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d.ref-prev:null;
-    const share=brandTotal?d.total/brandTotal*100:0;
-    const sub=document.createElement('tr');
-    sub.className='model-sub';
-    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
-      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
-      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
-      <td>${fP2(share)}</td>`;
-    ins.after(sub);ins=sub;
-  });
-}
-
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
-  },40);
-}
-
-function resetFilters(){
-  const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST']);
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  render();
-}
-</script>
-</body>
-</html>
+    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3
