@@ -333,20 +333,21 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 /* ── RANKING VISUAL ───────────────────── */
 .rank-body{padding:6px 0}
-.rank-row{display:grid;grid-template-columns:30px 28px minmax(0,1fr) 150px 86px 66px 82px;
+.rank-row{display:grid;grid-template-columns:30px 32px minmax(0,1fr) 150px 86px 66px 82px;
   align-items:center;gap:8px;padding:5px 12px;border-radius:6px;cursor:default}
 .rank-row:hover{background:rgba(255,255,255,.04)}
 .rank-bmw{background:rgba(217,119,6,.12)!important}
 .rank-pos{color:var(--text2);font-size:.76rem;text-align:right;font-variant-numeric:tabular-nums}
-.rank-badge{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;
-  justify-content:center;font-weight:700;font-size:.72rem;color:#fff;flex-shrink:0}
+.rank-badge{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:.72rem;color:#fff;flex-shrink:0;padding:4px}
+.brand-logo-img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
 .rank-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rank-bar-wrap{height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
 .rank-bar{height:100%;background:var(--ice);border-radius:4px;transition:width .3s}
 .rank-regs{font-size:.9rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .rank-cuota{font-size:.78rem;color:var(--text2);text-align:right}
 .rank-var{font-size:.78rem;font-weight:600;text-align:right}
-.rank-hdr-cols{display:grid;grid-template-columns:30px 28px minmax(0,1fr) 150px 86px 66px 82px;
+.rank-hdr-cols{display:grid;grid-template-columns:30px 32px minmax(0,1fr) 150px 86px 66px 82px;
   gap:8px;padding:3px 12px 5px;border-bottom:1px solid var(--border);margin-bottom:4px}
 .rank-hdr-cols span{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
 .rank-hdr-cols .rh-r{text-align:right}
@@ -795,6 +796,39 @@ function _brandColor(name){
   const P=['#06b6d4','#10b981','#6366f1','#f59e0b','#ec4899','#8b5cf6','#14b8a6','#3b82f6','#ef4444','#84cc16','#f97316','#a78bfa'];
   let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
   return P[h%P.length];
+}
+// Mapa nombre DGT → archivo en public/logos/ (sin extensión)
+const BRAND_LOGO={
+  'Abarth':'Abarth','Alfa Romeo':'Alfa Romeo','Alpine':'Alpine',
+  'Aston Martin':'Aston Martin','Audi':'Audi','Bentley':'Bentley',
+  'BMW':'BMW','Bmw I':'BMW','BYD':'BYD','Cadillac':'Cadillac',
+  'Caterham Cars Ltd':'Caterham','Citroen':'Citroen','Citro\xEBn':'Citroen',
+  'Cupra':'Cupra','Dacia':'Dacia','DFSK':'DFSK','DR':'DR','DS':'DS',
+  'Dongfeng':'Dongfeng','EVO':'EVO','Ebro':'Ebro','Faw':'Faw',
+  'Ferrari':'Ferrari','Fiat':'Fiat','Ford':'Ford',
+  'Foton':'Foton Motors','Honda':'Honda','Hyundai':'Hyundai',
+  'Ineos':'Ineos','Iveco':'Iveco','Jaecoo':'Jaecoo','Jeep':'Jeep',
+  'Kia':'Kia','Kg Mobility':'Kg Mobility','Lamborghini':'Lamborghini',
+  'Lancia':'Lancia','Land Rover':'Land Rover','Land  Rover':'Land Rover',
+  'Leapmotor':'Leapmotor','Lexus':'Lexus','Livan':'Livan','Lotus':'Lotus',
+  'Lynk & Co':'Lynk & Co','MAN':'MAN','Maserati':'Maserati',
+  'Maxus':'Maxus','Mazda':'Mazda','McLaren':'McLaren',
+  'Mercedes':'Mercedes','Mercedes-V':'Mercedes-V','MG':'MG','MINI':'MINI',
+  'Mitsubishi':'Mitsubishi','Mitsubishi-Fuso':'Mitsubishi-Fuso',
+  'Nissan':'Nissan','Omoda':'Omoda','Opel':'Opel',
+  'Peugeot':'Peugeot','Polestar':'Polestar','Porsche':'Porsche',
+  'Renault':'Renault','Renault Trucks':'Renault Trucks',
+  'Rolls-Royce':'Rolls-Royce','SEAT':'SEAT','Seres':'Seres',
+  'Shineray':'Shineray','Skoda':'Skoda','Smart':'Smart',
+  'Ssangyong':'Ssangyong','Subaru':'Subaru','Suzuki':'Suzuki',
+  'Tesla':'Tesla','Tesla Motors':'Tesla','Toyota':'Toyota',
+  'Volkswagen':'Volkswagen','Volvo':'Volvo','Voyah':'Voyah',
+  'Xpeng':'Xpeng','Yudo':'Yudo','Zeekr':'Zeekr',
+};
+function _brandLogo(brand){
+  const f=BRAND_LOGO[brand];
+  if(!f)return `<span style="font-weight:700;font-size:.72rem">${brand[0]||'?'}</span>`;
+  return `<img src="logos/${encodeURIComponent(f)}.png" alt="${brand}" class="brand-logo-img" loading="lazy">`;
 }
 const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MES3=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -2582,7 +2616,7 @@ function renderRanking(sv,tot,yoy){
     const varCls=yPct===null?'':(yPct>=0?'pos':'neg');
     return `<div class="rank-row${isBMW?' rank-bmw':''}">
       <span class="rank-pos">${i+1}</span>
-      <span class="rank-badge" style="background:${col}">${brand[0]}</span>
+      <span class="rank-badge" style="background:${col}">${_brandLogo(brand)}</span>
       <span class="rank-name" title="${brand}">${brand}</span>
       <div class="rank-bar-wrap"><div class="rank-bar" style="width:${barW}%"></div></div>
       <span class="rank-regs">${fN(d.total)}</span>
@@ -2822,41 +2856,4 @@ function downloadInforme(){
       // ── Titulo seccion + linea azul ───────────────────────────────────
       const tY=sY+22;
       doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(18,28,44);
-      doc.text(title,M,tY);
-      doc.setDrawColor(26,96,196);doc.setLineWidth(0.7);
-      doc.line(M,tY+2.5,W-M,tY+2.5);
-
-      // ── "Marcas destacadas" con cuadrados de color ────────────────────
-      const mdY=tY+10;
-      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
-      doc.text('Marcas destacadas',M,mdY);
-      // Cuadrado dorado + "BMW · MINI"
-      let mx=M+37;
-      doc.setFillColor(205,162,25);doc.rect(mx,mdY-2.5,2.5,2.5,'F');
-      doc.text('BMW \xB7 MINI',mx+3.5,mdY);
-      // Cuadrado azul + "Audi · Mercedes"
-      mx+=21;
-      doc.setFillColor(26,96,196);doc.rect(mx,mdY-2.5,2.5,2.5,'F');
-      doc.text('Audi \xB7 Mercedes',mx+3.5,mdY);
-
-      // ── Tabla ─────────────────────────────────────────────────────────
-      drawTable(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN,mdY+5);
-    }
-
-    // ══ PORTADA (pagina 1, fondo blanco) ══════════════════════════════════
-    // Eyebrow
-    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(118,130,148);
-    doc.text('INFORME INTERNO',M,95);
-    // Titulo principal
-    doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(18,28,44);
-    doc.text('Ranking de marcas',M,109);
-    // Subtitulo azul
-    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(26,96,196);
-    doc.text('Matriculaciones \xB7 '+mLabelPer,M,122);
-    // Descripcion
-    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(88,102,120);
-    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,133,{maxWidth:CW});
-    // Separador
-    doc.setDrawColor(215,222,232);doc.setLineWidth(0.25);doc.line(M,140,W-M,140);
-    // 4 cajas KPI con borde
-    const bw
+      doc
