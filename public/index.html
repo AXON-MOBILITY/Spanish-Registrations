@@ -342,7 +342,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   justify-content:center;font-weight:700;font-size:.8rem;color:#fff;flex-shrink:0;
   overflow:hidden;padding:5px;box-sizing:border-box}
 .rank-badge.no-logo{padding:0}
-.brand-logo-img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;flex-shrink:0}
+.brand-logo-img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;flex-shrink:0;transform-origin:center}
 .ov-brand-badge{display:inline-flex;align-items:center;justify-content:center;
   width:26px;height:26px;border-radius:6px;padding:3px;margin-right:7px;
   vertical-align:middle;flex-shrink:0;overflow:hidden;box-sizing:border-box}
@@ -806,40 +806,52 @@ function _brandColor(name){
 // Mapa nombre DGT → archivo en public/logos/ (sin extensión)
 const BRAND_LOGO={
   'Abarth':'Abarth','Alfa Romeo':'Alfa Romeo','Alpine':'Alpine',
-  'Aston Martin':'Aston Martin','Audi':'Audi','Bentley':'Bentley',
+  'Aston Martin':'Aston Martin','Acura':'Acura','acura':'Acura','Audi':'Audi',
+  'BAW':'BAW','Baojun':'Baojun','baojun':'Baojun','Baw':'BAW','baw':'BAW','Bentley':'Bentley',
   'BMW':'BMW','Bmw I':'BMW','BYD':'BYD','Cadillac':'Cadillac',
   'Caterham Cars Ltd':'Caterham','Citroen':'Citroen','Citro\xEBn':'Citroen',
-  'Cupra':'Cupra','Dacia':'Dacia','DFSK':'DFSK','DR':'DR','DS':'DS',
+  'Chevrolet':'Chevrolet','chevrolet':'Chevrolet','Cirelli':'Cirelli','cirelli':'Cirelli','Cupra':'Cupra',
+  'Dacia':'Dacia','DFSK':'DFSK','DR':'DR','DS':'DS',
   'Dongfeng':'Dongfeng','EVO':'EVO','Ebro':'Ebro','Faw':'Faw',
   'Ferrari':'Ferrari','Fiat':'Fiat','Ford':'Ford',
   'Foton':'Foton Motors','Foton Motors':'Foton Motors',
-  'Geely':'Geely','Isuzu':'Isuzu','Bestune':'Bestune','Changan':'Changan',
+  'Geely':'Geely','Great Wall':'GWM','GWM':'GWM','Gwm':'GWM','gwm':'GWM',
+  'Isuzu':'Isuzu','Bestune':'Bestune','Changan':'Changan',
   'Caterham':'Caterham','Caterham Cars Ltd':'Caterham',
   'Honda':'Honda','Hyundai':'Hyundai',
-  'Ineos':'Ineos','Iveco':'Iveco','Jaecoo':'Jaecoo','Jeep':'Jeep',
+  'Ineos':'Ineos','Iveco':'Iveco','Jaguar':'Jaguar','Jaecoo':'Jaecoo','Jeep':'Jeep',
   'Kia':'Kia','Kg Mobility':'Kg Mobility','Lamborghini':'Lamborghini',
   'Lancia':'Lancia','Land Rover':'Land Rover','Land  Rover':'Land Rover',
   'Leapmotor':'Leapmotor','Lexus':'Lexus','Livan':'Livan','Lotus':'Lotus',
   'Lynk & Co':'Lynk & Co','MAN':'MAN','Maserati':'Maserati',
-  'Maxus':'Maxus','Mazda':'Mazda','McLaren':'McLaren',
+  'Maxus':'Maxus','Mazda':'Mazda','McLaren':'McLaren','Moke':'Moke',
+  'Moke International Ltd':'Moke','Moke International Ltf':'Moke',
   'Mercedes':'Mercedes','Mercedes-V':'Mercedes-V','MG':'MG','MINI':'MINI',
-  'Mitsubishi':'Mitsubishi','Mitsubishi-Fuso':'Mitsubishi-Fuso',
+  'Mitsubishi':'Mitsubishi','Mitsubishi-Fuso':'Mitsubishi-Fuso','Morgan':'Morgan',
   'Nissan':'Nissan','Omoda':'Omoda','Opel':'Opel',
   'Peugeot':'Peugeot','Polestar':'Polestar','Porsche':'Porsche',
   'Renault':'Renault','Renault Trucks':'Renault Trucks',
   'Rolls-Royce':'Rolls-Royce','SEAT':'SEAT','Seres':'Seres',
-  'Shineray':'Shineray','Skoda':'Skoda','Smart':'Smart',
-  'Ssangyong':'Ssangyong','Subaru':'Subaru','Suzuki':'Suzuki',
-  'Tesla':'Tesla','Tesla Motors':'Tesla','Toyota':'Toyota',
+  'Shineray':'Shineray','Skoda':'Skoda','Skywell':'Skywell','Smart':'Smart',
+  'Sportequipe':'Sportequipe','sportequipe':'Sportequipe','Ssangyong':'Ssangyong','Subaru':'Subaru',
+  'Suzuki':'Suzuki','Tesla':'Tesla','Tesla Motors':'Tesla','Tiger':'Tiger','tiger':'Tiger',
+  'Toyota':'Toyota','Tripod':'Tripod','tripod':'Tripod',
   'Volkswagen':'Volkswagen','Volkswagen V W':'Volkswagen','Vw':'Volkswagen',
   'Alpina':'BMW',
   'Volvo':'Volvo','Voyah':'Voyah',
   'Xpeng':'Xpeng','Yudo':'Yudo','Zeekr':'Zeekr',
 };
+function _brandLogoScale(brand){
+  if(brand==='Jeep')return 1.25;
+  if(brand==='Lamborghini')return 1.16;
+  return 1;
+}
 function _brandLogo(brand){
   const f=BRAND_LOGO[brand];
   if(!f)return `<span style="font-weight:700;font-size:.72rem">${brand[0]||'?'}</span>`;
-  return `<img src="logos/${encodeURIComponent(f)}.png" alt="${brand}" class="brand-logo-img" loading="lazy">`;
+  const sc=_brandLogoScale(brand);
+  const st=sc!==1?` style="transform:scale(${sc})"`:'';
+  return `<img src="logos/${encodeURIComponent(f)}.png" alt="${brand}" class="brand-logo-img" loading="lazy"${st}>`;
 }
 const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MES3=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -2839,11 +2851,246 @@ async function downloadInforme(){
               // Fondo oscuro neutro para que el logo blanco sea visible
               doc.setFillColor(22,35,58);
               doc.roundedRect(bx,by,bs,bs,1,1,'F');
-              doc.addImage(_logoCache[brand],'PNG',bx+0.8,by+0.8,bs-1.6,bs-1.6);
+              const sc=_brandLogoScale(brand), sz=(bs-1.6)*sc;
+              doc.addImage(_logoCache[brand],'PNG',bx+(bs-sz)/2,by+(bs-sz)/2,sz,sz);
             } else {
               // Fallback: circulo de color de marca
               const[r,g,b]=hRGB(_brandColor(brand));
               doc.setFillColor(r,g,b);
               doc.ellipse(bx+bs/2,d.cell.y+d.cell.height/2,1.4,1.4,'F');
             }
-            // Linea acento izquierda: dorado BMW/MINI, roj
+            // Linea acento izquierda: dorado BMW/MINI, rojo Audi/Mercedes
+            const isGold=brand==='BMW'||brand==='MINI';
+            const isBlue=brand==='Audi'||brand==='Mercedes';
+            if(isGold||isBlue){
+              doc.setDrawColor(...(isGold?[205,162,25]:[198,42,42]));
+              doc.setLineWidth(1.4);
+              doc.line(d.cell.x+0.5,d.cell.y+0.3,d.cell.x+0.5,d.cell.y+d.cell.height-0.3);
+            }
+          }
+        },
+        didDrawPage(){pgFooter();},
+      });
+    }
+
+    // Dibuja una seccion completa (pagina nueva + stats + titulo + tabla)
+    function drawSection(title,sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN,yoyPer,ytdYoY){
+      doc.addPage();
+
+      // ── 3 stats centrados en la zona superior ─────────────────────────
+      // Centros en 47, 105, 163 mm (distribucion uniforme sobre CW=174)
+      const sCX=[M+CW/6, M+CW/2, M+5*CW/6];
+      const sY=16;
+      const sCols=[
+        {v:fN(totN),   lbl:'Matric. del mes',yoy:yoyPer},
+        {v:fN(ytdTotN),lbl:'Acumulado YTD',  yoy:ytdYoY},
+        {v:String(sv.length),lbl:'Marcas activas',yoy:null},
+      ];
+      sCols.forEach((s,i)=>{
+        const cx=sCX[i];
+        doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(18,28,44);
+        doc.text(s.v,cx,sY,{align:'center'});
+        doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(108,122,138);
+        doc.text(s.lbl,cx,sY+5.5,{align:'center'});
+        if(s.yoy!=null){
+          const pos=s.yoy>=0;
+          doc.setFont('helvetica','bold');doc.setFontSize(7.5);
+          doc.setTextColor(pos?14:198,pos?128:42,pos?78:42);
+          doc.text((pos?'+':'')+s.yoy.toFixed(1)+'%',cx,sY+12,{align:'center'});
+        }
+      });
+
+      // ── Titulo seccion + linea azul ───────────────────────────────────
+      const tY=sY+22;
+      doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(18,28,44);
+      doc.text(title,M,tY);
+      doc.setDrawColor(26,96,196);doc.setLineWidth(0.7);
+      doc.line(M,tY+2.5,W-M,tY+2.5);
+
+      // ── "Marcas destacadas" con cuadrados de color ────────────────────
+      const mdY=tY+10;
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
+      doc.text('Marcas destacadas',M,mdY);
+      // Cuadrado dorado + "BMW · MINI"
+      let mx=M+37;
+      doc.setFillColor(205,162,25);doc.rect(mx,mdY-2.5,2.5,2.5,'F');
+      doc.text('BMW \xB7 MINI',mx+3.5,mdY);
+      // Cuadrado rojo + "Audi · Mercedes"
+      mx+=21;
+      doc.setFillColor(198,42,42);doc.rect(mx,mdY-2.5,2.5,2.5,'F');
+      doc.text('Audi \xB7 Mercedes',mx+3.5,mdY);
+
+      // ── Tabla ─────────────────────────────────────────────────────────
+      drawTable(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN,mdY+5);
+    }
+
+    // ══ PORTADA (pagina 1, fondo blanco) ══════════════════════════════════
+    // Eyebrow
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(118,130,148);
+    doc.text('INFORME INTERNO',M,95);
+    // Titulo principal
+    doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(18,28,44);
+    doc.text('Ranking de marcas',M,109);
+    // Subtitulo azul
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(26,96,196);
+    doc.text('Matriculaciones \xB7 '+mLabelPer,M,122);
+    // Descripcion
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(88,102,120);
+    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,133,{maxWidth:CW});
+    // Separador
+    doc.setDrawColor(215,222,232);doc.setLineWidth(0.25);doc.line(M,140,W-M,140);
+    // 4 cajas KPI con borde
+    const bw=(CW-9)/4;
+    [
+      {n:fN(perTot),  lbl:'Mercado Total',              yoy:perTotYoY},
+      {n:fN(fT.BEV),  lbl:'BEV \xB7 El\xE9ctricos',        yoy:fYY.BEV},
+      {n:fN(fT.PHEV), lbl:'PHEV \xB7 H\xEDbridos enchufables',yoy:fYY.PHEV},
+      {n:fN(fT.ICE),  lbl:'ICE \xB7 Combusti\xF3n',         yoy:fYY.ICE},
+    ].forEach((k,i)=>{
+      const bx=M+i*(bw+3), by=148;
+      doc.setFillColor(255,255,255);doc.setDrawColor(208,216,228);doc.setLineWidth(0.25);
+      doc.roundedRect(bx,by,bw,30,1.2,1.2,'FD');
+      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(18,28,44);
+      doc.text(k.n,bx+5,by+10);
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
+      doc.text(k.lbl,bx+5,by+16.5);
+      if(k.yoy!=null){
+        const pos=k.yoy>=0;
+        doc.setFont('helvetica','bold');doc.setFontSize(8);
+        doc.setTextColor(pos?14:198,pos?128:42,pos?78:42);
+        doc.text((pos?'+':'')+k.yoy.toFixed(1)+'% interanual',bx+5,by+24.5);
+      }
+    });
+    // Pie de portada
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(142,155,170);
+    doc.text('Elaborado a partir de datos de matriculaciones totales de turismos y todoterrenos (Passenger Cars + 4x4). Los simbolos de marca son marcadores de color propios de este informe, no logotipos oficiales.',M,265,{maxWidth:CW});
+    doc.text('Generado automaticamente el '+nowStr+'.',M,271);
+
+    // ══ MERCADO TOTAL ═════════════════════════════════════════════════════
+    drawSection('Mercado Total',perSv,perTot,perYoYMap,ytdB,ytdBP,ytdTot,perTotYoY,ytdTotYoY);
+
+    // ══ BEV ═══════════════════════════════════════════════════════════════
+    const bevSv=perSv.map(([b,d])=>[b,{total:d.BEV||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(bevSv.length){const fd=fuelYtd('BEV');drawSection('BEV \xB7 El\xE9ctricos',bevSv,fT.BEV,fuelYoYMap('BEV'),fd.bC,fd.bP,fd.t,fYY.BEV,fd.yoy);}
+
+    // ══ PHEV ══════════════════════════════════════════════════════════════
+    const phevSv=perSv.map(([b,d])=>[b,{total:d.PHEV||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(phevSv.length){const fd=fuelYtd('PHEV');drawSection('PHEV \xB7 H\xEDbridos enchufables',phevSv,fT.PHEV,fuelYoYMap('PHEV'),fd.bC,fd.bP,fd.t,fYY.PHEV,fd.yoy);}
+
+    // ══ ICE ═══════════════════════════════════════════════════════════════
+    const iceSv=perSv.map(([b,d])=>[b,{total:d.ICE||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(iceSv.length){const fd=fuelYtd('ICE');drawSection('ICE \xB7 Combusti\xF3n',iceSv,fT.ICE,fuelYoYMap('ICE'),fd.bC,fd.bP,fd.t,fYY.ICE,fd.yoy);}
+
+    const fname='Informe_Matriculaciones_'+MES3[curM-1]+'_'+_OVD.refYear+'.pdf';
+    doc.save(fname);
+  }catch(err){
+    console.error('PDF error:',err);
+    alert('Error generando PDF: '+err.message);
+  }
+}
+
+// Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
+function fcNum(s){
+  const v=parseFloat(String(s||'').replace(/[.\s\u00a0]/g,'').replace(',','.'));
+  return isFinite(v)?v:0;
+}
+function fcSetRacM(marca,val){
+  const v=fcNum(val);
+  if(!String(val).trim()||v<0)delete FCS.ovRacM[marca];else FCS.ovRacM[marca]=v;
+  FCS.rac='inc';
+  fcRefreshRacPills();
+  renderForecast();
+}
+function fcSetYear(marca,val){
+  const v=fcNum(val);
+  if(!String(val).trim()||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
+  renderForecast();
+}
+
+// ── UI CONTROLS ──────────────────────────────────────────
+function toggleSg(id){g(id).classList.toggle('open')}
+
+function toggleModelRows(btn,brand){
+  const tr=btn.closest('tr');
+  const wasOpen=btn.classList.contains('open');
+  // Remove existing sub-rows
+  let nx=tr.nextElementSibling;
+  while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
+  btn.classList.toggle('open',!wasOpen);
+  if(wasOpen)return;
+  const E=REC.enums;
+  const mIdx=E.marca.indexOf(brand);
+  const {rows,prevRows,refYear,commonM}=_RC;
+  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
+  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
+  // Aggregate ref counts per model
+  const byMo={};
+  brandRows.forEach(r=>{
+    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
+    if(!byMo[mo])byMo[mo]={total:0,ref:0};
+    byMo[mo].total+=r[COL.N];
+    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
+  });
+  // Prev counts per model
+  const byMoPrev={};
+  prevRows.filter(r=>r[COL.MARCA]===mIdx&&commonM.has(r[COL.M])).forEach(r=>{
+    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
+    byMoPrev[mo]=(byMoPrev[mo]||0)+r[COL.N];
+  });
+  const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
+  let ins=tr;
+  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
+  sorted.forEach(([mo,d])=>{
+    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
+    const prev=byMoPrev[mo]||0;
+    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
+    const yDelta=prev?d.ref-prev:null;
+    const share=brandTotal?d.total/brandTotal*100:0;
+    const sub=document.createElement('tr');
+    sub.className='model-sub';
+    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
+      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
+      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
+      <td>${fP2(share)}</td>`;
+    ins.after(sub);ins=sub;
+  });
+}
+
+function showTab(name){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  g('pane-'+name).classList.add('on');
+  g('tbtn-'+name).classList.add('on');
+  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
+  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
+  // instante y el recalculo llega un frame despues.
+  setTimeout(()=>{
+    if(REC&&(name==='overview'||name==='analisis'))render();
+    if(name==='prov'&&PROV)renderProv();
+    if(name==='trend'&&TREND)renderTrend();
+    if(name==='forecast'&&FC)renderForecast();
+    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
+  },40);
+}
+
+function resetFilters(){
+  const E=REC.enums;
+  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
+  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
+  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
+  F.fuels=new Set(E.fuel.map((_,i)=>i));
+  F.canales=new Set(E.canal.map((_,i)=>i));
+  F.segs=new Set(E.seg.map((_,i)=>i));
+  F.subs=new Set(E.sub.map((_,i)=>i));
+  F.oem=new Set(['CHINESE','REST']);
+  CONCEPTS.forEach(c=>F.concepts.add(c));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body='';
+  render();
+}
+</script>
+</body>
+</html>
