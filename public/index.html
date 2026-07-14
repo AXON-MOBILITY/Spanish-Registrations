@@ -1374,12 +1374,15 @@ function render(){
   // ── RANKING + PDF SNAPSHOT ──
   const _fuelPrev={BEV:0,ICE:0,PHEV:0};
   if(hasPrev)prevRows.filter(r=>commonM.has(r[COL.M])).forEach(r=>{const f=E.fuel[r[COL.FUEL]];if(f in _fuelPrev)_fuelPrev[f]+=r[COL.N];});
+  // _fuelRef: refYear filtered to commonM only (matches _fuelPrev period for correct YoY)
+  const _fuelRef={BEV:0,ICE:0,PHEV:0};
+  refRows.filter(r=>commonM.has(r[COL.M])).forEach(r=>{const f=E.fuel[r[COL.FUEL]];if(f in _fuelRef)_fuelRef[f]+=r[COL.N];});
   _OVD={
     sv:sortedVis,total,yoy:byBrandYoY,hasPrev,refYear,fuelTots,
     fuelYoY:{
-      BEV:hasPrev&&_fuelPrev.BEV?(fuelTots.BEV-_fuelPrev.BEV)/_fuelPrev.BEV*100:null,
-      PHEV:hasPrev&&_fuelPrev.PHEV?(fuelTots.PHEV-_fuelPrev.PHEV)/_fuelPrev.PHEV*100:null,
-      ICE:hasPrev&&_fuelPrev.ICE?(fuelTots.ICE-_fuelPrev.ICE)/_fuelPrev.ICE*100:null,
+      BEV:hasPrev&&_fuelPrev.BEV?(_fuelRef.BEV-_fuelPrev.BEV)/_fuelPrev.BEV*100:null,
+      PHEV:hasPrev&&_fuelPrev.PHEV?(_fuelRef.PHEV-_fuelPrev.PHEV)/_fuelPrev.PHEV*100:null,
+      ICE:hasPrev&&_fuelPrev.ICE?(_fuelRef.ICE-_fuelPrev.ICE)/_fuelPrev.ICE*100:null,
     },
     months:new Set(F.months),
     totYoY:totYoYPct,
@@ -2689,7 +2692,7 @@ function downloadInforme(){
     doc.text('Mercado Total',M,y);
     doc.setFont('helvetica','normal');
     doc.setTextColor(80,100,120);
-    doc.text('  Marcas destacadas  ■ BMW \xB7 MINI  ■ Audi \xB7 Mercedes',M+24,y);
+    doc.text('  Marcas destacadas  * BMW \xB7 MINI  * Audi \xB7 Mercedes',M+24,y);
 
     y+=5;
     const sumStats=[
@@ -2737,10 +2740,10 @@ function downloadInforme(){
         i+1, brand,
         fN(d.total),
         yPct==null?'—':(yPct>=0?'+':'')+yPct.toFixed(1)+'%',
-        fP2(share)+'%',
+        fP2(share),
         fN(ytdN),
         ytdPct==null?'—':(ytdPct>=0?'+':'')+ytdPct.toFixed(1)+'%',
-        fP2(ytdSh)+'%',
+        fP2(ytdSh),
       ];
     });
 
@@ -2921,14 +2924,4 @@ function resetFilters(){
   F.canales=new Set(E.canal.map((_,i)=>i));
   F.segs=new Set(E.seg.map((_,i)=>i));
   F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST']);
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  render();
-}
-</script>
-</body>
-</html>
+  F.oem=new Set(['CHINESE','REST
