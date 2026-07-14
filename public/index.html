@@ -2721,8 +2721,9 @@ function downloadInforme(){
     const ytdR=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear);
     const ytdP=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear-1);
     const ytdB={},ytdBP={};
-    ytdR.forEach(r=>{const b=E.marca[r[COL.MARCA]];ytdB[b]=(ytdB[b]||0)+r[COL.N];});
-    ytdP.forEach(r=>{const b=E.marca[r[COL.MARCA]];ytdBP[b]=(ytdBP[b]||0)+r[COL.N];});
+    const _E=REC.enums;
+    ytdR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdB[b]=(ytdB[b]||0)+r[COL.N];});
+    ytdP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdBP[b]=(ytdBP[b]||0)+r[COL.N];});
     const ytdTot=Object.values(ytdB).reduce((s,v)=>s+v,0);
 
     const tableBody=_OVD.sv.map(([brand,d],i)=>{
@@ -2927,6 +2928,3 @@ function resetFilters(){
   F.marca='';F.modelo='';F.body='';
   render();
 }
-</script>
-</body>
-</html>
