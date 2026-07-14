@@ -1115,7 +1115,7 @@ def main():
 
     scope_info = {
         "mode": args.scope,
-        "source": "DGT microdata processed with the Simmix-aligned ETL; no truncated BBDD brand-scope filter.",
+        "source": "DGT microdata processed by the independent ETL; Simmix is audit/drift only.",
     }
     if args.scope == "simmix":
         scope_fallback = out_dir / "simmix_scope_brands.json"
@@ -1143,8 +1143,8 @@ def main():
             print("  Scope Simmix: sin BBDD de referencia; usando DGT completo")
 
     # ── Alineación a targets Simmix ──────────────────────────────────────────
-    # SIMMIX_ALIGN=1 (default): comportamiento actual, reescala 2026 al export.
-    # SIMMIX_ALIGN=0: modo independiente — el dashboard publica la ETL propia y
+    # SIMMIX_ALIGN=1: modo legado, reescala 2026 al export.
+    # SIMMIX_ALIGN=0 (default): modo independiente — el dashboard publica la ETL propia y
     # el export Simmix se usa SOLO para el informe de drift (auditoría).
     # Criterio para pasar a 0: drift por marca/canal < 2% (ver docs/AUDITORIA).
     ranking_obj      = build_province_brand_ranking(prov_data, monthly_records, mtd_records)
@@ -1156,7 +1156,7 @@ def main():
         (log_dir / ("forecast_" + date.today().strftime("%Y%m%d") + ".json")).write_text(
             json.dumps(forecast_obj, ensure_ascii=False), encoding="utf-8")
 
-    align_enabled = os.environ.get("SIMMIX_ALIGN", "1") != "0"
+    align_enabled = os.environ.get("SIMMIX_ALIGN", "0") != "0"
     target_payload = load_simmix_2026_targets(base, out_dir / "simmix_2026_targets.json")
 
     drift = compute_simmix_drift(monthly_records, mtd_records, target_payload)

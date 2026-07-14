@@ -16,10 +16,10 @@ GitHub Actions esta programado entre semana en varias ventanas UTC para cubrir C
 
 La variable `SIMMIX_ALIGN` (definida en `dgt-auto.yml`, seccion `env`):
 
-- `"1"` (transicion): el dashboard alinea 2026 al ultimo export Simmix. En paralelo se publica siempre `public/data/simmix_drift.json` con el delta real de la ETL propia.
-- `"0"` (independiente): el dashboard publica la ETL propia; Simmix solo alimenta el drift.
+- `"1"` (legado): el dashboard alinea 2026 al ultimo export Simmix. En paralelo se publica siempre `public/data/simmix_drift.json` con el delta real de la ETL propia.
+- `"0"` (actual, independiente): el dashboard publica la ETL propia; Simmix solo alimenta el drift.
 
-Criterio para cambiar a `"0"`: KPI de `docs/AUDITORIA_INDEPENDENCIA_SIMMIX.md`.
+El workflow ya usa `"0"`; para comparar contra Simmix se revisa `public/data/simmix_drift.json`.
 
 ## Ficheros versionados
 

@@ -34,9 +34,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # 1 = el dashboard se alinea al último export Simmix (transición).
+  # 1 = modo legado: alinea 2026 al ultimo export Simmix.
   # 0 = modo independiente: publica la ETL propia; Simmix solo auditoría/drift.
-  SIMMIX_ALIGN: "1"
+  SIMMIX_ALIGN: "0"
 
 jobs:
   sync:

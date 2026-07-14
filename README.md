@@ -45,8 +45,8 @@ La ETL replica la clasificación Simmix desde el dato bruto DGT. Reglas principa
 
 ## Independencia de Simmix
 
-- `SIMMIX_ALIGN=1` (actual, transición): el dashboard alinea 2026 al último export Simmix; en paralelo se publica `public/data/simmix_drift.json` con el delta real de la ETL.
-- `SIMMIX_ALIGN=0` (objetivo): el dashboard publica la ETL propia; el export Simmix (mientras exista) solo alimenta el informe de drift.
+- `SIMMIX_ALIGN=1` (legado): el dashboard alinea 2026 al ultimo export Simmix; en paralelo se publica `public/data/simmix_drift.json` con el delta real de la ETL.
+- `SIMMIX_ALIGN=0` (actual): el dashboard publica la ETL propia; el export Simmix (mientras exista) solo alimenta el informe de drift.
 - **KPI de desconexión**: |delta| ≤ 2% por marca/canal (marcas ≥500 uds/semestre) y ≤ 1% por canal a nivel mercado. Ver `docs/AUDITORIA_INDEPENDENCIA_SIMMIX.md`.
 
 ## Uso
@@ -57,7 +57,7 @@ python -m pytest tests/ -q                    # tests de reglas
 python scripts/process_month.py auto --force  # sync diario + mensual
 python scripts/process_month.py all --force   # reprocesar todo el histórico
 python scripts/build_dashboard_data.py        # regenerar public/data
-SIMMIX_ALIGN=0 python scripts/build_dashboard_data.py   # modo independiente
+python scripts/build_dashboard_data.py                 # modo independiente por defecto
 ```
 
 ## Validación
