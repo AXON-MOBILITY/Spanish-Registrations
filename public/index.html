@@ -300,9 +300,55 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   #sidebar{width:100%;max-height:220px;border-right:none;border-bottom:1px solid var(--border)}
   .pane{padding:10px;gap:10px}
 }
+
+/* ── LOGIN SCREEN ───────────────────────── */
+#login-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+}
+#login-screen.hidden{display:none}
+.login-box{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:40px 48px;display:flex;flex-direction:column;align-items:center;gap:20px;
+  min-width:320px;
+}
+.login-logo{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700;color:var(--txt)}
+.login-logo span{color:var(--acc)}
+.login-title{font-size:.85rem;color:var(--txt2);letter-spacing:.04em;text-transform:uppercase}
+.login-input{
+  width:100%;padding:10px 14px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg);color:var(--txt);
+  font-size:1rem;text-align:center;letter-spacing:.1em;outline:none;
+}
+.login-input:focus{border-color:var(--acc)}
+.login-btn{
+  width:100%;padding:10px;border-radius:8px;
+  background:var(--acc);border:none;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;
+}
+.login-btn:hover{filter:brightness(1.15)}
+.login-err{color:#f87171;font-size:.82rem;min-height:1em;text-align:center}
 </style>
 </head>
 <body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      DGT <span>Matriculaciones</span>
+    </div>
+    <div class="login-title">Acceso restringido</div>
+    <input id="login-pw" class="login-input" type="password" placeholder="Contraseña"
+           onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
 
 <!-- TOPBAR -->
 <div id="topbar">
@@ -687,6 +733,28 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 </div><!-- /shell -->
 
 <script>
+
+// ── AUTH ──────────────────────────────────────────
+(function(){
+  const KEY='dgt_auth_v1', PWD='BMW2026';
+  if(localStorage.getItem(KEY)===PWD){
+    document.getElementById('login-screen').classList.add('hidden');
+  }
+})();
+function doLogin(){
+  const val=document.getElementById('login-pw').value;
+  const err=document.getElementById('login-err');
+  if(val==='BMW2026'){
+    localStorage.setItem('dgt_auth_v1','BMW2026');
+    document.getElementById('login-screen').classList.add('hidden');
+    err.textContent='';
+  } else {
+    err.textContent='Contraseña incorrecta';
+    document.getElementById('login-pw').value='';
+    document.getElementById('login-pw').focus();
+  }
+}
+// ─────────────────────────────────────────────────
 Chart.register(ChartDataLabels);
 
 const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,N:11};
@@ -2487,57 +2555,4 @@ function toggleModelRows(btn,brand){
   });
   const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
   let ins=tr;
-  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
-  sorted.forEach(([mo,d])=>{
-    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
-    const prev=byMoPrev[mo]||0;
-    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d.ref-prev:null;
-    const share=brandTotal?d.total/brandTotal*100:0;
-    const sub=document.createElement('tr');
-    sub.className='model-sub';
-    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
-      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
-      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'â€”'}</td>
-      <td>${fP2(share)}</td>`;
-    ins.after(sub);ins=sub;
-  });
-}
-
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-  },40);
-}
-
-function resetFilters(){
-  const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST']);
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  render();
-}
-</script>
-</body>
-</html>
+  const _BMW
