@@ -631,6 +631,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
             </span>
           </span>
         </div>
+        <div id="prov-filter-notice" style="display:none;font-size:.75rem;color:var(--text2);padding:4px 12px 6px;border-bottom:1px solid var(--border);background:var(--card2)"></div>
         <div class="tbl-wrap2">
           <table id="tbl-prov">
             <thead><tr>
@@ -1814,7 +1815,17 @@ function renderProv(){
   RK.year=g('rk-year').value;
   const gi=RK.gama;
   const E=REC.enums;
-  const selectedYear=parseInt(RK.year,10);
+  let selectedYear=parseInt(RK.year,10);
+  // Si el año local no está en el filtro global, sincronizar automáticamente
+  if(F.years.size&&!F.years.has(selectedYear)){
+    const cands=PROV.years.filter(y=>F.years.has(y));
+    if(cands.length){
+      RK.year=String(cands[cands.length-1]);
+      selectedYear=parseInt(RK.year,10);
+      const sel=g('rk-year');if(sel)sel.value=RK.year;
+      fillProvMonths();
+    }
+  }
   const allFuelNames=new Set([...F.fuels].map(i=>E.fuel[i]));
   const provValue=(v)=>{
     if(v.length>3){
@@ -1843,12 +1854,82 @@ function renderProv(){
     }
     return true;
   };
+  // ── Sub/HP filter detection ──
+  const allSubsActive=F.subs.size>=E.sub.length;
+  const allHpsActive=F.hps.size===0;
+  const useFiltered=!allSubsActive||!allHpsActive;
+  const hasFiltData=PROV.provinces.length>0&&!!(PROV.provinces[0].years_filt);
+  // Nombre sets para filtrado
+  const allowedSubNames=allSubsActive?null:new Set([...F.subs].map(i=>E.sub[i]));
+  const allowedHpNames=allHpsActive?null:new Set([...F.hps].map(i=>E.hp[i]));
+  // ── Notice ──
+  const notice=g('prov-filter-notice');
+  if(useFiltered){
+    const parts=[];
+    if(!allSubsActive){
+      const names=[...F.subs].map(i=>E.sub[i]).filter(Boolean);
+      parts.push('Subsegmento: '+(names.length?names.join(', '):'ninguno'));
+    }
+    if(!allHpsActive){
+      const names=[...F.hps].map(i=>E.hp[i]).filter(Boolean);
+      parts.push('HP: '+(names.length?names.join(', '):'ninguno'));
+    }
+    let msg='Filtros activos: '+parts.join(' · ')+'.';
+    if(!hasFiltData)msg+=' ⚠ Datos detallados no disponibles — regenera con process_month.py para aplicar este filtro.';
+    else msg+=' Filtrando datos provinciales.';
+    notice.textContent=msg;
+    notice.style.display='';
+  } else {
+    // Mostrar siempre qué filtros SÍ aplican aquí vs los que no aplican
+    const noApply=[];
+    if(F.segs.size<E.seg.length)noApply.push('Segmento');
+    if(F.hps.size>0)noApply.push('HP');
+    if(F.modelo)noApply.push('Modelo');
+    if(F.body)noApply.push('Carrocería');
+    if(noApply.length){
+      notice.textContent='Filtros globales que no aplican en datos provinciales: '+noApply.join(', ')+'. Aplican: Combustible, Canal, Marca, OEM, Subsegmento, HP.';
+      notice.style.display='';
+    } else {
+      notice.style.display='none';
+    }
+  }
+  // ── Función para obtener marcas desde estructura filt ──
+  const provBrandsFromFilt=(p,monthKeys)=>{
+    const brands={};
+    const fkAllowed=(fk)=>{
+      const ps=fk.split('|');
+      const sub=ps[1]||'';
+      const hp=ps[2]||'Standard';
+      if(allowedSubNames&&!allowedSubNames.has(sub))return false;
+      if(allowedHpNames){
+        const hpNorm=hp||'Standard';
+        if(!allowedHpNames.has(hpNorm)&&!allowedHpNames.has(hp))return false;
+      }
+      return true;
+    };
+    const addMap=(fkMap)=>{
+      Object.entries(fkMap||{}).forEach(([fk,v])=>{
+        if(!fkAllowed(fk))return;
+        const marca=fk.split('|')[0];
+        if(!brands[marca])brands[marca]=new Array(12).fill(0);
+        const cell=brands[marca];
+        for(let i=0;i<v.length;i++)cell[i]=(cell[i]||0)+(v[i]||0);
+      });
+    };
+    const allMonthsLen=provMonthsForYear(RK.year).length;
+    if(monthKeys.length===allMonthsLen&&p.years_filt){
+      addMap((p.years_filt||{})[String(selectedYear)]);
+    } else if(p.months_filt){
+      monthKeys.forEach(ym=>addMap((p.months_filt||{})[ym]));
+    }
+    return brands;
+  };
   const monthKeys=provMonthsForYear(RK.year)
     .filter(mm=>RK.months.has(mm)&&F.months.has(parseInt(mm,10))&&F.years.has(selectedYear))
     .map(mm=>`${RK.year}-${mm}`);
   const rows=[];
   PROV.provinces.forEach(p=>{
-    const brands=provBrandsForMonths(p,monthKeys);
+    const brands=(useFiltered&&hasFiltData)?provBrandsFromFilt(p,monthKeys):provBrandsForMonths(p,monthKeys);
     const entries=Object.entries(brands)
       .filter(([m])=>provBrandAllowed(m))
       .map(([m,v])=>[m,provValue(v)])

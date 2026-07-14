@@ -536,7 +536,9 @@ def load_provinces(base):
             try:
                 fuel = row.get("fuel_type", "ICE") or "ICE"
                 marca = _normalize_brand(row.get("marca", ""))
-                data[(yr, mo, marca, row["cod_prov"], row["provincia"], row["canal"], fuel)] += int(row.get("count", 0) or 0)
+                sub = row.get("subseg", "") or ""
+                hp  = row.get("hp", "") or ""
+                data[(yr, mo, marca, row["cod_prov"], row["provincia"], row["canal"], fuel, sub, hp)] += int(row.get("count", 0) or 0)
             except (ValueError, KeyError):
                 pass
     for f in sorted(glob.glob(str(base/"dgt_prov_daily_[0-9]*.csv"))):
@@ -552,7 +554,9 @@ def load_provinces(base):
                     continue
                 fuel = row.get("fuel_type", "ICE") or "ICE"
                 marca = _normalize_brand(row.get("marca", ""))
-                data[(yr, mo, marca, row["cod_prov"], row["provincia"], canal, fuel)] += int(row.get("count", 0) or 0)
+                sub = row.get("subseg", "") or ""
+                hp  = row.get("hp", "") or ""
+                data[(yr, mo, marca, row["cod_prov"], row["provincia"], canal, fuel, sub, hp)] += int(row.get("count", 0) or 0)
             except (ValueError, KeyError):
                 pass
     return data
@@ -562,15 +566,16 @@ def apply_simmix_scope_provinces(prov_data, scopes):
         return prov_data, {}
     kept = defaultdict(int)
     stats = defaultdict(lambda: {"kept": 0, "excluded": 0, "scope_brands": 0})
-    for (yr, mo, marca, cod, nombre, canal, fuel), cnt in prov_data.items():
+    for key, cnt in prov_data.items():
+        yr, mo, marca = key[0], key[1], key[2]
         scope = scopes.get(yr)
         if scope is None:
-            kept[(yr, mo, marca, cod, nombre, canal, fuel)] += cnt
+            kept[key] += cnt
             stats[yr]["kept"] += cnt
             continue
         stats[yr]["scope_brands"] = len(scope)
         if marca and marca.upper() in scope:
-            kept[(yr, mo, marca, cod, nombre, canal, fuel)] += cnt
+            kept[key] += cnt
             stats[yr]["kept"] += cnt
         else:
             stats[yr]["excluded"] += cnt
@@ -698,33 +703,44 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
     years = set()
     months = set()
     for key, cnt in prov_data.items():
-        if len(key) != 7:
+        # Soporte backward-compat: clave antigua (7) y nueva (9, con sub+hp)
+        if len(key) == 9:
+            yr, mo, marca, cod, nombre, canal, fuel, sub, hp = key
+        elif len(key) == 7:
+            yr, mo, marca, cod, nombre, canal, fuel = key
+            sub = hp = ""
+        else:
             continue
-        yr, mo, marca, cod, nombre, canal, fuel = key
         if canal not in CANALES or marca not in focus:
             continue
         years.add(yr)
         ym = f"{yr}-{mo:02d}"
         months.add(ym)
-        d = out.setdefault(cod, {"name": nombre, "years": {}, "months": {}})
+        d = out.setdefault(cod, {"name": nombre, "years": {}, "months": {},
+                                  "years_filt": {}, "months_filt": {}})
         d["name"] = nombre
-        cell = d["years"].setdefault(yr, {}).setdefault(marca, [0] * 12)
+        # Estructura principal (agrega todos los sub/hp — comportamiento original)
+        cell  = d["years"].setdefault(yr, {}).setdefault(marca, [0] * 12)
         mcell = d["months"].setdefault(ym, {}).setdefault(marca, [0] * 12)
-        cell[0] += cnt
-        mcell[0] += cnt
-        if fuel == "BEV":
-            cell[1] += cnt
-            mcell[1] += cnt
-        elif fuel == "PHEV":
-            cell[2] += cnt
-            mcell[2] += cnt
-        cell[3 + CANALES.index(canal) * len(FUELS) + FUELS.index(fuel)] += cnt
-        mcell[3 + CANALES.index(canal) * len(FUELS) + FUELS.index(fuel)] += cnt
+        # Estructura filt: clave "marca|sub|hp" → [total, BEV, PHEV, canal*fuel...]
+        fk = f"{marca}|{sub}|{hp}"
+        fcell  = d["years_filt"].setdefault(yr, {}).setdefault(fk, [0] * 12)
+        mfcell = d["months_filt"].setdefault(ym, {}).setdefault(fk, [0] * 12)
+        ci = 3 + CANALES.index(canal) * len(FUELS) + FUELS.index(fuel)
+        for c in (cell, mcell, fcell, mfcell):
+            c[0] += cnt
+            if fuel == "BEV":
+                c[1] += cnt
+            elif fuel == "PHEV":
+                c[2] += cnt
+            c[ci] += cnt
 
     provinces = [
         {"cod": cod, "name": d["name"],
-         "years": {str(y): brands for y, brands in sorted(d["years"].items())},
-         "months": {ym: brands for ym, brands in sorted(d["months"].items())}}
+         "years":       {str(y): brands for y, brands in sorted(d["years"].items())},
+         "months":      {ym: brands for ym, brands in sorted(d["months"].items())},
+         "years_filt":  {str(y): fk for y, fk in sorted(d["years_filt"].items())},
+         "months_filt": {ym: fk for ym, fk in sorted(d["months_filt"].items())}}
         for cod, d in sorted(out.items())
     ]
     return {"years": sorted(years), "months": sorted(months),
@@ -785,7 +801,9 @@ def build_provinces_json(prov_data):
     pt  = defaultdict(lambda:{"name":"",**_zero()})
     pbm = defaultdict(lambda:defaultdict(_zero))
     for key,cnt in prov_data.items():
-        if len(key) == 7:
+        if len(key) == 9:
+            yr, mo, _marca, cod, nombre, canal, fuel, _sub, _hp = key
+        elif len(key) == 7:
             yr, mo, _marca, cod, nombre, canal, fuel = key
         else:
             yr, mo, cod, nombre, canal, fuel = key
