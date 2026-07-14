@@ -83,6 +83,7 @@ input.tf-modelo-input::placeholder{color:var(--text3)}
 .btn-xpd.open{transform:rotate(90deg);color:var(--acc)}
 tr.model-sub td{padding:2px 6px 2px 22px;font-size:10px;color:var(--text2);background:rgba(255,255,255,.03);border-bottom:none}
 tr.model-sub td:first-child{color:var(--text)}
+tr.model-sub-unknown td{color:var(--text3);font-style:italic}
 .hp-row{display:flex;gap:5px;align-items:center}
 .hp-lbl{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text3);cursor:pointer}
 .hp-lbl input{accent-color:var(--acc);width:12px;height:12px;cursor:pointer}
@@ -3026,31 +3027,40 @@ function toggleModelRows(btn,brand){
   const {rows,prevRows,refYear,commonM}=_RC;
   const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
   const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
-  // Aggregate ref counts per model
+  // Aggregate ref counts per model. Empty DGT model codes are not real models;
+  // keep them separate and always at the bottom of the expanded list.
+  const UNKNOWN_MODEL='Otros / no clasificado';
+  const modelKey=r=>{
+    const mo=(E.modelo[r[COL.MODELO]]||'').trim();
+    return mo||UNKNOWN_MODEL;
+  };
   const byMo={};
   brandRows.forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    if(!byMo[mo])byMo[mo]={total:0,ref:0};
+    const mo=modelKey(r);
+    if(!byMo[mo])byMo[mo]={total:0,ref:0,unknown:mo===UNKNOWN_MODEL};
     byMo[mo].total+=r[COL.N];
     if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
   });
   // Prev counts per model
   const byMoPrev={};
   prevRows.filter(r=>r[COL.MARCA]===mIdx&&commonM.has(r[COL.M])).forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
+    const mo=modelKey(r);
     byMoPrev[mo]=(byMoPrev[mo]||0)+r[COL.N];
   });
-  const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
+  const sorted=Object.entries(byMo).sort((a,b)=>{
+    if(a[1].unknown!==b[1].unknown)return a[1].unknown?1:-1;
+    return b[1].total-a[1].total;
+  });
   let ins=tr;
   const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
   sorted.forEach(([mo,d])=>{
-    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
+    const moLabel=d.unknown?UNKNOWN_MODEL:((brand==='BMW'&&_BMW_I[mo])||mo);
     const prev=byMoPrev[mo]||0;
     const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
     const yDelta=prev?d.ref-prev:null;
     const share=brandTotal?d.total/brandTotal*100:0;
     const sub=document.createElement('tr');
-    sub.className='model-sub';
+    sub.className='model-sub'+(d.unknown?' model-sub-unknown':'');
     sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
       <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
