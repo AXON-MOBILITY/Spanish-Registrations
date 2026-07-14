@@ -1860,52 +1860,51 @@ function renderProv(){
   const allHpsActive=F.hps.size===0;
   const useFiltered=!allSubsActive||!allHpsActive;
   const hasFiltData=PROV.provinces.length>0&&!!(PROV.provinces[0].years_filt);
-  // Nombre sets para filtrado
+  // Sets de nombres permitidos
   const allowedSubNames=allSubsActive?null:new Set([...F.subs].map(i=>E.sub[i]));
   const allowedHpNames=allHpsActive?null:new Set([...F.hps].map(i=>E.hp[i]));
+  // ── Fracción nacional por marca para aproximación sub/HP ──
+  // Usamos _RC.rows (ya filtrado por año/mes/fuel/canal) para calcular qué % de
+  // unidades de cada marca corresponde al sub/HP seleccionado, y lo aplicamos
+  // como peso a los totales provinciales (exacto tras regenerar CSV; aprox. ahora).
+  let brandFrac=null;
+  if(useFiltered){
+    brandFrac={};
+    const bTot={},bMatch={};
+    (_RC&&_RC.rows||[]).forEach(r=>{
+      const marca=E.marca[r[COL.MARCA]];
+      const n=r[COL.N];
+      bTot[marca]=(bTot[marca]||0)+n;
+      const subOk=allSubsActive||F.subs.has(r[COL.SUB]);
+      const hpOk=allHpsActive||F.hps.has(r[COL.HP]);
+      if(subOk&&hpOk)bMatch[marca]=(bMatch[marca]||0)+n;
+    });
+    Object.keys(bTot).forEach(b=>{brandFrac[b]=bTot[b]>0?(bMatch[b]||0)/bTot[b]:0;});
+  }
   // ── Notice ──
   const notice=g('prov-filter-notice');
   if(useFiltered){
     const parts=[];
-    if(!allSubsActive){
-      const names=[...F.subs].map(i=>E.sub[i]).filter(Boolean);
-      parts.push('Subsegmento: '+(names.length?names.join(', '):'ninguno'));
-    }
-    if(!allHpsActive){
-      const names=[...F.hps].map(i=>E.hp[i]).filter(Boolean);
-      parts.push('HP: '+(names.length?names.join(', '):'ninguno'));
-    }
-    let msg='Filtros activos: '+parts.join(' · ')+'.';
-    if(!hasFiltData)msg+=' ⚠ Datos detallados no disponibles — regenera con process_month.py para aplicar este filtro.';
-    else msg+=' Filtrando datos provinciales.';
-    notice.textContent=msg;
+    if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegmento: '+(ns.length?ns.join(', '):'ninguno'));}
+    if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'ninguno'));}
+    notice.textContent='Filtros activos: '+parts.join(' · ')+'. '+(hasFiltData?'Datos exactos.':'Estimación basada en distribución nacional por marca.');
     notice.style.display='';
   } else {
-    // Mostrar siempre qué filtros SÍ aplican aquí vs los que no aplican
     const noApply=[];
     if(F.segs.size<E.seg.length)noApply.push('Segmento');
-    if(F.hps.size>0)noApply.push('HP');
     if(F.modelo)noApply.push('Modelo');
     if(F.body)noApply.push('Carrocería');
-    if(noApply.length){
-      notice.textContent='Filtros globales que no aplican en datos provinciales: '+noApply.join(', ')+'. Aplican: Combustible, Canal, Marca, OEM, Subsegmento, HP.';
-      notice.style.display='';
-    } else {
-      notice.style.display='none';
-    }
+    if(noApply.length){notice.textContent='Filtros sin efecto en tab Provincias: '+noApply.join(', ')+'.';notice.style.display='';}
+    else notice.style.display='none';
   }
-  // ── Función para obtener marcas desde estructura filt ──
+  // ── Función para obtener marcas desde estructura filt exacta ──
   const provBrandsFromFilt=(p,monthKeys)=>{
     const brands={};
     const fkAllowed=(fk)=>{
       const ps=fk.split('|');
-      const sub=ps[1]||'';
-      const hp=ps[2]||'Standard';
+      const sub=ps[1]||'';const hp=ps[2]||'Standard';
       if(allowedSubNames&&!allowedSubNames.has(sub))return false;
-      if(allowedHpNames){
-        const hpNorm=hp||'Standard';
-        if(!allowedHpNames.has(hpNorm)&&!allowedHpNames.has(hp))return false;
-      }
+      if(allowedHpNames&&!allowedHpNames.has(hp||'Standard')&&!allowedHpNames.has(hp))return false;
       return true;
     };
     const addMap=(fkMap)=>{
@@ -1918,11 +1917,8 @@ function renderProv(){
       });
     };
     const allMonthsLen=provMonthsForYear(RK.year).length;
-    if(monthKeys.length===allMonthsLen&&p.years_filt){
-      addMap((p.years_filt||{})[String(selectedYear)]);
-    } else if(p.months_filt){
-      monthKeys.forEach(ym=>addMap((p.months_filt||{})[ym]));
-    }
+    if(monthKeys.length===allMonthsLen&&p.years_filt){addMap((p.years_filt||{})[String(selectedYear)]);}
+    else if(p.months_filt){monthKeys.forEach(ym=>addMap((p.months_filt||{})[ym]));}
     return brands;
   };
   const monthKeys=provMonthsForYear(RK.year)
@@ -1930,10 +1926,15 @@ function renderProv(){
     .map(mm=>`${RK.year}-${mm}`);
   const rows=[];
   PROV.provinces.forEach(p=>{
-    const brands=(useFiltered&&hasFiltData)?provBrandsFromFilt(p,monthKeys):provBrandsForMonths(p,monthKeys);
+    const brands=hasFiltData?provBrandsFromFilt(p,monthKeys):provBrandsForMonths(p,monthKeys);
     const entries=Object.entries(brands)
       .filter(([m])=>provBrandAllowed(m))
-      .map(([m,v])=>[m,provValue(v)])
+      .map(([m,v])=>{
+        let val=provValue(v);
+        // Aplicar fracción sub/HP: exacta si hasFiltData, aprox. nacional si no
+        if(useFiltered&&brandFrac)val=Math.round(val*(brandFrac[m]??1));
+        return[m,val];
+      })
       .filter(([,v])=>v>0)
       .sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
     if(!entries.length)return;
