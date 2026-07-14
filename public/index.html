@@ -45,11 +45,10 @@ body{display:flex;flex-direction:column;overflow:hidden}
   flex-shrink:0;z-index:200;
 }
 .tb-logo{
-  display:flex;align-items:center;gap:8px;padding:0 18px;
-  font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;
+  display:flex;align-items:center;padding:0 16px;
   border-right:1px solid var(--border);height:100%;
 }
-.tb-logo .acc{color:var(--acc)}
+.app-brand-img{height:38px;width:auto;display:block;object-fit:contain}
 .tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tab-btn{
   padding:0 16px;height:100%;border:none;background:transparent;
@@ -317,8 +316,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   padding:40px 48px;display:flex;flex-direction:column;align-items:center;gap:20px;
   min-width:320px;
 }
-.login-logo{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700;color:var(--txt)}
-.login-logo span{color:var(--acc)}
+.login-logo{display:flex;align-items:center;justify-content:center;width:100%}
+.login-brand-img{width:min(250px,80vw);height:auto;display:block;object-fit:contain}
 .login-title{font-size:.85rem;color:var(--txt2);letter-spacing:.04em;text-transform:uppercase}
 .login-input{
   width:100%;padding:10px 14px;border-radius:8px;
@@ -378,11 +377,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-        <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
-      </svg>
-      DGT <span>Matriculaciones</span>
+      <img class="login-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat - Matriculaciones DGT">
     </div>
     <div class="login-title">Acceso restringido</div>
     <input id="login-pw" class="login-input" type="password" placeholder="Contraseña"
@@ -396,8 +391,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="tb-logo">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-    DGT <span class="acc">Matriculaciones</span>
+    <img class="app-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat - Matriculaciones DGT">
   </div>
   <div class="tb-tabs">
     <button class="tab-btn on" id="tbtn-overview" onclick="showTab('overview')">Overview</button>
