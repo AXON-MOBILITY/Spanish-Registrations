@@ -780,8 +780,9 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 // ── AUTH ──────────────────────────────────────────
 (function(){
-  const KEY='dgt_auth_v1', PWD='BMW2026';
-  if(localStorage.getItem(KEY)===PWD){
+  const KEY='dgt_auth_v2', PWD='BMW2026';
+  localStorage.removeItem('dgt_auth_v1');
+  if(sessionStorage.getItem(KEY)===PWD){
     document.getElementById('login-screen').classList.add('hidden');
   }
 })();
@@ -789,7 +790,7 @@ function doLogin(){
   const val=document.getElementById('login-pw').value;
   const err=document.getElementById('login-err');
   if(val==='BMW2026'){
-    localStorage.setItem('dgt_auth_v1','BMW2026');
+    sessionStorage.setItem('dgt_auth_v2','BMW2026');
     document.getElementById('login-screen').classList.add('hidden');
     err.textContent='';
   } else {
