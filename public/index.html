@@ -2924,4 +2924,14 @@ function resetFilters(){
   F.canales=new Set(E.canal.map((_,i)=>i));
   F.segs=new Set(E.seg.map((_,i)=>i));
   F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST
+  F.oem=new Set(['CHINESE','REST']);
+  CONCEPTS.forEach(c=>F.concepts.add(c));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body='';
+  render();
+}
+</script>
+</body>
+</html>
