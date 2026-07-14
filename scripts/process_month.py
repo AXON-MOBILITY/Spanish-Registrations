@@ -605,6 +605,10 @@ def _model_candidates(sbrand, s):
         if sx.startswith('CRAFTER'):
             cands.append((sbrand, 'CRAFTER'))
     if sbrand == 'DS':
+        if re.match(r'^N\s*4\b', s):
+            cands.append((sbrand, 'NO4'))
+        if re.match(r'^N\s*8\b', s) or s.startswith('1SQ8'):
+            cands.append((sbrand, 'NO8'))
         if re.match(r'^(?:DS\s*)?7\s*CROSSBACK\b', s):
             cands.append((sbrand, 'DS7 CROSSBACK'))
         m = re.match(r'^(?:DS\s*)?([3479])\b', s)
@@ -615,6 +619,10 @@ def _model_candidates(sbrand, s):
             cands.append((sbrand, 'DAILY'))
     if sbrand == 'PEUGEOT':
         sp = s.replace(' ', '')
+        if sp.startswith('E-2008') or sp.startswith('E2008'):
+            cands.append((sbrand, 'E-2008 ALLURE ELECTRICO'))
+        if sp.startswith('E-208') or sp.startswith('E208'):
+            cands.append((sbrand, 'E-208'))
         for code in ('2008','208','3008','308','408','5008','508'):
             if sp.startswith('N' + code) or sp.startswith(code):
                 cands.append((sbrand, code)); break
@@ -689,6 +697,8 @@ def _model_candidates(sbrand, s):
                 cands.append((sbrand, code)); break
     if sbrand == 'EVO':
         sx = s.replace(' ', '')
+        if sx.startswith('CUATRO'):
+            cands.append((sbrand, 'EVO 4'))
         if sx.startswith('EVOCROSS4') or sx.startswith('CROSS4'): cands.append((sbrand, 'CROSS 4'))
         for n in ('3','4','5','6','7'):
             if sx.startswith('EVO' + n):
@@ -717,6 +727,8 @@ def _model_candidates(sbrand, s):
         if s.startswith('CAYENNE E-HYBRID') or s == 'CAYENNE S':
             cands.append((sbrand, 'CAYENNE COUPE'))
     if sbrand == 'MAZDA':
+        if s.startswith('6E') or s.startswith('MAZDA 6E'):
+            cands.append((sbrand, '6E'))
         if s.startswith('MAZDA2 HYBRID'): cands.append((sbrand, 'MAZDA 2'))
         cands += [(sbrand, re.sub(r'([A-Z]+)(\d)', r'\1 \2', s)), (sbrand, s_nd)]
     if sbrand == 'VOLKSWAGEN':
@@ -724,7 +736,50 @@ def _model_candidates(sbrand, s):
         if sx.startswith('ID.BUZZ') or sx.startswith('IDBUZZ'): cands.append((sbrand, 'ID.BUZZ'))
         if sx.startswith('KOMBI'): cands.append((sbrand, 'CARAVELLE'))
     if sbrand == 'SUZUKI':
+        if s.startswith('E VITARA'):
+            cands.append((sbrand, 'E VITARA'))
         if s.startswith('S-CROSS'): cands.append((sbrand, 'SX4'))
+    if sbrand == 'ALPINE':
+        sx = s.replace(' ', '')
+        if sx.startswith('A110'): cands.append((sbrand, 'A110'))
+        if sx.startswith('A290'): cands.append((sbrand, 'A290'))
+        if sx.startswith('A390'): cands.append((sbrand, 'A390'))
+    if sbrand == 'BAW':
+        if s.startswith('T01'):
+            cands.append((sbrand, '212 T01'))
+    if sbrand == 'TIGER':
+        if s.startswith('EIGHT'):
+            cands.append((sbrand, 'TIGER 8'))
+        if s.startswith('SIX'):
+            cands.append((sbrand, 'TIGER 6'))
+    if sbrand == 'SPORTEQUIPE':
+        m = re.match(r'^([678])\b', s)
+        if m:
+            cands.append((sbrand, 'SPORTEQUIPE ' + m.group(1)))
+    if sbrand == 'CIRELLI':
+        m = re.match(r'^([1-9])\b', s)
+        if m:
+            cands.append((sbrand, 'CIRELLI ' + m.group(1)))
+    if sbrand == 'ZEEKR':
+        if s.startswith('X'):
+            cands.append((sbrand, 'ZEEKR X'))
+        if re.match(r'^1\b', s):
+            cands.append((sbrand, 'ZEEKR 1'))
+    if sbrand == 'POLESTAR':
+        m = re.match(r'^([234])\b', s)
+        if m:
+            cands.append((sbrand, 'POLESTAR ' + m.group(1)))
+    if sbrand == 'RENAULT':
+        if 'TRAFIC' in s:
+            cands.append((sbrand, 'TRAFIC'))
+    if sbrand == 'SHINERAY':
+        if s.startswith('G01'):
+            cands.append((sbrand, 'SWM G01'))
+    if sbrand == 'ICH-X':
+        if s.startswith('X K2'):
+            cands.append((sbrand, 'K2'))
+        if s.startswith('X K3'):
+            cands.append((sbrand, 'K3'))
     if sbrand == 'HYUNDAI':
         sx = s.replace(' ', '')
         if s.startswith('TUCSON') or s.startswith('TUCSON,IX35'): cands.append((sbrand, 'TUCSON'))
@@ -1645,6 +1700,19 @@ def add_drift_alerts(yyyymm, counts, alerts):
 def normalize_marca(marca, modelo=''):
     m = marca.strip().upper()
     mo = modelo.strip().upper()
+    if m in ('', 'SIN MARCA'):
+        mo_norm = _strip_accents(mo)
+        mo_compact = mo_norm.replace(' ', '')
+        if (re.match(r'^(?:NUEVO\s+)?(?:E-)?(?:208|2008|3008|308|408|5008)\b', mo_norm)
+                or mo_compact.startswith(('E-208', 'E208', 'E-2008', 'E2008'))
+                or 'EXPERT' in mo_norm or 'PARTNER' in mo_norm):
+            return 'PEUGEOT'
+        if ('CITROEN' in mo_norm or 'BERLINGO' in mo_norm
+                or re.match(r'^(?:NUEVO\s+)?(?:E-)?C[345]\b', mo_norm)
+                or mo_norm.startswith(('C3 ', 'C4 ', 'C5 '))):
+            return 'CITROEN'
+        if re.match(r'^(CORSA|MOKKA|FRONTERA)\b', mo_norm):
+            return 'OPEL'
     m = _BRAND_NORM.get(m, m)
     if m == 'SPORTEQUIPE' and ('ICH-X' in mo or mo.startswith('X K')):
         return 'ICH-X'
