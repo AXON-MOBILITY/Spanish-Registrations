@@ -1855,39 +1855,53 @@ function renderProv(){
     }
     return true;
   };
-  // ── Sub/HP filter detection ──
+  // Segmento/Sub/HP filter detection
+  const allSegsActive=F.segs.size>=E.seg.length;
   const allSubsActive=F.subs.size>=E.sub.length;
   const allHpsActive=F.hps.size===0;
-  const useFiltered=!allSubsActive||!allHpsActive;
-  const hasFiltData=PROV.provinces.length>0&&!!(PROV.provinces[0].years_filt);
-  // Sets de nombres permitidos
+  const useFiltered=!allSegsActive||!allSubsActive||!allHpsActive;
+  const hasFiltStructure=PROV.provinces.length>0&&!!(PROV.provinces[0].years_filt);
+  const hasFiltData=hasFiltStructure&&PROV.provinces.some(p=>
+    Object.keys(((p.years_filt||{})[String(selectedYear)]||{})).some(fk=>{
+      const ps=fk.split('|');
+      return !!(ps[1]||ps[2]);
+    })
+  );
+  // Sets de nombres permitidos: sub/HP exactos en province_brands.json.
   const allowedSubNames=allSubsActive?null:new Set([...F.subs].map(i=>E.sub[i]));
   const allowedHpNames=allHpsActive?null:new Set([...F.hps].map(i=>E.hp[i]));
-  // ── Fracción nacional por marca para aproximación sub/HP ──
-  // Usamos _RC.rows (ya filtrado por año/mes/fuel/canal) para calcular qué % de
-  // unidades de cada marca corresponde al sub/HP seleccionado, y lo aplicamos
-  // como peso a los totales provinciales (exacto tras regenerar CSV; aprox. ahora).
+  // Si no hay estructura exacta, estimamos seg/sub/HP por fraccion nacional.
+  // Si la hay, sub/HP ya son exactos y solo estimamos segmento si esta activo.
   let brandFrac=null;
-  if(useFiltered){
+  if(useFiltered&&(!hasFiltData||!allSegsActive)){
     brandFrac={};
     const bTot={},bMatch={};
-    (_RC&&_RC.rows||[]).forEach(r=>{
+    REC.rows.forEach(r=>{
+      if(!F.years.has(r[COL.Y]))return;
+      if(!F.months.has(r[COL.M]))return;
+      if(!F.fuels.has(r[COL.FUEL]))return;
+      if(!F.canales.has(r[COL.CANAL]))return;
       const marca=E.marca[r[COL.MARCA]];
+      const denomSubOk=!hasFiltData||allSubsActive||F.subs.has(r[COL.SUB]);
+      const denomHpOk=!hasFiltData||allHpsActive||F.hps.has(r[COL.HP]);
+      if(!denomSubOk||!denomHpOk)return;
       const n=r[COL.N];
       bTot[marca]=(bTot[marca]||0)+n;
-      const subOk=allSubsActive||F.subs.has(r[COL.SUB]);
-      const hpOk=allHpsActive||F.hps.has(r[COL.HP]);
-      if(subOk&&hpOk)bMatch[marca]=(bMatch[marca]||0)+n;
+      const segOk=allSegsActive||F.segs.has(r[COL.SEG]);
+      const subOk=hasFiltData||allSubsActive||F.subs.has(r[COL.SUB]);
+      const hpOk=hasFiltData||allHpsActive||F.hps.has(r[COL.HP]);
+      if(segOk&&subOk&&hpOk)bMatch[marca]=(bMatch[marca]||0)+n;
     });
     Object.keys(bTot).forEach(b=>{brandFrac[b]=bTot[b]>0?(bMatch[b]||0)/bTot[b]:0;});
   }
-  // ── Notice ──
+  // Notice
   const notice=g('prov-filter-notice');
   if(useFiltered){
     const parts=[];
+    if(!allSegsActive){const ns=[...F.segs].map(i=>E.seg[i]).filter(Boolean);parts.push('Segmento: '+(ns.length?ns.join(', '):'ninguno'));}
     if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegmento: '+(ns.length?ns.join(', '):'ninguno'));}
     if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'ninguno'));}
-    notice.textContent='Filtros activos: '+parts.join(' · ')+'. '+(hasFiltData?'Datos exactos.':'Estimación basada en distribución nacional por marca.');
+    notice.textContent='Filtros activos: '+parts.join(' · ')+'. '+(hasFiltData?(allSegsActive?'Datos exactos.':'Sub/HP exactos; segmento estimado por distribución nacional.'):'Estimación basada en distribución nacional por marca.');
     notice.style.display='';
   } else {
     const noApply=[];
@@ -1931,8 +1945,8 @@ function renderProv(){
       .filter(([m])=>provBrandAllowed(m))
       .map(([m,v])=>{
         let val=provValue(v);
-        // Aplicar fracción sub/HP: exacta si hasFiltData, aprox. nacional si no
-        if(useFiltered&&brandFrac)val=Math.round(val*(brandFrac[m]??1));
+        // Aplica solo la fraccion estimada que siga pendiente (segmento o fallback sin exactos).
+        if(brandFrac)val=Math.round(val*(brandFrac[m]??1));
         return[m,val];
       })
       .filter(([,v])=>v>0)
