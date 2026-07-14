@@ -333,7 +333,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 /* ── RANKING VISUAL ───────────────────── */
 .rank-body{padding:6px 0}
-.rank-row{display:grid;grid-template-columns:30px 42px minmax(0,1fr) 150px 86px 66px 82px;
+.rank-row{display:grid;grid-template-columns:30px 42px 180px minmax(60px,1fr) 86px 66px 82px;
   align-items:center;gap:8px;padding:5px 12px;border-radius:6px;cursor:default}
 .rank-row:hover{background:rgba(255,255,255,.04)}
 .rank-bmw{background:rgba(217,119,6,.12)!important}
@@ -353,7 +353,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .rank-regs{font-size:.9rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .rank-cuota{font-size:.78rem;color:var(--text2);text-align:right}
 .rank-var{font-size:.78rem;font-weight:600;text-align:right}
-.rank-hdr-cols{display:grid;grid-template-columns:30px 42px minmax(0,1fr) 150px 86px 66px 82px;
+.rank-hdr-cols{display:grid;grid-template-columns:30px 42px 180px minmax(60px,1fr) 86px 66px 82px;
   gap:8px;padding:3px 12px 5px;border-bottom:1px solid var(--border);margin-bottom:4px}
 .rank-hdr-cols span{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
 .rank-hdr-cols .rh-r{text-align:right}
@@ -3020,80 +3020,4 @@ function toggleModelRows(btn,brand){
   let nx=tr.nextElementSibling;
   while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
   btn.classList.toggle('open',!wasOpen);
-  if(wasOpen)return;
-  const E=REC.enums;
-  const mIdx=E.marca.indexOf(brand);
-  const {rows,prevRows,refYear,commonM}=_RC;
-  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
-  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
-  // Aggregate ref counts per model
-  const byMo={};
-  brandRows.forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    if(!byMo[mo])byMo[mo]={total:0,ref:0};
-    byMo[mo].total+=r[COL.N];
-    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
-  });
-  // Prev counts per model
-  const byMoPrev={};
-  prevRows.filter(r=>r[COL.MARCA]===mIdx&&commonM.has(r[COL.M])).forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    byMoPrev[mo]=(byMoPrev[mo]||0)+r[COL.N];
-  });
-  const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
-  let ins=tr;
-  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
-  sorted.forEach(([mo,d])=>{
-    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
-    const prev=byMoPrev[mo]||0;
-    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d.ref-prev:null;
-    const share=brandTotal?d.total/brandTotal*100:0;
-    const sub=document.createElement('tr');
-    sub.className='model-sub';
-    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
-      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
-      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
-      <td>${fP2(share)}</td>`;
-    ins.after(sub);ins=sub;
-  });
-}
-
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
-  },40);
-}
-
-function resetFilters(){
-  const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST']);
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  render();
-}
-</script>
-</body>
-</html>
+  if(wasOpen)return;
