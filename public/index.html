@@ -3122,4 +3122,32 @@ function showTab(name){
     if(name==='prov'&&PROV)renderProv();
     if(name==='trend'&&TREND)renderTrend();
     if(name==='forecast'&&FC)renderForecast();
-   
+    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
+  },40);
+}
+
+function resetFilters(){
+  const E=REC.enums;
+  const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
+  const defaultYears=new Set(allYears.includes(2026)?[2026]:[allYears[allYears.length-1]]);
+  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('#sb-years input[type=checkbox]').forEach(cb=>cb.checked=defaultYears.has(parseInt(cb.value,10)));
+  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
+  F.years=defaultYears;
+  updateCount('cnt-years',F.years.size,allYears.length);
+  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
+  F.fuels=new Set(E.fuel.map((_,i)=>i));
+  F.canales=new Set(E.canal.map((_,i)=>i));
+  F.segs=new Set(E.seg.map((_,i)=>i));
+  F.subs=new Set(E.sub.map((_,i)=>i));
+  F.oem=new Set(['CHINESE','REST']);
+  CONCEPTS.forEach(c=>F.concepts.add(c));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body='';
+  render();
+}
+</script>
+</body>
+</html>
