@@ -1855,7 +1855,7 @@ function renderProv(){
     }
     return true;
   };
-  // Segmento/Sub/HP filter detection
+  // Seg/Sub/HP filter detection
   const allSegsActive=F.segs.size>=E.seg.length;
   const allSubsActive=F.subs.size>=E.sub.length;
   const allHpsActive=F.hps.size===0;
@@ -1864,51 +1864,27 @@ function renderProv(){
   const hasFiltData=hasFiltStructure&&PROV.provinces.some(p=>
     Object.keys(((p.years_filt||{})[String(selectedYear)]||{})).some(fk=>{
       const ps=fk.split('|');
-      return !!(ps[1]||ps[2]);
+      return ps.length>=4&&!!(ps[1]||ps[2]||ps[3]);
     })
   );
-  // Sets de nombres permitidos: sub/HP exactos en province_brands.json.
+  // Sets de nombres permitidos para datos provinciales exactos.
+  const allowedSegNames=allSegsActive?null:new Set([...F.segs].map(i=>E.seg[i]));
   const allowedSubNames=allSubsActive?null:new Set([...F.subs].map(i=>E.sub[i]));
   const allowedHpNames=allHpsActive?null:new Set([...F.hps].map(i=>E.hp[i]));
-  // Si no hay estructura exacta, estimamos seg/sub/HP por fraccion nacional.
-  // Si la hay, sub/HP ya son exactos y solo estimamos segmento si esta activo.
-  let brandFrac=null;
-  if(useFiltered&&(!hasFiltData||!allSegsActive)){
-    brandFrac={};
-    const bTot={},bMatch={};
-    REC.rows.forEach(r=>{
-      if(!F.years.has(r[COL.Y]))return;
-      if(!F.months.has(r[COL.M]))return;
-      if(!F.fuels.has(r[COL.FUEL]))return;
-      if(!F.canales.has(r[COL.CANAL]))return;
-      const marca=E.marca[r[COL.MARCA]];
-      const denomSubOk=!hasFiltData||allSubsActive||F.subs.has(r[COL.SUB]);
-      const denomHpOk=!hasFiltData||allHpsActive||F.hps.has(r[COL.HP]);
-      if(!denomSubOk||!denomHpOk)return;
-      const n=r[COL.N];
-      bTot[marca]=(bTot[marca]||0)+n;
-      const segOk=allSegsActive||F.segs.has(r[COL.SEG]);
-      const subOk=hasFiltData||allSubsActive||F.subs.has(r[COL.SUB]);
-      const hpOk=hasFiltData||allHpsActive||F.hps.has(r[COL.HP]);
-      if(segOk&&subOk&&hpOk)bMatch[marca]=(bMatch[marca]||0)+n;
-    });
-    Object.keys(bTot).forEach(b=>{brandFrac[b]=bTot[b]>0?(bMatch[b]||0)/bTot[b]:0;});
-  }
   // Notice
   const notice=g('prov-filter-notice');
   if(useFiltered){
     const parts=[];
-    if(!allSegsActive){const ns=[...F.segs].map(i=>E.seg[i]).filter(Boolean);parts.push('Segmento: '+(ns.length?ns.join(', '):'ninguno'));}
+    if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segmento: '+(ns.length?ns.join(', '):'ninguno'));}
     if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegmento: '+(ns.length?ns.join(', '):'ninguno'));}
     if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'ninguno'));}
-    notice.textContent='Filtros activos: '+parts.join(' · ')+'. '+(hasFiltData?(allSegsActive?'Datos exactos.':'Sub/HP exactos; segmento estimado por distribución nacional.'):'Estimación basada en distribución nacional por marca.');
+    notice.textContent='Filtros activos: '+parts.join(' · ')+'. '+(hasFiltData?'Datos provinciales exactos.':'Datos provinciales pendientes de reprocesar con segmento/subsegmento/HP.');
     notice.style.display='';
   } else {
     const noApply=[];
-    if(F.segs.size<E.seg.length)noApply.push('Segmento');
     if(F.modelo)noApply.push('Modelo');
     if(F.body)noApply.push('Carrocería');
-    if(noApply.length){notice.textContent='Filtros sin efecto en tab Provincias: '+noApply.join(', ')+'.';notice.style.display='';}
+    if(noApply.length){notice.textContent='Filtros sin efecto en Provincias: '+noApply.join(', ')+'.';notice.style.display='';}
     else notice.style.display='none';
   }
   // ── Función para obtener marcas desde estructura filt exacta ──
@@ -1916,7 +1892,11 @@ function renderProv(){
     const brands={};
     const fkAllowed=(fk)=>{
       const ps=fk.split('|');
-      const sub=ps[1]||'';const hp=ps[2]||'Standard';
+      const hasSegKey=ps.length>=4;
+      const seg=hasSegKey?(ps[1]||''):'';
+      const sub=hasSegKey?(ps[2]||''):(ps[1]||'');
+      const hp=hasSegKey?(ps[3]||'Standard'):(ps[2]||'Standard');
+      if(allowedSegNames&&(!hasSegKey||!allowedSegNames.has(seg)))return false;
       if(allowedSubNames&&!allowedSubNames.has(sub))return false;
       if(allowedHpNames&&!allowedHpNames.has(hp||'Standard')&&!allowedHpNames.has(hp))return false;
       return true;
@@ -1940,13 +1920,11 @@ function renderProv(){
     .map(mm=>`${RK.year}-${mm}`);
   const rows=[];
   PROV.provinces.forEach(p=>{
-    const brands=hasFiltData?provBrandsFromFilt(p,monthKeys):provBrandsForMonths(p,monthKeys);
+    const brands=hasFiltData?provBrandsFromFilt(p,monthKeys):(useFiltered?{}:provBrandsForMonths(p,monthKeys));
     const entries=Object.entries(brands)
       .filter(([m])=>provBrandAllowed(m))
       .map(([m,v])=>{
         let val=provValue(v);
-        // Aplica solo la fraccion estimada que siga pendiente (segmento o fallback sin exactos).
-        if(brandFrac)val=Math.round(val*(brandFrac[m]??1));
         return[m,val];
       })
       .filter(([,v])=>v>0)
