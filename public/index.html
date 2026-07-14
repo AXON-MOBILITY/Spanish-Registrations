@@ -2807,7 +2807,7 @@ async function downloadInforme(){
         },
         alternateRowStyles:{fillColor:[245,249,254]},
         columnStyles:{
-          0:{cellWidth:9,  halign:'right', textColor:[158,170,185],fontStyle:'normal',fontSize:7},
+          0:{cellWidth:13, halign:'right', textColor:[158,170,185],fontStyle:'normal',fontSize:7},
           1:{cellWidth:44, fontStyle:'bold',
              cellPadding:{top:2,right:2.5,bottom:2,left:10}},
           2:{cellWidth:20, halign:'right'},
@@ -2835,6 +2835,9 @@ async function downloadInforme(){
             if((brand==='Audi'||brand==='Mercedes')&&d.column.index===1)
               d.cell.styles.textColor=[198,42,42];
           }
+          // Cabecera fila 1 col 0: reducir padding para que 'Pos' no se parta
+          if(d.section==='head'&&d.row.index===1&&d.column.index===0)
+            d.cell.styles.cellPadding={top:2.5,right:1,bottom:2.5,left:1};
           // Cabecera fila 0: ocultar celdas vacias (mismo color que bg)
           if(d.section==='head'&&d.row.index===0){
             if([3,4,6,7].includes(d.column.index))
