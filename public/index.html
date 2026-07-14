@@ -333,23 +333,24 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 /* ── RANKING VISUAL ───────────────────── */
 #card-ranking{margin-top:16px}
-.rank-body{padding:6px 0}
-.rank-row{display:grid;grid-template-columns:30px 28px minmax(0,1fr) 150px 86px 66px 82px;
-  align-items:center;gap:8px;padding:5px 12px;border-radius:6px;cursor:default}
+.rank-body{padding:4px 0}
+.rank-row{display:grid;grid-template-columns:38px 46px 190px 1fr 110px 76px 92px;
+  align-items:center;gap:10px;padding:12px 16px;border-radius:8px;cursor:default;min-height:62px}
 .rank-row:hover{background:rgba(255,255,255,.04)}
-.rank-bmw{background:rgba(217,119,6,.12)!important}
-.rank-pos{color:var(--text2);font-size:.76rem;text-align:right;font-variant-numeric:tabular-nums}
-.rank-badge{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;
-  justify-content:center;font-weight:700;font-size:.72rem;color:#fff;flex-shrink:0}
-.rank-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank-bar-wrap{height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
-.rank-bar{height:100%;background:var(--ice);border-radius:4px;transition:width .3s}
-.rank-regs{font-size:.9rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
-.rank-cuota{font-size:.78rem;color:var(--text2);text-align:right}
-.rank-var{font-size:.78rem;font-weight:600;text-align:right}
-.rank-hdr-cols{display:grid;grid-template-columns:30px 28px minmax(0,1fr) 150px 86px 66px 82px;
-  gap:8px;padding:3px 12px 5px;border-bottom:1px solid var(--border);margin-bottom:4px}
-.rank-hdr-cols span{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.rank-bmw{background:rgba(217,119,6,.13)!important}
+.rank-pos{color:var(--text2);font-size:.8rem;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.rank-badge{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:.95rem;color:#fff;flex-shrink:0;letter-spacing:0}
+.rank-name{font-size:.95rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-transform:uppercase;letter-spacing:.04em}
+.rank-bar-wrap{height:9px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden}
+.rank-bar{height:100%;background:var(--ice);border-radius:5px;transition:width .4s ease}
+.rank-regs{font-size:1.05rem;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.rank-cuota{font-size:.82rem;color:var(--text2);text-align:right;font-variant-numeric:tabular-nums}
+.rank-var{font-size:.84rem;font-weight:700;text-align:right}
+.rank-hdr-cols{display:grid;grid-template-columns:38px 46px 190px 1fr 110px 76px 92px;
+  gap:10px;padding:6px 16px 8px;border-bottom:1px solid var(--border);margin-bottom:2px}
+.rank-hdr-cols span{font-size:.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:.07em}
 .rank-hdr-cols .rh-r{text-align:right}
 .dl-btn{margin-left:auto;padding:4px 12px;border-radius:6px;border:1px solid var(--border);
   background:none;color:var(--acc2);font-size:.76rem;cursor:pointer;white-space:nowrap}
@@ -2585,22 +2586,25 @@ function renderRanking(sv,tot,yoy){
     const isBMW=['BMW','MINI'].includes(brand);
     const varStr=yPct===null?'—':(yPct>=0?'▲ +':'▼ ')+Math.abs(yPct).toFixed(1)+'%';
     const varCls=yPct===null?'':(yPct>=0?'pos':'neg');
+    const varIcon=yPct===null?'':yPct>=0?'▲ ':'▼ ';
     return `<div class="rank-row${isBMW?' rank-bmw':''}">
       <span class="rank-pos">${i+1}</span>
-      <span class="rank-badge" style="background:${col}">${brand[0]}</span>
+      <span class="rank-badge" style="background:${col}">${brand[0].toUpperCase()}</span>
       <span class="rank-name" title="${brand}">${brand}</span>
       <div class="rank-bar-wrap"><div class="rank-bar" style="width:${barW}%"></div></div>
       <span class="rank-regs">${fN(d.total)}</span>
       <span class="rank-cuota">${fP2(share)}</span>
-      <span class="rank-var ${varCls}">${varStr}</span>
+      <span class="rank-var ${varCls}">${yPct===null?'—':varIcon+Math.abs(yPct).toFixed(1)+'%'}</span>
     </div>`;
   }).join('');
   body.innerHTML=hdr+`<div class="rank-body">${rows}</div>`;
 }
 
 function downloadInforme(){
-  if(!_OVD||!window.jspdf){alert('Cargando librerías, inténtalo de nuevo en un momento.');return;}
-  const {jsPDF}=window.jspdf;
+  try{
+  const _jspdf=window.jspdf||window.jsPDF;
+  if(!_OVD||!_jspdf){alert('Cargando librerías, inténtalo de nuevo en un momento.');return;}
+  const jsPDF=_jspdf.jsPDF||_jspdf;
   const doc=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
   const W=210,M=14,CW=W-2*M;
   let y=M;
@@ -2696,13 +2700,11 @@ function downloadInforme(){
   });
 
   doc.autoTable({
-    head:[[
-      {content:'Pos',rowSpan:1},{content:'Marca',rowSpan:1},
-      {content:mLabel,colSpan:3,styles:{halign:'center'}},
-      {content:'Acumulado YTD '+_OVD.refYear,colSpan:3,styles:{halign:'center'}}
-    ],[
-      '','','Unidades','Var. %','Cuota','Unidades','Var. %','Cuota'
-    ]],
+    head:[
+      ['Pos','Marca',
+       'Unidades ('+mLabel+')','Var. %','Cuota %',
+       'Unid. YTD '+_OVD.refYear,'Var. % YTD','Cuota % YTD']
+    ],
     body,
     startY:y,
     margin:{left:M,right:M},
@@ -2739,6 +2741,7 @@ function downloadInforme(){
 
   const fname='Informe_Matriculaciones_'+mths.map(m=>MES3[m-1]).join('-')+'_'+_OVD.refYear+'.pdf';
   doc.save(fname);
+  }catch(e){console.error('PDF error:',e);alert('Error generando PDF: '+e.message);}
 }
 
 // Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
@@ -2791,57 +2794,4 @@ function toggleModelRows(btn,brand){
   });
   const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
   let ins=tr;
-  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
-  sorted.forEach(([mo,d])=>{
-    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
-    const prev=byMoPrev[mo]||0;
-    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d.ref-prev:null;
-    const share=brandTotal?d.total/brandTotal*100:0;
-    const sub=document.createElement('tr');
-    sub.className='model-sub';
-    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
-      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
-      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
-      <td>${fP2(share)}</td>`;
-    ins.after(sub);ins=sub;
-  });
-}
-
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-  },40);
-}
-
-function resetFilters(){
-  const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST']);
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  render();
-}
-</script>
-</body>
-</html>
+  const _BMW
