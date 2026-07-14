@@ -2812,7 +2812,8 @@ function downloadInforme(){
         doc.setFontSize(6.5);
         doc.setFont('helvetica','normal');
         doc.setTextColor(160,175,190);
-        doc.line(M,289,W-M,289,{drawColor:[220,225,230]});
+        doc.setDrawColor(220,225,230);
+        doc.line(M,289,W-M,289);
         doc.text('DGT Matriculaciones \xB7 '+mLabel,M,293);
         doc.text('P\xE1g. '+pg,W-M,293,{align:'right'});
       }
