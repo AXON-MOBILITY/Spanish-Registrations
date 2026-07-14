@@ -383,11 +383,11 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   </div>
   <div class="tb-tabs">
     <button class="tab-btn on" id="tbtn-overview" onclick="showTab('overview')">Overview</button>
+    <button class="tab-btn" id="tbtn-ranking" onclick="showTab('ranking')">Ranking</button>
     <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Canal &amp; Mensual</button>
     <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provincias</button>
     <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
     <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
-    <button class="tab-btn" id="tbtn-ranking" onclick="showTab('ranking')">Ranking</button>
   </div>
   <div class="tb-right">
     <button class="dl-btn" id="btn-dl-informe" onclick="downloadInforme()" style="margin-right:6px">&#11015; Descargar informe</button>
@@ -2595,343 +2595,261 @@ function renderRanking(sv,tot,yoy){
 
 function downloadInforme(){
   try{
-    // ── Detect jsPDF ──
     let JPDF=null;
-    if(window.jspdf&&window.jspdf.jsPDF) JPDF=window.jspdf.jsPDF;
-    else if(window.jsPDF) JPDF=window.jsPDF;
+    if(window.jspdf&&window.jspdf.jsPDF)JPDF=window.jspdf.jsPDF;
+    else if(window.jsPDF)JPDF=window.jsPDF;
     if(!JPDF){alert('Librería PDF no cargada — recarga la página e inténtalo de nuevo.');return;}
     if(!_OVD){alert('Sin datos — aplica filtros primero.');return;}
 
     const doc=new JPDF({orientation:'p',unit:'mm',format:'a4'});
-    const W=210,M=15,CW=W-2*M;
-    let y=0;
+    const W=210,M=18,CW=W-2*M;
 
     const mths=[..._OVD.months].sort((a,b)=>a-b);
-    const mLabel=mths.length===12?'Año completo '+_OVD.refYear
-      :mths.map(m=>MES[m-1]).join(', ')+' '+_OVD.refYear;
+    const mLabel=mths.length===12?'A\xF1o completo '+_OVD.refYear
+      :mths.map(m=>MES[m-1]).join('-')+' '+_OVD.refYear;
     const now=new Date();
     const nowStr=now.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'})
-                +' '+now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+               +' '+now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
 
-    // ══ HEADER OSCURO ══════════════════════════════════════════════════════
-    const HDR_H=62;
-    doc.setFillColor(13,27,42);
-    doc.rect(0,0,W,HDR_H,'F');
-
-    // Eyebrow
-    y=13;
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(7);
-    doc.setTextColor(120,155,195);
-    doc.text('INFORME INTERNO \xB7 PARQUE AUTOMOTOR ESPA\xD1A',M,y);
-
-    // Título
-    y=22;
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(20);
-    doc.setTextColor(255,255,255);
-    doc.text('Ranking de marcas',M,y);
-
-    // Subtítulo
-    y=29;
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(9.5);
-    doc.setTextColor(140,185,230);
-    doc.text('Matriculaciones \xB7 '+mLabel,M,y);
-
-    // Descripcion
-    y=34.5;
-    doc.setFontSize(7);
-    doc.setTextColor(95,130,170);
-    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,y,{maxWidth:CW});
-
-    // ── 4 stat boxes ──
     const fT=_OVD.fuelTots, tot=_OVD.total, fYY=_OVD.fuelYoY;
-    const stats=[
-      {n:fN(tot),    lbl:'Mercado Total',         yoy:_OVD.totYoY, yc:[16,185,129]},
-      {n:fN(fT.BEV), lbl:'BEV \xB7 El\xE9ctricos',      yoy:fYY.BEV,     yc:[16,185,129]},
-      {n:fN(fT.PHEV),lbl:'PHEV \xB7 H\xEDbridos enchufables',yoy:fYY.PHEV,yc:[239,68,68]},
-      {n:fN(fT.ICE), lbl:'ICE \xB7 Combusti\xF3n',       yoy:fYY.ICE,     yc:[59,130,246]},
-    ];
-    const bw=(CW-9)/4;
-    y=40;
-    stats.forEach((s,i)=>{
-      const bx=M+i*(bw+3);
-      // big number
-      doc.setFont('helvetica','bold');
-      doc.setFontSize(13);
-      doc.setTextColor(...s.yc);
-      doc.text(s.n,bx+bw/2,y+4,{align:'center'});
-      // label
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(6.2);
-      doc.setTextColor(160,195,230);
-      doc.text(s.lbl,bx+bw/2,y+9,{align:'center'});
-      // yoy
-      if(s.yoy!=null){
-        const pos=s.yoy>=0;
-        doc.setTextColor(pos?16:239,pos?185:68,pos?129:68);
-        doc.setFontSize(6.5);
-        doc.setFont('helvetica','bold');
-        doc.text((pos?'+':'')+s.yoy.toFixed(1)+'% interanual',bx+bw/2,y+14.5,{align:'center'});
-      }
-    });
+    const _E=REC.enums;
+    const {refRows,prevRows,commonM,hasPrev}=_RC;
 
-    // ── Nota pie de cabecera ──
-    y=HDR_H+4;
-    doc.setTextColor(100,130,160);
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(6.2);
-    doc.text('Elaborado a partir de datos de matriculaciones de turismos y todoterrenos (PC + 4x4). Generado autom\xE1ticamente el '+nowStr+'.',M,y,{maxWidth:CW});
-
-    // ── Context line ──
-    y+=5;
-    doc.setTextColor(40,60,80);
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(7.5);
-    doc.text('Mercado Total',M,y);
-    doc.setFont('helvetica','normal');
-    doc.setTextColor(80,100,120);
-    doc.text('  Marcas destacadas  * BMW \xB7 MINI  * Audi \xB7 Mercedes',M+24,y);
-
-    y+=5;
-    const sumStats=[
-      {v:fN(tot),lbl:'Matric. del per\xEDodo',yoy:_OVD.totYoY},
-      {v:fN(Object.values(_OVD.sv.reduce((acc,[,d])=>{acc.tot=(acc.tot||0)+d.total;return acc},{}).tot||0)),
-       lbl:''},
-    ];
-    // Simple summary line
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(11);
-    doc.setTextColor(20,40,60);
-    const totYoyStr=_OVD.totYoY!=null?'  '+((_OVD.totYoY>=0?'+':'')+_OVD.totYoY.toFixed(1)+'%'):'';
-    doc.text(fN(tot),M,y);
-    if(_OVD.totYoY!=null){
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(_OVD.totYoY>=0?16:210,_OVD.totYoY>=0?140:50,_OVD.totYoY>=0?90:50);
-      doc.text(totYoyStr,M+20,y);
-    }
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(7);
-    doc.setTextColor(80,100,120);
-    doc.text(_OVD.sv.length+' marcas activas',M+44,y);
-
-    y+=6;
-
-    // ══ TABLA RANKING ═════════════════════════════════════════════════════
-    // YTD data
+    // YTD all-months data
     const ytdR=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear);
     const ytdP=applyFiltersBase().filter(r=>r[COL.Y]===_OVD.refYear-1);
     const ytdB={},ytdBP={};
-    const _E=REC.enums;
     ytdR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdB[b]=(ytdB[b]||0)+r[COL.N];});
     ytdP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdBP[b]=(ytdBP[b]||0)+r[COL.N];});
     const ytdTot=Object.values(ytdB).reduce((s,v)=>s+v,0);
+    const ytdTotPrev=Object.values(ytdBP).reduce((s,v)=>s+v,0);
+    const ytdTotYoY=ytdTotPrev?(ytdTot-ytdTotPrev)/ytdTotPrev*100:null;
 
-    const tableBody=_OVD.sv.map(([brand,d],i)=>{
-      const share=tot?d.total/tot*100:0;
-      const yD=_OVD.yoy[brand];
-      const yPct=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
-      const ytdN=ytdB[brand]||0, ytdPv=ytdBP[brand]||0;
-      const ytdPct=ytdPv?(ytdN-ytdPv)/ytdPv*100:null;
-      const ytdSh=ytdTot?ytdN/ytdTot*100:0;
-      return [
-        i+1, brand,
-        fN(d.total),
-        yPct==null?'—':(yPct>=0?'+':'')+yPct.toFixed(1)+'%',
-        fP2(share),
-        fN(ytdN),
-        ytdPct==null?'—':(ytdPct>=0?'+':'')+ytdPct.toFixed(1)+'%',
-        fP2(ytdSh),
-      ];
-    });
+    // Fuel-specific YTD brand data
+    function fuelYtdData(fuelName){
+      const bCur={},bPrev={};
+      ytdR.filter(r=>_E.fuel[r[COL.FUEL]]===fuelName).forEach(r=>{const b=_E.marca[r[COL.MARCA]];bCur[b]=(bCur[b]||0)+r[COL.N];});
+      ytdP.filter(r=>_E.fuel[r[COL.FUEL]]===fuelName).forEach(r=>{const b=_E.marca[r[COL.MARCA]];bPrev[b]=(bPrev[b]||0)+r[COL.N];});
+      const tot=Object.values(bCur).reduce((s,v)=>s+v,0);
+      const totPrev=Object.values(bPrev).reduce((s,v)=>s+v,0);
+      return{bCur,bPrev,tot,yoy:totPrev?(tot-totPrev)/totPrev*100:null};
+    }
+    // Fuel-specific period YoY per brand (commonM aligned)
+    function fuelPeriodYoY(fuelName){
+      const byB={};
+      refRows.filter(r=>commonM.has(r[COL.M])&&_E.fuel[r[COL.FUEL]]===fuelName)
+        .forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!byB[b])byB[b]={ref:0,prev:0};byB[b].ref+=r[COL.N];});
+      if(hasPrev)prevRows.filter(r=>commonM.has(r[COL.M])&&_E.fuel[r[COL.FUEL]]===fuelName)
+        .forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!byB[b])byB[b]={ref:0,prev:0};byB[b].prev+=r[COL.N];});
+      return byB;
+    }
 
-    // Helper: hex color to [r,g,b]
+    // Helpers
     function hexRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 
-    doc.autoTable({
-      head:[
-        ['Pos','Marca',mLabel,'','','Acumulado YTD '+_OVD.refYear,'',''],
-        ['','','Unidades','Var. %','Cuota','Unidades','Var. %','Cuota'],
-      ],
-      body:tableBody,
-      startY:y,
-      margin:{left:M,right:M},
-      styles:{
-        fontSize:7.5,cellPadding:[2,2.5],
-        textColor:[30,50,70],lineColor:[215,225,235],lineWidth:.2,
-        font:'helvetica',overflow:'linebreak',
-      },
-      headStyles:{
-        fillColor:[13,27,42],textColor:[170,205,240],
-        fontStyle:'bold',fontSize:7,cellPadding:[2,2.5],
-      },
-      alternateRowStyles:{fillColor:[245,248,252]},
-      columnStyles:{
-        0:{cellWidth:10,halign:'center',textColor:[150,165,180],fontStyle:'normal'},
-        1:{cellWidth:40,fontStyle:'bold'},
-        2:{halign:'right',cellWidth:20},
-        3:{halign:'right',cellWidth:16},
-        4:{halign:'right',cellWidth:16},
-        5:{halign:'right',cellWidth:20},
-        6:{halign:'right',cellWidth:16},
-        7:{halign:'right',cellWidth:16},
-      },
-      didParseCell(data){
-        if(data.section==='body'){
-          const brand=data.row.raw[1];
-          if(brand==='BMW'||brand==='MINI')
-            data.cell.styles.fillColor=[255,242,215];
-          const v=String(data.cell.raw);
-          if(data.column.index>=2){
-            if(v.startsWith('+')&&v.endsWith('%'))
-              data.cell.styles.textColor=[15,130,85];
-            else if(v.startsWith('-')&&v.endsWith('%'))
-              data.cell.styles.textColor=[200,50,50];
+    function tableBody(sv,totN,byYoY,ytdBrand,ytdBrandPrev,ytdTotN){
+      return sv.map(([brand,d],i)=>{
+        const share=totN?d.total/totN*100:0;
+        const yD=byYoY[brand];
+        const yPct=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
+        const ytdN=ytdBrand[brand]||0,ytdPv=ytdBrandPrev[brand]||0;
+        const ytdPct=ytdPv?(ytdN-ytdPv)/ytdPv*100:null;
+        const ytdSh=ytdTotN?ytdN/ytdTotN*100:0;
+        return[
+          i+1,brand,
+          fN(d.total),
+          yPct==null?'—':(yPct>=0?'+':'')+yPct.toFixed(1)+'%',
+          fP2(share),
+          fN(ytdN),
+          ytdPct==null?'—':(ytdPct>=0?'+':'')+ytdPct.toFixed(1)+'%',
+          fP2(ytdSh),
+        ];
+      });
+    }
+
+    function drawTable(sv,totN,byYoY,ytdBrand,ytdBrandPrev,ytdTotN,startY){
+      const body=tableBody(sv,totN,byYoY,ytdBrand,ytdBrandPrev,ytdTotN);
+      doc.autoTable({
+        head:[
+          ['Pos','Marca',mLabel,'','','Acumulado YTD '+_OVD.refYear,'',''],
+          ['','','Unidades','Var. %','Cuota','Unidades','Var. %','Cuota'],
+        ],
+        body,startY,
+        margin:{left:M,right:M},
+        styles:{
+          fontSize:7.5,
+          cellPadding:{top:2.2,right:2.5,bottom:2.2,left:2.5},
+          textColor:[30,45,65],
+          lineColor:[225,232,240],lineWidth:0.15,
+          font:'helvetica',overflow:'linebreak',
+        },
+        headStyles:{
+          fillColor:[30,100,200],textColor:[255,255,255],
+          fontStyle:'bold',fontSize:7,
+          cellPadding:{top:2.5,right:2.5,bottom:2.5,left:2.5},
+        },
+        alternateRowStyles:{fillColor:[246,249,253]},
+        columnStyles:{
+          0:{cellWidth:9,halign:'right',textColor:[155,168,182],fontStyle:'normal',fontSize:7},
+          1:{cellWidth:44,fontStyle:'bold',cellPadding:{top:2.2,right:2.5,bottom:2.2,left:9}},
+          2:{halign:'right',cellWidth:20},
+          3:{halign:'right',cellWidth:16},
+          4:{halign:'right',cellWidth:14,textColor:[130,145,160]},
+          5:{halign:'right',cellWidth:20},
+          6:{halign:'right',cellWidth:16},
+          7:{halign:'right',cellWidth:14,textColor:[130,145,160]},
+        },
+        didParseCell(data){
+          if(data.section==='body'){
+            const v=String(data.cell.raw);
+            if(data.column.index===3||data.column.index===6){
+              if(v.startsWith('+'))data.cell.styles.textColor=[15,130,80];
+              else if(v.startsWith('-'))data.cell.styles.textColor=[200,45,45];
+              else data.cell.styles.textColor=[120,130,145];
+              data.cell.styles.fontStyle='bold';
+            }
           }
+          if(data.section==='head'&&data.row.index===0){
+            if([3,4,6,7].includes(data.column.index))
+              data.cell.styles.textColor=[30,100,200];// same as bg → hidden
+          }
+        },
+        didDrawCell(data){
+          if(data.section==='body'&&data.column.index===1){
+            const brand=data.row.raw[1];
+            const col=_brandColor(brand);
+            const[r,g,b]=hexRGB(col);
+            doc.setFillColor(r,g,b);
+            const cx=data.cell.x+4;
+            const cy=data.cell.y+data.cell.height/2;
+            doc.circle(cx,cy,1.5,'F');
+            // Left accent stripe for BMW/MINI (gold) and Audi/Mercedes (blue)
+            if(brand==='BMW'||brand==='MINI'){
+              doc.setDrawColor(200,160,30);doc.setLineWidth(1.5);
+              doc.line(data.cell.x+0.4,data.cell.y+0.5,data.cell.x+0.4,data.cell.y+data.cell.height-0.5);
+            }else if(brand==='Audi'||brand==='Mercedes'){
+              doc.setDrawColor(30,100,200);doc.setLineWidth(1.5);
+              doc.line(data.cell.x+0.4,data.cell.y+0.5,data.cell.x+0.4,data.cell.y+data.cell.height-0.5);
+            }
+          }
+        },
+        didDrawPage(){
+          const pg=doc.internal.getCurrentPageInfo().pageNumber;
+          doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+          doc.setTextColor(170,180,195);doc.setDrawColor(220,226,234);doc.setLineWidth(0.2);
+          doc.line(M,289,W-M,289);
+          doc.text('DGT Matriculaciones \xB7 '+mLabel,M,293);
+          doc.text('P\xE1g. '+pg,W-M,293,{align:'right'});
+        },
+      });
+    }
+
+    function addSection(title,sv,totN,byYoY,ytdBrand,ytdBrandPrev,ytdTotN,yoyPeriod,ytdYoY){
+      doc.addPage();
+      // Top-right stats block (3 columns)
+      const sx=M, sy=14;
+      const cols=[
+        {v:fN(totN),lbl:'Matric. del mes',yoy:yoyPeriod},
+        {v:fN(ytdTotN),lbl:'Acumulado YTD',yoy:ytdYoY},
+        {v:String(sv.length),lbl:'Marcas activas',yoy:null},
+      ];
+      const sw=42;
+      cols.forEach((c,i)=>{
+        const cx=sx+i*sw;
+        doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(20,30,45);
+        doc.text(c.v,cx,sy);
+        doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(110,125,140);
+        doc.text(c.lbl,cx,sy+5);
+        if(c.yoy!=null){
+          const pos=c.yoy>=0;
+          doc.setFont('helvetica','bold');doc.setFontSize(7);
+          doc.setTextColor(pos?15:200,pos?130:45,pos?80:45);
+          doc.text((pos?'+':'')+c.yoy.toFixed(1)+'%',cx,sy+11);
         }
-        // head row 0: merge period columns visually
-        if(data.section==='head'&&data.row.index===0){
-          if(data.column.index===3||data.column.index===4)
-            data.cell.styles.textColor=[13,27,42]; // hide filler
-          if(data.column.index===6||data.column.index===7)
-            data.cell.styles.textColor=[13,27,42];
-        }
-      },
-      didDrawCell(data){
-        // Draw colored dot next to brand name
-        if(data.section==='body'&&data.column.index===1){
-          const brand=data.row.raw[1];
-          const col=_brandColor(brand);
-          const [r,g,b]=hexRGB(col);
-          doc.setFillColor(r,g,b);
-          doc.roundedRect(data.cell.x+2,data.cell.y+data.cell.height/2-1.8,3.5,3.5,0.8,0.8,'F');
-        }
-      },
-      didDrawPage(data){
-        // Footer
-        const pg=doc.internal.getCurrentPageInfo().pageNumber;
-        doc.setFontSize(6.5);
-        doc.setFont('helvetica','normal');
-        doc.setTextColor(160,175,190);
-        doc.setDrawColor(220,225,230);
-        doc.line(M,289,W-M,289);
-        doc.text('DGT Matriculaciones \xB7 '+mLabel,M,293);
-        doc.text('P\xE1g. '+pg,W-M,293,{align:'right'});
+      });
+      // Section title with blue underline
+      const ty=sy+20;
+      doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,30,45);
+      doc.text(title,M,ty);
+      doc.setDrawColor(30,100,200);doc.setLineWidth(0.7);
+      doc.line(M,ty+2,W-M,ty+2);
+      // "Marcas destacadas" hint
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(110,125,140);
+      doc.text('Marcas destacadas  BMW \xB7 MINI  Audi \xB7 Mercedes',M,ty+8);
+
+      drawTable(sv,totN,byYoY,ytdBrand,ytdBrandPrev,ytdTotN,ty+12);
+    }
+
+    // ══ PAGE 1: COVER (white) ══════════════════════════════════════════════
+    // Eyebrow
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(120,130,145);
+    doc.text('INFORME INTERNO \xB7 PARQUE AUTOMOTOR ESPA\xD1A',M,95);
+    // Main title
+    doc.setFont('helvetica','bold');doc.setFontSize(26);doc.setTextColor(20,30,45);
+    doc.text('Ranking de marcas',M,108);
+    // Blue subtitle
+    doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(30,100,200);
+    doc.text('Matriculaciones \xB7 '+mLabel,M,120);
+    // Description
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(90,105,122);
+    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,130,{maxWidth:CW});
+    // Separator
+    doc.setDrawColor(218,224,232);doc.setLineWidth(0.3);doc.line(M,136,W-M,136);
+    // 4 KPI boxes
+    const kpis=[
+      {n:fN(tot),     lbl:'Mercado Total',              yoy:_OVD.totYoY},
+      {n:fN(fT.BEV),  lbl:'BEV \xB7 El\xE9ctricos',        yoy:fYY.BEV},
+      {n:fN(fT.PHEV), lbl:'PHEV \xB7 H\xEDbridos enchufables',yoy:fYY.PHEV},
+      {n:fN(fT.ICE),  lbl:'ICE \xB7 Combusti\xF3n',         yoy:fYY.ICE},
+    ];
+    const bw=(CW-9)/4;
+    kpis.forEach((k,i)=>{
+      const bx=M+i*(bw+3),by=143;
+      doc.setDrawColor(210,218,228);doc.setLineWidth(0.25);doc.setFillColor(255,255,255);
+      doc.roundedRect(bx,by,bw,28,1,1,'FD');
+      doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(20,30,45);
+      doc.text(k.n,bx+4,by+9);
+      doc.setFont('helvetica','normal');doc.setFontSize(6.8);doc.setTextColor(110,125,140);
+      doc.text(k.lbl,bx+4,by+15);
+      if(k.yoy!=null){
+        const pos=k.yoy>=0;
+        doc.setFont('helvetica','bold');doc.setFontSize(7.5);
+        doc.setTextColor(pos?15:200,pos?130:45,pos?80:45);
+        doc.text((pos?'+':'')+k.yoy.toFixed(1)+'% interanual',bx+4,by+23);
       }
     });
+    // Footer disclaimer
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(145,158,172);
+    doc.text('Elaborado a partir de datos de matriculaciones totales de turismos y todoterrenos (Passenger Cars + 4x4). Los s\xEDmbolos de marca son marcadores de color propios de este informe, no logotipos oficiales.',M,264,{maxWidth:CW});
+    doc.text('Generado autom\xE1ticamente el '+nowStr+'.',M,270);
+
+    // ══ SECTION: MERCADO TOTAL ════════════════════════════════════════════
+    addSection('Mercado Total',_OVD.sv,tot,_OVD.yoy,ytdB,ytdBP,ytdTot,_OVD.totYoY,ytdTotYoY);
+
+    // ══ SECTION: BEV ══════════════════════════════════════════════════════
+    const bevSv=_OVD.sv.map(([b,d])=>[b,{total:d.BEV}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(bevSv.length){
+      const byd=fuelYtdData('BEV');
+      const bevYoY=fuelPeriodYoY('BEV');
+      addSection('BEV \xB7 El\xE9ctricos',bevSv,fT.BEV,bevYoY,byd.bCur,byd.bPrev,byd.tot,fYY.BEV,byd.yoy);
+    }
+
+    // ══ SECTION: PHEV ═════════════════════════════════════════════════════
+    const phevSv=_OVD.sv.map(([b,d])=>[b,{total:d.PHEV}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(phevSv.length){
+      const phyd=fuelYtdData('PHEV');
+      const phevYoY=fuelPeriodYoY('PHEV');
+      addSection('PHEV \xB7 H\xEDbridos enchufables',phevSv,fT.PHEV,phevYoY,phyd.bCur,phyd.bPrev,phyd.tot,fYY.PHEV,phyd.yoy);
+    }
+
+    // ══ SECTION: ICE ══════════════════════════════════════════════════════
+    const iceSv=_OVD.sv.map(([b,d])=>[b,{total:d.ICE}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(iceSv.length){
+      const icyd=fuelYtdData('ICE');
+      const iceYoY=fuelPeriodYoY('ICE');
+      addSection('ICE \xB7 Combusti\xF3n',iceSv,fT.ICE,iceYoY,icyd.bCur,icyd.bPrev,icyd.tot,fYY.ICE,icyd.yoy);
+    }
 
     const fname='Informe_Matriculaciones_'+mths.map(m=>MES3[m-1]).join('-')+'_'+_OVD.refYear+'.pdf';
     doc.save(fname);
-  }catch(err){
-    console.error('PDF error:',err);
-    alert('Error generando PDF: '+err.message);
-  }
-}
-
-// Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
-function fcNum(s){
-  const v=parseFloat(String(s||'').replace(/[.\s\u00a0]/g,'').replace(',','.'));
-  return isFinite(v)?v:0;
-}
-function fcSetRacM(marca,val){
-  const v=fcNum(val);
-  if(!String(val).trim()||v<0)delete FCS.ovRacM[marca];else FCS.ovRacM[marca]=v;
-  FCS.rac='inc';
-  fcRefreshRacPills();
-  renderForecast();
-}
-function fcSetYear(marca,val){
-  const v=fcNum(val);
-  if(!String(val).trim()||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
-  renderForecast();
-}
-
-// ── UI CONTROLS ──────────────────────────────────────────
-function toggleSg(id){g(id).classList.toggle('open')}
-
-function toggleModelRows(btn,brand){
-  const tr=btn.closest('tr');
-  const wasOpen=btn.classList.contains('open');
-  // Remove existing sub-rows
-  let nx=tr.nextElementSibling;
-  while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
-  btn.classList.toggle('open',!wasOpen);
-  if(wasOpen)return;
-  const E=REC.enums;
-  const mIdx=E.marca.indexOf(brand);
-  const {rows,prevRows,refYear,commonM}=_RC;
-  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
-  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
-  // Aggregate ref counts per model
-  const byMo={};
-  brandRows.forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    if(!byMo[mo])byMo[mo]={total:0,ref:0};
-    byMo[mo].total+=r[COL.N];
-    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
-  });
-  // Prev counts per model
-  const byMoPrev={};
-  prevRows.filter(r=>r[COL.MARCA]===mIdx&&commonM.has(r[COL.M])).forEach(r=>{
-    const mo=E.modelo[r[COL.MODELO]]||'(sin modelo)';
-    byMoPrev[mo]=(byMoPrev[mo]||0)+r[COL.N];
-  });
-  const sorted=Object.entries(byMo).sort((a,b)=>b[1].total-a[1].total);
-  let ins=tr;
-  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
-  sorted.forEach(([mo,d])=>{
-    const moLabel=(brand==='BMW'&&_BMW_I[mo])||mo;
-    const prev=byMoPrev[mo]||0;
-    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
-    const yDelta=prev?d.ref-prev:null;
-    const share=brandTotal?d.total/brandTotal*100:0;
-    const sub=document.createElement('tr');
-    sub.className='model-sub';
-    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
-      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
-      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
-      <td>${fP2(share)}</td>`;
-    ins.after(sub);ins=sub;
-  });
-}
-
-function showTab(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  g('pane-'+name).classList.add('on');
-  g('tbtn-'+name).classList.add('on');
-  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
-  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
-  // instante y el recalculo llega un frame despues.
-  setTimeout(()=>{
-    if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
-    if(name==='trend'&&TREND)renderTrend();
-    if(name==='forecast'&&FC)renderForecast();
-    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
-  },40);
-}
-
-function resetFilters(){
-  const E=REC.enums;
-  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
-  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
-  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
-  F.fuels=new Set(E.fuel.map((_,i)=>i));
-  F.canales=new Set(E.canal.map((_,i)=>i));
-  F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
-  F.oem=new Set(['CHINESE','REST']);
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  F.hps.clear();
-  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
-  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
-  render();
-}
-</script>
-</body>
-</html>
+ 
