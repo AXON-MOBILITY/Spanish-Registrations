@@ -1009,6 +1009,7 @@ function addQuickSel(containerId, allFn, noneFn){
 function buildSidebar(){
   const E=REC.enums;
   const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
+  const defaultYears=new Set(allYears.includes(2026)?[2026]:[allYears[allYears.length-1]]);
 
   // YEARS
   addQuickSel('sb-years',
@@ -1016,14 +1017,15 @@ function buildSidebar(){
     ()=>{ F.years.clear(); g('sb-years').querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-years',0,allYears.length); render(); }
   );
   allYears.forEach(y=>{
-    F.years.add(y);
-    g('sb-years').appendChild(mkCb(String(y),true,on=>{
+    if(defaultYears.has(y))F.years.add(y);
+    g('sb-years').appendChild(mkCb(String(y),defaultYears.has(y),on=>{
       if(on)F.years.add(y);else F.years.delete(y);
       updateCount('cnt-years',F.years.size,allYears.length);
       render();
     }));
   });
 
+  updateCount('cnt-years',F.years.size,allYears.length);
   // MONTHS
   addQuickSel('sb-months',
     ()=>{ for(let m=1;m<=12;m++)F.months.add(m); g('sb-months').querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-months',12,12); render(); },
@@ -3091,9 +3093,13 @@ function showTab(name){
 
 function resetFilters(){
   const E=REC.enums;
+  const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
+  const defaultYears=new Set(allYears.includes(2026)?[2026]:[allYears[allYears.length-1]]);
   document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('#sb-years input[type=checkbox]').forEach(cb=>cb.checked=defaultYears.has(parseInt(cb.value,10)));
   document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
-  F.years=new Set([...new Set(REC.rows.map(r=>r[COL.Y]))]);
+  F.years=defaultYears;
+  updateCount('cnt-years',F.years.size,allYears.length);
   F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
   F.fuels=new Set(E.fuel.map((_,i)=>i));
   F.canales=new Set(E.canal.map((_,i)=>i));
