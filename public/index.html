@@ -2173,8 +2173,6 @@ function trendBaseRows(){
   const bIdx=F.body?E.body.indexOf(F.body):-1;
   return REC.rows.filter(r=>{
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
-    if(!F.years.has(r[COL.Y]))return false;
-    if(!F.months.has(r[COL.M]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
@@ -2316,10 +2314,7 @@ function renderTrend(){
   });
   let fm=g('tr-from-m').value,tm=g('tr-to-m').value;
   if(fm>tm){const x=fm;fm=tm;tm=x;g('tr-from-m').value=fm;g('tr-to-m').value=tm;}
-  const perM=TR.months.filter(pd=>{
-    const y=parseInt(pd.slice(0,4),10),m=parseInt(pd.slice(5,7),10);
-    return pd>=fm&&pd<=tm&&F.years.has(y)&&F.months.has(m);
-  });
+  const perM=TR.months.filter(pd=>pd>=fm&&pd<=tm);
   const labM=perM.map(pd=>MES3[parseInt(pd.slice(5),10)-1]+'-'+pd.slice(2,4));
   // Market aggregate series (monthly)
   const mktSeriesM=[];
@@ -2406,10 +2401,7 @@ function renderTrend(){
   };
   let fd=g('tr-from-d').value,td=g('tr-to-d').value;
   if(fd>td){const x=fd;fd=td;td=x;g('tr-from-d').value=fd;g('tr-to-d').value=td;}
-  const perD=TR.days.filter(pd=>{
-    const y=parseInt(pd.slice(0,4),10),m=parseInt(pd.slice(5,7),10);
-    return pd>=fd&&pd<=td&&F.years.has(y)&&F.months.has(m);
-  });
+  const perD=TR.days.filter(pd=>pd>=fd&&pd<=td);
   // Market aggregate series (daily)
   const mktSeriesD=[];
   if(TR.mkt&&TR.mkt.size>0){
@@ -2442,20 +2434,22 @@ function renderTrend(){
   trDrawLine('ch-trend-d',perD.map(x=>x.slice(8)+'/'+x.slice(5,7)),[...mktSeriesD,...trSeries(selectedBrands,perD,(m,pd)=>dVal(m,pd))]);
 
   // Compute market-level totM/cnM for KPI cards + pct chart (no F.marca/seg/hp filter)
-  // allTotM/allCnM include prior years for YOY lookups even when F.years excludes them
+  // allTotM/allCnM include all years for YOY lookups; totM/cnM scoped to Trend fm/tm range
+  const _fyear=parseInt(fm.slice(0,4),10),_tyear=parseInt(tm.slice(0,4),10);
+  const _trYears=new Set();
+  for(let _y=_fyear;_y<=_tyear;_y++)_trYears.add(_y);
   const totM={},cnM={},allTotM={},allCnM={};
   REC.rows.forEach(r=>{
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return;
     if(!F.fuels.has(r[COL.FUEL]))return;
     if(!F.canales.has(r[COL.CANAL]))return;
     if(!trendSubOk(r))return;
-    if(!F.months.has(r[COL.M]))return;
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
     const n=r[COL.N];
     const isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);
     allTotM[k]=(allTotM[k]||0)+n;
     if(isCN)allCnM[k]=(allCnM[k]||0)+n;
-    if(F.years.has(r[COL.Y])){
+    if(_trYears.has(r[COL.Y])){
       totM[k]=(totM[k]||0)+n;
       if(isCN)cnM[k]=(cnM[k]||0)+n;
     }
