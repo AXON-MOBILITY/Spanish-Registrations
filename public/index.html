@@ -2332,8 +2332,6 @@ function initTrend(){
   const defM=TR.months[Math.max(0,TR.months.length-18)];
   trFillRange('tr-from-m','tr-to-m',TR.months,defM);
   trFillRange('tr-from-d','tr-to-d',TR.days,null);
-  const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
-  g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
   initTrendSubFilters();
   // Market aggregate pills
   if(g('tr-mkt-TOTAL'))return; // already initialised — don't duplicate pills
@@ -3657,3 +3655,4 @@ function renderAlerts(){
 </script>
 </body>
 </html>
+                                                                                                                                                                          
