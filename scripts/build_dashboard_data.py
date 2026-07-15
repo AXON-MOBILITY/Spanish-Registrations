@@ -881,7 +881,7 @@ def build_pending_classification(monthly_records, mtd_records):
                   if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
          "uds_12m": vol12[b]}
         for b in vol12
-        if first_seen[b] >= horizon and vol12[b] >= 10
+        if first_seen[b] >= horizon and vol12[b] >= 1
     ), key=lambda x: -x["uds_12m"])
 
     pend = defaultdict(int)
@@ -930,7 +930,7 @@ def build_pending_classification(monthly_records, mtd_records):
                   if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
          "uds_12m": vol12[b]}
         for b in vol12
-        if first_seen[b] >= horizon and vol12[b] >= 10
+        if first_seen[b] >= horizon and vol12[b] >= 1
     ), key=lambda x: -x["uds_12m"])
 
     pend = defaultdict(int)
