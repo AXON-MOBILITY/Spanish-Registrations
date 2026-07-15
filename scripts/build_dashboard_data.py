@@ -75,6 +75,23 @@ _BRAND_NORM = {
     'VOLKSWAGEN V W': 'Volkswagen', 'VOLKSWAGEN-AUTOVERO': 'Volkswagen',
 }
 
+# ── Marcas ya clasificadas conscientemente ────────────────────────────────────
+# Espejo de _CHINESE_BRANDS + _BRAND_CONCEPT de index.html, más marcas conocidas.
+# Cuando clasifiques una marca nueva, añádela aquí → deja de aparecer en el panel.
+_EXTRA_CLASSIFIED = {
+    # Marcas chinas (espejo de _CHINESE_BRANDS en index.html)
+    'Aion', 'Arcfox', 'Baic', 'Baojun', 'Baw', 'BydDidi', 'Byvin',
+    'Changan', 'Chery', 'Dayun', 'Dongfeng', 'Ebro', 'Exlantix',
+    'Faw', 'Foton Motor', 'Funky Cat', 'Geely', 'Great Wall', 'Huanghai',
+    'JAC', 'Jaecoo', 'Jetour', 'Jiyue', 'JMC', 'Leapmotor',
+    'Li', 'Livan', 'Neta', 'NIO', 'Qiantu', 'Tiger', 'Tiggo', 'VGV',
+    'Xpeng', 'Zeekr',
+    # Focus Segment / otras marcas conocidas no cubiertas por _BRAND_NORM
+    'Genesis', 'Bugatti', 'Donkervoort', 'Lucid Motors', 'Lancia',
+    'BAW', 'Wuling',
+}
+_KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
+
 def _normalize_brand(raw):
     s = (raw or '').strip()
     canon = _BRAND_NORM.get(s.upper())
@@ -881,7 +898,7 @@ def build_pending_classification(monthly_records, mtd_records):
                   if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
          "uds_12m": vol12[b]}
         for b in vol12
-        if first_seen[b] >= horizon and vol12[b] >= 1
+        if first_seen[b] >= horizon and vol12[b] >= 1 and b not in _KNOWN_CLASSIFIED
     ), key=lambda x: -x["uds_12m"])
 
     pend = defaultdict(int)
@@ -930,7 +947,7 @@ def build_pending_classification(monthly_records, mtd_records):
                   if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
          "uds_12m": vol12[b]}
         for b in vol12
-        if first_seen[b] >= horizon and vol12[b] >= 1
+        if first_seen[b] >= horizon and vol12[b] >= 1 and b not in _KNOWN_CLASSIFIED
     ), key=lambda x: -x["uds_12m"])
 
     pend = defaultdict(int)
@@ -1230,23 +1247,4 @@ def main():
 
     for fname, obj in [
         ("records.json",   records_obj),
-        ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
-        ("provinces.json", provinces_obj),
-        ("province_brands.json", ranking_obj),
-        ("daily_brands.json", daily_brands_obj),
-        ("pending_classification.json", build_pending_classification(monthly_records, mtd_records)),
-        ("forecast.json", forecast_obj),
-    ]:
-        p = out_dir / fname
-        p.write_text(json.dumps(obj, ensure_ascii=False, separators=(",",":")), encoding="utf-8")
-        n_items = len(obj.get("rows", obj.get("days", obj.get("provinces", []))))
-        print(f"  {fname}: {p.stat().st_size/1024:.0f} KB  ({n_items} rows/items)")
-
-    meta = build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data, scope_info)
-    p    = out_dir / "meta.json"
-    p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"  meta.json")
-    print(f"OK — {meta['total_registrations_historical']:,} matriculas en {meta['completed_months']} meses")
-
-if __name__ == "__main__":
-    main()
+        ("daily_mtd.json",
