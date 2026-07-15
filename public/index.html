@@ -334,6 +334,51 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 /* ── RANKING VISUAL ───────────────────── */
 .rank-body{padding:6px 0}
+
+/* ── ALERTS TAB ─────────────────────────────────────────────────────────── */
+.alrt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.alrt-date{font-size:.78rem;color:var(--text2);font-weight:500}
+.alrt-empty{color:var(--text2);font-size:.9rem;padding:32px 0;text-align:center}
+.alrt-grid{display:grid;gap:10px}
+.alrt-card{background:var(--card);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;transition:box-shadow .2s}
+.alrt-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.12)}
+.alrt-card-top{display:flex;align-items:center;gap:10px;padding:10px 14px 8px}
+.alrt-sev{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.alrt-sev.red{background:#ef4444}
+.alrt-sev.amber{background:#f59e0b}
+.alrt-sev.info{background:#3b82f6}
+.alrt-brand{font-weight:700;font-size:.95rem;flex:1}
+.alrt-badge{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.03em}
+.alrt-badge.spike{background:#fef2f2;color:#ef4444}
+.alrt-badge.drop{background:#eff6ff;color:#3b82f6}
+.alrt-badge.info{background:#f0fdf4;color:#10b981}
+.alrt-pct{font-size:.9rem;font-weight:700;margin-left:6px}
+.alrt-pct.pos{color:#ef4444}
+.alrt-pct.neg{color:#3b82f6}
+.alrt-summary{font-size:.78rem;color:var(--text2);padding:0 14px 8px;margin-top:-2px}
+.alrt-body{padding:0 14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.alrt-section{background:var(--bg);border-radius:7px;padding:8px 10px}
+.alrt-section-title{font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--text2);margin-bottom:5px}
+.alrt-rows{display:flex;flex-direction:column;gap:3px}
+.alrt-row{display:grid;grid-template-columns:80px 44px 44px 58px;
+  align-items:center;gap:4px;font-size:.76rem}
+.alrt-row-lbl{color:var(--text2);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alrt-row-val{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.alrt-row-avg{text-align:right;font-variant-numeric:tabular-nums;color:var(--text2)}
+.alrt-row-dev{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:.72rem;border-radius:4px;padding:1px 4px}
+.alrt-row-dev.hi{background:#fef2f2;color:#ef4444}
+.alrt-row-dev.lo{background:#eff6ff;color:#3b82f6}
+.alrt-row-dev.ok{color:var(--text2)}
+.alrt-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.alrt-filter-lbl{font-size:.75rem;color:var(--text2);font-weight:600}
+.alrt-pill{font-size:.73rem;font-weight:600;padding:3px 10px;border-radius:20px;
+  border:1px solid var(--border);cursor:pointer;background:transparent;
+  color:var(--text2);transition:all .15s}
+.alrt-pill.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+@media(max-width:600px){.alrt-body{grid-template-columns:1fr}.alrt-row{grid-template-columns:70px 38px 38px 50px}}
+
 .rank-row{display:grid;grid-template-columns:30px 42px 160px minmax(60px,1fr) 72px 80px 60px 78px;
   align-items:center;gap:8px;padding:5px 12px;border-radius:6px;cursor:default}
 .rank-row:hover{background:rgba(0,0,0,.04)}
@@ -432,6 +477,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Channel &amp; Monthly</button>
     <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provinces</button>
     <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
+    <button class="tab-btn" id="tbtn-alerts" onclick="showTab('alerts')">Alerts</button>
     <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
   </div>
   <div class="tb-right">
@@ -805,6 +851,27 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         <div id="ranking-body"></div>
       </div>
     </div><!-- /pane-ranking -->
+
+
+    <div class="pane" id="pane-alerts">
+      <div class="card" style="padding:14px 16px">
+        <div class="alrt-header">
+          <span style="font-weight:700;font-size:.95rem">Daily Anomaly Alerts · Focus Segment</span>
+          <span class="alrt-date" id="alrt-date-lbl"></span>
+        </div>
+        <div class="alrt-filters">
+          <span class="alrt-filter-lbl">Severity:</span>
+          <button class="alrt-pill on" data-alrt-sev="red" onclick="toggleAlrtPill(this)">🔴 High</button>
+          <button class="alrt-pill on" data-alrt-sev="amber" onclick="toggleAlrtPill(this)">🟡 Medium</button>
+          <button class="alrt-pill on" data-alrt-sev="info" onclick="toggleAlrtPill(this)">🔵 Low</button>
+          <span class="alrt-filter-lbl" style="margin-left:8px">Type:</span>
+          <button class="alrt-pill on" data-alrt-type="spike" onclick="toggleAlrtPill(this)">↑ Spike</button>
+          <button class="alrt-pill on" data-alrt-type="drop" onclick="toggleAlrtPill(this)">↓ Drop</button>
+        </div>
+        <div class="alrt-grid" id="alrt-grid"></div>
+        <div class="alrt-empty hidden" id="alrt-empty">No significant anomalies detected for the latest available day.</div>
+      </div>
+    </div><!-- /pane-alerts -->
 
   </div><!-- /content -->
 </div><!-- /shell -->
@@ -3279,6 +3346,7 @@ function showTab(name){
     if(name==='prov'&&PROV)renderProv();
     if(name==='trend'&&TREND)renderTrend();
     if(name==='forecast'&&FC)renderForecast();
+    if(name==='alerts'&&TREND)renderAlerts();
     if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{},_OVD?_OVD.mth:{},_OVD?_OVD.ytd:{},_OVD?_OVD.rankMaxM:null);
   },40);
 }
@@ -3305,6 +3373,201 @@ function resetFilters(){
   F.marca='';F.modelo='';F.body='';
   render();
 }
+// ── ALERTS ────────────────────────────────────────────────────────────────
+const _ALERT_ACTIVE_SEV=new Set(['red','amber','info']);
+const _ALERT_ACTIVE_TYPE=new Set(['spike','drop']);
+
+function toggleAlrtPill(btn){
+  btn.classList.toggle('on');
+  const sev=btn.dataset.alrtSev,type=btn.dataset.alrtType;
+  if(sev){if(btn.classList.contains('on'))_ALERT_ACTIVE_SEV.add(sev);else _ALERT_ACTIVE_SEV.delete(sev);}
+  if(type){if(btn.classList.contains('on'))_ALERT_ACTIVE_TYPE.add(type);else _ALERT_ACTIVE_TYPE.delete(type);}
+  renderAlerts();
+}
+
+function renderAlerts(){
+  if(!TREND||!TREND.days||!TREND.days.length)return;
+  const days=TREND.days;
+  const canales=TREND.canales||['Private','Corporate','RAC'];
+  const fuels=TREND.fuels||['ICE','BEV','PHEV'];
+
+  // Latest day
+  const latest=days[days.length-1];
+  const latestDate=latest.day;
+  g('alrt-date-lbl').textContent='Latest data: '+latestDate;
+
+  // Focus brands = keys of _BRAND_CONCEPT
+  const focusBrands=Object.keys(_BRAND_CONCEPT);
+
+  // Baseline: all days except latest, min 5 days
+  const hist=days.slice(0,-1);
+  if(hist.length<3){
+    g('alrt-grid').innerHTML='';
+    g('alrt-empty').classList.remove('hidden');
+    g('alrt-empty').textContent='Not enough history to compute baselines (need at least 4 days).';
+    return;
+  }
+
+  const alerts=[];
+
+  focusBrands.forEach(brand=>{
+    const todayArr=latest.brands[brand]||new Array(9).fill(0);
+    const todayTotal=todayArr.reduce((s,v)=>s+v,0);
+
+    // Collect history for this brand (skip days with 0 total — likely weekends/holidays)
+    const histDays=hist.filter(d=>{
+      const v=d.brands[brand];
+      return v&&v.reduce((s,n)=>s+n,0)>0;
+    });
+    if(histDays.length<3&&todayTotal===0)return; // no data at all
+    const hN=histDays.length||1;
+
+    // Average per cell
+    const avgArr=new Array(9).fill(0);
+    histDays.forEach(d=>{
+      const v=d.brands[brand]||new Array(9).fill(0);
+      v.forEach((n,i)=>avgArr[i]+=n);
+    });
+    avgArr.forEach((_,i)=>avgArr[i]=avgArr[i]/hN);
+    const avgTotal=avgArr.reduce((s,v)=>s+v,0);
+
+    // Skip ultra-niche brands with avg < 1.5/day
+    if(avgTotal<1.5&&todayTotal<3)return;
+
+    // Deviation %
+    const devPct=avgTotal>0?(todayTotal-avgTotal)/avgTotal*100:null;
+
+    // Determine severity on total
+    let sev=null,type=null;
+    if(devPct!==null){
+      if(devPct>=200||(devPct<=-65&&avgTotal>=3)){sev='red';type=devPct>0?'spike':'drop';}
+      else if(devPct>=80||(devPct<=-40&&avgTotal>=2)){sev='amber';type=devPct>0?'spike':'drop';}
+      else if(Math.abs(devPct)>=30){sev='info';type=devPct>0?'spike':'drop';}
+    }
+
+    // Per-canal breakdown (sum over fuels)
+    const canalToday=canales.map((_,ci)=>fuels.reduce((s,_,fi)=>s+todayArr[ci*3+fi],0));
+    const canalAvg=canales.map((_,ci)=>fuels.reduce((s,_,fi)=>s+avgArr[ci*3+fi],0));
+    // Per-fuel breakdown (sum over canales)
+    const fuelToday=fuels.map((_,fi)=>canales.reduce((s,_,ci)=>s+todayArr[ci*3+fi],0));
+    const fuelAvg=fuels.map((_,fi)=>canales.reduce((s,_,ci)=>s+avgArr[ci*3+fi],0));
+
+    // Also check if a specific canal has a major spike even if total is ok
+    if(!sev){
+      for(let ci=0;ci<canales.length;ci++){
+        if(canalAvg[ci]>=1.5){
+          const cd=(canalToday[ci]-canalAvg[ci])/canalAvg[ci]*100;
+          if(Math.abs(cd)>=120){sev='amber';type=cd>0?'spike':'drop';break;}
+          if(Math.abs(cd)>=60){sev='info';type=cd>0?'spike':'drop';break;}
+        }
+      }
+    }
+
+    if(!sev)return; // no anomaly
+
+    alerts.push({brand,sev,type,
+      todayTotal,avgTotal,devPct,histN:hN,
+      canalToday,canalAvg,canales,
+      fuelToday,fuelAvg,fuels});
+  });
+
+  // Sort: red first, then amber, then info; within same sev sort by abs(devPct)
+  const sevOrder={red:0,amber:1,info:2};
+  alerts.sort((a,b)=>{
+    if(sevOrder[a.sev]!==sevOrder[b.sev])return sevOrder[a.sev]-sevOrder[b.sev];
+    return Math.abs(b.devPct||0)-Math.abs(a.devPct||0);
+  });
+
+  // Filter by active pills
+  const visible=alerts.filter(a=>_ALERT_ACTIVE_SEV.has(a.sev)&&_ALERT_ACTIVE_TYPE.has(a.type));
+
+  const grid=g('alrt-grid');
+  const empty=g('alrt-empty');
+  if(!visible.length){
+    grid.innerHTML='';
+    empty.classList.remove('hidden');
+    empty.textContent=alerts.length
+      ?'No alerts match the active filters.'
+      :'No significant anomalies detected for '+latestDate+'.';
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const fmtN=n=>n==null?'—':Math.round(n).toLocaleString('es-ES');
+  const fmtDev=v=>v==null?'—':(v>=0?'+':'')+v.toFixed(0)+'%';
+  const devCls=v=>v==null?'ok':v>=40?'hi':v<=-30?'lo':'ok';
+
+  grid.innerHTML=visible.map(a=>{
+    const pctStr=a.devPct!=null?fmtDev(a.devPct):'n/a';
+    const pctCls=a.devPct!=null&&a.devPct>0?'pos':'neg';
+    const badgeCls=a.type==='spike'?'spike':a.type==='drop'?'drop':'info';
+    const badgeTxt=a.type==='spike'?'↑ SPIKE':a.type==='drop'?'↓ DROP':'NOTABLE';
+    const concept=_BRAND_CONCEPT[a.brand]||'';
+    const conceptShort=concept==='TRAD. COMP.'?'Traditional':'New Players';
+
+    // Canal rows
+    const canalRows=a.canales.map((c,ci)=>{
+      const td=a.canalToday[ci],av=a.canalAvg[ci];
+      const dev=av>=0.5?(td-av)/av*100:null;
+      return `<div class="alrt-row">
+        <span class="alrt-row-lbl">${c}</span>
+        <span class="alrt-row-val">${fmtN(td)}</span>
+        <span class="alrt-row-avg">${fmtN(av)}</span>
+        <span class="alrt-row-dev ${devCls(dev)}">${fmtDev(dev)}</span>
+      </div>`;
+    }).join('');
+
+    // Fuel rows
+    const fuelRows=a.fuels.map((f,fi)=>{
+      const td=a.fuelToday[fi],av=a.fuelAvg[fi];
+      const dev=av>=0.5?(td-av)/av*100:null;
+      return `<div class="alrt-row">
+        <span class="alrt-row-lbl">${f}</span>
+        <span class="alrt-row-val">${fmtN(td)}</span>
+        <span class="alrt-row-avg">${fmtN(av)}</span>
+        <span class="alrt-row-dev ${devCls(dev)}">${fmtDev(dev)}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="alrt-card">
+      <div class="alrt-card-top">
+        <div class="alrt-sev ${a.sev}"></div>
+        <span class="alrt-brand">${a.brand}</span>
+        <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
+        <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
+        <span class="alrt-pct ${pctCls}">${pctStr}</span>
+      </div>
+      <div class="alrt-summary">
+        Today: <strong>${fmtN(a.todayTotal)}</strong> units &nbsp;·&nbsp;
+        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> &nbsp;·&nbsp;
+        <span style="color:var(--text2)">excl. zero-reg days</span>
+      </div>
+      <div class="alrt-body">
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Canal</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>
+            ${canalRows}
+          </div>
+        </div>
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Fuel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>
+            ${fuelRows}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 </script>
 </body>
 </html>
