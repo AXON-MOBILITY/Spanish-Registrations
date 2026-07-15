@@ -1985,6 +1985,15 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
         modelo_canon, seg, sub, hp, body, fuel_detail = lookup_enrichment(marca, modelo, line_s)
         if marca == 'BMW' and modelo_canon in _BMW_IMODEL_FIX:
             modelo_canon = _BMW_IMODEL_FIX[modelo_canon]
+        # Fallback: si no hay canon, usar modelo DGT crudo (sin sufijo VIN)
+        if not modelo_canon and modelo:
+            _parts = modelo.strip().split()
+            _clean = []
+            for _p in _parts:
+                if len(_p) >= 7 and sum(c.isdigit() for c in _p) >= 2:
+                    break
+                _clean.append(_p)
+            modelo_canon = ' '.join(_clean) if _clean else (_parts[0] if _parts else '')
         if not fuel_detail:
             fuel_detail = get_fuel_detail_from_dgt(line_s)
         hp = classify_high_performance(marca, modelo, hp)
