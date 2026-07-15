@@ -1247,4 +1247,23 @@ def main():
 
     for fname, obj in [
         ("records.json",   records_obj),
-        ("daily_mtd.json",
+        ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
+        ("provinces.json", provinces_obj),
+        ("province_brands.json", ranking_obj),
+        ("daily_brands.json", daily_brands_obj),
+        ("pending_classification.json", build_pending_classification(monthly_records, mtd_records)),
+        ("forecast.json", forecast_obj),
+    ]:
+        p = out_dir / fname
+        p.write_text(json.dumps(obj, ensure_ascii=False, separators=(",",":")), encoding="utf-8")
+        n_items = len(obj.get("rows", obj.get("days", obj.get("provinces", []))))
+        print(f"  {fname}: {p.stat().st_size/1024:.0f} KB  ({n_items} rows/items)")
+
+    meta = build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data, scope_info)
+    p    = out_dir / "meta.json"
+    p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"  meta.json")
+    print(f"OK - {meta['total_registrations_historical']:,} matriculas en {meta['completed_months']} meses")
+
+if __name__ == "__main__":
+    main()
