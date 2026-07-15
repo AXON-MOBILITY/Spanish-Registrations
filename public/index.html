@@ -2546,13 +2546,13 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
   if(TR.pctMode==='SHARE'){
     labels=perM.map(pd=>MES3[parseInt(pd.slice(5),10)-1]+'-'+pd.slice(2,4));
     const shareData=perM.map(pd=>{
-      const t=totM[pd]||0;
-      return t>0?+((cnM[pd]||0)/t*100).toFixed(2):null;
+      const t=allTotM[pd]||0;
+      return t>0?+((allCnM[pd]||0)/t*100).toFixed(2):null;
     });
-    // Prior-year reference line (same months -1 year)
+    // Rest-of-market line
     const restData=perM.map(pd=>{
-      const t=totM[pd]||0;
-      return t>0?+((t-(cnM[pd]||0))/t*100).toFixed(2):null;
+      const t=allTotM[pd]||0;
+      return t>0?+((t-(allCnM[pd]||0))/t*100).toFixed(2):null;
     });
     datasets=[
       {label:'Chinese Brands %',data:shareData,borderColor:'#f97316',backgroundColor:'#f9731633',
@@ -2576,17 +2576,17 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
       return pre>0?+((cur-pre)/pre*100).toFixed(1):null;
     };
     const nonCnM={};
-    perM.forEach(pd=>{nonCnM[pd]=Math.max(0,(totM[pd]||0)-(cnM[pd]||0));});
+    perM.forEach(pd=>{nonCnM[pd]=Math.max(0,(allTotM[pd]||0)-(allCnM[pd]||0));});
     const nonAllM={};
     perM.forEach(pd=>{nonAllM[pd]=Math.max(0,(_allT[pd]||0)-(_allC[pd]||0));});
     datasets=[
-      {label:'Total Market YoY%',data:yoyM.map(pd=>yoyCalc(totM,pd)),
+      {label:'Total Market YoY%',data:yoyM.map(pd=>yoyCalc(allTotM,allTotM,pd)),
        borderColor:'#e2e8f0',backgroundColor:'#e2e8f022',borderWidth:2,
        pointRadius:yoyM.length>60?0:3,tension:.25,fill:false},
-      {label:'Chinese Brands YoY%',data:yoyM.map(pd=>yoyCalc(cnM,_allC,pd)),
+      {label:'Chinese Brands YoY%',data:yoyM.map(pd=>yoyCalc(allCnM,allCnM,pd)),
        borderColor:'#f97316',backgroundColor:'#f9731622',borderWidth:2,
        pointRadius:yoyM.length>60?0:3,tension:.25,fill:false},
-      {label:'Non-Chinese YoY%',data:yoyM.map(pd=>yoyCalc(nonCnM,nonAllM,pd)),
+      {label:'Non-Chinese YoY%',data:yoyM.map(pd=>yoyCalc(nonCnM,nonCnM,pd)),
        borderColor:'#60a5fa',backgroundColor:'#60a5fa11',borderWidth:1.5,
        pointRadius:0,tension:.25,fill:false}
     ];
