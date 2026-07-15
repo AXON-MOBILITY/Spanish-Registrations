@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Axon Mobility — Spanish Registrations</title>
+<title>Axon Mobility &mdash; Spanish Registrations</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -49,6 +49,12 @@ body{display:flex;flex-direction:column;overflow:hidden}
   border-right:1px solid var(--border);height:100%;
 }
 .app-brand-img{height:38px;width:auto;display:block;object-fit:contain}
+.axon-lockup{display:flex;align-items:center;gap:9px}
+.axon-mark{width:34px;height:34px;flex-shrink:0;display:block}
+.axon-word{display:flex;flex-direction:column;gap:1px;line-height:1}
+.axon-name{font-size:.92rem;font-weight:800;letter-spacing:-.03em;color:#0f172a}
+.axon-name span{font-weight:800;color:#1d4ed8}
+.axon-tag{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#475569}
 .tb-tabs{display:flex;align-items:flex-end;height:100%;padding:0 6px;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tab-btn{
   padding:0 16px;height:100%;border:none;background:transparent;
@@ -318,6 +324,11 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 }
 .login-logo{display:flex;align-items:center;justify-content:center;width:100%}
 .login-brand-img{width:min(250px,80vw);height:auto;display:block;object-fit:contain}
+.login-logo .axon-lockup{flex-direction:column;gap:12px}
+.login-logo .axon-mark{width:58px;height:58px}
+.login-logo .axon-word{align-items:center}
+.login-logo .axon-name{font-size:1.35rem}
+.login-logo .axon-tag{font-size:.62rem;color:#475569}
 .login-title{font-size:.85rem;color:var(--txt2);letter-spacing:.04em;text-transform:uppercase}
 .login-input{
   width:100%;padding:10px 14px;border-radius:8px;
@@ -481,29 +492,28 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo" style="flex-direction:column;gap:12px;margin-bottom:4px">
-      <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:52px;height:52px;flex-shrink:0">
-        <defs>
-          <linearGradient id="axg" x1="70" y1="60" x2="180" y2="185" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#6366f1"/>
-          </linearGradient>
-          <filter id="axglow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <rect x="12" y="12" width="232" height="232" rx="52" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
-        <circle cx="128" cy="128" r="74" stroke="#2a2a3a" stroke-width="9"/>
-        <path d="M128 54 A74 74 0 0 1 202 128" stroke="url(#axg)" stroke-width="10" stroke-linecap="round" filter="url(#axglow)"/>
-        <path d="M128 202 A74 74 0 0 1 54 128" stroke="#3b82f6" stroke-opacity=".65" stroke-width="10" stroke-linecap="round"/>
-        <path d="M84 144 L164 82 L139 169 L124 129 L84 144Z" fill="url(#axg)" filter="url(#axglow)"/>
-        <circle cx="128" cy="54" r="8" fill="#3b82f6"/>
-        <circle cx="202" cy="128" r="8" fill="#38bdf8"/>
-        <circle cx="128" cy="202" r="8" fill="#6b7280"/>
-        <circle cx="54" cy="128" r="8" fill="#6b7280"/>
-      </svg>
-      <div style="text-align:center">
-        <div style="font-size:1.3rem;font-weight:800;letter-spacing:-0.04em;background:linear-gradient(135deg,#e8e8f0 40%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AXON <span style="font-weight:300">Mobility</span></div>
-        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280;margin-top:3px">Automotive Market Intelligence</div>
+    <div class="login-logo">
+      <div class="axon-lockup" aria-label="Axon Mobility">
+        <svg class="axon-mark" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="axonLoginGradient" x1="70" y1="60" x2="180" y2="185" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#6366f1"/>
+            </linearGradient>
+          </defs>
+          <rect x="12" y="12" width="232" height="232" rx="52" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
+          <circle cx="128" cy="128" r="74" stroke="#2a2a3a" stroke-width="9"/>
+          <path d="M128 54 A74 74 0 0 1 202 128" stroke="url(#axonLoginGradient)" stroke-width="10" stroke-linecap="round"/>
+          <path d="M128 202 A74 74 0 0 1 54 128" stroke="#3b82f6" stroke-opacity=".7" stroke-width="10" stroke-linecap="round"/>
+          <path d="M84 144 L164 82 L139 169 L124 129 L84 144Z" fill="url(#axonLoginGradient)"/>
+          <circle cx="128" cy="54" r="8" fill="#3b82f6"/>
+          <circle cx="202" cy="128" r="8" fill="#38bdf8"/>
+          <circle cx="128" cy="202" r="8" fill="#64748b"/>
+          <circle cx="54" cy="128" r="8" fill="#64748b"/>
+        </svg>
+        <div class="axon-word">
+          <div class="axon-name">AXON <span>Mobility</span></div>
+          <div class="axon-tag">Automotive Market Intelligence</div>
+        </div>
       </div>
     </div>
     <div class="login-title">Acceso restringido</div>
@@ -516,29 +526,28 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="tb-logo" style="display:flex;align-items:center;gap:10px">
-    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:34px;height:34px;flex-shrink:0">
-    <defs>
-      <linearGradient id="axgh" x1="70" y1="60" x2="180" y2="185" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#6366f1"/>
-      </linearGradient>
-      <filter id="axglowh" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-    </defs>
-    <rect x="12" y="12" width="232" height="232" rx="52" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
-    <circle cx="128" cy="128" r="74" stroke="#2a2a3a" stroke-width="9"/>
-    <path d="M128 54 A74 74 0 0 1 202 128" stroke="url(#axgh)" stroke-width="10" stroke-linecap="round" filter="url(#axglowh)"/>
-    <path d="M128 202 A74 74 0 0 1 54 128" stroke="#3b82f6" stroke-opacity=".65" stroke-width="10" stroke-linecap="round"/>
-    <path d="M84 144 L164 82 L139 169 L124 129 L84 144Z" fill="url(#axgh)" filter="url(#axglowh)"/>
-    <circle cx="128" cy="54" r="8" fill="#3b82f6"/>
-    <circle cx="202" cy="128" r="8" fill="#38bdf8"/>
-    <circle cx="128" cy="202" r="8" fill="#6b7280"/>
-    <circle cx="54" cy="128" r="8" fill="#6b7280"/>
-  </svg>
-    <div style="display:flex;flex-direction:column;gap:1px">
-      <div style="font-size:.9rem;font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,#e8e8f0 40%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">AXON <span style="font-weight:300">Mobility</span></div>
-      <div style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#6b7280">Market Intelligence</div>
+  <div class="tb-logo">
+    <div class="axon-lockup" aria-label="Axon Mobility">
+      <svg class="axon-mark" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="axonHeaderGradient" x1="70" y1="60" x2="180" y2="185" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#6366f1"/>
+          </linearGradient>
+        </defs>
+        <rect x="12" y="12" width="232" height="232" rx="52" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
+        <circle cx="128" cy="128" r="74" stroke="#2a2a3a" stroke-width="9"/>
+        <path d="M128 54 A74 74 0 0 1 202 128" stroke="url(#axonHeaderGradient)" stroke-width="10" stroke-linecap="round"/>
+        <path d="M128 202 A74 74 0 0 1 54 128" stroke="#3b82f6" stroke-opacity=".7" stroke-width="10" stroke-linecap="round"/>
+        <path d="M84 144 L164 82 L139 169 L124 129 L84 144Z" fill="url(#axonHeaderGradient)"/>
+        <circle cx="128" cy="54" r="8" fill="#3b82f6"/>
+        <circle cx="202" cy="128" r="8" fill="#38bdf8"/>
+        <circle cx="128" cy="202" r="8" fill="#64748b"/>
+        <circle cx="54" cy="128" r="8" fill="#64748b"/>
+      </svg>
+      <div class="axon-word">
+        <div class="axon-name">AXON <span>Mobility</span></div>
+        <div class="axon-tag">Market Intelligence</div>
+      </div>
     </div>
   </div>
   <div class="tb-tabs">
@@ -3523,7 +3532,7 @@ function renderNewBrandsPanel(){
   const rows=brands.map((b,i)=>{
     const since=b.desde||'';
     const units=(b.uds_12m||0).toLocaleString('es-ES');
-    const models=(b.models&&b.models.length)?b.models:(modelByBrand[b.marca]||[]);
+    const models=((b.models&&b.models.length)?b.models:(modelByBrand[b.marca]||[])).filter(m=>m.modelo&&m.modelo!=='(sin modelo)');
     const hasModels=models.length;
     const modelRows=hasModels?models.map(m=>
       `<div style="display:grid;grid-template-columns:1fr 60px;padding:3px 0 3px 16px;gap:8px">
@@ -3544,7 +3553,7 @@ function renderNewBrandsPanel(){
   }).join('');
   el.innerHTML=`<div class="card" style="padding:12px 16px;margin-bottom:12px;border-left:4px solid #f59e0b">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <span style="font-size:1rem">\u26a0\ufe0f</span>
+      <span style="font-size:1rem">⚠️</span>
       <span style="font-weight:700;font-size:.9rem">Unclassified new brands</span>
     </div>
     <div style="display:grid;grid-template-columns:24px 1fr 80px 90px;gap:8px;padding:0 0 4px;border-bottom:2px solid var(--border);margin-bottom:2px">
@@ -3556,7 +3565,6 @@ function renderNewBrandsPanel(){
     ${rows}
   </div>`;
 }
-
 function renderAlertsBrief(days,canales,fuels){
   const el=g('alrt-brief');
   if(!el||!REC)return;
@@ -3759,4 +3767,47 @@ function renderAlerts(){
         <span class="alrt-row-dev ${devCls(dev)}">${fmtDev(dev)}</span>
       </div>`;
     }).join('');
-    return `<div class="alrt-
+    return `<div class="alrt-card">
+      <div class="alrt-card-top">
+        <div class="alrt-sev ${a.sev}"></div>
+        ${_logoHtml}
+        <span class="alrt-brand">${a.brand}</span>
+        <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
+        ${streakHtml}
+        <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
+        <span class="alrt-pct ${pctCls}">${pctStr}</span>
+      </div>
+      <div class="alrt-summary">
+        Today: <strong>${fmtN(a.todayTotal)}</strong> ·
+        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> ·
+        <span style="color:var(--text2)">excl. zero-reg days</span>
+      </div>
+      ${racFlagHtml}
+      <div class="alrt-body">
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Channel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>${canalRows}
+          </div>
+        </div>
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Fuel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>${fuelRows}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+</script>
+</body>
+</html>
+
