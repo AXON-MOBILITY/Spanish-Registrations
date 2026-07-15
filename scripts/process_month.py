@@ -2543,6 +2543,10 @@ if __name__ == '__main__':
         _end = '{:04d}{:02d}'.format(_now.year, _now.month)
         for yyyymm in all_months(end=_end):
             download_and_process(yyyymm, keep_raw=keep, force=force)
+        # Los meses sin fichero mensual publicado (MTD) se construyen desde diarios.
+        # En un rebuild completo tambien hay que regenerarlos para propagar nuevas
+        # dimensiones como segmento/subsegmento/HP a dgt_prov_daily_*.
+        sync_daily_current(keep_raw=keep, force=force)
     elif arg == 'monthly-2026':
         sync_monthly_2026(keep_raw=keep, force=force)
     elif arg == 'daily-current':
