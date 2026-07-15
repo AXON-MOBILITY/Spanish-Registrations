@@ -390,7 +390,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       if(err) err.textContent='';
       return false;
     }
-    if(err) err.textContent='Contraseña incorrecta';
+    if(err) err.textContent='Wrong password';
     if(input){input.value=''; input.focus();}
     return false;
   };
@@ -813,20 +813,22 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 // ── AUTH ──────────────────────────────────────────
 (function(){
   const KEY='dgt_auth_v2', PWD='BMW2026';
-  localStorage.removeItem('dgt_auth_v1');
-  if(sessionStorage.getItem(KEY)===PWD){
-    document.getElementById('login-screen').classList.add('hidden');
-  }
+  try{localStorage.removeItem('dgt_auth_v1');}catch(e){}
+  try{
+    if(sessionStorage.getItem(KEY)===PWD){
+      document.getElementById('login-screen').classList.add('hidden');
+    }
+  }catch(e){}
 })();
 function doLogin(){
   const val=document.getElementById('login-pw').value;
   const err=document.getElementById('login-err');
   if(val==='BMW2026'){
-    sessionStorage.setItem('dgt_auth_v2','BMW2026');
+    try{sessionStorage.setItem('dgt_auth_v2','BMW2026');}catch(e){}
     document.getElementById('login-screen').classList.add('hidden');
     err.textContent='';
   } else {
-    err.textContent='Contraseña incorrecta';
+    err.textContent='Wrong password';
     document.getElementById('login-pw').value='';
     document.getElementById('login-pw').focus();
   }
