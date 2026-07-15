@@ -930,55 +930,6 @@ def build_pending_classification(monthly_records, mtd_records):
         "how_to": "Decidir y anadir fila en masters/master_clasificacion_manual.csv (brand,model,seg,sub,hp,body,fuel_detail); el siguiente run la aplica.",
     }
 
-def build_pending_classification(monthly_records, mtd_records):
-    """pending_classification.json — cola diaria de revision manual.
-
-    1. Marcas nuevas: primera aparicion en los ultimos 6 meses y volumen >=50.
-    2. Modelos sin clasificar: sin segmento, >=50 uds en el anyo en curso.
-    Las decisiones se persisten en masters/master_clasificacion_manual.csv.
-    """
-    rows = list(monthly_records) + list(mtd_records)
-    if not rows:
-        return {"new_brands": [], "unclassified_models": []}
-    last = max((r["y"], r["m"]) for r in rows)
-    cur_year = last[0]
-    horizon = (last[0] * 12 + last[1]) - 6
-
-    first_seen = {}
-    vol12 = defaultdict(int)
-    for r in rows:
-        b = r["marca"]
-        ym = r["y"] * 12 + r["m"]
-        if b not in first_seen or ym < first_seen[b]:
-            first_seen[b] = ym
-        if ym > (last[0] * 12 + last[1]) - 12:
-            vol12[b] += r["n"]
-    new_brands = sorted((
-        {"marca": b,
-         "desde": f"{first_seen[b] // 12}-{(first_seen[b] % 12) or 12:02d}"
-                  if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
-         "uds_12m": vol12[b]}
-        for b in vol12
-        if first_seen[b] >= horizon and vol12[b] >= 1 and b not in _KNOWN_CLASSIFIED
-    ), key=lambda x: -x["uds_12m"])
-
-    pend = defaultdict(int)
-    for r in rows:
-        if r["y"] == cur_year and not (r["seg"] or "").strip():
-            pend[(r["marca"], r["modelo"] or "(sin modelo)")] += r["n"]
-    unclassified = sorted((
-        {"marca": m, "modelo": mo, "uds": n}
-        for (m, mo), n in pend.items() if n >= 50
-    ), key=lambda x: -x["uds"])
-
-    return {
-        "generated": date.today().isoformat(),
-        "year": cur_year,
-        "new_brands": new_brands,
-        "unclassified_models": unclassified[:200],
-        "how_to": "Decidir y anadir fila en masters/master_clasificacion_manual.csv (brand,model,seg,sub,hp,body,fuel_detail); el siguiente run la aplica.",
-    }
-
 def build_forecast(monthly_records, mtd_records, daily_brands_obj):
     """forecast.json — motor del modelo predictivo (ver docs/MODELO_PREDICTIVO.md).
 

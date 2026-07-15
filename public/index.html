@@ -3470,11 +3470,18 @@ function renderNewBrandsPanel(){
   if(!el)return;
   if(!window.PEND||!window.PEND.new_brands||!window.PEND.new_brands.length){el.innerHTML='';return;}
   const brands=window.PEND.new_brands;
+  const modelByBrand={};
+  (window.PEND.unclassified_models||[]).forEach(m=>{
+    const b=m.marca||'';
+    if(!modelByBrand[b])modelByBrand[b]=[];
+    modelByBrand[b].push({modelo:m.modelo,uds:m.uds});
+  });
   const rows=brands.map((b,i)=>{
     const since=b.desde||'';
     const units=(b.uds_12m||0).toLocaleString('es-ES');
-    const hasModels=b.models&&b.models.length;
-    const modelRows=hasModels?b.models.map(m=>
+    const models=(b.models&&b.models.length)?b.models:(modelByBrand[b.marca]||[]);
+    const hasModels=models.length;
+    const modelRows=hasModels?models.map(m=>
       `<div style="display:grid;grid-template-columns:1fr 60px;padding:3px 0 3px 16px;gap:8px">
         <span style="font-size:.78rem;color:var(--text2)">${m.modelo}</span>
         <span style="font-size:.78rem;color:var(--text2);text-align:right">${m.uds} uds</span>
