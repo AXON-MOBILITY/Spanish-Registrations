@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Raw DGT downloads / vendor files
+*.zip
+*.ZIP
+export_mat_*.txt
+export_mensual_mat_*.txt
+MAS_VEHMAT_*.*
+data/raw/
+
+# Large paid/source datasets kept local (validación Simmix)
+BBDD_*_PRODUCTO*.csv
+validation/BBDD_*.csv
+
+# Record-level output (demasiado grande para git — generar localmente)
+BBDD_DGT.csv
+.checkpoint.json
+
+# Local/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,333 @@
+{
+  "status": "computed",
+  "source": "BBDD_2026_PRODUCTO_06_30.csv",
+  "year": 2026,
+  "total_etl": 665955,
+  "total_simmix": 749707,
+  "total_delta": -83752,
+  "total_delta_pct": -11.17,
+  "groups_evaluated": 141,
+  "groups_within_2pct": 74,
+  "worst": [
+    {
+      "marca": "FORD",
+      "canal": "Corporate",
+      "etl": 5387,
+      "simmix": 16023,
+      "delta": -10636,
+      "delta_pct": -66.38
+    },
+    {
+      "marca": "RENAULT",
+      "canal": "Corporate",
+      "etl": 13337,
+      "simmix": 22536,
+      "delta": -9199,
+      "delta_pct": -40.82
+    },
+    {
+      "marca": "PEUGEOT",
+      "canal": "Corporate",
+      "etl": 13900,
+      "simmix": 20508,
+      "delta": -6608,
+      "delta_pct": -32.22
+    },
+    {
+      "marca": "CITROEN",
+      "canal": "Corporate",
+      "etl": 8832,
+      "simmix": 14582,
+      "delta": -5750,
+      "delta_pct": -39.43
+    },
+    {
+      "marca": "TOYOTA",
+      "canal": "Corporate",
+      "etl": 14996,
+      "simmix": 20645,
+      "delta": -5649,
+      "delta_pct": -27.36
+    },
+    {
+      "marca": "VOLKSWAGEN",
+      "canal": "Corporate",
+      "etl": 16572,
+      "simmix": 21554,
+      "delta": -4982,
+      "delta_pct": -23.11
+    },
+    {
+      "marca": "OPEL",
+      "canal": "Corporate",
+      "etl": 6191,
+      "simmix": 9455,
+      "delta": -3264,
+      "delta_pct": -34.52
+    },
+    {
+      "marca": "FORD",
+      "canal": "Private",
+      "etl": 5698,
+      "simmix": 8419,
+      "delta": -2721,
+      "delta_pct": -32.32
+    },
+    {
+      "marca": "FIAT",
+      "canal": "Corporate",
+      "etl": 1783,
+      "simmix": 4138,
+      "delta": -2355,
+      "delta_pct": -56.91
+    },
+    {
+      "marca": "RENAULT",
+      "canal": "Private",
+      "etl": 16643,
+      "simmix": 18955,
+      "delta": -2312,
+      "delta_pct": -12.2
+    },
+    {
+      "marca": "CITROEN",
+      "canal": "RAC",
+      "etl": 6165,
+      "simmix": 8024,
+      "delta": -1859,
+      "delta_pct": -23.17
+    },
+    {
+      "marca": "FORD",
+      "canal": "RAC",
+      "etl": 2973,
+      "simmix": 4753,
+      "delta": -1780,
+      "delta_pct": -37.45
+    },
+    {
+      "marca": "CITROEN",
+      "canal": "Private",
+      "etl": 6587,
+      "simmix": 8298,
+      "delta": -1711,
+      "delta_pct": -20.62
+    },
+    {
+      "marca": "FIAT",
+      "canal": "Private",
+      "etl": 959,
+      "simmix": 2622,
+      "delta": -1663,
+      "delta_pct": -63.42
+    },
+    {
+      "marca": "IVECO",
+      "canal": "Corporate",
+      "etl": 0,
+      "simmix": 1587,
+      "delta": -1587,
+      "delta_pct": -100.0
+    },
+    {
+      "marca": "IVECO",
+      "canal": "RAC",
+      "etl": 0,
+      "simmix": 1512,
+      "delta": -1512,
+      "delta_pct": -100.0
+    },
+    {
+      "marca": "VOLKSWAGEN",
+      "canal": "RAC",
+      "etl": 10179,
+      "simmix": 11559,
+      "delta": -1380,
+      "delta_pct": -11.94
+    },
+    {
+      "marca": "MERCEDES",
+      "canal": "Corporate",
+      "etl": 14027,
+      "simmix": 15406,
+      "delta": -1379,
+      "delta_pct": -8.95
+    },
+    {
+      "marca": "VOLKSWAGEN",
+      "canal": "Private",
+      "etl": 18167,
+      "simmix": 19464,
+      "delta": -1297,
+      "delta_pct": -6.66
+    },
+    {
+      "marca": "FIAT",
+      "canal": "RAC",
+      "etl": 4728,
+      "simmix": 5929,
+      "delta": -1201,
+      "delta_pct": -20.26
+    },
+    {
+      "marca": "MERCEDES-V",
+      "canal": "RAC",
+      "etl": 73,
+      "simmix": 1048,
+      "delta": -975,
+      "delta_pct": -93.03
+    },
+    {
+      "marca": "TOYOTA",
+      "canal": "Private",
+      "etl": 35020,
+      "simmix": 35927,
+      "delta": -907,
+      "delta_pct": -2.52
+    },
+    {
+      "marca": "NISSAN",
+      "canal": "Corporate",
+      "etl": 6811,
+      "simmix": 7696,
+      "delta": -885,
+      "delta_pct": -11.5
+    },
+    {
+      "marca": "PEUGEOT",
+      "canal": "Private",
+      "etl": 7911,
+      "simmix": 8775,
+      "delta": -864,
+      "delta_pct": -9.85
+    },
+    {
+      "marca": "RENAULT",
+      "canal": "RAC",
+      "etl": 9053,
+      "simmix": 9890,
+      "delta": -837,
+      "delta_pct": -8.46
+    },
+    {
+      "marca": "MERCEDES-V",
+      "canal": "Corporate",
+      "etl": 86,
+      "simmix": 894,
+      "delta": -808,
+      "delta_pct": -90.38
+    },
+    {
+      "marca": "OPEL",
+      "canal": "RAC",
+      "etl": 8429,
+      "simmix": 9222,
+      "delta": -793,
+      "delta_pct": -8.6
+    },
+    {
+      "marca": "PEUGEOT",
+      "canal": "RAC",
+      "etl": 15094,
+      "simmix": 15814,
+      "delta": -720,
+      "delta_pct": -4.55
+    },
+    {
+      "marca": "OPEL",
+      "canal": "Private",
+      "etl": 2624,
+      "simmix": 3294,
+      "delta": -670,
+      "delta_pct": -20.34
+    },
+    {
+      "marca": "SKODA",
+      "canal": "RAC",
+      "etl": 8624,
+      "simmix": 7961,
+      "delta": 663,
+      "delta_pct": 8.33
+    },
+    {
+      "marca": "MAN",
+      "canal": "Corporate",
+      "etl": 2,
+      "simmix": 662,
+      "delta": -660,
+      "delta_pct": -99.7
+    },
+    {
+      "marca": "SEAT",
+      "canal": "Corporate",
+      "etl": 13328,
+      "simmix": 13957,
+      "delta": -629,
+      "delta_pct": -4.51
+    },
+    {
+      "marca": "ISUZU",
+      "canal": "Corporate",
+      "etl": 2,
+      "simmix": 595,
+      "delta": -593,
+      "delta_pct": -99.66
+    },
+    {
+      "marca": "RENAULT TRUCKS",
+      "canal": "Corporate",
+      "etl": 11,
+      "simmix": 567,
+      "delta": -556,
+      "delta_pct": -98.06
+    },
+    {
+      "marca": "MERCEDES",
+      "canal": "RAC",
+      "etl": 9042,
+      "simmix": 9508,
+      "delta": -466,
+      "delta_pct": -4.9
+    },
+    {
+      "marca": "TOYOTA",
+      "canal": "RAC",
+      "etl": 6877,
+      "simmix": 7338,
+      "delta": -461,
+      "delta_pct": -6.28
+    },
+    {
+      "marca": "AUDI",
+      "canal": "Private",
+      "etl": 6303,
+      "simmix": 6722,
+      "delta": -419,
+      "delta_pct": -6.23
+    },
+    {
+      "marca": "SKODA",
+      "canal": "Corporate",
+      "etl": 7939,
+      "simmix": 8357,
+      "delta": -418,
+      "delta_pct": -5.0
+    },
+    {
+      "marca": "MITSUBISHI-FUSO",
+      "canal": "Corporate",
+      "etl": 0,
+      "simmix": 401,
+      "delta": -401,
+      "delta_pct": -100.0
+    },
+    {
+      "marca": "MAXUS",
+      "canal": "Corporate",
+      "etl": 0,
+      "simmix": 396,
+      "delta": -396,
+      "delta_pct": -100.0
+    }
+  ]
+}

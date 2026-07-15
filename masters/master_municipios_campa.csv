@@ -1,0 +1,12 @@
+cod_municipio,municipio,provincia,tipo,marcas,evidencia,fuente_evidencia,empresas_ine_total,canal_dgt
+28093,Navacerrada,Madrid,campa_fabricante,SKODA,136 SKODA RS jan-2025 = Simmix Corp exacto; sep-2025 60 en Navacerrada,Análisis multi-mes DGT vs Simmix,281,Corporate
+28169,Venturada,Madrid,campa_fabricante,TOYOTA|LEXUS|MERCEDES-BENZ,Toyota(33)/Lexus(14)/MB(10) jan → Simmix Corp; RS%=57-92% según mes,Análisis DGT + Simmix enero-oct 2025,268,Corporate
+28022,Boadilla del Monte,Madrid,campa_fabricante,OPEL|PEUGEOT|CITROËN|DS|ALFA ROMEO|RENAULT|JEEP,OPEL 248 RS jan = Simmix Corp; JEEP avg +24/mes RS=total Simmix RAC=0,Análisis multi-mes confirmado,6811,Corporate
+38038,Santa Cruz de Tenerife,Santa Cruz de Tenerife,campa_fabricante,PEUGEOT,RS=31=Corp Simmix exacto; RN=42=RAC Simmix exacto,Análisis enero 2025 exact match,Corporate
+35025,Tejeda,Las Palmas,campa_fabricante,PEUGEOT,RS=24=Corp Simmix exacto; RN=25=RAC Simmix exacto,Análisis enero 2025 exact match,,Corporate
+28006,Alcobendas,Madrid,mixto,MÚLTIPLES,"10.393 empresas; Toyota/Kia/Renault/Hyundai importadores PERO también Europcar y otras. SKODA+RS en feb/mar/oct = empresas renting, NO campa",INE DIRCE + Análisis multi-mes,10393,ambiguo
+28069,La Hiruela,Madrid,depot_alquiler,SUZUKI|FIAT|OPEL|VOLKSWAGEN|ALFA ROMEO|JEEP,"Solo 9 empresas INE; DGT RAC total ≈ Simmix RAC total para cada marca → coches ya contados en Simmix RAC bajo otras ciudades; NO campa fabricante",Análisis multi-mes DGT (5 meses 2025),9,RAC
+28125,Robledo de Chavela,Madrid,depot_alquiler,PEUGEOT,RS=300 = Simmix RAC 300 (gran depósito alquiler Peugeot) → NO campa,Análisis enero 2025,349,RAC
+28090,Moralzarzal,Madrid,depot_alquiler,PEUGEOT,RS=205 = Simmix RAC 205 → NO campa; gran empresa alquiler,Análisis enero 2025,976,RAC
+38017,Granadilla de Abona,Santa Cruz de Tenerife,depot_alquiler,RENAULT|VOLKSWAGEN,"RENAULT DGT_RAC=189 Simmix_RAC=0 → demasiado volumen para ser exceso real; VOLKSWAGEN RS avg +52/mes pero DGT_RAC < Simmix_RAC al nivel marca",Análisis multi-mes,RAC
+28083,Torrelaguna,Madrid,sospechoso,MERCEDES-BENZ,"DGT_RAC=21 RS=21 Simmix_RAC=13 → posible exceso +8; pero volumen pequeño y no confirmado en multi-mes",Análisis enero 2025,pendiente_validar
