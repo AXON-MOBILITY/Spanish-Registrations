@@ -2,12 +2,13 @@ name: DGT weekly refresh (viernes)
 
 # Cada viernes reprocesamos con --force todos los diarios del mes en curso
 # por si la DGT ha corregido ficheros ya publicados.
-# Se ejecuta a las 7:30 UTC, antes de la ventana normal del sync diario.
+# Se ejecuta a las 08:15 UTC (= 09:15 CET invierno / 10:15 CEST verano),
+# siempre después de que la DGT suba los ficheros actualizados.
 
 on:
   workflow_dispatch:   # permite lanzarlo manualmente también
   schedule:
-    - cron: "30 7 * * 5"   # viernes 07:30 UTC
+    - cron: "15 8 * * 5"   # viernes 08:15 UTC → 09:15 España (invierno) / 10:15 (verano)
 
 permissions:
   contents: write
@@ -62,6 +63,4 @@ jobs:
           if git diff --cached --quiet; then
             echo "Sin cambios tras el reprocesado — los ficheros DGT no han variado."
             exit 0
-          fi
-          git commit -m "Weekly refresh: reprocesado diarios mes en curso [skip ci]"
-          git push
+      
