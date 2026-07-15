@@ -334,7 +334,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 /* ── RANKING VISUAL ───────────────────── */
 .rank-body{padding:6px 0}
-.rank-row{display:grid;grid-template-columns:30px 42px 180px minmax(60px,1fr) 86px 66px 82px;
+.rank-row{display:grid;grid-template-columns:30px 42px 160px minmax(60px,1fr) 72px 80px 60px 78px;
   align-items:center;gap:8px;padding:5px 12px;border-radius:6px;cursor:default}
 .rank-row:hover{background:rgba(0,0,0,.04)}
 .rank-bmw{background:rgba(217,119,6,.12)!important}
@@ -349,12 +349,16 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   vertical-align:middle;flex-shrink:0;overflow:hidden;box-sizing:border-box}
 .ov-brand-badge.no-logo{padding:0}
 .rank-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank-bar-wrap{height:7px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
-.rank-bar{height:100%;background:var(--ice);border-radius:4px;transition:width .3s}
-.rank-regs{font-size:.9rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.rank-bars{display:flex;flex-direction:column;gap:3px}
+.rank-bar-wrap{height:6px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
+.rank-bar{height:100%;border-radius:4px;transition:width .4s}
+.rank-bar-mth{background:#3b82f6}
+.rank-bar-ytd{background:rgba(16,185,129,.7)}
+.rank-regs{font-size:.88rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.rank-ytd{font-size:.88rem;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;color:rgba(16,185,129,.9)}
 .rank-cuota{font-size:.78rem;color:var(--text2);text-align:right}
 .rank-var{font-size:.78rem;font-weight:600;text-align:right}
-.rank-hdr-cols{display:grid;grid-template-columns:30px 42px 180px minmax(60px,1fr) 86px 66px 82px;
+.rank-hdr-cols{display:grid;grid-template-columns:30px 42px 160px minmax(60px,1fr) 72px 80px 60px 78px;
   gap:8px;padding:3px 12px 5px;border-bottom:1px solid var(--border);margin-bottom:4px}
 .rank-hdr-cols span{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
 .rank-hdr-cols .rh-r{text-align:right}
@@ -1377,6 +1381,34 @@ function render(){
   const prevM=new Set(prevRows.map(r=>r[COL.M]));
   const commonM=new Set([...refM].filter(m=>prevM.has(m)));
   const hasPrev=prevRows.length>0&&commonM.size>0;
+  // ── Monthly + YTD for ranking dual bars ──
+  const _mIdx=F.marca?E.marca.indexOf(F.marca):-1;
+  const _moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
+  const _bIdx=F.body?E.body.indexOf(F.body):-1;
+  const _allRefYearRows=refYear?REC.rows.filter(r=>{
+    if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
+    if(r[COL.Y]!==refYear)return false;
+    if(!F.fuels.has(r[COL.FUEL]))return false;
+    if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.segs.has(r[COL.SEG]))return false;
+    if(!F.subs.has(r[COL.SUB]))return false;
+    if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
+    if(F.oem.size<2){const _isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);if(_isCN&&!F.oem.has('CHINESE'))return false;if(!_isCN&&!F.oem.has('REST'))return false;}
+    if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
+    if(_mIdx>=0&&r[COL.MARCA]!==_mIdx)return false;
+    if(_moIdx>=0&&r[COL.MODELO]!==_moIdx)return false;
+    if(_bIdx>=0&&r[COL.BODY]!==_bIdx)return false;
+    return true;
+  }):[];
+  const _rankMaxM=_allRefYearRows.length?Math.max(..._allRefYearRows.map(r=>r[COL.M])):null;
+  const byBrandMth={},byBrandYTD={};
+  if(_rankMaxM){
+    _allRefYearRows.forEach(r=>{
+      const _b=E.marca[r[COL.MARCA]];
+      if(r[COL.M]===_rankMaxM)byBrandMth[_b]=(byBrandMth[_b]||0)+r[COL.N];
+      byBrandYTD[_b]=(byBrandYTD[_b]||0)+r[COL.N];
+    });
+  }
   _RC={rows,refRows,prevRows,refYear,prevYear,commonM,hasPrev};
 
   // Aggregate by brand
@@ -1506,7 +1538,7 @@ function render(){
   const _fuelRef={BEV:0,ICE:0,PHEV:0};
   refRows.filter(r=>commonM.has(r[COL.M])).forEach(r=>{const f=E.fuel[r[COL.FUEL]];if(f in _fuelRef)_fuelRef[f]+=r[COL.N];});
   _OVD={
-    sv:sortedVis,total,yoy:byBrandYoY,hasPrev,refYear,fuelTots,
+    sv:sortedVis,total,yoy:byBrandYoY,mth:byBrandMth,ytd:byBrandYTD,rankMaxM:_rankMaxM,hasPrev,refYear,fuelTots,
     fuelYoY:{
       BEV:hasPrev&&_fuelPrev.BEV?(_fuelRef.BEV-_fuelPrev.BEV)/_fuelPrev.BEV*100:null,
       PHEV:hasPrev&&_fuelPrev.PHEV?(_fuelRef.PHEV-_fuelPrev.PHEV)/_fuelPrev.PHEV*100:null,
@@ -1515,7 +1547,7 @@ function render(){
     months:new Set(F.months),
     totYoY:totYoYPct,
   };
-  renderRanking(sortedVis,total,byBrandYoY);
+  renderRanking(sortedVis,total,byBrandYoY,byBrandMth,byBrandYTD,_rankMaxM);
 
   // Charts — top 20
   const top20=sortedVis.slice(0,20);
@@ -2783,35 +2815,46 @@ function renderForecast(){
 }
 
 // ── RANKING VISUAL ──────────────────────────────────────────────────────────
-function renderRanking(sv,tot,yoy){
+function renderRanking(sv,tot,yoy,mth,ytd,maxM){
   const body=g('ranking-body');if(!body)return;
   if(!sv||!sv.length){body.innerHTML='';return;}
-  const maxR=sv[0][1].total||1;
   const note=g('ranking-note');
   if(note)note.textContent=sv.length+' marcas';
+  // Scale each bar independently to its own max
+  const maxMthVal=Math.max(...sv.map(([b])=>(mth&&mth[b])||0),1);
+  const maxYtdVal=Math.max(...sv.map(([b])=>(ytd&&ytd[b])||0),1);
+  const mthLbl=maxM?MES3[maxM-1]:'Month';
+  const ytdLbl=maxM?'Jan–'+MES3[maxM-1]:'YTD';
   const hdr=`<div class="rank-hdr-cols">
-    <span></span><span></span><span>Marca</span>
+    <span></span><span></span><span>Brand</span>
     <span></span>
-    <span class="rh-r">Matr.</span>
-    <span class="rh-r">Cuota</span>
+    <span class="rh-r">${mthLbl}</span>
+    <span class="rh-r">${ytdLbl}</span>
+    <span class="rh-r">Share</span>
     <span class="rh-r">Var.%</span>
   </div>`;
   const rows=sv.map(([brand,d],i)=>{
     const share=tot?d.total/tot*100:0;
     const yD=yoy[brand];
     const yPct=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
-    const barW=Math.round(d.total/maxR*100);
+    const mthVal=(mth&&mth[brand])||0;
+    const ytdVal=(ytd&&ytd[brand])||0;
+    const barMthW=Math.round(mthVal/maxMthVal*100);
+    const barYtdW=Math.round(ytdVal/maxYtdVal*100);
     const col=_brandColor(brand);
     const isBMW=['BMW','MINI'].includes(brand);
     const varStr=yPct===null?'—':(yPct>=0?'▲ +':'▼ ')+Math.abs(yPct).toFixed(1)+'%';
     const varCls=yPct===null?'':(yPct>=0?'pos':'neg');
-    const hasLogo=!!BRAND_LOGO[brand];
     return `<div class="rank-row${isBMW?' rank-bmw':''}">
       <span class="rank-pos">${i+1}</span>
       <span class="${(()=>{const _f=BRAND_LOGO[brand];return BRAND_COLOR_LOGO[_f]?'rank-badge color-logo':_f?'rank-badge white-logo':'rank-badge no-logo'})()}"${!BRAND_LOGO[brand]?` style="background:${col}"`:''}>${_brandLogo(brand)}</span>
       <span class="rank-name" title="${brand}">${brand}</span>
-      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${barW}%"></div></div>
-      <span class="rank-regs">${fN(d.total)}</span>
+      <div class="rank-bars">
+        <div class="rank-bar-wrap" title="${mthLbl}: ${fN(mthVal)}"><div class="rank-bar rank-bar-mth" style="width:${barMthW}%"></div></div>
+        <div class="rank-bar-wrap" title="${ytdLbl}: ${fN(ytdVal)}"><div class="rank-bar rank-bar-ytd" style="width:${barYtdW}%"></div></div>
+      </div>
+      <span class="rank-regs">${fN(mthVal)}</span>
+      <span class="rank-ytd">${fN(ytdVal)}</span>
       <span class="rank-cuota">${fP2(share)}</span>
       <span class="rank-var ${varCls}">${varStr}</span>
     </div>`;
@@ -3249,7 +3292,7 @@ function showTab(name){
     if(name==='prov'&&PROV)renderProv();
     if(name==='trend'&&TREND)renderTrend();
     if(name==='forecast'&&FC)renderForecast();
-    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
+    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{},_OVD?_OVD.mth:{},_OVD?_OVD.ytd:{},_OVD?_OVD.rankMaxM:null);
   },40);
 }
 
