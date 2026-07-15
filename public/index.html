@@ -396,8 +396,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   <div class="tb-tabs">
     <button class="tab-btn on" id="tbtn-overview" onclick="showTab('overview')">Overview</button>
     <button class="tab-btn" id="tbtn-ranking" onclick="showTab('ranking')">Ranking</button>
-    <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Canal &amp; Mensual</button>
-    <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provincias</button>
+    <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Channel &amp; Monthly</button>
+    <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provinces</button>
     <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
     <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
   </div>
@@ -414,18 +414,18 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <!-- BARRA DE FILTROS (fila propia, nunca se solapa) -->
   <div class="tb-filters">
     <div class="tf-grp">
-      <span class="tf-lbl">Marca</span>
-      <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">Todas</option></select>
+      <span class="tf-lbl">Brand</span>
+      <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
     </div>
     <div class="tf-grp">
-      <span class="tf-lbl">Modelo</span>
+      <span class="tf-lbl">Model</span>
       <input id="f-modelo" class="tf-modelo-input" type="text" list="f-modelo-list"
              placeholder="Buscar modelo…" autocomplete="off" oninput="onTopChange()">
       <datalist id="f-modelo-list"></datalist>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Body</span>
-      <select id="f-body" class="tf-sel" onchange="onTopChange()"><option value="">Todos</option></select>
+      <select id="f-body" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">High Perf.</span>
@@ -522,7 +522,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <!-- MS by Fuel -->
         <div class="card">
-          <div class="card-hdr"><span>Market Share by Fuel</span><span class="note">Top 20 marcas</span></div>
+          <div class="card-hdr"><span>Market Share by Fuel</span><span class="note">Top 20 brands</span></div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Brand</th><th>BEV</th><th>ICE</th><th>PHEV</th></tr></thead>
@@ -544,7 +544,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <!-- MS by Channel -->
         <div class="card">
-          <div class="card-hdr"><span>Market Share by Channel</span><span class="note">Top 20 marcas</span></div>
+          <div class="card-hdr"><span>Market Share by Channel</span><span class="note">Top 20 brands</span></div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Brand</th><th>Corp</th><th>Priv</th><th>RAC</th></tr></thead>
@@ -560,7 +560,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <div class="analysis-grid-top">
         <!-- Channel distribution table -->
         <div class="card">
-          <div class="card-hdr">Distribución por Canal</div>
+          <div class="card-hdr">Channel Distribution</div>
           <div class="tbl-wrap wide-wrap">
             <table>
               <thead>
@@ -621,7 +621,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="pane" id="pane-prov">
       <div class="card">
         <div class="card-hdr">
-          <span>Ranking marcas Focus + BYD por provincia &middot; Top 5</span>
+          <span>Focus + BYD Brand Ranking by Province &middot; Top 5</span>
           <span class="rk-ctrls">
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
             <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
@@ -635,7 +635,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         <div class="tbl-wrap2">
           <table id="tbl-prov">
             <thead><tr>
-              <th>Provincia</th><th>Uds</th>
+              <th>Province</th><th>Units</th>
               <th class="r1">1&ordm;</th><th class="r2">2&ordm;</th><th class="r3">3&ordm;</th><th>4&ordm;</th><th>5&ordm;</th>
             </tr></thead>
             <tbody id="tbody-prov"></tbody>
@@ -648,13 +648,13 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="pane" id="pane-trend">
       <div class="card">
         <div class="card-hdr">
-          <span>Tendencia por marca</span>
+          <span>Brand Trend</span>
           <span class="rk-ctrls"><span class="sg-pills" id="tr-mode" style="padding:0"></span></span>
         </div>
         <div class="ch-body" style="display:flex;gap:16px;align-items:flex-start">
           <div style="flex:1;min-width:0">
             <div class="tr-controls">
-              <span class="tf-lbl">Marca</span>
+              <span class="tf-lbl">Brand</span>
               <input id="tr-brand-input" class="tf-modelo-input" list="tr-brand-list"
                      placeholder="A&ntilde;adir marca&hellip;" autocomplete="off"
                      onchange="trAddBrand()">
@@ -662,7 +662,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
               <span id="tr-brands" class="tr-brands" style="margin:0"></span>
             </div>
             <div class="tr-controls" style="margin-top:6px">
-              <span class="tf-lbl">Modelo</span>
+              <span class="tf-lbl">Model</span>
               <input id="tr-model-input" class="tf-modelo-input" list="tr-model-list"
                      placeholder="A&ntilde;adir modelo&hellip;" autocomplete="off"
                      onchange="trAddModel()">
@@ -678,7 +678,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
               <span class="sg-pills" id="tr-focus" style="padding:0"></span>
             </div>
             <div class="tr-controls" style="margin-top:6px">
-              <span class="tf-lbl">Mercado</span>
+              <span class="tf-lbl">Market</span>
               <span class="sg-pills" id="tr-mkt" style="padding:0"></span>
             </div>
           </div>
@@ -698,10 +698,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <span>Mensual &middot; hist&oacute;rico completo</span>
+          <span>Monthly &middot; Full History</span>
           <span class="rk-ctrls">
-            <span class="tf-lbl">Desde</span><select id="tr-from-m" class="tf-sel" onchange="renderTrend()"></select>
-            <span class="tf-lbl">Hasta</span><select id="tr-to-m" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">From</span><select id="tr-from-m" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">To</span><select id="tr-to-m" class="tf-sel" onchange="renderTrend()"></select>
           </span>
         </div>
         <div class="ch-body">
@@ -710,10 +710,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <span>Diario <span class="note" id="tr-note"></span></span>
+          <span>Daily <span class="note" id="tr-note"></span></span>
           <span class="rk-ctrls">
-            <span class="tf-lbl">Desde</span><select id="tr-from-d" class="tf-sel" onchange="renderTrend()"></select>
-            <span class="tf-lbl">Hasta</span><select id="tr-to-d" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">From</span><select id="tr-from-d" class="tf-sel" onchange="renderTrend()"></select>
+            <span class="tf-lbl">To</span><select id="tr-to-d" class="tf-sel" onchange="renderTrend()"></select>
           </span>
         </div>
         <div class="ch-body">
@@ -722,7 +722,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <span id="tr-pct-title">Cuota Chinese Brands (%)</span>
+          <span id="tr-pct-title">Chinese Brands Share (%)</span>
           <span class="rk-ctrls"><span class="sg-pills" id="tr-pct-mode" style="padding:0"></span></span>
         </div>
         <div class="ch-body">
@@ -740,7 +740,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         </div>
         <div class="ch-body">
           <div class="tr-controls">
-            <span class="tf-lbl">Objetivo mercado 2026 (total)</span>
+            <span class="tf-lbl">2026 Market Target (total)</span>
             <input id="fc-target" class="tf-modelo-input" type="text" inputmode="numeric" style="width:105px"
                    placeholder="opcional" oninput="renderForecast()">
           </div>
@@ -750,7 +750,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="card">
         <div class="card-hdr">
-          <span>Mensual por marca: Actuals + Forecast</span>
+          <span>Monthly by Brand: Actuals + Forecast</span>
           <span class="note">RAC mes actual y Ajuste a&ntilde;o total son editables por marca</span>
         </div>
         <div class="tbl-wrap2" style="max-height:calc(100vh - 300px);overflow:auto">
@@ -766,7 +766,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="pane" id="pane-ranking">
       <div class="card">
         <div class="card-hdr">
-          <span>Ranking de Marcas</span>
+          <span>Brand Ranking</span>
           <span class="note" id="ranking-note"></span>
         </div>
         <div id="ranking-body"></div>
@@ -888,8 +888,8 @@ function _brandLogo(brand){
   }
   return `<img src="logos/${encodeURIComponent(f)}.png" alt="${brand}" class="brand-logo-img white-logo" loading="lazy"${st}>`;
 }
-const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const MES3=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MES3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const SEG_ORDER=['UKL0','UKL1','UKL2','KKL','MKL','SKL','GKL','GKL+'];
 
 // Sub-concept mapping for FOCUS SEGMENT brands
@@ -1875,16 +1875,16 @@ function renderProv(){
   const notice=g('prov-filter-notice');
   if(useFiltered){
     const parts=[];
-    if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segmento: '+(ns.length?ns.join(', '):'ninguno'));}
-    if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegmento: '+(ns.length?ns.join(', '):'ninguno'));}
-    if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'ninguno'));}
-    notice.textContent='Filtros activos: '+parts.join(' · ')+'. '+(hasFiltData?'Datos provinciales exactos.':'Datos provinciales pendientes de reprocesar con segmento/subsegmento/HP.');
+    if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segment: '+(ns.length?ns.join(', '):'none'));}
+    if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegment: '+(ns.length?ns.join(', '):'none'));}
+    if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'none'));}
+    notice.textContent='Active filters: '+parts.join(' · ')+'. '+(hasFiltData?'Exact provincial data.':'Provincial data pending reprocessing with segment/subsegment/HP.');
     notice.style.display='';
   } else {
     const noApply=[];
-    if(F.modelo)noApply.push('Modelo');
-    if(F.body)noApply.push('Carrocería');
-    if(noApply.length){notice.textContent='Filtros sin efecto en Provincias: '+noApply.join(', ')+'.';notice.style.display='';}
+    if(F.modelo)noApply.push('Model');
+    if(F.body)noApply.push('Body');
+    if(noApply.length){notice.textContent='Filters with no effect on Provinces: '+noApply.join(', ')+'.';notice.style.display='';}
     else notice.style.display='none';
   }
   // ── Función para obtener marcas desde estructura filt exacta ──
@@ -2178,11 +2178,11 @@ function initTrend(){
   trFillRange('tr-from-m','tr-to-m',TR.months,defM);
   trFillRange('tr-from-d','tr-to-d',TR.days,null);
   const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
-  g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
+  g('tr-note').textContent='DGT only publishes daily data for the current period; available '+d0+' \u2192 '+d1;
   initTrendSubFilters();
   // Market aggregate pills
   if(g('tr-mkt-TOTAL'))return; // already initialised — don't duplicate pills
-  const MKT_OPTS=[['TOTAL','Total Mercado','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
+  const MKT_OPTS=[['TOTAL','Total Market','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
   TR.mkt=new Set();
   MKT_OPTS.forEach(([key,label,color])=>{
     const pill=document.createElement('div');
@@ -2271,7 +2271,7 @@ function renderTrend(){
       else mktMo.REST[k]=(mktMo.REST[k]||0)+n;
     });
     const MKT_C={TOTAL:'#e2e8f0',CHINESE:'#f97316',REST:'#60a5fa'};
-    const MKT_L={TOTAL:'Total Mercado',CHINESE:'Chinese Brands',REST:'Non-Chinese'};
+    const MKT_L={TOTAL:'Total Market',CHINESE:'Chinese Brands',REST:'Non-Chinese'};
     TR.mkt.forEach(key=>{
       let acc=0;
       const data=perM.map(pd=>{
@@ -2351,7 +2351,7 @@ function renderTrend(){
   const mktSeriesD=[];
   if(TR.mkt&&TR.mkt.size>0){
     const MKT_C={TOTAL:'#e2e8f0',CHINESE:'#f97316',REST:'#60a5fa'};
-    const MKT_L={TOTAL:'Total Mercado',CHINESE:'Chinese Brands',REST:'Non-Chinese'};
+    const MKT_L={TOTAL:'Total Market',CHINESE:'Chinese Brands',REST:'Non-Chinese'};
     TR.mkt.forEach(key=>{
       let acc=0;
       const data=perD.map(pd=>{
@@ -2433,7 +2433,7 @@ function renderTrend(){
 
 function initTrendPct(){
   if(g('tr-pct-SHARE'))return;
-  const OPTS=[['SHARE','Cuota %'],['YOY','Crecimiento YoY %']];
+  const OPTS=[['SHARE','Share %'],['YOY','YoY Growth %']];
   TR.pctMode=TR.pctMode||'YOY';
   OPTS.forEach(([key,label])=>{
     const pill=document.createElement('div');
@@ -2444,7 +2444,7 @@ function initTrendPct(){
       TR.pctMode=key;
       g('tr-pct-SHARE').classList.toggle('on',key==='SHARE');
       g('tr-pct-YOY').classList.toggle('on',key==='YOY');
-      g('tr-pct-title').textContent=key==='YOY'?'Crecimiento interanual YoY (%)':'Cuota Chinese Brands (%)';
+      g('tr-pct-title').textContent=key==='YOY'?'YoY Growth (%)':'Chinese Brands Share (%)';
       renderTrendPct();
     };
     g('tr-pct-mode').appendChild(pill);
@@ -2518,7 +2518,7 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
     const nonAllM={};
     perM.forEach(pd=>{nonAllM[pd]=Math.max(0,(_allT[pd]||0)-(_allC[pd]||0));});
     datasets=[
-      {label:'Total Mercado YoY%',data:yoyM.map(pd=>yoyCalc(totM,_allT,pd)),
+      {label:'Total Market YoY%',data:yoyM.map(pd=>yoyCalc(totM,_allT,pd)),
        borderColor:'#e2e8f0',backgroundColor:'#e2e8f022',borderWidth:2,
        pointRadius:yoyM.length>60?0:3,tension:.25,fill:false},
       {label:'Chinese Brands YoY%',data:yoyM.map(pd=>yoyCalc(cnM,_allC,pd)),
@@ -2683,11 +2683,11 @@ function renderForecast(){
   }
 
   // cabecera
-  const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const MESES=MES3;
   const th=g('thead-fc');
-  th.innerHTML='<tr><th>Marca</th>'+MESES.map((m,i)=>
+  th.innerHTML='<tr><th>Brand</th>'+MESES.map((m,i)=>
     `<th class="${i+1<curM?'':'month-hdr'}">${m}</th>`).join('')
-    +'<th>A&ntilde;o</th><th>RAC '+MESES[curM-1]+' (edit)</th><th>Ajuste a&ntilde;o total (edit)</th></tr>';
+    +'<th>Year</th><th>RAC '+MESES[curM-1]+' (edit)</th><th>Year Adj. (edit)</th></tr>';
 
   const tb=g('tbody-fc');tb.innerHTML='';
   const colTot=Array(13).fill(0);let totEx=0,totRac=0;
@@ -3069,4 +3069,8 @@ async function downloadInforme(){
     // Titulo principal
     doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(18,28,44);
     doc.text('Ranking de marcas',M,109);
-    // Subtitulo azul
+    // Subtitulo azul
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(26,96,196);
+    doc.text('Matriculaciones \xB7 '+mLabelPer,M,122);
+    // Descripcion
+    doc.setFont('helvetica','no
