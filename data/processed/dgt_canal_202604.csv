@@ -267,7 +267,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,CHANGAN,DEEPAL S05,Private,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,308
 2026,04,CHANGAN,DEEPAL S07,Corporate,BEV,Electrico,UKL2,REST,Standard,SAV,2
 2026,04,CHANGAN,DEEPAL S07,Private,BEV,Electrico,UKL2,REST,Standard,SAV,23
-2026,04,CHEVROLET,,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,04,CHEVROLET,TRAIBLAZER,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,CITROEN,BERLINGO,Corporate,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,9
 2026,04,CITROEN,BERLINGO,Corporate,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,239
 2026,04,CITROEN,BERLINGO,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,10
@@ -388,7 +388,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,EBRO,S800,RAC,ICE,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,30
 2026,04,EBRO,S900,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,87
 2026,04,EBRO,S900,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,105
-2026,04,EVEASY,,RAC,BEV,Electrico,,REST,Standard,,2
+2026,04,EVEASY,EVEASY,RAC,BEV,Electrico,,REST,Standard,,2
 2026,04,EVO,EVO 4,Corporate,ICE,Gasolina,UKL1,REST,Standard,SAV,12
 2026,04,EVO,EVO 4,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,69
 2026,04,EVO,EVO 4,RAC,ICE,Gasolina,UKL1,REST,Standard,SAV,5
@@ -398,19 +398,19 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,EVO,EVO 6,Private,ICE,Gasolina,UKL2,REST,Standard,SAV,7
 2026,04,EVO,EVO 7,Corporate,ICE,Gasolina,UKL2,REST,Standard,SAV,6
 2026,04,EVO,EVO 7,RAC,ICE,Gasolina,UKL2,REST,Standard,SAV,1
-2026,04,FAW,,Corporate,PHEV,Gasolina/Electrico Enchufable,,REST,Standard,,1
-2026,04,FAW,,Private,ICE,Gasolina,,REST,Standard,,5
+2026,04,FAW,B70,Private,ICE,Gasolina,,REST,Standard,,1
 2026,04,FAW,T77,Corporate,ICE,Gasolina,UKL2,REST,Standard,SAV,4
 2026,04,FAW,T77,Private,ICE,Gasolina,UKL2,REST,Standard,SAV,13
-2026,04,FERRARI,,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,04,FAW,T90,Private,ICE,Gasolina,,REST,Standard,,4
+2026,04,FAW,YUEYI 07 PHEV,Corporate,PHEV,Gasolina/Electrico Enchufable,,REST,Standard,,1
 2026,04,FERRARI,12CILINDRI,Private,ICE,Gasolina,GKL+,FOCUS SEGMENT,Standard,COUPE,1
 2026,04,FERRARI,296,Corporate,PHEV,Gasolina/Electrico Enchufable,GKL+,FOCUS SEGMENT,Standard,COUPE,1
 2026,04,FERRARI,AMALFI,Corporate,ICE,Gasolina,GKL+,FOCUS SEGMENT,Standard,COUPE,2
 2026,04,FERRARI,AMALFI,Private,ICE,Gasolina,GKL+,FOCUS SEGMENT,Standard,COUPE,1
+2026,04,FERRARI,FERRARI F80,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,FERRARI,PUROSANGUE,Corporate,ICE,Gasolina,GKL+,FOCUS SEGMENT,Standard,SAV,1
 2026,04,FERRARI,PUROSANGUE,Private,ICE,Gasolina,GKL+,FOCUS SEGMENT,Standard,SAV,1
 2026,04,FERRARI,ROMA,Private,ICE,Gasolina,GKL+,FOCUS SEGMENT,Standard,COUPE,2
-2026,04,FIAT,,Private,ICE,Diesel,,REST,Standard,,1
 2026,04,FIAT,500,Corporate,BEV,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 3P,9
 2026,04,FIAT,500,Corporate,ICE,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 3P,38
 2026,04,FIAT,500,Private,BEV,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 3P,4
@@ -427,6 +427,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,FIAT,DOBLO CARGO,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,6
 2026,04,FIAT,E-ULYSSE,Corporate,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,13
 2026,04,FIAT,E-ULYSSE,RAC,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,4
+2026,04,FIAT,FIAT PUNTO,Private,ICE,Diesel,,REST,Standard,,1
 2026,04,FIAT,PANDA,Corporate,BEV,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 5P,1
 2026,04,FIAT,PANDA,Corporate,ICE,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 5P,126
 2026,04,FIAT,PANDA,Private,BEV,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 5P,10
@@ -438,12 +439,12 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,FIAT,SCUDO,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,1
 2026,04,FIAT,TIPO,Corporate,ICE,Diesel,UKL2,REST,Standard,HACH 5P,3
 2026,04,FIAT,TIPO,Private,ICE,Diesel,UKL2,REST,Standard,HACH 5P,6
-2026,04,FORD,,Corporate,ICE,Gasolina,,REST,Standard,,2
 2026,04,FORD,BRONCO,Corporate,ICE,Gasolina,MKL,REST,Standard,SUV,7
 2026,04,FORD,BRONCO,Private,ICE,Gasolina,MKL,REST,Standard,SUV,2
 2026,04,FORD,CAPRI,Corporate,BEV,Electrico,UKL1,REST,Standard,SAV,67
 2026,04,FORD,CAPRI,Private,BEV,Electrico,UKL1,REST,Standard,SAV,19
 2026,04,FORD,CAPRI,RAC,BEV,Electrico,UKL1,REST,Standard,SAV,7
+2026,04,FORD,ESCAPE,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,FORD,EXPLORER,Corporate,BEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,PICKUP,25
 2026,04,FORD,EXPLORER,Private,BEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,PICKUP,19
 2026,04,FORD,EXPLORER,RAC,BEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,PICKUP,2
@@ -469,6 +470,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,FORD,PUMA,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,239
 2026,04,FORD,PUMA,RAC,BEV,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,4
 2026,04,FORD,PUMA,RAC,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,427
+2026,04,FORD,TAURUS,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,FORD,TOURNEO,Corporate,BEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,20
 2026,04,FORD,TOURNEO,Corporate,ICE,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,49
 2026,04,FORD,TOURNEO,Corporate,PHEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,46
@@ -488,7 +490,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,GEELY,E5,Private,BEV,Electrico,UKL2,REST,Standard,HACH 5P,6
 2026,04,GEELY,STARRAY,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,45
 2026,04,GEELY,STARRAY,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,55
-2026,04,HONDA,,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,04,HONDA,ACCORD,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,HONDA,CIVIC,Corporate,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,29
 2026,04,HONDA,CIVIC,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,81
 2026,04,HONDA,CR-V,Corporate,ICE,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,9
@@ -503,10 +505,10 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,HONDA,PRELUDE,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,COUPE,4
 2026,04,HONDA,ZR-V,Corporate,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,5
 2026,04,HONDA,ZR-V,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,41
-2026,04,HYUNDAI,,Corporate,ICE,Gasolina,,REST,Standard,,2
 2026,04,HYUNDAI,BAYON,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,55
 2026,04,HYUNDAI,BAYON,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,93
 2026,04,HYUNDAI,BAYON,RAC,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,439
+2026,04,HYUNDAI,ELANTRA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,HYUNDAI,I10,Corporate,ICE,Gasolina,UKL0,REST,Standard,HACH 5P,34
 2026,04,HYUNDAI,I10,Private,ICE,Gasolina,UKL0,REST,Standard,HACH 5P,67
 2026,04,HYUNDAI,I20,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,111
@@ -532,6 +534,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,HYUNDAI,SANTA FE,Corporate,PHEV,Gasolina/Electrico Enchufable,MKL,REST,Standard,SAV,18
 2026,04,HYUNDAI,SANTA FE,Private,ICE,Gasolina/Electrico Enchufable,MKL,REST,Standard,SAV,8
 2026,04,HYUNDAI,SANTA FE,Private,PHEV,Gasolina/Electrico Enchufable,MKL,REST,Standard,SAV,18
+2026,04,HYUNDAI,SONATA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,HYUNDAI,STARIA,Corporate,ICE,Gasolina/Electrico,MKL,REST,Standard,MPV,9
 2026,04,HYUNDAI,STARIA,Private,ICE,Gasolina/Electrico,MKL,REST,Standard,MPV,11
 2026,04,HYUNDAI,STARIA,RAC,ICE,Gasolina/Electrico,MKL,REST,Standard,MPV,30
@@ -544,7 +547,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,ICH-X,K2,RAC,ICE,Diesel,UKL1,REST,Standard,SAV,2
 2026,04,ICH-X,K3,Corporate,ICE,Gas Licuado con petroleo (GLP),UKL2,REST,Standard,SAV,3
 2026,04,INEOS,GRENADIER,Private,ICE,Gasolina,MKL,REST,Standard,PICKUP,2
-2026,04,INFINITI,,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,04,INFINITI,G37,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,ISUZU,D-MAX,Corporate,ICE,Electrico,SKL,REST,Standard,PICKUP,2
 2026,04,JAECOO,JAECOO 5,Corporate,BEV,Gasolina/Electrico,UKL1,REST,Standard,SAV,19
 2026,04,JAECOO,JAECOO 5,Corporate,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,39
@@ -559,12 +562,12 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,JAECOO,JAECOO 7,RAC,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,42
 2026,04,JAECOO,JAECOO 8,Corporate,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,20
 2026,04,JAECOO,JAECOO 8,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,46
-2026,04,JEEP,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,JEEP,AVENGER,Corporate,BEV,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,16
 2026,04,JEEP,AVENGER,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,126
 2026,04,JEEP,AVENGER,Private,BEV,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,22
 2026,04,JEEP,AVENGER,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,119
 2026,04,JEEP,AVENGER,RAC,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,171
+2026,04,JEEP,COMPAS LATITUDE 4X4,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,JEEP,COMPASS,Corporate,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,2
 2026,04,JEEP,COMPASS,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,37
 2026,04,JEEP,COMPASS,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,8
@@ -593,7 +596,6 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,KG MOBILITY,TORRES,Private,BEV,Gasolina/Electrico,UKL2,REST,Standard,SAV,30
 2026,04,KG MOBILITY,TORRES,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,96
 2026,04,KG MOBILITY,TORRES,RAC,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,45
-2026,04,KIA,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,KIA,CEED,Corporate,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,19
 2026,04,KIA,CEED,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,18
 2026,04,KIA,CEED,RAC,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,60
@@ -609,6 +611,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,KIA,EV6,Private,BEV,Electrico,KKL,REST,Standard,SAV,11
 2026,04,KIA,EV9,Corporate,BEV,Electrico,MKL,REST,Standard,MPV,13
 2026,04,KIA,EV9,Private,BEV,Electrico,MKL,REST,Standard,MPV,5
+2026,04,KIA,FORTE,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,KIA,K4,Corporate,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,13
 2026,04,KIA,K4,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,11
 2026,04,KIA,NIRO,Corporate,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,8
@@ -686,13 +689,13 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,LEAPMOTOR,T03,Corporate,BEV,Electrico,UKL0,REST,Standard,HACH 5P,42
 2026,04,LEAPMOTOR,T03,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,94
 2026,04,LEAPMOTOR,T03,RAC,BEV,Electrico,UKL0,REST,Standard,HACH 5P,1
-2026,04,LEXUS,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,LEXUS,ES,Corporate,ICE,Gasolina/Electrico,MKL,FOCUS SEGMENT,Standard,SEDAN,6
 2026,04,LEXUS,ES,Private,ICE,Gasolina/Electrico,MKL,FOCUS SEGMENT,Standard,SEDAN,1
 2026,04,LEXUS,LBX,Corporate,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,77
 2026,04,LEXUS,LBX,Private,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,137
 2026,04,LEXUS,LBX,RAC,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,11
 2026,04,LEXUS,LM,Corporate,ICE,Gasolina/Electrico,MKL,REST,Standard,MPV,1
+2026,04,LEXUS,LX 570,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,LEXUS,NX,Corporate,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,27
 2026,04,LEXUS,NX,Corporate,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,116
 2026,04,LEXUS,NX,Private,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,28
@@ -929,8 +932,8 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,MITSUBISHI,OUTLANDER,Corporate,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,20
 2026,04,MITSUBISHI,OUTLANDER,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,35
 2026,04,MITSUBISHI,OUTLANDER,RAC,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,30
-2026,04,MODELCAR HNOS,,Corporate,ICE,Diesel,,REST,Standard,,1
-2026,04,NISSAN,,Corporate,ICE,Gasolina,,REST,Standard,,5
+2026,04,MODELCAR HNOS,TGE,Corporate,ICE,Diesel,,REST,Standard,,1
+2026,04,NISSAN,ALTIMA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,NISSAN,ARIYA,Corporate,BEV,Electrico,UKL2,REST,Standard,SAV,6
 2026,04,NISSAN,ARIYA,Private,BEV,Electrico,UKL2,REST,Standard,SAV,5
 2026,04,NISSAN,JUKE,Corporate,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,235
@@ -938,15 +941,19 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,NISSAN,JUKE,RAC,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,80
 2026,04,NISSAN,MICRA,Corporate,BEV,Electrico,UKL1,REST,Standard,HACH 5P,7
 2026,04,NISSAN,MICRA,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,49
+2026,04,NISSAN,NISSAZN QASHQAI,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,NISSAN,PRIMASTAR,Corporate,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,1
 2026,04,NISSAN,PRIMASTAR,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,5
 2026,04,NISSAN,QASHQAI,Corporate,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,617
 2026,04,NISSAN,QASHQAI,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,447
 2026,04,NISSAN,QASHQAI,RAC,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,21
+2026,04,NISSAN,ROGUE,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,04,NISSAN,SENTRA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,NISSAN,TOWNSTAR,Corporate,BEV,Gasolina,SKL,REST,Standard,TRANSPORTER,6
 2026,04,NISSAN,TOWNSTAR,Corporate,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,2
 2026,04,NISSAN,TOWNSTAR,Private,BEV,Gasolina,SKL,REST,Standard,TRANSPORTER,1
 2026,04,NISSAN,TOWNSTAR,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,8
+2026,04,NISSAN,VERSA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,NISSAN,X-TRAIL,Corporate,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,136
 2026,04,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,163
 2026,04,NISSAN,X-TRAIL,RAC,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,2
@@ -961,7 +968,6 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,OMODA,OMODA 9,Corporate,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,131
 2026,04,OMODA,OMODA 9,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,182
 2026,04,OMODA,OMODA 9,RAC,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,11
-2026,04,OPEL,,Private,ICE,Gasolina,,REST,Standard,,1
 2026,04,OPEL,ASTRA,Corporate,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,13
 2026,04,OPEL,ASTRA,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,11
 2026,04,OPEL,ASTRA,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,10
@@ -990,6 +996,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,OPEL,GRANDLAND X,Private,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,2
 2026,04,OPEL,GRANDLAND X,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,28
 2026,04,OPEL,GRANDLAND X,RAC,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,12
+2026,04,OPEL,MERIVA,Private,ICE,Gasolina,,REST,Standard,,1
 2026,04,OPEL,MOKKA,Corporate,BEV,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,2
 2026,04,OPEL,MOKKA,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,18
 2026,04,OPEL,MOKKA,Private,BEV,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,3
@@ -1126,7 +1133,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,RENAULT,TWINGO,Corporate,BEV,Electrico,UKL0,REST,Standard,HACH 5P,87
 2026,04,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,6
 2026,04,RENAULT TRUCKS,TRAFIC,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,1
-2026,04,ROLLS-ROYCE,,Private,ICE,Gasolina,,REST,Standard,,1
+2026,04,ROLLS-ROYCE,WRAITH,Private,ICE,Gasolina,,REST,Standard,,1
 2026,04,SEAT,ARONA,Corporate,ICE,Gasolina,UKL1,REST,Standard,SAV,689
 2026,04,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,500
 2026,04,SEAT,ARONA,RAC,ICE,Gasolina,UKL1,REST,Standard,SAV,1023
@@ -1141,14 +1148,15 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,445
 2026,04,SEAT,LEON,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,13
 2026,04,SEAT,LEON,RAC,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,492
-2026,04,SHINERAY,,Corporate,BEV,Electrico,,REST,Standard,,1
 2026,04,SHINERAY,G03F,Corporate,PHEV,Gasolina/Electrico Enchufable,MKL,REST,Standard,SUV,2
 2026,04,SHINERAY,G03F,Private,ICE,Gasolina/Electrico Enchufable,MKL,REST,Standard,SUV,20
 2026,04,SHINERAY,G03F,Private,PHEV,Gasolina/Electrico Enchufable,MKL,REST,Standard,SUV,9
 2026,04,SHINERAY,G05,Private,ICE,Gasolina,MKL,REST,Standard,SAV,9
+2026,04,SHINERAY,N.A.,Corporate,BEV,Electrico,,REST,Standard,,1
 2026,04,SHINERAY,SWM G01,Private,ICE,Gasolina,MKL,REST,Standard,SUV,2
-2026,04,SIN MARCA,,Private,ICE,Diesel,,REST,Standard,,1
-2026,04,SIN MARCA,,Private,ICE,Gasolina,,REST,Standard,,2
+2026,04,SIN MARCA,NUEVO C4X HYBRID 145,Private,ICE,Gasolina,,REST,Standard,,1
+2026,04,SIN MARCA,SCALA,Private,ICE,Gasolina,,REST,Standard,,1
+2026,04,SIN MARCA,SPACETOURER PLUS,Private,ICE,Diesel,,REST,Standard,,1
 2026,04,SKODA,ELROQ,Corporate,BEV,Electrico,UKL2,REST,Standard,SAV,109
 2026,04,SKODA,ELROQ,Private,BEV,Electrico,UKL2,REST,Standard,SAV,145
 2026,04,SKODA,ELROQ,RAC,BEV,Electrico,UKL2,REST,Standard,SAV,26
@@ -1189,11 +1197,11 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,SPORTEQUIPE,SPORTEQUIPE 6,RAC,ICE,Gas Licuado con petroleo (GLP),UKL2,REST,Standard,SAV,30
 2026,04,SPORTEQUIPE,SPORTEQUIPE 7,RAC,ICE,Gas Licuado con petroleo (GLP),KKL,REST,Standard,SAV,20
 2026,04,SPORTEQUIPE,SPORTEQUIPE 8,RAC,ICE,Gas Licuado con petroleo (GLP),UKL2,REST,Standard,SAV,12
-2026,04,SUBARU,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,SUBARU,BRZ,Private,ICE,Gasolina,UKL2,REST,Standard,COUPE,1
 2026,04,SUBARU,FORESTER,Corporate,ICE,Gasolina/Electrico,KKL,REST,Standard,SAV,5
 2026,04,SUBARU,FORESTER,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SAV,16
 2026,04,SUBARU,FORESTER,RAC,ICE,Gasolina/Electrico,KKL,REST,Standard,SAV,1
+2026,04,SUBARU,LEGACY,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,SUBARU,OUTBACK,Corporate,ICE,Gasolina,KKL,REST,Standard,ESTATE,21
 2026,04,SUBARU,OUTBACK,Private,ICE,Gasolina,KKL,REST,Standard,ESTATE,14
 2026,04,SUBARU,OUTBACK,RAC,ICE,Gasolina,KKL,REST,Standard,ESTATE,1
@@ -1266,7 +1274,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,TOYOTA,YARIS CROSS,Corporate,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,486
 2026,04,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,1226
 2026,04,TOYOTA,YARIS CROSS,RAC,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,29
-2026,04,VOLKSWAGEN,,Corporate,ICE,Gasolina,,REST,Standard,,2
+2026,04,VOLKSWAGEN,ATLAS CROSS SPORT,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,VOLKSWAGEN,CADDY,Corporate,ICE,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,15
 2026,04,VOLKSWAGEN,CADDY,Corporate,PHEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,113
 2026,04,VOLKSWAGEN,CADDY,Private,ICE,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,51
@@ -1297,6 +1305,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,VOLKSWAGEN,ID.BUZZ,Corporate,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,62
 2026,04,VOLKSWAGEN,ID.BUZZ,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,29
 2026,04,VOLKSWAGEN,ID.BUZZ,RAC,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,21
+2026,04,VOLKSWAGEN,JETTA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,04,VOLKSWAGEN,MULTIVAN,Corporate,ICE,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,7
 2026,04,VOLKSWAGEN,MULTIVAN,Corporate,PHEV,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,52
 2026,04,VOLKSWAGEN,MULTIVAN,Private,ICE,Gasolina/Electrico Enchufable,SKL,REST,Standard,TRANSPORTER,20
@@ -1369,7 +1378,7 @@ anyo,mes,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
 2026,04,XPENG,G9,Corporate,BEV,Electrico,MKL,FOCUS SEGMENT,Standard,SAV,11
 2026,04,XPENG,G9,Private,BEV,Electrico,MKL,FOCUS SEGMENT,Standard,SAV,4
 2026,04,XPENG,P7,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SEDAN,1
-2026,04,YOOUDOOO,,Corporate,ICE,Gasolina,,REST,Standard,,9
+2026,04,YOOUDOOO,2 PRO,Corporate,ICE,Gasolina,UKL2,REST,Standard,SAV,9
 2026,04,ZEEKR,ZEEKR 1,Corporate,BEV,Electrico,MKL,FOCUS SEGMENT,Standard,SEDAN,2
 2026,04,ZEEKR,ZEEKR X,Corporate,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,1
 2026,04,ZHIDOU,ZHIDOU,Private,BEV,Electrico,,,Standard,,1

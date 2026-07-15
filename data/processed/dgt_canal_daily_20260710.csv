@@ -1,5 +1,5 @@
 anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,count
-2026,07,10,ACURA,,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,07,10,ACURA,ILX,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,07,10,ALFA ROMEO,TONALE,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,1
 2026,07,10,ALPINE,A290,Corporate,BEV,Electrico,UKL1,REST,Standard,HACH 5P,3
 2026,07,10,ALPINE,A290,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,5
@@ -105,7 +105,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,07,10,CHANGAN,DEEPAL S05,Private,BEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,10
 2026,07,10,CHANGAN,DEEPAL S05,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,4
 2026,07,10,CHANGAN,DEEPAL S07,Private,BEV,Electrico,UKL2,REST,Standard,SAV,3
-2026,07,10,CHEVROLET,,Corporate,ICE,Gasolina,,REST,Standard,,1
+2026,07,10,CHEVROLET,SONIC,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,07,10,CITROEN,BERLINGO,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,1
 2026,07,10,CITROEN,BERLINGO,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,8
 2026,07,10,CITROEN,C3,Corporate,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,5
@@ -160,7 +160,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,07,10,EBRO,S900,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,1
 2026,07,10,EBRO,S900,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,5
 2026,07,10,EVO,EVO 4,Corporate,ICE,Gasolina,UKL1,REST,Standard,SAV,1
-2026,07,10,FAW,,Private,ICE,Gasolina,,REST,Standard,,1
+2026,07,10,FAW,B70,Private,ICE,Gasolina,,REST,Standard,,1
 2026,07,10,FAW,T77,Corporate,ICE,Gasolina,UKL2,REST,Standard,SAV,1
 2026,07,10,FIAT,500,Corporate,ICE,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 3P,6
 2026,07,10,FIAT,500,Private,BEV,Gasolina Mild Hybrid,UKL0,REST,Standard,HACH 3P,1
@@ -484,7 +484,7 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,07,10,SEAT,LEON,Corporate,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,11
 2026,07,10,SEAT,LEON,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,1
 2026,07,10,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,20
-2026,07,10,SHINERAY,,Private,BEV,Electrico,,REST,Standard,,1
+2026,07,10,SHINERAY,N.A.,Private,BEV,Electrico,,REST,Standard,,1
 2026,07,10,SKODA,ELROQ,Corporate,BEV,Electrico,UKL2,REST,Standard,SAV,3
 2026,07,10,SKODA,ELROQ,Private,BEV,Electrico,UKL2,REST,Standard,SAV,3
 2026,07,10,SKODA,ENYAQ,Private,BEV,Electrico,UKL2,REST,Standard,SAV,2
@@ -511,8 +511,6 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,07,10,TESLA,MODEL 3,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SEDAN,1
 2026,07,10,TESLA,MODEL Y,Corporate,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,4
 2026,07,10,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,1
-2026,07,10,TOYOTA,,Corporate,BEV,Electrico,,REST,Standard,,1
-2026,07,10,TOYOTA,,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,07,10,TOYOTA,AYGO X,Corporate,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,2
 2026,07,10,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,7
 2026,07,10,TOYOTA,BZ4X,Corporate,BEV,Electrico,UKL2,REST,Standard,SAV,1
@@ -536,6 +534,8 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,coun
 2026,07,10,TOYOTA,RAV 4,Corporate,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,7
 2026,07,10,TOYOTA,RAV 4,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,3
 2026,07,10,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,31
+2026,07,10,TOYOTA,SIENNA,Corporate,BEV,Electrico,,REST,Standard,,1
+2026,07,10,TOYOTA,SIENNA,Corporate,ICE,Gasolina,,REST,Standard,,1
 2026,07,10,TOYOTA,YARIS,Corporate,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,35
 2026,07,10,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,39
 2026,07,10,TOYOTA,YARIS,RAC,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,1
