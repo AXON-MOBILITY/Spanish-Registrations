@@ -340,6 +340,12 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .alrt-date{font-size:.78rem;color:var(--text2);font-weight:500}
 .alrt-empty{color:var(--text2);font-size:.9rem;padding:32px 0;text-align:center}
 .alrt-grid{display:grid;gap:10px}
+.alrt-logo{display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:6px;flex-shrink:0;overflow:hidden}
+.alrt-logo.color-logo{background:#F1F5F9;padding:3px}
+.alrt-logo.white-logo{background:#1a2a40;padding:3px}
+.alrt-logo.no-logo{background:var(--border)}
+.alrt-logo .brand-logo-img{width:100%;height:100%;object-fit:contain}
 .alrt-card{background:var(--card);border:1px solid var(--border);border-radius:10px;
   overflow:hidden;transition:box-shadow .2s}
 .alrt-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.12)}
@@ -3471,9 +3477,12 @@ function renderAlerts(){
       fuelToday,fuelAvg,fuels});
   });
 
-  // Sort: red first, then amber, then info; within same sev sort by abs(devPct)
+  // Sort: BMW/Mercedes/Audi pinned first (in that order), then by severity + abs deviation
+  const _BRAND_PRIO={'BMW':0,'Mercedes':1,'Audi':2};
   const sevOrder={red:0,amber:1,info:2};
   alerts.sort((a,b)=>{
+    const pa=_BRAND_PRIO[a.brand]??99, pb=_BRAND_PRIO[b.brand]??99;
+    if(pa!==pb)return pa-pb;
     if(sevOrder[a.sev]!==sevOrder[b.sev])return sevOrder[a.sev]-sevOrder[b.sev];
     return Math.abs(b.devPct||0)-Math.abs(a.devPct||0);
   });
@@ -3529,9 +3538,13 @@ function renderAlerts(){
       </div>`;
     }).join('');
 
+    const _lf=BRAND_LOGO[a.brand];
+    const _logoCls=BRAND_COLOR_LOGO[_lf]?'alrt-logo color-logo':_lf?'alrt-logo white-logo':'alrt-logo no-logo';
+    const _logoHtml=`<span class="${_logoCls}">${_brandLogo(a.brand)}</span>`;
     return `<div class="alrt-card">
       <div class="alrt-card-top">
         <div class="alrt-sev ${a.sev}"></div>
+        ${_logoHtml}
         <span class="alrt-brand">${a.brand}</span>
         <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
         <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
