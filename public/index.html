@@ -403,15 +403,16 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     if(input) input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.doLogin();}});
   });
 })();
-</script></head>
+</script>
+</head>
 <body>
 
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <img class="login-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat - Matriculaciones DGT">
+      <img class="login-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat">
     </div>
-    <div class="login-title">Acceso restringido</div>
+    <div class="login-title">Restricted Access</div>
     <input id="login-pw" class="login-input" type="password" placeholder="Contraseña">
     <button class="login-btn" id="login-submit" type="button" onclick="return doLogin()">Entrar</button>
     <div class="login-err" id="login-err"></div>
@@ -422,7 +423,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="tb-logo">
-    <img class="app-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat - Matriculaciones DGT">
+    <img class="app-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat">
   </div>
   <div class="tb-tabs">
     <button class="tab-btn on" id="tbtn-overview" onclick="showTab('overview')">Overview</button>
@@ -812,38 +813,24 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 // ── AUTH ──────────────────────────────────────────
 (function(){
   const KEY='dgt_auth_v2', PWD='BMW2026';
-  const clean=v=>String(v||'').replace(/\s+/g,'').toUpperCase();
-  const hideLogin=()=>{
-    const screen=document.getElementById('login-screen');
-    if(screen)screen.classList.add('hidden');
-  };
-  window.doLogin=function(){
-    const input=document.getElementById('login-pw');
-    const err=document.getElementById('login-err');
-    const val=input?input.value:'';
-    if(clean(val)===PWD){
-      sessionStorage.setItem(KEY,PWD);
-      hideLogin();
-      if(err)err.textContent='';
-    } else {
-      if(err)err.textContent='Contraseña incorrecta';
-      if(input){input.value='';input.focus();}
-    }
-  };
   localStorage.removeItem('dgt_auth_v1');
   if(sessionStorage.getItem(KEY)===PWD){
-    hideLogin();
+    document.getElementById('login-screen').classList.add('hidden');
   }
-  const btn=document.getElementById('login-submit');
-  const input=document.getElementById('login-pw');
-  if(btn)btn.addEventListener('click',window.doLogin);
-  if(input)input.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){
-      e.preventDefault();
-      window.doLogin();
-    }
-  });
 })();
+function doLogin(){
+  const val=document.getElementById('login-pw').value;
+  const err=document.getElementById('login-err');
+  if(val==='BMW2026'){
+    sessionStorage.setItem('dgt_auth_v2','BMW2026');
+    document.getElementById('login-screen').classList.add('hidden');
+    err.textContent='';
+  } else {
+    err.textContent='Contraseña incorrecta';
+    document.getElementById('login-pw').value='';
+    document.getElementById('login-pw').focus();
+  }
+}
 // ─────────────────────────────────────────────────
 Chart.register(ChartDataLabels);
 
@@ -1923,7 +1910,7 @@ function renderProv(){
     if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segment: '+(ns.length?ns.join(', '):'none'));}
     if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegment: '+(ns.length?ns.join(', '):'none'));}
     if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'none'));}
-    notice.textContent='Active filters: '+parts.join(' | ')+'.';
+    notice.textContent='Active filters: '+parts.join(' · ')+'. '+(hasFiltData?'Exact provincial data.':'Provincial data pending reprocessing with segment/subsegment/HP.');
     notice.style.display='';
   } else {
     const noApply=[];
@@ -2223,7 +2210,7 @@ function initTrend(){
   trFillRange('tr-from-m','tr-to-m',TR.months,defM);
   trFillRange('tr-from-d','tr-to-d',TR.days,null);
   const d0=TR.days[0]||'',d1=TR.days[TR.days.length-1]||'';
-  g('tr-note').textContent='DGT only publishes daily data for the current period; available '+d0+' \u2192 '+d1;
+  g('tr-note').textContent='la DGT solo publica diarios del periodo en curso; disponibles '+d0+' \u2192 '+d1;
   initTrendSubFilters();
   // Market aggregate pills
   if(g('tr-mkt-TOTAL'))return; // already initialised — don't duplicate pills
@@ -2445,8 +2432,7 @@ function renderTrend(){
 
   renderTrendPct(totM,cnM,allTotM,allCnM);
 
-  // KPI cards — sincronizadas con el mes HASTA del selector
-  // Step backward through perM (F.years-filtered) and look up prior year in allTotM
+  // KPI cards — step backward through perM (F.years-filtered) and look up prior year in allTotM
   {
     let kpiMonth=null;
     for(let i=perM.length-1;i>=0;i--){
@@ -2563,7 +2549,7 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
     const nonAllM={};
     perM.forEach(pd=>{nonAllM[pd]=Math.max(0,(_allT[pd]||0)-(_allC[pd]||0));});
     datasets=[
-      {label:'Total Market YoY%',data:yoyM.map(pd=>yoyCalc(totM,_allT,pd)),
+      {label:'Total Market YoY%',data:yoyM.map(pd=>yoyCalc(totM,pd)),
        borderColor:'#e2e8f0',backgroundColor:'#e2e8f022',borderWidth:2,
        pointRadius:yoyM.length>60?0:3,tension:.25,fill:false},
       {label:'Chinese Brands YoY%',data:yoyM.map(pd=>yoyCalc(cnM,_allC,pd)),
@@ -3118,4 +3104,175 @@ async function downloadInforme(){
     doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(26,96,196);
     doc.text('Matriculaciones \xB7 '+mLabelPer,M,122);
     // Descripcion
-    doc.setFont('helvetica','no
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(88,102,120);
+    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,133,{maxWidth:CW});
+    // Separador
+    doc.setDrawColor(215,222,232);doc.setLineWidth(0.25);doc.line(M,140,W-M,140);
+    // 4 cajas KPI con borde
+    const bw=(CW-9)/4;
+    [
+      {n:fN(perTot),  lbl:'Mercado Total',              yoy:perTotYoY},
+      {n:fN(fT.BEV),  lbl:'BEV \xB7 El\xE9ctricos',        yoy:fYY.BEV},
+      {n:fN(fT.PHEV), lbl:'PHEV \xB7 H\xEDbridos enchufables',yoy:fYY.PHEV},
+      {n:fN(fT.ICE),  lbl:'ICE \xB7 Combusti\xF3n',         yoy:fYY.ICE},
+    ].forEach((k,i)=>{
+      const bx=M+i*(bw+3), by=148;
+      doc.setFillColor(255,255,255);doc.setDrawColor(208,216,228);doc.setLineWidth(0.25);
+      doc.roundedRect(bx,by,bw,30,1.2,1.2,'FD');
+      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(18,28,44);
+      doc.text(k.n,bx+5,by+10);
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
+      doc.text(k.lbl,bx+5,by+16.5);
+      if(k.yoy!=null){
+        const pos=k.yoy>=0;
+        doc.setFont('helvetica','bold');doc.setFontSize(8);
+        doc.setTextColor(pos?14:198,pos?128:42,pos?78:42);
+        doc.text((pos?'+':'')+k.yoy.toFixed(1)+'% interanual',bx+5,by+24.5);
+      }
+    });
+    // Pie de portada
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(142,155,170);
+    doc.text('Elaborado a partir de datos de matriculaciones totales de turismos y todoterrenos (Passenger Cars + 4x4). Los simbolos de marca son marcadores de color propios de este informe, no logotipos oficiales.',M,265,{maxWidth:CW});
+    doc.text('Generado automaticamente el '+nowStr+'.',M,271);
+
+    // ══ MERCADO TOTAL ═════════════════════════════════════════════════════
+    drawSection('Mercado Total',perSv,perTot,perYoYMap,ytdB,ytdBP,ytdTot,perTotYoY,ytdTotYoY);
+
+    // ══ BEV ═══════════════════════════════════════════════════════════════
+    const bevSv=perSv.map(([b,d])=>[b,{total:d.BEV||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(bevSv.length){const fd=fuelYtd('BEV');drawSection('BEV \xB7 El\xE9ctricos',bevSv,fT.BEV,fuelYoYMap('BEV'),fd.bC,fd.bP,fd.t,fYY.BEV,fd.yoy);}
+
+    // ══ PHEV ══════════════════════════════════════════════════════════════
+    const phevSv=perSv.map(([b,d])=>[b,{total:d.PHEV||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(phevSv.length){const fd=fuelYtd('PHEV');drawSection('PHEV \xB7 H\xEDbridos enchufables',phevSv,fT.PHEV,fuelYoYMap('PHEV'),fd.bC,fd.bP,fd.t,fYY.PHEV,fd.yoy);}
+
+    // ══ ICE ═══════════════════════════════════════════════════════════════
+    const iceSv=perSv.map(([b,d])=>[b,{total:d.ICE||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
+    if(iceSv.length){const fd=fuelYtd('ICE');drawSection('ICE \xB7 Combusti\xF3n',iceSv,fT.ICE,fuelYoYMap('ICE'),fd.bC,fd.bP,fd.t,fYY.ICE,fd.yoy);}
+
+    const fname='Informe_Matriculaciones_'+MES3[curM-1]+'_'+_OVD.refYear+'.pdf';
+    doc.save(fname);
+  }catch(err){
+    console.error('PDF error:',err);
+    alert('Error generando PDF: '+err.message);
+  }
+}
+
+// Parseo numerico espanol: acepta "150.000", "150 000" o "150000"
+function fcNum(s){
+  const v=parseFloat(String(s||'').replace(/[.\s\u00a0]/g,'').replace(',','.'));
+  return isFinite(v)?v:0;
+}
+function fcSetRacM(marca,val){
+  const v=fcNum(val);
+  if(!String(val).trim()||v<0)delete FCS.ovRacM[marca];else FCS.ovRacM[marca]=v;
+  FCS.rac='inc';
+  fcRefreshRacPills();
+  renderForecast();
+}
+function fcSetYear(marca,val){
+  const v=fcNum(val);
+  if(!String(val).trim()||v<=0)delete FCS.ovYear[marca];else FCS.ovYear[marca]=v;
+  renderForecast();
+}
+
+// ── UI CONTROLS ──────────────────────────────────────────
+function toggleSg(id){g(id).classList.toggle('open')}
+
+function toggleModelRows(btn,brand){
+  const tr=btn.closest('tr');
+  const wasOpen=btn.classList.contains('open');
+  // Remove existing sub-rows
+  let nx=tr.nextElementSibling;
+  while(nx&&nx.classList.contains('model-sub')){const tmp=nx.nextElementSibling;nx.remove();nx=tmp;}
+  btn.classList.toggle('open',!wasOpen);
+  if(wasOpen)return;
+  const E=REC.enums;
+  const mIdx=E.marca.indexOf(brand);
+  const {rows,prevRows,refYear,commonM}=_RC;
+  const brandRows=rows.filter(r=>r[COL.MARCA]===mIdx);
+  const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
+  // Aggregate ref counts per model. Empty DGT model codes are not real models;
+  // keep them separate and always at the bottom of the expanded list.
+  const UNKNOWN_MODEL='Otros / no clasificado';
+  const modelKey=r=>{
+    const mo=(E.modelo[r[COL.MODELO]]||'').trim();
+    return mo||UNKNOWN_MODEL;
+  };
+  const byMo={};
+  brandRows.forEach(r=>{
+    const mo=modelKey(r);
+    if(!byMo[mo])byMo[mo]={total:0,ref:0,unknown:mo===UNKNOWN_MODEL};
+    byMo[mo].total+=r[COL.N];
+    if(r[COL.Y]===refYear&&commonM.has(r[COL.M]))byMo[mo].ref+=r[COL.N];
+  });
+  // Prev counts per model
+  const byMoPrev={};
+  prevRows.filter(r=>r[COL.MARCA]===mIdx&&commonM.has(r[COL.M])).forEach(r=>{
+    const mo=modelKey(r);
+    byMoPrev[mo]=(byMoPrev[mo]||0)+r[COL.N];
+  });
+  const sorted=Object.entries(byMo).sort((a,b)=>{
+    if(a[1].unknown!==b[1].unknown)return a[1].unknown?1:-1;
+    return b[1].total-a[1].total;
+  });
+  let ins=tr;
+  const _BMW_I={'I3':'i3','I4':'i4','I5':'i5','I7':'i7','I8':'i8','IX':'iX','IX1':'iX1','IX2':'iX2','IX3':'iX3'};
+  sorted.forEach(([mo,d])=>{
+    const moLabel=d.unknown?UNKNOWN_MODEL:((brand==='BMW'&&_BMW_I[mo])||mo);
+    const prev=byMoPrev[mo]||0;
+    const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
+    const yDelta=prev?d.ref-prev:null;
+    const share=brandTotal?d.total/brandTotal*100:0;
+    const sub=document.createElement('tr');
+    sub.className='model-sub'+(d.unknown?' model-sub-unknown':'');
+    sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
+      <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
+      <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
+      <td>${fP2(share)}</td>`;
+    ins.after(sub);ins=sub;
+  });
+}
+
+function showTab(name){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  g('pane-'+name).classList.add('on');
+  g('tbtn-'+name).classList.add('on');
+  // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
+  // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
+  // instante y el recalculo llega un frame despues.
+  setTimeout(()=>{
+    if(REC&&(name==='overview'||name==='analisis'))render();
+    if(name==='prov'&&PROV)renderProv();
+    if(name==='trend'&&TREND)renderTrend();
+    if(name==='forecast'&&FC)renderForecast();
+    if(name==='ranking')renderRanking(_OVD?_OVD.sv:null,_OVD?_OVD.total:0,_OVD?_OVD.yoy:{});
+  },40);
+}
+
+function resetFilters(){
+  const E=REC.enums;
+  const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
+  const defaultYears=new Set(allYears.includes(2026)?[2026]:[allYears[allYears.length-1]]);
+  document.querySelectorAll('#sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
+  document.querySelectorAll('#sb-years input[type=checkbox]').forEach(cb=>cb.checked=defaultYears.has(parseInt(cb.value,10)));
+  document.querySelectorAll('.sg-pill').forEach(p=>p.classList.add('on'));
+  F.years=defaultYears;
+  updateCount('cnt-years',F.years.size,allYears.length);
+  F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
+  F.fuels=new Set(E.fuel.map((_,i)=>i));
+  F.canales=new Set(E.canal.map((_,i)=>i));
+  F.segs=new Set(E.seg.map((_,i)=>i));
+  F.subs=new Set(E.sub.map((_,i)=>i));
+  F.oem=new Set(['CHINESE','REST']);
+  CONCEPTS.forEach(c=>F.concepts.add(c));
+  F.hps.clear();
+  document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
+  g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
+  F.marca='';F.modelo='';F.body='';
+  render();
+}
+</script>
+</body>
+</html>
