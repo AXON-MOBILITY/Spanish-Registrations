@@ -1156,8 +1156,8 @@ let BRAND_CHOICES=[];
 fetch('data/province_brands.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{PROV=d;initProv();}).catch(()=>{});
 fetch('data/daily_brands.json?v='+Date.now()).then(r=>r.json())
-fetch('data/pending_classification.json?v='+Date.now()).then(r=>r.json()).then(d=>{window.PEND=d;}).catch(()=>{window.PEND=null;})
   .then(d=>{TREND=d;initTrend();}).catch(()=>{});
+fetch('data/pending_classification.json?v='+Date.now()).then(r=>r.json()).then(d=>{window.PEND=d;}).catch(()=>{window.PEND=null;});
 
 // ── SIDEBAR BUILD ────────────────────────────────────────
 function addQuickSel(containerId, allFn, noneFn){
@@ -3688,4 +3688,4 @@ function renderAlerts(){
 </script>
 </body>
 </html>
-                                                  
+                                                 
