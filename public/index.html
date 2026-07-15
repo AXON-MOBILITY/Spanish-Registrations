@@ -2957,14 +2957,57 @@ async function downloadInforme(){
 
     // ── Pre-carga logos como base64 ───────────────────────────────────────
     const _logoCache={};
+    function _blobToDataUrl(blob){
+      return new Promise((res,rej)=>{
+        const rd=new FileReader();
+        rd.onload=()=>res(rd.result);
+        rd.onerror=()=>rej(rd.error);
+        rd.readAsDataURL(blob);
+      });
+    }
+    function _svgBlobToPngDataUrl(blob){
+      return new Promise((res,rej)=>{
+        const url=URL.createObjectURL(blob);
+        const img=new Image();
+        img.onload=()=>{
+          try{
+            const w=img.naturalWidth||img.width||256, h=img.naturalHeight||img.height||256;
+            const canvas=document.createElement('canvas');
+            canvas.width=w;canvas.height=h;
+            const ctx=canvas.getContext('2d');
+            ctx.clearRect(0,0,w,h);
+            ctx.drawImage(img,0,0,w,h);
+            URL.revokeObjectURL(url);
+            res(canvas.toDataURL('image/png'));
+          }catch(e){
+            URL.revokeObjectURL(url);
+            rej(e);
+          }
+        };
+        img.onerror=()=>{
+          URL.revokeObjectURL(url);
+          rej(new Error('No se pudo renderizar SVG'));
+        };
+        img.src=url;
+      });
+    }
     async function _fetchLogo(brand){
       const f=BRAND_LOGO[brand];if(!f)return;
-      try{
-        const r=await fetch('logos/'+encodeURIComponent(f)+'.png');
-        if(!r.ok)return;
-        const blob=await r.blob();
-        await new Promise(res=>{const rd=new FileReader();rd.onload=()=>{_logoCache[brand]=rd.result;res();};rd.readAsDataURL(blob);});
-      }catch(e){}
+      const colorExt=BRAND_COLOR_LOGO[f];
+      const tries=colorExt
+        ? [{url:'logos-color/'+encodeURIComponent(f)+'.'+colorExt,ext:colorExt,isColor:true},
+           {url:'logos/'+encodeURIComponent(f)+'.png',ext:'png',isColor:false}]
+        : [{url:'logos/'+encodeURIComponent(f)+'.png',ext:'png',isColor:false}];
+      for(const t of tries){
+        try{
+          const r=await fetch(t.url);
+          if(!r.ok)continue;
+          const blob=await r.blob();
+          const data=t.ext==='svg'?await _svgBlobToPngDataUrl(blob):await _blobToDataUrl(blob);
+          _logoCache[brand]={data,isColor:t.isColor};
+          return;
+        }catch(e){}
+      }
     }
     // Marcas unicas en el PDF
     const _pdfBrands=[...new Set(REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])).map(r=>REC.enums.marca[r[COL.MARCA]]).filter(Boolean))];
@@ -3144,11 +3187,11 @@ async function downloadInforme(){
             const brand=d.row.raw[1];
             const bs=6, bx=d.cell.x+1.5, by=d.cell.y+(d.cell.height-bs)/2;
             if(_logoCache[brand]){
-              // Fondo oscuro neutro para que el logo blanco sea visible
-              doc.setFillColor(22,35,58);
+              // Fondo claro para logos color, oscuro para logos blancos.
+              doc.setFillColor(...(_logoCache[brand].isColor?[241,245,249]:[22,35,58]));
               doc.roundedRect(bx,by,bs,bs,1,1,'F');
               const sc=_brandLogoScale(brand), sz=(bs-1.6)*sc;
-              doc.addImage(_logoCache[brand],'PNG',bx+(bs-sz)/2,by+(bs-sz)/2,sz,sz);
+              doc.addImage(_logoCache[brand].data,'PNG',bx+(bs-sz)/2,by+(bs-sz)/2,sz,sz);
             } else {
               // Fallback: circulo de color de marca
               const[r,g,b]=hRGB(_brandColor(brand));
@@ -3432,7 +3475,6 @@ function renderNewBrandsPanel(){
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
       <span style="font-size:1rem">\u26a0\ufe0f</span>
       <span style="font-weight:700;font-size:.9rem">Unclassified new brands</span>
-      <span style="font-size:.75rem;color:var(--text2);margin-left:auto">Add to _CHINESE_BRANDS or _BRAND_CONCEPT in index.html</span>
     </div>
     <div style="display:grid;grid-template-columns:1fr 80px 90px;gap:8px;padding:0 0 4px;border-bottom:2px solid var(--border);margin-bottom:2px">
       <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2)">Marca</span>
@@ -3652,40 +3694,4 @@ function renderAlerts(){
         <span class="alrt-brand">${a.brand}</span>
         <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
         ${streakHtml}
-        <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
-        <span class="alrt-pct ${pctCls}">${pctStr}</span>
-      </div>
-      <div class="alrt-summary">
-        Today: <strong>${fmtN(a.todayTotal)}</strong> ·
-        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> ·
-        <span style="color:var(--text2)">excl. zero-reg days</span>
-      </div>
-      ${racFlagHtml}
-      <div class="alrt-body">
-        <div class="alrt-section">
-          <div class="alrt-section-title">By Channel</div>
-          <div class="alrt-rows">
-            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
-              <span></span><span style="text-align:right">Today</span>
-              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
-            </div>${canalRows}
-          </div>
-        </div>
-        <div class="alrt-section">
-          <div class="alrt-section-title">By Fuel</div>
-          <div class="alrt-rows">
-            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
-              <span></span><span style="text-align:right">Today</span>
-              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
-            </div>${fuelRows}
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-</script>
-</body>
-</html>
-                                                           
+        <span class="alrt-badge ${
