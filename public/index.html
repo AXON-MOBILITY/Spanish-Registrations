@@ -2243,7 +2243,7 @@ function initTrend(){
   initTrendSubFilters();
   // Market aggregate pills
   if(g('tr-mkt-TOTAL'))return; // already initialised — don't duplicate pills
-  const MKT_OPTS=[['TOTAL','Total Market','#e2e8f0'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
+  const MKT_OPTS=[['TOTAL','Total Market','#64748b'],['CHINESE','Chinese Brands','#f97316'],['REST','Non-Chinese','#60a5fa']];
   TR.mkt=new Set();
   MKT_OPTS.forEach(([key,label,color])=>{
     const pill=document.createElement('div');
@@ -2328,7 +2328,7 @@ function renderTrend(){
       if(isCN)mktMo.CHINESE[k]=(mktMo.CHINESE[k]||0)+n;
       else mktMo.REST[k]=(mktMo.REST[k]||0)+n;
     });
-    const MKT_C={TOTAL:'#e2e8f0',CHINESE:'#f97316',REST:'#60a5fa'};
+    const MKT_C={TOTAL:'#64748b',CHINESE:'#f97316',REST:'#60a5fa'};
     const MKT_L={TOTAL:'Total Market',CHINESE:'Chinese Brands',REST:'Non-Chinese'};
     TR.mkt.forEach(key=>{
       let acc=0;
@@ -2405,7 +2405,7 @@ function renderTrend(){
   // Market aggregate series (daily)
   const mktSeriesD=[];
   if(TR.mkt&&TR.mkt.size>0){
-    const MKT_C={TOTAL:'#e2e8f0',CHINESE:'#f97316',REST:'#60a5fa'};
+    const MKT_C={TOTAL:'#64748b',CHINESE:'#f97316',REST:'#60a5fa'};
     const MKT_L={TOTAL:'Total Market',CHINESE:'Chinese Brands',REST:'Non-Chinese'};
     TR.mkt.forEach(key=>{
       let acc=0;
@@ -2575,7 +2575,7 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
     perM.forEach(pd=>{nonAllM[pd]=Math.max(0,(_allT[pd]||0)-(_allC[pd]||0));});
     datasets=[
       {label:'Total Market YoY%',data:yoyM.map(pd=>yoyCalc(allTotM,allTotM,pd)),
-       borderColor:'#e2e8f0',backgroundColor:'#e2e8f022',borderWidth:2,
+       borderColor:'#64748b',backgroundColor:'#64748b22',borderWidth:2,
        pointRadius:yoyM.length>60?0:3,tension:.25,fill:false},
       {label:'Chinese Brands YoY%',data:yoyM.map(pd=>yoyCalc(allCnM,allCnM,pd)),
        borderColor:'#f97316',backgroundColor:'#f9731622',borderWidth:2,
