@@ -69,6 +69,10 @@ _BRAND_NORM = {
     'DS AUTOMOBILES': 'DS',
     'MERCEDES BENZ AG': 'Mercedes', 'MERCEDES-BENZ MINIBUS': 'Mercedes',
     'MERCEDES IRIZAR': 'Mercedes',
+    # Variantes DGT de Volkswagen
+    'VW': 'Volkswagen', ' VW': 'Volkswagen',
+    'VOLKSWAGEN VW': 'Volkswagen', 'VOLKSWAGEN, VW': 'Volkswagen',
+    'VOLKSWAGEN V W': 'Volkswagen', 'VOLKSWAGEN-AUTOVERO': 'Volkswagen',
 }
 
 def _normalize_brand(raw):
