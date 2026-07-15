@@ -885,6 +885,7 @@ def build_pending_classification(monthly_records, mtd_records):
 
     first_seen = {}
     vol12 = defaultdict(int)
+    brand_models = defaultdict(lambda: defaultdict(int))
     for r in rows:
         b = r["marca"]
         ym = r["y"] * 12 + r["m"]
@@ -892,11 +893,22 @@ def build_pending_classification(monthly_records, mtd_records):
             first_seen[b] = ym
         if ym > (last[0] * 12 + last[1]) - 12:
             vol12[b] += r["n"]
-    new_brands = sorted((
-        {"marca": b,
+            mo = r.get("modelo") or "(sin modelo)"
+            brand_models[b][mo] += r["n"]
+
+    def _brand_entry(b):
+        models = sorted(
+            [{"modelo": mo, "uds": n} for mo, n in brand_models[b].items()],
+            key=lambda x: -x["uds"]
+        )[:15]
+        return {"marca": b,
          "desde": f"{first_seen[b] // 12}-{(first_seen[b] % 12) or 12:02d}"
                   if first_seen[b] % 12 else f"{first_seen[b] // 12 - 1}-12",
-         "uds_12m": vol12[b]}
+         "uds_12m": vol12[b],
+         "models": models}
+
+    new_brands = sorted((
+        _brand_entry(b)
         for b in vol12
         if first_seen[b] >= horizon and vol12[b] >= 1 and b not in _KNOWN_CLASSIFIED
     ), key=lambda x: -x["uds_12m"])
@@ -1247,23 +1259,4 @@ def main():
 
     for fname, obj in [
         ("records.json",   records_obj),
-        ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
-        ("provinces.json", provinces_obj),
-        ("province_brands.json", ranking_obj),
-        ("daily_brands.json", daily_brands_obj),
-        ("pending_classification.json", build_pending_classification(monthly_records, mtd_records)),
-        ("forecast.json", forecast_obj),
-    ]:
-        p = out_dir / fname
-        p.write_text(json.dumps(obj, ensure_ascii=False, separators=(",",":")), encoding="utf-8")
-        n_items = len(obj.get("rows", obj.get("days", obj.get("provinces", []))))
-        print(f"  {fname}: {p.stat().st_size/1024:.0f} KB  ({n_items} rows/items)")
-
-    meta = build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data, scope_info)
-    p    = out_dir / "meta.json"
-    p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"  meta.json")
-    print(f"OK - {meta['total_registrations_historical']:,} matriculas en {meta['completed_months']} meses")
-
-if __name__ == "__main__":
-    main()
+        ("daily_mtd.json",
