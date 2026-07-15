@@ -3442,7 +3442,7 @@ function renderAlertsBrief(days,canales,fuels){
   });
   const daysElapsed=monthDays.length;
   const daysInMonth=new Date(curYear,curM,0).getDate();
-  const pace=daysElapsed/daysInMonth;
+  const pace=daysElapsed/daysInMonth; // only used for % label
   const focusBig=['BMW','Mercedes','Audi'];
   const monthLbl=MES3[curM-1]+' '+curYear;
   const lyMonthLbl=MES3[curM-1]+' '+lyYear;
@@ -3450,8 +3450,18 @@ function renderAlertsBrief(days,canales,fuels){
     const mtdVal=mtd[brand]||0;
     const lyFull=lyTot[brand]||0;
     const lyPace=lyFull*pace;
-    const proj=pace>0?Math.round(mtdVal/pace):mtdVal;
     const lyChg=lyPace>0?(mtdVal-lyPace)/lyPace*100:null;
+    // FC forecast for current month: actuals MTD + share_hat × remaining market + RAC month estimate
+    let proj=null;
+    if(FC&&FCP&&FC.status==='ok'){
+      const _bfc=FC.brands.find(b=>b.marca===brand);
+      if(_bfc){
+        const _actEx=(FCP.actEx[brand]&&FCP.actEx[brand][FCP.curM])||0;
+        const _futEx=_bfc.share_hat*(FC.market.f_month_exrac_base-FC.market.mtd_exrac);
+        const _rac=fcRacMonthDefault(brand);
+        proj=Math.round(_actEx+_futEx+_rac);
+      }
+    }
     const racPct=mtdVal>0?(mtdRac[brand]||0)/mtdVal*100:0;
     const chgStr=lyChg===null?'—':(lyChg>=0?'+':'')+lyChg.toFixed(1)+'%';
     const chgCls=lyChg===null?'neu':lyChg>=5?'pos':lyChg<=-5?'neg':'neu';
@@ -3462,7 +3472,7 @@ function renderAlertsBrief(days,canales,fuels){
       <div class="alrt-brief-brand"><span class="${_lc}">${_brandLogo(brand)}</span><span>${brand}</span></div>
       <div class="alrt-brief-val">${mtdVal.toLocaleString('es-ES')}</div>
       <div class="alrt-brief-chg ${chgCls}">${chgStr}</div>
-      <div class="alrt-brief-proj">${proj.toLocaleString('es-ES')}</div>
+      <div class="alrt-brief-proj">${proj!=null?proj.toLocaleString('es-ES'):'—'}</div>
       <div class="alrt-brief-rac ${racCls}">${racPct.toFixed(0)}%</div>
     </div>`;
   }).join('');
@@ -3477,7 +3487,7 @@ function renderAlertsBrief(days,canales,fuels){
     </div>
     <div class="alrt-brief-table">
       <div class="alrt-brief-row header">
-        <div>Brand</div><div>MTD units</div><div>vs ${lyMonthLbl} pace</div><div>Projected</div><div>RAC %</div>
+        <div>Brand</div><div>MTD units</div><div>vs ${lyMonthLbl} pace</div><div>FC Jul</div><div>RAC %</div>
       </div>${rows}
     </div>
   </div>`;
