@@ -3694,4 +3694,40 @@ function renderAlerts(){
         <span class="alrt-brand">${a.brand}</span>
         <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
         ${streakHtml}
-        <span class="alrt-badge ${
+        <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
+        <span class="alrt-pct ${pctCls}">${pctStr}</span>
+      </div>
+      <div class="alrt-summary">
+        Today: <strong>${fmtN(a.todayTotal)}</strong> ·
+        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> ·
+        <span style="color:var(--text2)">excl. zero-reg days</span>
+      </div>
+      ${racFlagHtml}
+      <div class="alrt-body">
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Channel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>${canalRows}
+          </div>
+        </div>
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Fuel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>${fuelRows}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+</script>
+</body>
+</html>
+                                                 
