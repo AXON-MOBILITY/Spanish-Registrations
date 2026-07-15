@@ -3402,8 +3402,9 @@ function renderAlerts(){
   const latestDate=latest.day;
   g('alrt-date-lbl').textContent='Latest data: '+latestDate;
 
-  // Focus brands = keys of _BRAND_CONCEPT
-  const focusBrands=Object.keys(_BRAND_CONCEPT);
+  // Focus brands = keys of _BRAND_CONCEPT, minus sub-brand aliases not tracked standalone
+  const _ALRT_EXCLUDE=new Set(['Mercedes-V']);
+  const focusBrands=Object.keys(_BRAND_CONCEPT).filter(b=>!_ALRT_EXCLUDE.has(b));
 
   // Baseline: all days except latest, min 5 days
   const hist=days.slice(0,-1);
