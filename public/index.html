@@ -340,6 +340,26 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .alrt-date{font-size:.78rem;color:var(--text2);font-weight:500}
 .alrt-empty{color:var(--text2);font-size:.9rem;padding:32px 0;text-align:center}
 .alrt-grid{display:grid;gap:10px}
+.alrt-brief{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.alrt-brief-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.alrt-brief-table{display:flex;flex-direction:column;gap:3px}
+.alrt-brief-row{display:grid;grid-template-columns:150px 80px 110px 90px 65px;align-items:center;gap:8px;padding:5px 0}
+.alrt-brief-row.header{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--text2);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:2px}
+.alrt-brief-brand{display:flex;align-items:center;gap:7px;font-weight:600;font-size:.88rem}
+.alrt-brief-val{font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums}
+.alrt-brief-chg{font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.alrt-brief-chg.pos{color:#10b981}.alrt-brief-chg.neg{color:#ef4444}.alrt-brief-chg.neu{color:var(--text2)}
+.alrt-brief-proj{font-size:.82rem;color:var(--text2);font-variant-numeric:tabular-nums}
+.alrt-brief-rac{font-size:.85rem;font-weight:600;font-variant-numeric:tabular-nums}
+.alrt-brief-rac.hi{color:#ef4444}.alrt-brief-rac.mid{color:#f59e0b}.alrt-brief-rac.ok{color:var(--text2)}
+.alrt-eom-badge{font-size:.72rem;font-weight:700;padding:2px 8px;background:#fef3c7;color:#92400e;border-radius:20px}
+.alrt-rac-flag{margin:0 14px 8px;font-size:.75rem;padding:5px 10px;
+  background:#fef3c7;color:#92400e;border-radius:6px;border-left:3px solid #f59e0b}
+.alrt-row-rac .alrt-row-lbl{color:#d97706;font-weight:700}
+.alrt-streak{font-size:.68rem;font-weight:700;padding:2px 6px;border-radius:10px}
+.alrt-streak.drop{background:#fef2f2;color:#ef4444}
+.alrt-streak.spike{background:#f0fdf4;color:#10b981}
 .alrt-logo{display:inline-flex;align-items:center;justify-content:center;
   width:28px;height:28px;border-radius:6px;flex-shrink:0;overflow:hidden}
 .alrt-logo.color-logo{background:#F1F5F9;padding:3px}
@@ -860,6 +880,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 
     <div class="pane" id="pane-alerts">
+      <div id="alrt-brief"></div>
       <div class="card" style="padding:14px 16px">
         <div class="alrt-header">
           <span style="font-weight:700;font-size:.95rem">Daily Anomaly Alerts · Focus Segment</span>
@@ -3379,6 +3400,7 @@ function resetFilters(){
   F.marca='';F.modelo='';F.body='';
   render();
 }
+
 // ── ALERTS ────────────────────────────────────────────────────────────────
 const _ALERT_ACTIVE_SEV=new Set(['red','amber','info']);
 const _ALERT_ACTIVE_TYPE=new Set(['spike','drop']);
@@ -3391,75 +3413,120 @@ function toggleAlrtPill(btn){
   renderAlerts();
 }
 
+function renderAlertsBrief(days,canales,fuels){
+  const el=g('alrt-brief');
+  if(!el||!REC)return;
+  const latest=days[days.length-1];
+  const latestDate=latest.day;
+  const curYear=parseInt(latestDate.slice(0,4));
+  const curM=parseInt(latestDate.slice(5,7));
+  const curMonth=latestDate.slice(0,7);
+  const lyYear=curYear-1;
+  const monthDays=days.filter(d=>d.day.startsWith(curMonth));
+  const mtd={},mtdRac={};
+  monthDays.forEach(d=>{
+    Object.entries(d.brands).forEach(([b,arr])=>{
+      const total=arr.reduce((s,v)=>s+v,0);
+      const rac=(arr[6]||0)+(arr[7]||0)+(arr[8]||0);
+      mtd[b]=(mtd[b]||0)+total;
+      mtdRac[b]=(mtdRac[b]||0)+rac;
+    });
+  });
+  const E=REC.enums;
+  const lyTot={};
+  REC.rows.forEach(r=>{
+    if(r[COL.Y]!==lyYear||r[COL.M]!==curM)return;
+    if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return;
+    const b=E.marca[r[COL.MARCA]];
+    lyTot[b]=(lyTot[b]||0)+r[COL.N];
+  });
+  const daysElapsed=monthDays.length;
+  const daysInMonth=new Date(curYear,curM,0).getDate();
+  const pace=daysElapsed/daysInMonth;
+  const focusBig=['BMW','Mercedes','Audi'];
+  const monthLbl=MES3[curM-1]+' '+curYear;
+  const lyMonthLbl=MES3[curM-1]+' '+lyYear;
+  const rows=focusBig.map(brand=>{
+    const mtdVal=mtd[brand]||0;
+    const lyFull=lyTot[brand]||0;
+    const lyPace=lyFull*pace;
+    const proj=pace>0?Math.round(mtdVal/pace):mtdVal;
+    const lyChg=lyPace>0?(mtdVal-lyPace)/lyPace*100:null;
+    const racPct=mtdVal>0?(mtdRac[brand]||0)/mtdVal*100:0;
+    const chgStr=lyChg===null?'—':(lyChg>=0?'+':'')+lyChg.toFixed(1)+'%';
+    const chgCls=lyChg===null?'neu':lyChg>=5?'pos':lyChg<=-5?'neg':'neu';
+    const racCls=racPct>=45?'hi':racPct>=30?'mid':'ok';
+    const _lf=BRAND_LOGO[brand];
+    const _lc=BRAND_COLOR_LOGO[_lf]?'alrt-logo color-logo':_lf?'alrt-logo white-logo':'alrt-logo no-logo';
+    return `<div class="alrt-brief-row">
+      <div class="alrt-brief-brand"><span class="${_lc}">${_brandLogo(brand)}</span><span>${brand}</span></div>
+      <div class="alrt-brief-val">${mtdVal.toLocaleString('es-ES')}</div>
+      <div class="alrt-brief-chg ${chgCls}">${chgStr}</div>
+      <div class="alrt-brief-proj">${proj.toLocaleString('es-ES')}</div>
+      <div class="alrt-brief-rac ${racCls}">${racPct.toFixed(0)}%</div>
+    </div>`;
+  }).join('');
+  const daysLeft=daysInMonth-daysElapsed;
+  const eomHtml=daysLeft<=3?`<span class="alrt-eom-badge">⚠️ Last ${daysLeft} days of month</span>`:'';
+  el.innerHTML=`<div class="alrt-brief">
+    <div class="alrt-brief-hdr">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:700;font-size:.92rem">Competitive Snapshot · ${monthLbl}</span>${eomHtml}
+      </div>
+      <span class="alrt-date">${daysElapsed} working days · ${Math.round(pace*100)}% of month</span>
+    </div>
+    <div class="alrt-brief-table">
+      <div class="alrt-brief-row header">
+        <div>Brand</div><div>MTD units</div><div>vs ${lyMonthLbl} pace</div><div>Projected</div><div>RAC %</div>
+      </div>${rows}
+    </div>
+  </div>`;
+}
+
 function renderAlerts(){
   if(!TREND||!TREND.days||!TREND.days.length)return;
   const days=TREND.days;
   const canales=TREND.canales||['Private','Corporate','RAC'];
   const fuels=TREND.fuels||['ICE','BEV','PHEV'];
-
-  // Latest day
   const latest=days[days.length-1];
   const latestDate=latest.day;
   g('alrt-date-lbl').textContent='Latest data: '+latestDate;
-
-  // Focus brands = keys of _BRAND_CONCEPT, minus sub-brand aliases not tracked standalone
+  renderAlertsBrief(days,canales,fuels);
   const _ALRT_EXCLUDE=new Set(['Mercedes-V']);
   const focusBrands=Object.keys(_BRAND_CONCEPT).filter(b=>!_ALRT_EXCLUDE.has(b));
-
-  // Baseline: all days except latest, min 5 days
   const hist=days.slice(0,-1);
   if(hist.length<3){
     g('alrt-grid').innerHTML='';
     g('alrt-empty').classList.remove('hidden');
-    g('alrt-empty').textContent='Not enough history to compute baselines (need at least 4 days).';
+    g('alrt-empty').textContent='Not enough history (need at least 4 days).';
     return;
   }
-
   const alerts=[];
-
   focusBrands.forEach(brand=>{
     const todayArr=latest.brands[brand]||new Array(9).fill(0);
     const todayTotal=todayArr.reduce((s,v)=>s+v,0);
-
-    // Collect history for this brand (skip days with 0 total — likely weekends/holidays)
-    const histDays=hist.filter(d=>{
-      const v=d.brands[brand];
-      return v&&v.reduce((s,n)=>s+n,0)>0;
-    });
-    if(histDays.length<3&&todayTotal===0)return; // no data at all
+    const histDays=hist.filter(d=>{const v=d.brands[brand];return v&&v.reduce((s,n)=>s+n,0)>0;});
+    if(histDays.length<3&&todayTotal===0)return;
     const hN=histDays.length||1;
-
-    // Average per cell
     const avgArr=new Array(9).fill(0);
-    histDays.forEach(d=>{
-      const v=d.brands[brand]||new Array(9).fill(0);
-      v.forEach((n,i)=>avgArr[i]+=n);
-    });
+    histDays.forEach(d=>{const v=d.brands[brand]||new Array(9).fill(0);v.forEach((n,i)=>avgArr[i]+=n);});
     avgArr.forEach((_,i)=>avgArr[i]=avgArr[i]/hN);
     const avgTotal=avgArr.reduce((s,v)=>s+v,0);
-
-    // Skip ultra-niche brands with avg < 1.5/day
     if(avgTotal<1.5&&todayTotal<3)return;
-
-    // Deviation %
     const devPct=avgTotal>0?(todayTotal-avgTotal)/avgTotal*100:null;
-
-    // Determine severity on total
     let sev=null,type=null;
     if(devPct!==null){
       if(devPct>=200||(devPct<=-65&&avgTotal>=3)){sev='red';type=devPct>0?'spike':'drop';}
       else if(devPct>=80||(devPct<=-40&&avgTotal>=2)){sev='amber';type=devPct>0?'spike':'drop';}
       else if(Math.abs(devPct)>=30){sev='info';type=devPct>0?'spike':'drop';}
     }
-
-    // Per-canal breakdown (sum over fuels)
     const canalToday=canales.map((_,ci)=>fuels.reduce((s,_,fi)=>s+todayArr[ci*3+fi],0));
     const canalAvg=canales.map((_,ci)=>fuels.reduce((s,_,fi)=>s+avgArr[ci*3+fi],0));
-    // Per-fuel breakdown (sum over canales)
     const fuelToday=fuels.map((_,fi)=>canales.reduce((s,_,ci)=>s+todayArr[ci*3+fi],0));
     const fuelAvg=fuels.map((_,fi)=>canales.reduce((s,_,ci)=>s+avgArr[ci*3+fi],0));
-
-    // Also check if a specific canal has a major spike even if total is ok
+    const racPctToday=todayTotal>0?canalToday[2]/todayTotal*100:0;
+    const racPctAvg=avgTotal>0?canalAvg[2]/avgTotal*100:0;
+    const racFlag=racPctAvg>=8&&racPctToday>=racPctAvg*1.8&&canalToday[2]>=4;
     if(!sev){
       for(let ci=0;ci<canales.length;ci++){
         if(canalAvg[ci]>=1.5){
@@ -3469,65 +3536,64 @@ function renderAlerts(){
         }
       }
     }
-
-    if(!sev)return; // no anomaly
-
-    alerts.push({brand,sev,type,
-      todayTotal,avgTotal,devPct,histN:hN,
-      canalToday,canalAvg,canales,
-      fuelToday,fuelAvg,fuels});
+    let streakDown=0,streakUp=0;
+    const recentVals=histDays.slice(-5).map(d=>(d.brands[brand]||[]).reduce((s,v)=>s+v,0));
+    if(recentVals.length>=3){
+      for(let i=recentVals.length-1;i>=0;i--){if(recentVals[i]<avgTotal*0.75)streakDown++;else break;}
+      if(!streakDown)for(let i=recentVals.length-1;i>=0;i--){if(recentVals[i]>avgTotal*1.4)streakUp++;else break;}
+    }
+    const streak=streakDown>=3?streakDown:streakUp>=3?-streakUp:0;
+    if(!sev)return;
+    alerts.push({brand,sev,type,todayTotal,avgTotal,devPct,histN:hN,
+      canalToday,canalAvg,canales,fuelToday,fuelAvg,fuels,
+      racFlag,racPctToday,racPctAvg,streak});
   });
-
-  // Sort: BMW/Mercedes/Audi pinned first (in that order), then by severity + abs deviation
   const _BRAND_PRIO={'BMW':0,'Mercedes':1,'Audi':2};
   const sevOrder={red:0,amber:1,info:2};
   alerts.sort((a,b)=>{
-    const pa=_BRAND_PRIO[a.brand]??99, pb=_BRAND_PRIO[b.brand]??99;
+    const pa=_BRAND_PRIO[a.brand]??99,pb=_BRAND_PRIO[b.brand]??99;
     if(pa!==pb)return pa-pb;
     if(sevOrder[a.sev]!==sevOrder[b.sev])return sevOrder[a.sev]-sevOrder[b.sev];
     return Math.abs(b.devPct||0)-Math.abs(a.devPct||0);
   });
-
-  // Filter by active pills
   const visible=alerts.filter(a=>_ALERT_ACTIVE_SEV.has(a.sev)&&_ALERT_ACTIVE_TYPE.has(a.type));
-
   const grid=g('alrt-grid');
   const empty=g('alrt-empty');
   if(!visible.length){
     grid.innerHTML='';
     empty.classList.remove('hidden');
-    empty.textContent=alerts.length
-      ?'No alerts match the active filters.'
-      :'No significant anomalies detected for '+latestDate+'.';
+    empty.textContent=alerts.length?'No alerts match the active filters.':'No significant anomalies for '+latestDate+'.';
     return;
   }
   empty.classList.add('hidden');
-
   const fmtN=n=>n==null?'—':Math.round(n).toLocaleString('es-ES');
   const fmtDev=v=>v==null?'—':(v>=0?'+':'')+v.toFixed(0)+'%';
   const devCls=v=>v==null?'ok':v>=40?'hi':v<=-30?'lo':'ok';
-
   grid.innerHTML=visible.map(a=>{
     const pctStr=a.devPct!=null?fmtDev(a.devPct):'n/a';
     const pctCls=a.devPct!=null&&a.devPct>0?'pos':'neg';
-    const badgeCls=a.type==='spike'?'spike':a.type==='drop'?'drop':'info';
-    const badgeTxt=a.type==='spike'?'↑ SPIKE':a.type==='drop'?'↓ DROP':'NOTABLE';
+    const badgeCls=a.type==='spike'?'spike':'drop';
+    const badgeTxt=a.type==='spike'?'↑ SPIKE':'↓ DROP';
     const concept=_BRAND_CONCEPT[a.brand]||'';
     const conceptShort=concept==='TRAD. COMP.'?'Traditional':'New Players';
-
-    // Canal rows
+    const streakHtml=a.streak>=3?`<span class="alrt-streak drop">📉 ${a.streak}d low</span>`:
+      a.streak<=-3?`<span class="alrt-streak spike">📈 ${Math.abs(a.streak)}d high</span>`:'';
+    const racFlagHtml=a.racFlag
+      ?`<div class="alrt-rac-flag">⚠️ RAC ratio: ${a.racPctToday.toFixed(0)}% today vs ${a.racPctAvg.toFixed(0)}% avg — possible fleet push</div>`:'';
+    const _lf=BRAND_LOGO[a.brand];
+    const _lc=BRAND_COLOR_LOGO[_lf]?'alrt-logo color-logo':_lf?'alrt-logo white-logo':'alrt-logo no-logo';
+    const _logoHtml=`<span class="${_lc}">${_brandLogo(a.brand)}</span>`;
     const canalRows=a.canales.map((c,ci)=>{
       const td=a.canalToday[ci],av=a.canalAvg[ci];
       const dev=av>=0.5?(td-av)/av*100:null;
-      return `<div class="alrt-row">
-        <span class="alrt-row-lbl">${c}</span>
+      const isRac=ci===2&&a.racFlag;
+      return `<div class="alrt-row${isRac?' alrt-row-rac':''}">
+        <span class="alrt-row-lbl">${c}${isRac?' ⚠️':''}</span>
         <span class="alrt-row-val">${fmtN(td)}</span>
         <span class="alrt-row-avg">${fmtN(av)}</span>
         <span class="alrt-row-dev ${devCls(dev)}">${fmtDev(dev)}</span>
       </div>`;
     }).join('');
-
-    // Fuel rows
     const fuelRows=a.fuels.map((f,fi)=>{
       const td=a.fuelToday[fi],av=a.fuelAvg[fi];
       const dev=av>=0.5?(td-av)/av*100:null;
@@ -3538,24 +3604,22 @@ function renderAlerts(){
         <span class="alrt-row-dev ${devCls(dev)}">${fmtDev(dev)}</span>
       </div>`;
     }).join('');
-
-    const _lf=BRAND_LOGO[a.brand];
-    const _logoCls=BRAND_COLOR_LOGO[_lf]?'alrt-logo color-logo':_lf?'alrt-logo white-logo':'alrt-logo no-logo';
-    const _logoHtml=`<span class="${_logoCls}">${_brandLogo(a.brand)}</span>`;
     return `<div class="alrt-card">
       <div class="alrt-card-top">
         <div class="alrt-sev ${a.sev}"></div>
         ${_logoHtml}
         <span class="alrt-brand">${a.brand}</span>
         <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
+        ${streakHtml}
         <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
         <span class="alrt-pct ${pctCls}">${pctStr}</span>
       </div>
       <div class="alrt-summary">
-        Today: <strong>${fmtN(a.todayTotal)}</strong> units &nbsp;·&nbsp;
-        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> &nbsp;·&nbsp;
+        Today: <strong>${fmtN(a.todayTotal)}</strong> ·
+        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> ·
         <span style="color:var(--text2)">excl. zero-reg days</span>
       </div>
+      ${racFlagHtml}
       <div class="alrt-body">
         <div class="alrt-section">
           <div class="alrt-section-title">By Channel</div>
@@ -3563,8 +3627,7 @@ function renderAlerts(){
             <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
               <span></span><span style="text-align:right">Today</span>
               <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
-            </div>
-            ${canalRows}
+            </div>${canalRows}
           </div>
         </div>
         <div class="alrt-section">
@@ -3573,8 +3636,7 @@ function renderAlerts(){
             <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
               <span></span><span style="text-align:right">Today</span>
               <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
-            </div>
-            ${fuelRows}
+            </div>${fuelRows}
           </div>
         </div>
       </div>
