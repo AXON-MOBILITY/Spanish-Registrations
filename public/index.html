@@ -1878,7 +1878,7 @@ function renderProv(){
     if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segment: '+(ns.length?ns.join(', '):'none'));}
     if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegment: '+(ns.length?ns.join(', '):'none'));}
     if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'none'));}
-    notice.textContent='Active filters: '+parts.join(' · ')+'. '+(hasFiltData?'Exact provincial data.':'Provincial data pending reprocessing with segment/subsegment/HP.');
+    notice.textContent='Active filters: '+parts.join(' | ')+'.';
     notice.style.display='';
   } else {
     const noApply=[];
