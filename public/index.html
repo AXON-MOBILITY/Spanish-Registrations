@@ -3493,7 +3493,7 @@ function renderNewBrandsPanel(){
   }).join('');
   el.innerHTML=`<div class="card" style="padding:12px 16px;margin-bottom:12px;border-left:4px solid #f59e0b">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <span style="font-size:1rem">\u26a0\ufe0f</span>
+      <span style="font-size:1rem">⚠️</span>
       <span style="font-weight:700;font-size:.9rem">Unclassified new brands</span>
     </div>
     <div style="display:grid;grid-template-columns:24px 1fr 80px 90px;gap:8px;padding:0 0 4px;border-bottom:2px solid var(--border);margin-bottom:2px">
@@ -3505,7 +3505,6 @@ function renderNewBrandsPanel(){
     ${rows}
   </div>`;
 }
-
 function renderAlertsBrief(days,canales,fuels){
   const el=g('alrt-brief');
   if(!el||!REC)return;
@@ -3715,4 +3714,40 @@ function renderAlerts(){
         <span class="alrt-brand">${a.brand}</span>
         <span style="font-size:.7rem;color:var(--text2)">${conceptShort}</span>
         ${streakHtml}
-        <span cl
+        <span class="alrt-badge ${badgeCls}">${badgeTxt}</span>
+        <span class="alrt-pct ${pctCls}">${pctStr}</span>
+      </div>
+      <div class="alrt-summary">
+        Today: <strong>${fmtN(a.todayTotal)}</strong> ·
+        ${a.histN}d avg: <strong>${fmtN(a.avgTotal)}</strong> ·
+        <span style="color:var(--text2)">excl. zero-reg days</span>
+      </div>
+      ${racFlagHtml}
+      <div class="alrt-body">
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Channel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>${canalRows}
+          </div>
+        </div>
+        <div class="alrt-section">
+          <div class="alrt-section-title">By Fuel</div>
+          <div class="alrt-rows">
+            <div class="alrt-row" style="font-size:.65rem;color:var(--text2)">
+              <span></span><span style="text-align:right">Today</span>
+              <span style="text-align:right">Avg</span><span style="text-align:right">Dev</span>
+            </div>${fuelRows}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+</script>
+</body>
+</html>
+
