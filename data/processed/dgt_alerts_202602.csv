@@ -23,5 +23,5 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202602,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,625,+/-250 and +/-25%,"actual=1286; media_mismo_mes=661.0; historico=701,503,779; rel=+94.6%"
 202602,WARN,CHANNEL_DRIFT,TOYOTA,Private,count_vs_same_month_history,1142,+/-250 and +/-25%,"actual=5667; media_mismo_mes=4525.0; historico=5498,3732,4345; rel=+25.2%"
 202602,CRITICAL,CHANNEL_DRIFT,TOYOTA,RAC,count_vs_same_month_history,534,+/-250 and +/-25%,"actual=844; media_mismo_mes=310.0; historico=592,184,154; rel=+172.3%"
-202602,WARN,CHANNEL_DRIFT,VOLKSWAGEN,Private,count_vs_same_month_history,668,+/-250 and +/-25%,"actual=2533; media_mismo_mes=1865.0; historico=2490,1480,1625; rel=+35.8%"
+202602,WARN,CHANNEL_DRIFT,VOLKSWAGEN,Private,count_vs_same_month_history,670,+/-250 and +/-25%,"actual=2535; media_mismo_mes=1865.0; historico=2490,1480,1625; rel=+35.9%"
 202602,WARN,CHANNEL_DRIFT,VOLKSWAGEN,RAC,count_vs_same_month_history,450,+/-250 and +/-25%,"actual=1443; media_mismo_mes=993.3; historico=1045,443,1492; rel=+45.3%"
