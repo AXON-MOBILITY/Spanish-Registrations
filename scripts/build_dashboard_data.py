@@ -89,6 +89,10 @@ _EXTRA_CLASSIFIED = {
     # Focus Segment / otras marcas conocidas no cubiertas por _BRAND_NORM
     'Genesis', 'Bugatti', 'Donkervoort', 'Lucid Motors', 'Lancia',
     'BAW', 'Wuling',
+    # Nuevas marcas clasificadas 2026
+    'Gwm', 'Cirelli', 'Yooudooo', 'Eveasy',
+    'Rapido', 'Secma', 'Plymouth', 'La Hispano Suiza', 'Abt',
+    'Feniks', 'Gruau',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 
