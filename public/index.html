@@ -349,11 +349,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   vertical-align:middle;flex-shrink:0;overflow:hidden;box-sizing:border-box}
 .ov-brand-badge.no-logo{padding:0}
 .rank-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank-bars{display:flex;flex-direction:column;gap:3px}
-.rank-bar-wrap{height:6px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
-.rank-bar{height:100%;border-radius:4px;transition:width .4s}
-.rank-bar-mth{background:#3b82f6}
-.rank-bar-ytd{background:rgba(16,185,129,.7)}
+.rank-bar-wrap{height:7px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
+.rank-bar{height:100%;background:#10b981;border-radius:4px;transition:width .4s}
 .rank-regs{font-size:.88rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .rank-ytd{font-size:.88rem;font-weight:600;text-align:right;font-variant-numeric:tabular-nums;color:rgba(16,185,129,.9)}
 .rank-cuota{font-size:.78rem;color:var(--text2);text-align:right}
@@ -2839,7 +2836,6 @@ function renderRanking(sv,tot,yoy,mth,ytd,maxM){
     const yPct=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
     const mthVal=(mth&&mth[brand])||0;
     const ytdVal=(ytd&&ytd[brand])||0;
-    const barMthW=Math.round(mthVal/maxMthVal*100);
     const barYtdW=Math.round(ytdVal/maxYtdVal*100);
     const col=_brandColor(brand);
     const isBMW=['BMW','MINI'].includes(brand);
@@ -2849,10 +2845,7 @@ function renderRanking(sv,tot,yoy,mth,ytd,maxM){
       <span class="rank-pos">${i+1}</span>
       <span class="${(()=>{const _f=BRAND_LOGO[brand];return BRAND_COLOR_LOGO[_f]?'rank-badge color-logo':_f?'rank-badge white-logo':'rank-badge no-logo'})()}"${!BRAND_LOGO[brand]?` style="background:${col}"`:''}>${_brandLogo(brand)}</span>
       <span class="rank-name" title="${brand}">${brand}</span>
-      <div class="rank-bars">
-        <div class="rank-bar-wrap" title="${mthLbl}: ${fN(mthVal)}"><div class="rank-bar rank-bar-mth" style="width:${barMthW}%"></div></div>
-        <div class="rank-bar-wrap" title="${ytdLbl}: ${fN(ytdVal)}"><div class="rank-bar rank-bar-ytd" style="width:${barYtdW}%"></div></div>
-      </div>
+      <div class="rank-bar-wrap" title="${ytdLbl}: ${fN(ytdVal)}"><div class="rank-bar" style="width:${barYtdW}%"></div></div>
       <span class="rank-regs">${fN(mthVal)}</span>
       <span class="rank-ytd">${fN(ytdVal)}</span>
       <span class="rank-cuota">${fP2(share)}</span>
