@@ -380,9 +380,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <img class="login-brand-img" src="brand/automat-logo-option-2.png" alt="AutoMat - Matriculaciones DGT">
     </div>
     <div class="login-title">Acceso restringido</div>
-    <input id="login-pw" class="login-input" type="password" placeholder="Contraseña"
-           onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <input id="login-pw" class="login-input" type="password" placeholder="Contraseña">
+    <button class="login-btn" id="login-submit" type="button">Entrar</button>
     <div class="login-err" id="login-err"></div>
   </div>
 </div>
@@ -781,24 +780,38 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 // ── AUTH ──────────────────────────────────────────
 (function(){
   const KEY='dgt_auth_v2', PWD='BMW2026';
+  const clean=v=>String(v||'').replace(/\s+/g,'').toUpperCase();
+  const hideLogin=()=>{
+    const screen=document.getElementById('login-screen');
+    if(screen)screen.classList.add('hidden');
+  };
+  window.doLogin=function(){
+    const input=document.getElementById('login-pw');
+    const err=document.getElementById('login-err');
+    const val=input?input.value:'';
+    if(clean(val)===PWD){
+      sessionStorage.setItem(KEY,PWD);
+      hideLogin();
+      if(err)err.textContent='';
+    } else {
+      if(err)err.textContent='Contraseña incorrecta';
+      if(input){input.value='';input.focus();}
+    }
+  };
   localStorage.removeItem('dgt_auth_v1');
   if(sessionStorage.getItem(KEY)===PWD){
-    document.getElementById('login-screen').classList.add('hidden');
+    hideLogin();
   }
+  const btn=document.getElementById('login-submit');
+  const input=document.getElementById('login-pw');
+  if(btn)btn.addEventListener('click',window.doLogin);
+  if(input)input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      window.doLogin();
+    }
+  });
 })();
-function doLogin(){
-  const val=document.getElementById('login-pw').value;
-  const err=document.getElementById('login-err');
-  if(val==='BMW2026'){
-    sessionStorage.setItem('dgt_auth_v2','BMW2026');
-    document.getElementById('login-screen').classList.add('hidden');
-    err.textContent='';
-  } else {
-    err.textContent='Contraseña incorrecta';
-    document.getElementById('login-pw').value='';
-    document.getElementById('login-pw').focus();
-  }
-}
 // ─────────────────────────────────────────────────
 Chart.register(ChartDataLabels);
 
