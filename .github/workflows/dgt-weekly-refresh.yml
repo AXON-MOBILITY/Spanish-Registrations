@@ -1,0 +1,66 @@
+name: DGT weekly refresh (viernes)
+
+# Cada viernes reprocesamos con --force todos los diarios del mes en curso
+# por si la DGT ha corregido ficheros ya publicados.
+# Se ejecuta a las 08:15 UTC (= 09:15 CET invierno / 10:15 CEST verano),
+# siempre después de que la DGT suba los ficheros actualizados.
+
+on:
+  workflow_dispatch:   # permite lanzarlo manualmente también
+  schedule:
+    - cron: "15 8 * * 5"   # viernes 08:15 UTC → 09:15 España (invierno) / 10:15 (verano)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dgt-auto-sync        # misma lock-group que el sync diario
+  cancel-in-progress: false   # no cancelar si hay uno en marcha; esperar
+
+env:
+  SIMMIX_ALIGN: "0"
+
+jobs:
+  weekly-refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python deps
+        shell: bash
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests (gate)
+        shell: bash
+        run: python -m pytest tests/ -q
+
+      - name: Reprocess daily files for current month (--force)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Reprocesando todos los diarios del mes en curso con --force..."
+          python scripts/process_month.py daily-current --force
+
+      - name: Build dashboard data
+        shell: bash
+        run: python scripts/build_dashboard_data.py
+
+      - name: Commit if anything changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/processed/ public/ || true
+          if git diff --cached --quiet; then
+            echo "Sin cambios tras el reprocesado — los ficheros DGT no han variado."
+            exit 0
+      
