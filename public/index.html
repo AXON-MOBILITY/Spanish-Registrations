@@ -371,7 +371,39 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .ov-brand-badge.color-logo{background:#F1F5F9;padding:3px}
 .ov-brand-badge.white-logo{background:#1a2a40}
 </style>
-</head>
+<!-- LOGIN SAFE BOOTSTRAP -->
+<script>
+(function(){
+  const KEY='dgt_auth_v2';
+  const PWD='BMW2026';
+  const clean=v=>String(v||'').replace(/\s+/g,'').toUpperCase();
+  function hideLogin(){
+    const screen=document.getElementById('login-screen');
+    if(screen) screen.classList.add('hidden');
+  }
+  window.doLogin=function(){
+    const input=document.getElementById('login-pw');
+    const err=document.getElementById('login-err');
+    if(clean(input && input.value)===PWD){
+      try{sessionStorage.setItem(KEY,PWD);}catch(e){}
+      hideLogin();
+      if(err) err.textContent='';
+      return false;
+    }
+    if(err) err.textContent='Contraseña incorrecta';
+    if(input){input.value=''; input.focus();}
+    return false;
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    try{localStorage.removeItem('dgt_auth_v1');}catch(e){}
+    try{if(sessionStorage.getItem(KEY)===PWD) hideLogin();}catch(e){}
+    const btn=document.getElementById('login-submit') || document.querySelector('.login-btn');
+    const input=document.getElementById('login-pw');
+    if(btn) btn.addEventListener('click',function(e){e.preventDefault(); window.doLogin();});
+    if(input) input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.doLogin();}});
+  });
+})();
+</script></head>
 <body>
 
 <div id="login-screen">
@@ -381,7 +413,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     </div>
     <div class="login-title">Acceso restringido</div>
     <input id="login-pw" class="login-input" type="password" placeholder="Contraseña">
-    <button class="login-btn" id="login-submit" type="button">Entrar</button>
+    <button class="login-btn" id="login-submit" type="button" onclick="return doLogin()">Entrar</button>
     <div class="login-err" id="login-err"></div>
   </div>
 </div>
