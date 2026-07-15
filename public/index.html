@@ -880,6 +880,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 
     <div class="pane" id="pane-alerts">
+      <div id="alrt-new-brands"></div>
       <div id="alrt-brief"></div>
       <div class="card" style="padding:14px 16px">
         <div class="alrt-header">
@@ -941,14 +942,14 @@ function _brandColor(name){
 }
 // Mapa nombre DGT → archivo en public/logos/ (sin extensión)
 const BRAND_LOGO={
-  'Abarth':'Abarth','Alfa Romeo':'Alfa Romeo','Alpine':'Alpine',
+  'Abarth':'Abarth','Aion':'Aion','aion':'Aion','Alfa Romeo':'Alfa Romeo','Alpine':'Alpine',
   'Aston Martin':'Aston Martin','Acura':'Acura','acura':'Acura','Audi':'Audi',
   'BAW':'BAW','Baojun':'Baojun','baojun':'Baojun','Baw':'BAW','baw':'BAW','Bentley':'Bentley',
   'BMW':'BMW','Bmw I':'BMW','BYD':'BYD','Cadillac':'Cadillac',
   'Caterham Cars Ltd':'Caterham','Citroen':'Citroen','Citro\xEBn':'Citroen',
   'Chevrolet':'Chevrolet','chevrolet':'Chevrolet','Cirelli':'Cirelli','cirelli':'Cirelli','Cupra':'Cupra',
   'Dacia':'Dacia','DFSK':'DFSK','DR':'DR','DS':'DS',
-  'Dongfeng':'Dongfeng','EVO':'EVO','Ebro':'Ebro','Faw':'Faw',
+  'Dongfeng':'Dongfeng','EVO':'EVO','Ebro':'Ebro','Exlantix':'Exlantix','exlantix':'Exlantix','Faw':'Faw',
   'Ferrari':'Ferrari','Fiat':'Fiat','Ford':'Ford',
   'Foton':'Foton Motors','Foton Motors':'Foton Motors',
   'Geely':'Geely','Great Wall':'GWM','GWM':'GWM','Gwm':'GWM','gwm':'GWM',
@@ -981,9 +982,9 @@ const BRAND_LOGO={
 
 // Mapa de logos a color (logos-color/): filename → extensión
 const BRAND_COLOR_LOGO={
-  'Acura':'svg','Alfa Romeo':'svg','Aston Martin':'svg','Audi':'svg','BMW':'svg','BYD':'svg',
+  'Acura':'svg','Aion':'svg','Alfa Romeo':'svg','Aston Martin':'svg','Audi':'svg','BMW':'svg','BYD':'svg',
   'Bentley':'svg','Cadillac':'svg','Changan':'svg','Citroen':'svg','DS':'svg',
-  'Dacia':'svg','Ferrari':'svg','Fiat':'svg','Ford':'svg','Foton Motors':'svg',
+  'Dacia':'svg','Exlantix':'svg','Ferrari':'svg','Fiat':'svg','Ford':'svg','Foton Motors':'svg',
   'GWM':'svg','Honda':'svg','Hyundai':'svg','Iveco':'svg','Jaguar':'svg',
   'Jeep':'svg','Kg Mobility':'svg','Kia':'svg','Lamborghini':'svg','Lancia':'svg',
   'Land Rover':'svg','Lexus':'svg','Lotus':'svg','MG':'svg','MINI':'svg',
@@ -1072,6 +1073,7 @@ const _CHINESE_BRANDS=new Set([
   'Seres','Shineray','Skywell','Smart',
   'Tiggo',
   'VGV','Voyah',
+  'Exlantix',
   'Xpeng',
   'Zeekr',
 ]);
@@ -1095,9 +1097,9 @@ const EXCLUDED_BRANDS=new Set([
 // Marcas de coche conocidas: siempre visibles en el desplegable aunque tengan
 // poco volumen (Ferrari, Morgan...). Las demas entran si superan 250 uds desde 2025.
 const KNOWN_BRANDS=new Set([
-  'Abarth','Aiways','Alfa Romeo','Alpine','Alpina','Aston Martin','Audi','BAIC',
+  'Abarth','Aion','Aiways','Alfa Romeo','Alpine','Alpina','Aston Martin','Audi','BAIC',
   'BMW','BYD','Bentley','Bestune','Cadillac','Caterham','Changan','Citroen',
-  'Cupra','DFSK','DR','DS','Dacia','Dongfeng','EVO','Ebro','Ferrari','Fiat',
+  'Cupra','DFSK','DR','DS','Dacia','Dongfeng','EVO','Ebro','Exlantix','Ferrari','Fiat',
   'Ford','Foton Motors','GWM','Geely','Honda','Hyundai','Ineos','Isuzu','Iveco',
   'Jaecoo','Jaguar','Jeep','Karma','Kg Mobility','Kia','LEVC','Lamborghini',
   'Lancia','Land Rover','Leapmotor','Lexus','Livan','Lotus','Lynk & Co','MAN',
@@ -1154,6 +1156,7 @@ let BRAND_CHOICES=[];
 fetch('data/province_brands.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{PROV=d;initProv();}).catch(()=>{});
 fetch('data/daily_brands.json?v='+Date.now()).then(r=>r.json())
+fetch('data/pending_classification.json?v='+Date.now()).then(r=>r.json()).then(d=>{window.PEND=d;}).catch(()=>{window.PEND=null;})
   .then(d=>{TREND=d;initTrend();}).catch(()=>{});
 
 // ── SIDEBAR BUILD ────────────────────────────────────────
@@ -3411,6 +3414,35 @@ function toggleAlrtPill(btn){
   renderAlerts();
 }
 
+function renderNewBrandsPanel(){
+  const el=g('alrt-new-brands');
+  if(!el)return;
+  if(!window.PEND||!window.PEND.new_brands||!window.PEND.new_brands.length){el.innerHTML='';return;}
+  const brands=window.PEND.new_brands;
+  const rows=brands.map(b=>{
+    const since=b.desde||'';
+    const units=(b.uds_12m||0).toLocaleString('es-ES');
+    return `<div style="display:grid;grid-template-columns:1fr 80px 90px;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-weight:600;font-size:.88rem">${b.marca}</span>
+      <span style="font-size:.82rem;color:var(--text2)">${units} uds</span>
+      <span style="font-size:.78rem;color:var(--text2)">desde ${since}</span>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div class="card" style="padding:12px 16px;margin-bottom:12px;border-left:4px solid #f59e0b">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="font-size:1rem">\u26a0\ufe0f</span>
+      <span style="font-weight:700;font-size:.9rem">Nuevas marcas sin clasificar</span>
+      <span style="font-size:.75rem;color:var(--text2);margin-left:auto">A\u00f1ade a _CHINESE_BRANDS o _BRAND_CONCEPT en index.html</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 80px 90px;gap:8px;padding:0 0 4px;border-bottom:2px solid var(--border);margin-bottom:2px">
+      <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2)">Marca</span>
+      <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2)">Uds 12m</span>
+      <span style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2)">Primera vez</span>
+    </div>
+    ${rows}
+  </div>`;
+}
+
 function renderAlertsBrief(days,canales,fuels){
   const el=g('alrt-brief');
   if(!el||!REC)return;
@@ -3499,6 +3531,7 @@ function renderAlerts(){
   const latest=days[days.length-1];
   const latestDate=latest.day;
   g('alrt-date-lbl').textContent='Latest data: '+latestDate;
+  renderNewBrandsPanel();
   renderAlertsBrief(days,canales,fuels);
   const _ALRT_EXCLUDE=new Set(['Mercedes-V']);
   const focusBrands=Object.keys(_BRAND_CONCEPT).filter(b=>!_ALRT_EXCLUDE.has(b));
@@ -3655,4 +3688,4 @@ function renderAlerts(){
 </script>
 </body>
 </html>
-                                                                                                                                                                          
+                                                  
