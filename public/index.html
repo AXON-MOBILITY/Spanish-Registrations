@@ -620,7 +620,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="sg-body" id="sb-segs"></div>
     </div>
-    <div class="sg" id="sg-provs">
+    <div class="sg" id="sg-provs" style="display:none">
       <div class="sg-hdr" onclick="toggleSg('sg-provs')">
         <span>Province <span class="sg-count" id="cnt-provs"></span></span>
         <span class="sg-arrow">▼</span>
@@ -1926,11 +1926,11 @@ function buildProvSidebar(){
       renderProv();
     }));
   });
+  updateCount('cnt-provs',total,total);
 }
 
 function initProv(){
   if(!PROV||!PROV.provinces.length)return;
-  buildProvSidebar();
   GAMAS.forEach((gm,i)=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(i===RK.gama?' on':'');
@@ -1949,6 +1949,7 @@ function initProv(){
   });
   RK.year=String(PROV.years[PROV.years.length-1]);
   sel.value=RK.year;
+  buildProvSidebar();
   fillProvMonths();
   renderProv();
 }
@@ -3470,6 +3471,8 @@ function showTab(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
   g('pane-'+name).classList.add('on');
   g('tbtn-'+name).classList.add('on');
+  const sgProvs=g('sg-provs');
+  if(sgProvs)sgProvs.style.display=name==='prov'?'':'none';
   // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
   // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
   // instante y el recalculo llega un frame despues.
