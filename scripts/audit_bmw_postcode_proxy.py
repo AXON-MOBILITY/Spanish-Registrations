@@ -43,6 +43,37 @@ F_RENTING = (242, 243)
 
 POSTCODE_RE = re.compile(r"^[0-5][0-9]{4}$")
 
+MASTER_PROVINCE_NAMES = {
+    "07": "ISLAS BALEARES",
+    "20": "GUIPUZCOA",
+    "35": "LAS PALMAS",
+    "38": "SANTA CRUZ DE TENERIFE",
+    "48": "VIZCAYA",
+}
+
+# Exact, reviewed aliases for abbreviations and bilingual names used by DGT.
+MUNICIPALITY_ALIASES = {
+    ("03", "ALICANTE"): "ALICANTE ALACANT",
+    ("03", "ALCOY"): "ALCOY ALCOI",
+    ("03", "CAMPELLO"): "EL CAMPELLO",
+    ("03", "ELCHE"): "ELCHE ELX",
+    ("03", "JAVEA"): "JAVEA XABIA",
+    ("08", "S CUGAT DEL VALLES"): "SANT CUGAT DEL VALLES",
+    ("08", "S JULIA VILATORTA"): "SANT JULIA DE VILATORTA",
+    ("11", "EL PUERTO STA MARIA"): "EL PUERTO DE SANTA MARIA",
+    ("11", "JEREZ DE LA FTRA"): "JEREZ DE LA FRONTERA",
+    ("12", "BENICASIM"): "BENICASIM BENICASSIM",
+    ("12", "CASTELLO PLANA"): "CASTELLON DE LA PLANA CASTELLO DE LA PLANA",
+    ("15", "SANTIAGO"): "SANTIAGO DE COMPOSTELA",
+    ("28", "SAN SEBASTIAN REYES"): "SAN SEBASTIAN DE LOS REYES",
+    ("28", "VILLANUEVA DE CANADA"): "VILLANUEVA DE LA CANADA",
+    ("35", "LAS PALMAS G C"): "LAS PALMAS DE GRAN CANARIA",
+    ("38", "LA LAGUNA"): "SAN CRISTOBAL DE LA LAGUNA",
+    ("38", "S C TENERIFE"): "SANTA CRUZ DE TENERIFE",
+    ("46", "LA ELIANA"): "ELIANA L",
+    ("07", "PALMA"): "PALMA DE MALLORCA",
+}
+
 
 def normalize_text(value):
     value = unicodedata.normalize("NFKD", (value or "").strip().upper())
@@ -207,11 +238,17 @@ def audit_lines(
             if len(municipality_code) == 5 and municipality_code.isdigit()
             else ""
         )
-        province = pm.PROV_NAMES.get(province_code, "")
+        province = MASTER_PROVINCE_NAMES.get(
+            province_code, pm.PROV_NAMES.get(province_code, "")
+        )
         municipality = line[F_MUNICIPIO[0] : F_MUNICIPIO[1]].strip()
         if not municipality:
             metrics["blank_municipality_name_rows"] += 1
-        municipality_key = normalize_municipality(municipality)
+        raw_municipality_key = normalize_text(municipality)
+        municipality_key = MUNICIPALITY_ALIASES.get(
+            (province_code, raw_municipality_key),
+            normalize_municipality(municipality),
+        )
         master_key = (normalize_text(province), municipality_key)
 
         if master_key in ambiguous_master:
