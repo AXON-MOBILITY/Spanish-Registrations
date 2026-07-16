@@ -264,7 +264,6 @@ def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
     )
     summary["dominance_threshold"] = dominance_threshold
     summary["method"] = "geo_territory_proxy"
-    summary["unmatched_examples"] = unmatched_rows[:20]
     summary["warning"] = (
         "This is a domicile-territory proxy, not the observed selling dealer."
     )
@@ -278,6 +277,7 @@ def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
         }
         for key, count in unmatched.most_common()
     ]
+    summary["unmatched_examples"] = unmatched_rows[:20]
     return proxy_rows, summary, unmatched_rows
 
 
