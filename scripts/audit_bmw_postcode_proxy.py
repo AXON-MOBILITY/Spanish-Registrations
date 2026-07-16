@@ -51,6 +51,14 @@ def normalize_text(value):
     return " ".join(value.split())
 
 
+def normalize_municipality(value):
+    normalized = normalize_text(value)
+    tokens = normalized.split()
+    if len(tokens) > 1 and tokens[-1] in {"A", "O", "EL", "LA", "LOS", "LAS"}:
+        tokens = [tokens[-1]] + tokens[:-1]
+    return " ".join(tokens)
+
+
 def normalize_header(value):
     return normalize_text(value).replace(" ", "_")
 
@@ -84,7 +92,7 @@ def load_master(path):
             pos = _first(row, "Puntos_de_Venta", "Punto_de_Venta")
             pos_id = _first(row, "Id_Punto_de_Venta")
 
-            key = (normalize_text(province), normalize_text(municipality))
+            key = (normalize_text(province), normalize_municipality(municipality))
             if not all(key) or not pos_id:
                 continue
 
@@ -105,14 +113,24 @@ def load_master(path):
         for key, values in by_municipality.items()
         if len(values) == 1
     }
+    by_name_keys = collections.defaultdict(list)
+    for key, territory in unambiguous.items():
+        by_name_keys[key[1]].append((key, territory))
+    unique_name_master = {
+        name: values[0][1]
+        for name, values in by_name_keys.items()
+        if len(values) == 1
+    }
+
     diagnostics = {
         "master_rows": rows,
         "master_municipalities": len(by_municipality),
         "master_dealers": len(dealers),
         "master_points_of_sale": len(points_of_sale),
         "master_ambiguous_municipalities": len(ambiguous),
+        "master_unique_municipality_names": len(unique_name_master),
     }
-    return unambiguous, ambiguous, diagnostics
+    return unambiguous, ambiguous, unique_name_master, diagnostics
 
 
 def valid_postcode(value):
@@ -149,7 +167,13 @@ def decode_line(raw):
     return raw.rstrip(b"\r\n").decode("latin-1", errors="replace")
 
 
-def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
+def audit_lines(
+    lines,
+    master,
+    ambiguous_master,
+    master_by_unique_name,
+    dominance_threshold=1.0,
+):
     """Return postcode proxy rows, audit metrics and unmatched municipalities."""
     metrics = collections.Counter()
     postcode_evidence = collections.defaultdict(
@@ -187,12 +211,17 @@ def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
         municipality = line[F_MUNICIPIO[0] : F_MUNICIPIO[1]].strip()
         if not municipality:
             metrics["blank_municipality_name_rows"] += 1
-        master_key = (normalize_text(province), normalize_text(municipality))
+        municipality_key = normalize_municipality(municipality)
+        master_key = (normalize_text(province), municipality_key)
 
         if master_key in ambiguous_master:
             metrics["ambiguous_master_rows"] += 1
             continue
         territory = master.get(master_key)
+        if territory is None:
+            territory = master_by_unique_name.get(municipality_key)
+            if territory is not None:
+                metrics["unique_name_fallback_rows"] += 1
         if territory is None:
             metrics["unmatched_municipality_rows"] += 1
             unmatched[(province_code, province, municipality)] += 1
@@ -352,13 +381,16 @@ def main():
     if not 0.5 <= args.dominance_threshold <= 1.0:
         parser.error("--dominance-threshold must be between 0.5 and 1.0")
 
-    master, ambiguous_master, master_metrics = load_master(args.master)
+    master, ambiguous_master, master_by_unique_name, master_metrics = load_master(
+        args.master
+    )
     with source_path(args.source, args.yyyymm) as input_path:
         with open_lines(input_path) as lines:
             proxy_rows, audit, unmatched = audit_lines(
                 lines,
                 master,
                 ambiguous_master,
+                master_by_unique_name,
                 args.dominance_threshold,
             )
 
