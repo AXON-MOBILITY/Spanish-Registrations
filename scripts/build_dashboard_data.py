@@ -93,6 +93,7 @@ _EXTRA_CLASSIFIED = {
     'Gwm', 'Cirelli', 'Yooudooo', 'Eveasy',
     'Rapido', 'Secma', 'Plymouth', 'La Hispano Suiza', 'Abt',
     'Feniks', 'Gruau',
+    'Lepas', 'Tecnove',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 
