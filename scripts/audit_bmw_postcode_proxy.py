@@ -180,6 +180,8 @@ def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
         province_code = line[F_PROVINCIA_VEH[0] : F_PROVINCIA_VEH[1]].strip()
         province = pm.PROV_NAMES.get(province_code, "")
         municipality = line[F_MUNICIPIO[0] : F_MUNICIPIO[1]].strip()
+        if not municipality:
+            metrics["blank_municipality_name_rows"] += 1
         master_key = (normalize_text(province), normalize_text(municipality))
 
         if master_key in ambiguous_master:
@@ -262,6 +264,7 @@ def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
     )
     summary["dominance_threshold"] = dominance_threshold
     summary["method"] = "geo_territory_proxy"
+    summary["unmatched_examples"] = unmatched_rows[:20]
     summary["warning"] = (
         "This is a domicile-territory proxy, not the observed selling dealer."
     )
