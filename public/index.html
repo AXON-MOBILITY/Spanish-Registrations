@@ -1175,11 +1175,97 @@ const g=id=>document.getElementById(id);
 // ── LOAD ────────────────────────────────────────────────
 fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   REC=data;
+  REC_FULL_ROWS=data.rows;
   REC.enums.marca.forEach((b,i)=>{if(b&&!EXCLUDED_BRANDS.has(b))INCLUDED_MARCA_IDX.add(i);});
   buildSidebar();
   buildTopFilters();
   render();
 });
+
+// ── FILTRO DE PROVINCIA sobre Overview/Ranking/Channel&Monthly ──────────────
+// records_prov.json trae el grano marca+modelo por provincia. Lo proyectamos al
+// MISMO esquema que records.json (mismos COL/enums) para intercambiar REC.rows
+// cuando hay un subconjunto de provincias seleccionado. Con todas las provincias
+// marcadas se usa el dataset canonico (vista por defecto intacta).
+let RECP=null;            // records_prov.json crudo
+let REC_FULL_ROWS=null;   // filas canonicas (para restaurar)
+let RECP_PROJ=null;       // [{prov:name, row:[esquema REC]}]
+let TOTAL_PROVS=0;
+let ALL_PROV_NAMES=[];
+let _provFilterOn=false;
+let _recpPromise=null;
+
+// Carga PEREZOSA: records_prov.json (varios MB) solo se descarga la primera vez
+// que el usuario filtra por un subconjunto de provincias, para no penalizar la
+// carga inicial de la pagina.
+function ensureRECP(){
+  if(RECP_PROJ)return Promise.resolve();
+  if(_recpPromise)return _recpPromise;
+  _recpPromise=fetch('data/records_prov.json?v='+Date.now())
+    .then(r=>r.json()).then(data=>{RECP=data; tryBuildProvProjection();})
+    .catch(()=>{RECP=null;});
+  return _recpPromise;
+}
+
+function tryBuildProvProjection(){
+  if(!REC||!RECP||!RECP.rows||!RECP.rows.length||RECP_PROJ)return;
+  const E=REC.enums, P=RECP.enums;
+  const C={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,SEG:6,SUB:7,HP:8,BODY:9,PROV:10,N:11};
+  const remap=(pArr,rArr,addToIncluded)=>{
+    const map=new Array(pArr.length);
+    pArr.forEach((val,i)=>{
+      let j=rArr.indexOf(val);
+      if(j<0){ j=rArr.length; rArr.push(val);
+               if(addToIncluded&&val&&!EXCLUDED_BRANDS.has(val))INCLUDED_MARCA_IDX.add(j); }
+      map[i]=j;
+    });
+    return map;
+  };
+  const mMarca =remap(P.marca ,E.marca ,true);
+  const mModelo=remap(P.modelo,E.modelo,false);
+  const mSeg   =remap(P.seg   ,E.seg   ,false);
+  const mSub   =remap(P.sub   ,E.sub   ,false);
+  const mHp    =remap(P.hp    ,E.hp    ,false);
+  const mBody  =remap(P.body  ,E.body  ,false);
+  let fdIdx=E.fuel_det.indexOf(''); if(fdIdx<0){ fdIdx=E.fuel_det.length; E.fuel_det.push(''); }
+  const provNames=P.prov;
+  RECP_PROJ=RECP.rows.map(r=>({
+    prov: provNames[r[C.PROV]],
+    row: [ r[C.Y], r[C.M], mMarca[r[C.MARCA]], mModelo[r[C.MODELO]],
+           r[C.CANAL], r[C.FUEL], fdIdx,
+           mSeg[r[C.SEG]], mSub[r[C.SUB]], mHp[r[C.HP]], mBody[r[C.BODY]], r[C.N] ]
+  }));
+}
+
+// hay un subconjunto propio de provincias seleccionado con dataset ya cargado
+function provFilterActive(){
+  return RECP_PROJ && TOTAL_PROVS>0 && F.provs.size>0 && F.provs.size<TOTAL_PROVS;
+}
+// intercambia REC.rows segun la seleccion de provincias
+function rebuildActiveRecords(){
+  if(!REC)return;
+  if(provFilterActive()){
+    REC.rows=RECP_PROJ.filter(o=>F.provs.has(o.prov)).map(o=>o.row);
+    _provFilterOn=true;
+  } else if(_provFilterOn||REC.rows!==REC_FULL_ROWS){
+    REC.rows=REC_FULL_ROWS;
+    _provFilterOn=false;
+  }
+}
+// la seleccion actual necesita el dataset provincial?
+function needProvData(){
+  return TOTAL_PROVS>0 && F.provs.size>0 && F.provs.size<TOTAL_PROVS;
+}
+// handler unico cuando cambia la seleccion de provincias
+function onProvChange(){
+  if(PROV)renderProv();               // pestaña Provinces: inmediata (usa PROV)
+  if(needProvData()&&!RECP_PROJ){
+    ensureRECP().then(()=>{ rebuildActiveRecords(); render(); });
+  } else {
+    rebuildActiveRecords(); render();
+  }
+}
+
 let LAST_COMPLETED_MONTH=null;
 fetch('data/meta.json?v='+Date.now()).then(r=>r.json()).then(m=>{
   if(m.last_completed_month)LAST_COMPLETED_MONTH=m.last_completed_month;
@@ -1913,17 +1999,19 @@ function buildProvSidebar(){
   const names=PROV.provinces.map(p=>p.name);
   names.forEach(n=>F.provs.add(n));
   const total=names.length;
+  TOTAL_PROVS=total;
+  ALL_PROV_NAMES=names.slice();
   const cont=g('sb-provs');
   cont.innerHTML='';
   addQuickSel('sb-provs',
-    ()=>{ names.forEach(n=>F.provs.add(n)); cont.querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-provs',total,total); renderProv(); },
-    ()=>{ F.provs.clear(); cont.querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-provs',0,total); renderProv(); }
+    ()=>{ names.forEach(n=>F.provs.add(n)); cont.querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-provs',total,total); onProvChange(); },
+    ()=>{ F.provs.clear(); cont.querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-provs',0,total); onProvChange(); }
   );
   names.forEach(n=>{
     cont.appendChild(mkCb(n,true,on=>{
       if(on)F.provs.add(n);else F.provs.delete(n);
       updateCount('cnt-provs',F.provs.size,total);
-      renderProv();
+      onProvChange();
     }));
   });
   updateCount('cnt-provs',total,total);
@@ -3472,7 +3560,10 @@ function showTab(name){
   g('pane-'+name).classList.add('on');
   g('tbtn-'+name).classList.add('on');
   const sgProvs=g('sg-provs');
-  if(sgProvs)sgProvs.style.display=name==='prov'?'':'none';
+  if(sgProvs){
+    const provTabs=['overview','ranking','analisis','prov'];
+    sgProvs.style.display=provTabs.includes(name)?'':'none';
+  }
   // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
   // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
   // instante y el recalculo llega un frame despues.
@@ -3506,6 +3597,13 @@ function resetFilters(){
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
   F.marca='';F.modelo='';F.body='';
+  if(ALL_PROV_NAMES.length){
+    F.provs=new Set(ALL_PROV_NAMES);
+    updateCount('cnt-provs',F.provs.size,ALL_PROV_NAMES.length);
+    const sb=g('sb-provs');
+    if(sb)sb.querySelectorAll('input').forEach(c=>c.checked=true);
+  }
+  rebuildActiveRecords();
   render();
 }
 

@@ -2014,7 +2014,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
         counts[(marca, canal)] += 1
         fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
-            prov_counts[(cod_prov, marca, canal, fuel_code, seg, sub, hp)] += 1
+            prov_counts[(cod_prov, marca, modelo_canon, canal, fuel_code, seg, sub, hp, body)] += 1
 
         # Collect vin10 for N/U=N records so future tram=B dedup checks work
         if _nu_field == 'N':
@@ -2160,28 +2160,38 @@ def save_csv(counts, yyyymm):
     return path
 
 
+def _unpack_prov_key(key):
+    """Desempaqueta la clave de prov_counts soportando formatos historicos.
+    Devuelve (cod_prov, marca, modelo, canal, fuel_type, segmento, subseg, hp, body)."""
+    if len(key) == 9:      # nuevo: con modelo + body
+        cod_prov, marca, modelo, canal, fuel_type, segmento, subseg, hp, body = key
+    elif len(key) == 7:    # antiguo: seg/sub/hp sin modelo/body
+        cod_prov, marca, canal, fuel_type, segmento, subseg, hp = key
+        modelo = body = ""
+    elif len(key) == 6:
+        cod_prov, marca, canal, fuel_type, subseg, hp = key
+        modelo = segmento = body = ""
+    elif len(key) == 4:
+        cod_prov, marca, canal, fuel_type = key
+        modelo = segmento = subseg = hp = body = ""
+    else:
+        cod_prov, canal, fuel_type = key
+        marca = modelo = segmento = subseg = hp = body = ""
+    return cod_prov, marca, modelo, canal, fuel_type, segmento, subseg, hp, body
+
+
 def save_prov_csv(prov_counts, yyyymm):
-    """prov_counts: {(cod_prov, marca, canal, fuel_type, segmento, subseg, hp): n}"""
+    """prov_counts: {(cod_prov, marca, modelo, canal, fuel_type, segmento, subseg, hp, body): n}"""
     import csv as csv_mod
     year, month = yyyymm[:4], yyyymm[4:]
     path = os.path.join(OUT_DIR, "dgt_prov_{}.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","cod_prov","provincia","canal","fuel_type","segmento","subseg","hp","count"])
+        w.writerow(["anyo","mes","marca","modelo","cod_prov","provincia","canal","fuel_type","segmento","subseg","hp","body_type","count"])
         for key, n in sorted(prov_counts.items()):
-            if len(key) == 7:
-                cod_prov, marca, canal, fuel_type, segmento, subseg, hp = key
-            elif len(key) == 6:
-                cod_prov, marca, canal, fuel_type, subseg, hp = key
-                segmento = ""
-            elif len(key) == 4:
-                cod_prov, marca, canal, fuel_type = key
-                segmento = subseg = hp = ""
-            else:
-                cod_prov, canal, fuel_type = key
-                marca = segmento = subseg = hp = ""
+            cod_prov, marca, modelo, canal, fuel_type, segmento, subseg, hp, body = _unpack_prov_key(key)
             nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
-            w.writerow([year, month, marca, cod_prov, nombre, canal, fuel_type, segmento, subseg, hp, n])
+            w.writerow([year, month, marca, modelo, cod_prov, nombre, canal, fuel_type, segmento, subseg, hp, body, n])
     print("  -> {}  ({} combos provincia)".format(path, len(prov_counts)))
     return path
 
@@ -2214,21 +2224,11 @@ def save_prov_daily_csv(prov_counts, yyyymmdd):
     path = os.path.join(OUT_DIR, "dgt_prov_daily_{}.csv".format(yyyymmdd))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","dia","marca","cod_prov","provincia","canal","fuel_type","segmento","subseg","hp","count"])
+        w.writerow(["anyo","mes","dia","marca","modelo","cod_prov","provincia","canal","fuel_type","segmento","subseg","hp","body_type","count"])
         for key, n in sorted(prov_counts.items()):
-            if len(key) == 7:
-                cod_prov, marca, canal, fuel_type, segmento, subseg, hp = key
-            elif len(key) == 6:
-                cod_prov, marca, canal, fuel_type, subseg, hp = key
-                segmento = ""
-            elif len(key) == 4:
-                cod_prov, marca, canal, fuel_type = key
-                segmento = subseg = hp = ""
-            else:
-                cod_prov, canal, fuel_type = key
-                marca = segmento = subseg = hp = ""
+            cod_prov, marca, modelo, canal, fuel_type, segmento, subseg, hp, body = _unpack_prov_key(key)
             nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
-            w.writerow([year, month, day, marca, cod_prov, nombre, canal, fuel_type, segmento, subseg, hp, n])
+            w.writerow([year, month, day, marca, modelo, cod_prov, nombre, canal, fuel_type, segmento, subseg, hp, body, n])
     return path
 
 

@@ -681,6 +681,134 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
         "scope":  scope_info or {"mode": "dgt"},
     }
 
+def _load_prov_records_file(path, yr, mo):
+    """Lee un dgt_prov[_daily] con grano modelo+provincia -> lista de dicts."""
+    out = []
+    for row in _read_csv(path):
+        try:
+            n = int(row.get("count", 0) or 0)
+            if n <= 0:
+                continue
+            canal = row.get("canal", "")
+            if canal not in CANALES:
+                continue
+            out.append({
+                "y":      yr,
+                "m":      mo,
+                "marca":  _normalize_brand(row.get("marca", "")),
+                "modelo": (row.get("modelo", "") or "").strip().upper(),
+                "cod":    row.get("cod_prov", ""),
+                "prov":   row.get("provincia", "") or "",
+                "canal":  canal,
+                "fuel":   row.get("fuel_type", "ICE") or "ICE",
+                "seg":    row.get("segmento", "") or "",
+                "sub":    _focus_bucket(row.get("subseg", "")),
+                "hp":     row.get("hp", "") or "",
+                "body":   row.get("body_type", "") or "",
+                "n":      n,
+            })
+        except (ValueError, KeyError):
+            pass
+    return out
+
+
+def load_prov_records(base):
+    """Registros con grano marca+modelo+provincia (mensuales + MTD desde diarios).
+
+    Requiere dgt_prov_*.csv con columnas modelo/body_type (pipeline nuevo).
+    Los meses sin modelo (historico antiguo) simplemente aportan modelo vacio."""
+    records = []
+    completed = set()
+    for f in sorted(glob.glob(str(base/"dgt_prov_[0-9][0-9][0-9][0-9][0-9][0-9].csv"))):
+        m = re.match(r"dgt_prov_(\d{4})(\d{2})$", Path(f).stem)
+        if not m:
+            continue
+        yr, mo = int(m.group(1)), int(m.group(2))
+        completed.add((yr, mo))
+        records.extend(_load_prov_records_file(f, yr, mo))
+    for f in sorted(glob.glob(str(base/"dgt_prov_daily_[0-9]*.csv"))):
+        m = re.match(r"dgt_prov_daily_(\d{4})(\d{2})(\d{2})$", Path(f).stem)
+        if not m:
+            continue
+        yr, mo = int(m.group(1)), int(m.group(2))
+        if (yr, mo) in completed:
+            continue
+        records.extend(_load_prov_records_file(f, yr, mo))
+    return records
+
+
+def build_records_prov_json(prov_records, mtd_yr, mtd_mo, scope_info=None):
+    """records_prov.json: mismo formato columnar indexado que records.json pero
+    con dimension prov. Se carga en el dashboard SOLO cuando el filtro de
+    provincia esta activo (Overview/Ranking/Channel&Monthly). Agrega los dicts de
+    load_prov_records por la clave completa para colapsar duplicados diarios."""
+    agg = defaultdict(int)
+    for r in prov_records:
+        key = (r["y"], r["m"], r["marca"], r["modelo"], r["canal"], r["fuel"],
+               r["seg"], r["sub"], r["hp"], r["body"], r["cod"], r["prov"])
+        agg[key] += r["n"]
+
+    if not agg:
+        return {"cols": [], "rows": [], "enums": {}, "total": 0, "months": [],
+                "mtd": None, "scope": scope_info or {"mode": "dgt"}}
+
+    marca_idx  = {}; marcas  = []
+    modelo_idx = {}; modelos = []
+    seg_idx    = {}; segs    = []
+    sub_idx    = {}; subs    = []
+    hp_idx     = {}; hps     = []
+    body_idx   = {}; bodies  = []
+    prov_idx   = {}; provs   = []
+
+    canal_map = {"Private": 0, "Corporate": 1, "RAC": 2}
+    fuel_map  = {"ICE": 0, "BEV": 1, "PHEV": 2}
+
+    def idx(val, d, lst):
+        if val not in d:
+            d[val] = len(lst)
+            lst.append(val)
+        return d[val]
+
+    rows = []
+    for (y, mo, marca, modelo, canal, fuel, seg, sub, hp, body, cod, prov), n in agg.items():
+        rows.append([
+            y, mo,
+            idx(marca,  marca_idx,  marcas),
+            idx(modelo, modelo_idx, modelos),
+            canal_map.get(canal, 0),
+            fuel_map.get(fuel, 0),
+            idx(seg,  seg_idx,  segs),
+            idx(sub,  sub_idx,  subs),
+            idx(hp,   hp_idx,   hps),
+            idx(body, body_idx, bodies),
+            idx(prov, prov_idx, provs),
+            n,
+        ])
+
+    total = sum(r[-1] for r in rows)
+    months_present = sorted({(r[0], r[1]) for r in rows})
+
+    return {
+        "cols": ["y","m","marca","modelo","canal","fuel","seg","sub","hp","body","prov","n"],
+        "enums": {
+            "canal":  ["Private","Corporate","RAC"],
+            "fuel":   ["ICE","BEV","PHEV"],
+            "marca":  marcas,
+            "modelo": modelos,
+            "seg":    segs,
+            "sub":    subs,
+            "hp":     hps,
+            "body":   bodies,
+            "prov":   provs,
+        },
+        "rows":   rows,
+        "total":  total,
+        "months": [{"y":y,"m":mo,"label":f"{MONTHS_ES[mo]} {y}"} for y,mo in months_present],
+        "mtd":    {"y":mtd_yr,"m":mtd_mo} if mtd_yr else None,
+        "scope":  scope_info or {"mode": "dgt"},
+    }
+
+
 def _zero():
     return {c: 0 for c in CANALES + FUELS}
 
@@ -1126,6 +1254,7 @@ def main():
     mtd_records, mtd_yr, mtd_mo = load_mtd(base)
     daily_data                   = load_daily(base)
     prov_data                    = load_provinces(base)
+    prov_records                 = load_prov_records(base)
 
     scope_info = {
         "mode": args.scope,
@@ -1211,10 +1340,12 @@ def main():
 
     print("Generando JSONs...")
     records_obj = build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info)
+    records_prov_obj = build_records_prov_json(prov_records, mtd_yr, mtd_mo, scope_info)
     provinces_obj = build_provinces_json(prov_data)
 
     for fname, obj in [
         ("records.json",   records_obj),
+        ("records_prov.json", records_prov_obj),
         ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
         ("provinces.json", provinces_obj),
         ("province_brands.json", ranking_obj),
