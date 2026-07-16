@@ -177,7 +177,12 @@ def audit_lines(lines, master, ambiguous_master, dominance_threshold=1.0):
             continue
         metrics["valid_postcode_rows"] += 1
 
-        province_code = line[F_PROVINCIA_VEH[0] : F_PROVINCIA_VEH[1]].strip()
+        municipality_code = line[F_MUNICIPIO_INE[0] : F_MUNICIPIO_INE[1]].strip()
+        province_code = (
+            municipality_code[:2]
+            if len(municipality_code) == 5 and municipality_code.isdigit()
+            else ""
+        )
         province = pm.PROV_NAMES.get(province_code, "")
         municipality = line[F_MUNICIPIO[0] : F_MUNICIPIO[1]].strip()
         if not municipality:
