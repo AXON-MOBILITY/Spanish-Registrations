@@ -1657,6 +1657,7 @@ function render(){
     const yDelta=yD?yD.ref-yD.prev:null;
     const share=total?d.total/total*100:0;
     const tr=document.createElement('tr');
+    if(['BMW','MINI'].includes(brand)) tr.style.background='rgba(217,119,6,.12)';
     tr.innerHTML=`
       <td><button class="btn-xpd" onclick="toggleModelRows(this,'${brand.replace(/'/g,"\\'")}')">▶</button><span class="${(()=>{const _f=BRAND_LOGO[brand];return BRAND_COLOR_LOGO[_f]?'ov-brand-badge color-logo':_f?'ov-brand-badge white-logo':'ov-brand-badge no-logo'})()}"${!BRAND_LOGO[brand]?` style="background:${_brandColor(brand)}"`:''}>${_brandLogo(brand)}</span>${brand}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
