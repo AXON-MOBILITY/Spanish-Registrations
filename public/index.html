@@ -492,28 +492,17 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">
-      <div class="axon-lockup" aria-label="Axon Mobility">
-        <svg class="axon-mark" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="axonLoginGradient" x1="70" y1="60" x2="180" y2="185" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#6366f1"/>
-            </linearGradient>
-          </defs>
-          <rect x="12" y="12" width="232" height="232" rx="52" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
-          <circle cx="128" cy="128" r="74" stroke="#2a2a3a" stroke-width="9"/>
-          <path d="M128 54 A74 74 0 0 1 202 128" stroke="url(#axonLoginGradient)" stroke-width="10" stroke-linecap="round"/>
-          <path d="M128 202 A74 74 0 0 1 54 128" stroke="#3b82f6" stroke-opacity=".7" stroke-width="10" stroke-linecap="round"/>
-          <path d="M84 144 L164 82 L139 169 L124 129 L84 144Z" fill="url(#axonLoginGradient)"/>
-          <circle cx="128" cy="54" r="8" fill="#3b82f6"/>
-          <circle cx="202" cy="128" r="8" fill="#38bdf8"/>
-          <circle cx="128" cy="202" r="8" fill="#64748b"/>
-          <circle cx="54" cy="128" r="8" fill="#64748b"/>
-        </svg>
-        <div class="axon-word">
-          <div class="axon-name">AXON <span>Mobility</span></div>
-          <div class="axon-tag">Automotive Market Intelligence</div>
-        </div>
+    <div class="login-logo" style="flex-direction:column;gap:12px;margin-bottom:4px">
+      <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:60px;height:60px;flex-shrink:0">
+        <rect x="8" y="8" width="240" height="240" rx="56" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
+        <line x1="128" y1="48" x2="72" y2="200" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
+        <line x1="128" y1="48" x2="184" y2="200" stroke="#3b82f6" stroke-width="14" stroke-linecap="round"/>
+        <line x1="95" y1="138" x2="161" y2="138" stroke="#64748b" stroke-width="11" stroke-linecap="round"/>
+        <circle cx="128" cy="44" r="16" fill="#3b82f6"/>
+      </svg>
+      <div style="text-align:center">
+        <div style="font-size:1.3rem;font-weight:800;letter-spacing:-0.04em;background:linear-gradient(135deg,#e8e8f0 40%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AXON <span style="font-weight:300">Mobility</span></div>
+        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280;margin-top:3px">Automotive Market Intelligence</div>
       </div>
     </div>
     <div class="login-title">Acceso restringido</div>
@@ -526,28 +515,17 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="tb-logo">
-    <div class="axon-lockup" aria-label="Axon Mobility">
-      <svg class="axon-mark" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <linearGradient id="axonHeaderGradient" x1="70" y1="60" x2="180" y2="185" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#3b82f6"/><stop offset="1" stop-color="#6366f1"/>
-          </linearGradient>
-        </defs>
-        <rect x="12" y="12" width="232" height="232" rx="52" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
-        <circle cx="128" cy="128" r="74" stroke="#2a2a3a" stroke-width="9"/>
-        <path d="M128 54 A74 74 0 0 1 202 128" stroke="url(#axonHeaderGradient)" stroke-width="10" stroke-linecap="round"/>
-        <path d="M128 202 A74 74 0 0 1 54 128" stroke="#3b82f6" stroke-opacity=".7" stroke-width="10" stroke-linecap="round"/>
-        <path d="M84 144 L164 82 L139 169 L124 129 L84 144Z" fill="url(#axonHeaderGradient)"/>
-        <circle cx="128" cy="54" r="8" fill="#3b82f6"/>
-        <circle cx="202" cy="128" r="8" fill="#38bdf8"/>
-        <circle cx="128" cy="202" r="8" fill="#64748b"/>
-        <circle cx="54" cy="128" r="8" fill="#64748b"/>
-      </svg>
-      <div class="axon-word">
-        <div class="axon-name">AXON <span>Mobility</span></div>
-        <div class="axon-tag">Market Intelligence</div>
-      </div>
+  <div class="tb-logo" style="display:flex;align-items:center;gap:10px">
+    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:34px;height:34px;flex-shrink:0">
+    <rect x="8" y="8" width="240" height="240" rx="56" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
+    <line x1="128" y1="48" x2="72" y2="200" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
+    <line x1="128" y1="48" x2="184" y2="200" stroke="#3b82f6" stroke-width="14" stroke-linecap="round"/>
+    <line x1="95" y1="138" x2="161" y2="138" stroke="#64748b" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="128" cy="44" r="16" fill="#3b82f6"/>
+  </svg>
+    <div style="display:flex;flex-direction:column;gap:1px">
+      <div style="font-size:.9rem;font-weight:800;letter-spacing:-0.03em;background:linear-gradient(135deg,#e8e8f0 40%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1">AXON <span style="font-weight:300">Mobility</span></div>
+      <div style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#6b7280">Market Intelligence</div>
     </div>
   </div>
   <div class="tb-tabs">
