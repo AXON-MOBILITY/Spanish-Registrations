@@ -642,6 +642,13 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="sg-body" id="sb-segs"></div>
     </div>
+    <div class="sg" id="sg-provs">
+      <div class="sg-hdr" onclick="toggleSg('sg-provs')">
+        <span>Province <span class="sg-count" id="cnt-provs"></span></span>
+        <span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body" id="sb-provs"></div>
+    </div>
   </div>
 
   <!-- CONTENT -->
@@ -1177,6 +1184,7 @@ let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
+  provs:new Set(),
   marca:'',modelo:'',body:''
 };
 const CHARTS={};
@@ -1923,8 +1931,28 @@ const GAMAS=['Total','ICE','BEV','PHEV'];
 // v = [total, BEV, PHEV]; ICE se deriva: total - BEV - PHEV
 const GAMA_VAL=[v=>v[0], v=>v[0]-v[1]-v[2], v=>v[1], v=>v[2]];
 
+function buildProvSidebar(){
+  const names=PROV.provinces.map(p=>p.name);
+  names.forEach(n=>F.provs.add(n));
+  const total=names.length;
+  const cont=g('sb-provs');
+  cont.innerHTML='';
+  addQuickSel('sb-provs',
+    ()=>{ names.forEach(n=>F.provs.add(n)); cont.querySelectorAll('input').forEach(c=>c.checked=true); updateCount('cnt-provs',total,total); renderProv(); },
+    ()=>{ F.provs.clear(); cont.querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-provs',0,total); renderProv(); }
+  );
+  names.forEach(n=>{
+    cont.appendChild(mkCb(n,true,on=>{
+      if(on)F.provs.add(n);else F.provs.delete(n);
+      updateCount('cnt-provs',F.provs.size,total);
+      renderProv();
+    }));
+  });
+}
+
 function initProv(){
   if(!PROV||!PROV.provinces.length)return;
+  buildProvSidebar();
   GAMAS.forEach((gm,i)=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(i===RK.gama?' on':'');
@@ -2134,6 +2162,7 @@ function renderProv(){
     .map(mm=>`${RK.year}-${mm}`);
   const rows=[];
   PROV.provinces.forEach(p=>{
+    if(F.provs.size&&!F.provs.has(p.name))return;
     const brands=hasFiltData?provBrandsFromFilt(p,monthKeys):(useFiltered?{}:provBrandsForMonths(p,monthKeys));
     const entries=Object.entries(brands)
       .filter(([m])=>provBrandAllowed(m))
