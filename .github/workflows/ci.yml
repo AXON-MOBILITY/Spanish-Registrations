@@ -13,7 +13,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -29,3 +29,15 @@ jobs:
 
       - name: Smoke build dashboard data
         run: python scripts/build_dashboard_data.py
+
+      - name: Run temporary BMW postcode pilot
+        run: |
+          python scripts/audit_bmw_postcode_proxy.py \
+            --yyyymm 202606 \
+            --out-dir pilot-output
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bmw-postcode-pilot-202606
+          path: pilot-output/
+          if-no-files-found: error
