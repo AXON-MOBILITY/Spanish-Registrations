@@ -200,8 +200,8 @@ Auditoria de masters/master_concesin_bmw.csv:
 | Metrica | Valor |
 |---|---:|
 | Filas / pares provincia-municipio | 3.352 |
-| Concesiones distintas | 58 |
-| POS distintos | 114 |
+| Concesiones distintas | 56 |
+| POS distintos | 112 |
 | Municipios con mas de un POS en el maestro | 0 |
 | Volumen historico sumado | 318.487 |
 | Cobertura territorial teorica | 3.352 de 8.132 municipios (41,22%) |
@@ -214,6 +214,27 @@ Interpretacion:
 - 41,22% es cobertura de municipios, no de volumen BMW.
 - Cero ambiguedad demuestra un mapa territorial uno-a-uno, no que el cliente comprara en ese POS.
 - El ETL actual conserva provincia, pero no municipio, en dgt_prov_*; no puede calcularse retroactivamente cobertura BMW Private con los procesados. Debe medirse al leer de nuevo el raw.
+
+## Resultado del piloto real: junio de 2026
+
+Se ejecuto el auditor contra el fichero mensual real de la DGT de junio de 2026, aplicando el scope y las reglas de canal vigentes del pipeline.
+
+| Metrica | Valor |
+|---|---:|
+| Filas DGT leidas | 217.005 |
+| BMW Private elegibles | 1.148 |
+| Con CP valido | 1.148 (100%) |
+| Asignadas a territorio/POS | 1.060 |
+| Sin asignar por municipio | 88 |
+| Cobertura por volumen | **92,33%** |
+| Territorios de CP generados | 680 |
+| CP ambiguos entre varios POS | **0** |
+| Concesiones del maestro | 56 |
+| POS del maestro | 112 |
+
+La cobertura demuestra que el metodo es tecnicamente util para un analisis territorial. No mide exactitud comercial: sin una muestra BMW/DMS no puede comprobarse si el POS territorial coincide con el vendedor real. Por tanto, la salida debe conservar la etiqueta `geo_territory_proxy` y no presentarse como venta observada del concesionario.
+
+Queda un 7,67% sin resolver, principalmente por abreviaturas y denominaciones municipales no equivalentes entre DGT y el maestro. Puede reducirse con un catalogo INE versionado, sin relajar la regla que evita asignaciones ambiguas.
 
 ## Piloto BMW Private: proxy geografica
 
