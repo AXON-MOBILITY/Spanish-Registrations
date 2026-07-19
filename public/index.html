@@ -99,6 +99,13 @@ tr.model-sub-unknown td{color:var(--text3);font-style:italic}
   white-space:nowrap;transition:.15s;
 }
 .btn-clear:hover{background:rgba(37,99,235,.2)}
+@media(max-width:700px){
+  .tb-logo{padding:0 10px}
+  .tb-tabs{flex:1;min-width:0}
+  .tb-right{display:none}
+  .tab-btn{padding:0 10px}
+  .tb-filters{padding:6px 10px}
+}
 
 /* ── SHELL ───────────────────────────────────────────── */
 /* flex:1 en vez de calc(100vh-52px): si el topbar crece al envolver filtros
@@ -552,6 +559,13 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="tf-grp">
       <span class="tf-lbl">Brand</span>
       <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
+    </div>
+    <div class="tf-grp">
+      <span class="tf-lbl">Dealer (est.)</span>
+      <input id="f-dealer" class="tf-modelo-input" type="text" list="f-dealer-list"
+             placeholder="Todos" autocomplete="off" style="min-width:170px;max-width:230px"
+             onfocus="ensureRECD()" oninput="onDealerInput()">
+      <datalist id="f-dealer-list"></datalist>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Model</span>
@@ -1163,7 +1177,7 @@ const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
   provs:new Set(),
-  marca:'',modelo:'',body:''
+  marca:'',modelo:'',body:'',dealer:''
 };
 const CHARTS={};
 
@@ -1193,7 +1207,12 @@ let RECP_PROJ=null;       // [{prov:name, row:[esquema REC]}]
 let TOTAL_PROVS=0;
 let ALL_PROV_NAMES=[];
 let _provFilterOn=false;
+let _dealerFilterOn=false;
 let _recpPromise=null;
+let RECD=null;
+let RECD_PROJ=null;
+let _recdPromise=null;
+let DEALER_CHOICES=new Set();
 
 // Carga PEREZOSA: records_prov.json (varios MB) solo se descarga la primera vez
 // que el usuario filtra por un subconjunto de provincias, para no penalizar la
@@ -1237,6 +1256,96 @@ function tryBuildProvProjection(){
   }));
 }
 
+function ensureRECD(){
+  if(RECD_PROJ){
+    refreshDealers();
+    return Promise.resolve();
+  }
+  if(_recdPromise)return _recdPromise;
+  _recdPromise=fetch('data/records_dealer.json?v='+Date.now())
+    .then(r=>{
+      if(!r.ok)throw new Error('dealer dataset unavailable');
+      return r.json();
+    })
+    .then(data=>{
+      RECD=data;
+      tryBuildDealerProjection();
+      refreshDealers();
+    })
+    .catch(()=>{
+      RECD=null;
+      RECD_PROJ=[];
+      refreshDealers();
+    });
+  return _recdPromise;
+}
+
+function tryBuildDealerProjection(){
+  if(!REC||!RECD||!Array.isArray(RECD.rows)||RECD_PROJ)return;
+  const E=REC.enums,D=RECD.enums||{};
+  const C={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,PROV:11,DEALER:12,N:15};
+  const remap=(source,target,addToIncluded)=>{
+    const values=source||[],map=new Array(values.length);
+    values.forEach((val,i)=>{
+      let j=target.indexOf(val);
+      if(j<0){
+        j=target.length;target.push(val);
+        if(addToIncluded&&val&&!EXCLUDED_BRANDS.has(val))INCLUDED_MARCA_IDX.add(j);
+      }
+      map[i]=j;
+    });
+    return map;
+  };
+  const mMarca=remap(D.marca,E.marca,true);
+  const mModelo=remap(D.modelo,E.modelo,false);
+  const mFuelDet=remap(D.fuel_det,E.fuel_det,false);
+  const mSeg=remap(D.seg,E.seg,false);
+  const mSub=remap(D.sub,E.sub,false);
+  const mHp=remap(D.hp,E.hp,false);
+  const mBody=remap(D.body,E.body,false);
+  const provs=D.prov||[],dealers=D.dealer||[];
+  RECD_PROJ=RECD.rows.map(r=>({
+    prov:provs[r[C.PROV]]||'',
+    dealer:dealers[r[C.DEALER]]||'',
+    row:[
+      r[C.Y],r[C.M],mMarca[r[C.MARCA]],mModelo[r[C.MODELO]],
+      r[C.CANAL],r[C.FUEL],mFuelDet[r[C.FUEL_DET]],
+      mSeg[r[C.SEG]],mSub[r[C.SUB]],mHp[r[C.HP]],mBody[r[C.BODY]],r[C.N]
+    ]
+  }));
+}
+
+function refreshDealers(){
+  const list=g('f-dealer-list');
+  if(!list)return new Set();
+  const brand=F.marca;
+  DEALER_CHOICES=new Set((RECD_PROJ||[])
+    .filter(item=>!brand||REC.enums.marca[item.row[COL.MARCA]]===brand)
+    .map(item=>item.dealer)
+    .filter(Boolean));
+  list.innerHTML='';
+  [...DEALER_CHOICES].sort((a,b)=>a.localeCompare(b)).forEach(name=>{
+    const option=document.createElement('option');
+    option.value=name;
+    list.appendChild(option);
+  });
+  return DEALER_CHOICES;
+}
+
+let _dealerDebounce=null;
+function onDealerInput(){
+  clearTimeout(_dealerDebounce);
+  _dealerDebounce=setTimeout(()=>{
+    ensureRECD().then(()=>{
+      const value=g('f-dealer').value.trim();
+      refreshDealers();
+      F.dealer=DEALER_CHOICES.has(value)?value:'';
+      rebuildActiveRecords();
+      render();
+    });
+  },120);
+}
+
 // hay un subconjunto propio de provincias seleccionado con dataset ya cargado
 function provFilterActive(){
   return RECP_PROJ && TOTAL_PROVS>0 && F.provs.size>0 && F.provs.size<TOTAL_PROVS;
@@ -1244,11 +1353,20 @@ function provFilterActive(){
 // intercambia REC.rows segun la seleccion de provincias
 function rebuildActiveRecords(){
   if(!REC)return;
-  if(provFilterActive()){
+  if(F.dealer&&RECD_PROJ){
+    const byProvince=needProvData();
+    REC.rows=RECD_PROJ
+      .filter(o=>o.dealer===F.dealer&&(!byProvince||F.provs.has(o.prov)))
+      .map(o=>o.row);
+    _dealerFilterOn=true;
+    _provFilterOn=byProvince;
+  } else if(provFilterActive()){
     REC.rows=RECP_PROJ.filter(o=>F.provs.has(o.prov)).map(o=>o.row);
+    _dealerFilterOn=false;
     _provFilterOn=true;
-  } else if(_provFilterOn||REC.rows!==REC_FULL_ROWS){
+  } else if(_dealerFilterOn||_provFilterOn||REC.rows!==REC_FULL_ROWS){
     REC.rows=REC_FULL_ROWS;
+    _dealerFilterOn=false;
     _provFilterOn=false;
   }
 }
@@ -1258,8 +1376,10 @@ function needProvData(){
 }
 // handler unico cuando cambia la seleccion de provincias
 function onProvChange(){
-  if(PROV)renderProv();               // pestaña Provinces: inmediata (usa PROV)
-  if(needProvData()&&!RECP_PROJ){
+  if(PROV)renderProv();
+  if(F.dealer){
+    ensureRECD().then(()=>{ rebuildActiveRecords(); render(); });
+  } else if(needProvData()&&!RECP_PROJ){
     ensureRECP().then(()=>{ rebuildActiveRecords(); render(); });
   } else {
     rebuildActiveRecords(); render();
@@ -1515,6 +1635,14 @@ let _topDebounce=null;
 function onTopChange(){
   const marcaChanged=F.marca!==g('f-marca').value;
   F.marca=g('f-marca').value;F.body=g('f-body').value;
+  if(RECD_PROJ){
+    refreshDealers();
+    if(F.dealer&&!DEALER_CHOICES.has(F.dealer)){
+      F.dealer='';
+      g('f-dealer').value='';
+    }
+    rebuildActiveRecords();
+  }
   const modelSet=refreshModels();
   const inp=g('f-modelo');
   // Si cambia la marca y el modelo escrito no pertenece a ella, se limpia
@@ -2193,6 +2321,7 @@ function renderProv(){
     const noApply=[];
     if(F.modelo)noApply.push('Model');
     if(F.body)noApply.push('Body');
+    if(F.dealer)noApply.push('Dealer');
     if(noApply.length){notice.textContent='Filters with no effect on Provinces: '+noApply.join(', ')+'.';notice.style.display='';}
     else notice.style.display='none';
   }
@@ -3596,7 +3725,9 @@ function resetFilters(){
   F.hps.clear();
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
-  F.marca='';F.modelo='';F.body='';
+  g('f-dealer').value='';
+  F.marca='';F.modelo='';F.body='';F.dealer='';
+  refreshDealers();
   if(ALL_PROV_NAMES.length){
     F.provs=new Set(ALL_PROV_NAMES);
     updateCount('cnt-provs',F.provs.size,ALL_PROV_NAMES.length);
