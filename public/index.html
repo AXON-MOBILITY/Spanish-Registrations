@@ -562,10 +562,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Dealer (est.)</span>
-      <input id="f-dealer" class="tf-modelo-input" type="text" list="f-dealer-list"
-             placeholder="Todos" autocomplete="off" style="min-width:170px;max-width:230px"
-             onfocus="ensureRECD()" oninput="onDealerInput()">
-      <datalist id="f-dealer-list"></datalist>
+      <select id="f-dealer" class="tf-sel" style="min-width:190px;max-width:260px"
+              onfocus="ensureRECD()" onchange="onDealerChange()">
+        <option value="">All</option>
+      </select>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Model</span>
@@ -1316,34 +1316,44 @@ function tryBuildDealerProjection(){
 }
 
 function refreshDealers(){
-  const list=g('f-dealer-list');
-  if(!list)return new Set();
+  const select=g('f-dealer');
+  if(!select)return new Set();
   const brand=F.marca;
   DEALER_CHOICES=new Set((RECD_PROJ||[])
     .filter(item=>!brand||REC.enums.marca[item.row[COL.MARCA]]===brand)
     .map(item=>item.dealer)
     .filter(Boolean));
-  list.innerHTML='';
-  [...DEALER_CHOICES].sort((a,b)=>a.localeCompare(b)).forEach(name=>{
-    const option=document.createElement('option');
-    option.value=name;
-    list.appendChild(option);
+  select.innerHTML='<option value="">All</option>';
+  const groups=new Map();
+  [...DEALER_CHOICES].sort((a,b)=>a.localeCompare(b)).forEach(value=>{
+    const split=value.indexOf(' | ');
+    const dealerBrand=split>=0?value.slice(0,split):'Other';
+    const dealerName=split>=0?value.slice(split+3):value;
+    if(!groups.has(dealerBrand))groups.set(dealerBrand,[]);
+    groups.get(dealerBrand).push({value,label:dealerName});
   });
+  groups.forEach((options,dealerBrand)=>{
+    const group=document.createElement('optgroup');
+    group.label=dealerBrand;
+    options.forEach(({value,label})=>{
+      const option=document.createElement('option');
+      option.value=value;
+      option.textContent=label;
+      group.appendChild(option);
+    });
+    select.appendChild(group);
+  });
+  select.value=DEALER_CHOICES.has(F.dealer)?F.dealer:'';
   return DEALER_CHOICES;
 }
 
-let _dealerDebounce=null;
-function onDealerInput(){
-  clearTimeout(_dealerDebounce);
-  _dealerDebounce=setTimeout(()=>{
-    ensureRECD().then(()=>{
-      const value=g('f-dealer').value.trim();
-      refreshDealers();
-      F.dealer=DEALER_CHOICES.has(value)?value:'';
-      rebuildActiveRecords();
-      render();
-    });
-  },120);
+function onDealerChange(){
+  ensureRECD().then(()=>{
+    const value=g('f-dealer').value;
+    F.dealer=DEALER_CHOICES.has(value)?value:'';
+    rebuildActiveRecords();
+    render();
+  });
 }
 
 // hay un subconjunto propio de provincias seleccionado con dataset ya cargado

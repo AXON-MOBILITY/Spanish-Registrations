@@ -4,6 +4,7 @@ import csv
 import os
 import sys
 from collections import Counter
+from pathlib import Path
 
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
@@ -101,3 +102,13 @@ def test_compact_dealer_dataset_preserves_dashboard_dimensions():
     assert result["enums"]["dealer"] == ["Toyota | Dealer Norte"]
     assert result["rows"][0][-1] == 3
     assert result["total"] == 3
+
+def test_dealer_filter_is_a_brand_grouped_select():
+    html = (Path(__file__).parent.parent / "public" / "index.html").read_text(
+        encoding="utf-8"
+    )
+
+    assert '<select id="f-dealer"' in html
+    assert "document.createElement('optgroup')" in html
+    assert "onDealerChange()" in html
+    assert 'f-dealer-list' not in html
