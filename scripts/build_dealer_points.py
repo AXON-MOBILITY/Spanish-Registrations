@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a normalized sales-point master from official brand locators."""
+"""Build a normalized all-brand sales-point master with traceable sources."""
 
 import argparse
 import csv
@@ -10,6 +10,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import unicodedata
 import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
@@ -30,10 +31,96 @@ GRID = (
     (40.42, -3.70), (41.65, -4.72), (43.53, -5.66), (28.12, -15.44),
     (28.46, -16.25), (39.57, 2.65),
 )
+OSM_OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OSM_BBOXES = (
+    (35.0, -9.8, 39.7, -2.5),
+    (35.0, -2.5, 39.7, 4.5),
+    (39.7, -9.8, 43.9, -2.5),
+    (39.7, -2.5, 43.9, 4.5),
+    (27.5, -18.5, 29.7, -13.0),
+)
+DGT_BRAND_ALIASES = {
+    "Toyota": ("Toyota",),
+    "Dacia": ("Dacia",),
+    "Kia": ("Kia",),
+    "Volkswagen": ("Volkswagen", "VW"),
+    "Renault": ("Renault",),
+    "BYD": ("BYD",),
+    "MG": ("MG", "MG Motor"),
+    "Tesla": ("Tesla",),
+    "Hyundai": ("Hyundai",),
+    "Seat": ("Seat",),
+    "Ebro": ("Ebro", "Ebro Motors"),
+    "Peugeot": ("Peugeot",),
+    "Citroen": ("Citroen", "Citroën"),
+    "Skoda": ("Skoda", "Škoda"),
+    "Mazda": ("Mazda",),
+    "Audi": ("Audi",),
+    "Mercedes": ("Mercedes", "Mercedes-Benz"),
+    "Ford": ("Ford",),
+    "BMW": ("BMW",),
+    "Omoda": ("Omoda",),
+    "Nissan": ("Nissan",),
+    "Cupra": ("Cupra",),
+    "Jaecoo": ("Jaecoo",),
+    "Leapmotor": ("Leapmotor",),
+    "Opel": ("Opel",),
+    "Lexus": ("Lexus",),
+    "Volvo": ("Volvo",),
+    "Mini": ("Mini",),
+    "Honda": ("Honda",),
+    "Changan": ("Changan",),
+    "Suzuki": ("Suzuki",),
+    "Fiat": ("Fiat",),
+    "Mitsubishi": ("Mitsubishi",),
+    "Jeep": ("Jeep",),
+    "Xpeng": ("Xpeng", "XPeng"),
+    "KG Mobility": ("KG Mobility", "KGM", "SsangYong"),
+    "Geely": ("Geely",),
+    "Porsche": ("Porsche",),
+    "Lynk & Co": ("Lynk & Co", "Lynk and Co"),
+    "Alpine": ("Alpine",),
+    "Subaru": ("Subaru",),
+    "Evo": ("Evo", "EVO"),
+    "Smart": ("Smart",),
+    "Polestar": ("Polestar",),
+    "Land Rover": ("Land Rover",),
+    "Shineray": ("Shineray",),
+    "Alfa Romeo": ("Alfa Romeo",),
+    "DS": ("DS", "DS Automobiles"),
+    "Livan": ("Livan",),
+    "BAW": ("BAW",),
+    "FAW": ("FAW",),
+    "DR": ("DR", "DR Automobiles"),
+    "Mercedes-V": ("Mercedes Vans", "Mercedes-Benz Vans"),
+    "Dongfeng": ("Dongfeng",),
+    "DFSK": ("DFSK",),
+    "Lamborghini": ("Lamborghini",),
+    "Ferrari": ("Ferrari",),
+    "Maserati": ("Maserati",),
+    "Baojun": ("Baojun",),
+    "Cirelli": ("Cirelli",),
+    "Zeekr": ("Zeekr",),
+    "Bentley": ("Bentley",),
+    "Aston Martin": ("Aston Martin",),
+    "BAIC": ("BAIC",),
+    "SportEquipe": ("SportEquipe", "Sport Equipe"),
+    "Lancia": ("Lancia",),
+    "ICH-X": ("ICH-X", "ICH X"),
+    "Abarth": ("Abarth",),
+    "Ineos": ("Ineos", "Ineos Grenadier"),
+    "Moke": ("Moke", "Moke International", "Moke International Ltd"),
+    "Tripod": ("Tripod",),
+    "Gruau": ("Gruau",),
+    "Tiger": ("Tiger",),
+    "Sin marca": ("Sin marca",),
+}
+DGT_BRANDS = tuple(DGT_BRAND_ALIASES)
+
 FIELDS = (
     "brand", "dealer_id", "dealer_name", "point_of_sale", "point_of_sale_id",
     "address", "postcode", "city", "province", "latitude", "longitude",
-    "source_kind", "source_url", "retrieved_date",
+    "source_kind", "source_confidence", "source_url", "retrieved_date",
 )
 
 
@@ -65,7 +152,7 @@ def postcode(value):
 
 
 def make_point(brand, dealer_id, dealer_name, pos, pos_id, address, cp, city,
-               province, lat, lon, source_kind, source_url):
+               province, lat, lon, source_kind, source_url, source_confidence="official"):
     try:
         lat, lon = float(lat), float(lon)
     except (TypeError, ValueError):
@@ -79,7 +166,7 @@ def make_point(brand, dealer_id, dealer_name, pos, pos_id, address, cp, city,
     pos_id = pos_id or dealer_id
     pos = pos or dealer_name
     cp = postcode(cp)
-    if not all((dealer_id, dealer_name, pos_id, pos, cp)):
+    if not all((dealer_id, dealer_name, pos_id, pos)):
         return None
     return {
         "brand": brand, "dealer_id": dealer_id,
@@ -87,7 +174,8 @@ def make_point(brand, dealer_id, dealer_name, pos, pos_id, address, cp, city,
         "point_of_sale_id": pos_id, "address": clean(address),
         "postcode": cp, "city": clean(city), "province": clean(province),
         "latitude": f"{lat:.7f}", "longitude": f"{lon:.7f}",
-        "source_kind": source_kind, "source_url": source_url,
+        "source_kind": source_kind, "source_confidence": source_confidence,
+        "source_url": source_url,
         "retrieved_date": date.today().isoformat(),
     }
 
@@ -267,6 +355,96 @@ def fetch_seat_group(brand):
             rows.append(row)
     return rows
 
+def normalize_brand_text(value):
+    value = unicodedata.normalize("NFKD", clean(value))
+    value = "".join(char for char in value if not unicodedata.combining(char))
+    return " ".join(re.sub(r"[^A-Z0-9]+", " ", value.upper()).split())
+
+
+def osm_brand_index():
+    return {
+        normalize_brand_text(alias): brand
+        for brand, aliases in DGT_BRAND_ALIASES.items()
+        for alias in aliases
+    }
+
+
+def match_osm_brands(tags):
+    index = osm_brand_index()
+    matches = {}
+    explicit = ";".join(filter(None, (tags.get("brand:sales"), tags.get("brand"))))
+    for value in re.split(r"[;,|/]", explicit):
+        normalized = normalize_brand_text(value)
+        if not normalized:
+            continue
+        if normalized in index:
+            matches[index[normalized]] = "openstreetmap_brand_tag"
+            continue
+        padded = f" {normalized} "
+        for alias, brand in sorted(index.items(), key=lambda item: len(item[0]), reverse=True):
+            if f" {alias} " in padded:
+                matches[brand] = "openstreetmap_brand_tag"
+    if matches:
+        return matches
+
+    haystack = normalize_brand_text(" ".join(filter(None, (
+        tags.get("name"), tags.get("operator"),
+    ))))
+    padded = f" {haystack} "
+    for alias, brand in sorted(index.items(), key=lambda item: len(item[0]), reverse=True):
+        if f" {alias} " in padded:
+            matches[brand] = "openstreetmap_name_match"
+    return matches
+
+
+def fetch_osm_dealers(excluded=()):
+    excluded = set(excluded)
+    found = {}
+    raw_elements = 0
+    for south, west, north, east in OSM_BBOXES:
+        query = (
+            f'[out:json][timeout:120];nwr["shop"="car"]["name"]'
+            f'({south},{west},{north},{east});out center tags;'
+        )
+        url = f"{OSM_OVERPASS_URL}?{urllib.parse.urlencode({'data': query})}"
+        payload = json.loads(get(url, timeout=180))
+        if payload.get("remark"):
+            raise RuntimeError(f"Incomplete OpenStreetMap extraction: {payload['remark']}")
+        elements = payload.get("elements") or []
+        raw_elements += len(elements)
+        for item in elements:
+            tags = item.get("tags") or {}
+            if tags.get("second_hand") == "only":
+                continue
+            if tags.get("service:vehicle:new_car_sales") == "no":
+                continue
+            center = item.get("center") or item
+            matches = match_osm_brands(tags)
+            for brand, source_kind in matches.items():
+                if brand in excluded:
+                    continue
+                osm_id = f"osm:{item.get('type')}:{item.get('id')}"
+                name = tags.get("name")
+                address = clean(" ".join(filter(None, (
+                    tags.get("addr:street"), tags.get("addr:housenumber"),
+                ))))
+                row = make_point(
+                    brand, osm_id, name, name, osm_id, address,
+                    tags.get("addr:postcode"), tags.get("addr:city"),
+                    tags.get("addr:province"), center.get("lat"), center.get("lon"),
+                    source_kind, f"https://www.openstreetmap.org/{item.get('type')}/{item.get('id')}",
+                    source_confidence="community",
+                )
+                if row:
+                    found[(brand, osm_id)] = row
+    rows = list(found.values())
+    if raw_elements < 1500 or len(rows) < 500:
+        raise RuntimeError(
+            f"Incomplete OpenStreetMap extraction: {raw_elements} car shops, "
+            f"{len(rows)} brand matches"
+        )
+    return rows
+
 FETCHERS = {
     "Toyota": fetch_toyota, "Renault": lambda: fetch_renault_group("Renault"),
     "Dacia": lambda: fetch_renault_group("Dacia"), "Hyundai": fetch_hyundai,
@@ -279,6 +457,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--brands", default=",".join(SUPPORTED))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
+    parser.add_argument(
+        "--official-only", action="store_true",
+        help="Skip the lower-confidence OpenStreetMap fallback",
+    )
     args = parser.parse_args()
     brands = [value.strip().title() for value in args.brands.split(",") if value.strip()]
     unsupported = sorted(set(brands) - set(FETCHERS))
@@ -295,6 +477,16 @@ def main():
             )
         rows.extend(current)
         summary[brand] = {"sales_points": len(current), "dealer_names": len({r["dealer_name"] for r in current})}
+    if not args.official_only:
+        community = fetch_osm_dealers(excluded=brands)
+        rows.extend(community)
+        for brand in sorted({row["brand"] for row in community}):
+            current = [row for row in community if row["brand"] == brand]
+            summary[brand] = {
+                "sales_points": len(current),
+                "dealer_names": len({row["dealer_name"] for row in current}),
+                "source_confidence": "community",
+            }
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     with open(output, "w", encoding="utf-8", newline="") as handle:

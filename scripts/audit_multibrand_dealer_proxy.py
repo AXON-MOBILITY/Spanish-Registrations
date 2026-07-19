@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit a postcode-to-nearest-sales-point proxy for supported brands."""
+"""Audit every observed DGT brand against the traceable sales-point master."""
 
 import argparse
 import collections
@@ -15,6 +15,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import process_month as pm
+import build_dealer_points as dealer_master
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -36,7 +37,7 @@ OUTPUT_FIELDS = (
     "brand", "postcode", "dealer_method", "territory_status", "confidence",
     "dealer_estimated", "dealer_id", "point_of_sale_estimated", "point_of_sale_id",
     "dealer_postcode", "dealer_city", "distance_km", "next_dealer_distance_km",
-    "observed_private", "source_url",
+    "observed_private", "source_kind", "source_confidence", "source_url",
 )
 
 
@@ -53,6 +54,7 @@ def load_points(path):
                 row["longitude"] = float(row["longitude"])
             except (TypeError, ValueError):
                 continue
+            row.setdefault("source_confidence", "official")
             result[row["brand"]].append(row)
     return result
 
@@ -96,9 +98,7 @@ def haversine_km(lat1, lon1, lat2, lon2):
 
 def assign_point(brand, cp, centroid, points, max_distance=120.0, ambiguity_gap=8.0):
     lat, lon = centroid
-    candidates = [point for point in points if point.get("postcode", "")[:2] == cp[:2]]
-    if not candidates:
-        candidates = points
+    candidates = points
     ranked = sorted(
         [
             (haversine_km(lat, lon, point["latitude"], point["longitude"]), point)
@@ -133,10 +133,19 @@ def assign_point(brand, cp, centroid, points, max_distance=120.0, ambiguity_gap=
         confidence = "high" if ratio >= 1.75 and distance <= 35 else "medium"
         status, include_dealer, include_pos = "estimated_nearest", True, True
 
+    source_confidence = nearest.get("source_confidence", "official")
+    if source_confidence == "community" and include_dealer:
+        confidence = "low"
+    method = (
+        "geo_nearest_community_sales_point_proxy"
+        if source_confidence == "community"
+        else "geo_nearest_official_sales_point_proxy"
+    )
+
     return {
         "brand": brand,
         "postcode": cp,
-        "dealer_method": "geo_nearest_official_sales_point_proxy",
+        "dealer_method": method,
         "territory_status": status,
         "confidence": confidence,
         "dealer_estimated": nearest["dealer_name"] if include_dealer else "",
@@ -147,16 +156,28 @@ def assign_point(brand, cp, centroid, points, max_distance=120.0, ambiguity_gap=
         "dealer_city": nearest["city"] if include_dealer else "",
         "distance_km": round(distance, 2),
         "next_dealer_distance_km": round(competitor_distance, 2) if competitor_distance is not None else "",
+        "source_kind": nearest.get("source_kind", ""),
+        "source_confidence": source_confidence,
         "source_url": nearest["source_url"],
     }
 
 
-def private_brand(line, supported):
+def canonical_brand(value):
+    normalized = dealer_master.normalize_brand_text(value)
+    index = {
+        dealer_master.normalize_brand_text(alias): brand
+        for brand, aliases in dealer_master.DGT_BRAND_ALIASES.items()
+        for alias in (brand, *aliases)
+    }
+    return index.get(normalized) or value.strip().title()
+
+
+def private_brand(line):
     if len(line) < 714 or not pm.passes_dgt_scope_filters(line):
         return None
     model = line[F_MODELO[0]:F_MODELO[1]].strip().upper()
     normalized = pm.normalize_marca(line[F_MARCA[0]:F_MARCA[1]], model)
-    brand = next((value for value in supported if value.upper() == normalized.upper()), None)
+    brand = canonical_brand(normalized)
     if not brand or not pm.es_turismo_o_furgoneta(line):
         return None
     channel = pm.classify(
@@ -198,65 +219,88 @@ def open_lines(path):
             yield handle
 
 
+def unresolved_row(brand, cp, status):
+    return {
+        "brand": brand,
+        "postcode": cp,
+        "dealer_method": "unavailable",
+        "territory_status": status,
+        "confidence": "none",
+        "dealer_estimated": "",
+        "dealer_id": "",
+        "point_of_sale_estimated": "",
+        "point_of_sale_id": "",
+        "dealer_postcode": "",
+        "dealer_city": "",
+        "distance_km": "",
+        "next_dealer_distance_km": "",
+        "source_kind": "",
+        "source_confidence": "",
+        "source_url": "",
+    }
+
+
 def audit(lines, points, centroids):
     counts = collections.Counter()
     metrics = collections.Counter()
-    supported = set(points)
     for raw in lines:
         metrics["raw_rows"] += 1
         line = raw.rstrip(b"\r\n").decode("latin-1", errors="replace")
-        brand = private_brand(line, supported)
+        brand = private_brand(line)
         if not brand:
             continue
         metrics["eligible_private_rows"] += 1
         cp = line[F_CODIGO_POSTAL[0]:F_CODIGO_POSTAL[1]].strip()
         if not valid_postcode(cp):
-            metrics["invalid_postcode_rows"] += 1
-            continue
+            cp = ""
         counts[(brand, cp)] += 1
 
     rows = []
     for (brand, cp), observed in sorted(counts.items()):
-        centroid = centroids.get(cp)
-        if centroid is None:
-            metrics["missing_centroid_rows"] += observed
-            continue
-        row = assign_point(brand, cp, centroid, points[brand])
+        if not cp:
+            row = unresolved_row(brand, cp, "invalid_postcode")
+        elif not points.get(brand):
+            row = unresolved_row(brand, cp, "unmapped_brand")
+        else:
+            centroid = centroids.get(cp)
+            if centroid is None:
+                row = unresolved_row(brand, cp, "missing_centroid")
+            else:
+                row = assign_point(brand, cp, centroid, points[brand])
         row["observed_private"] = observed
         rows.append(row)
         metrics[row["territory_status"] + "_rows"] += observed
 
-    resolved = sum(
-        row["observed_private"]
-        for row in rows
-        if row["dealer_estimated"]
-    )
+    resolved = sum(row["observed_private"] for row in rows if row["dealer_estimated"])
     eligible = metrics["eligible_private_rows"]
+    observed_brands = sorted({brand for brand, _ in counts})
     per_brand = {}
-    for brand in sorted(supported):
+    for brand in observed_brands:
         brand_rows = [row for row in rows if row["brand"] == brand]
-        brand_eligible = sum(value for (value_brand, _), value in counts.items() if value_brand == brand)
-        brand_resolved = sum(row["observed_private"] for row in brand_rows if row["dealer_estimated"])
+        brand_eligible = sum(row["observed_private"] for row in brand_rows)
+        brand_resolved = sum(
+            row["observed_private"] for row in brand_rows if row["dealer_estimated"]
+        )
         statuses = collections.Counter()
         for row in brand_rows:
             statuses[row["territory_status"]] += row["observed_private"]
-        missing = brand_eligible - sum(statuses.values())
-        if missing:
-            statuses["missing_centroid"] = missing
         per_brand[brand] = {
             "eligible_private_rows": brand_eligible,
             "resolved_dealer_rows": brand_resolved,
             "dealer_coverage": round(brand_resolved / brand_eligible, 6) if brand_eligible else 0,
+            "master_sales_points": len(points.get(brand) or []),
             "statuses": dict(statuses),
         }
     summary = dict(metrics)
     summary.update({
-        "supported_brands": sorted(supported),
+        "observed_brands": observed_brands,
+        "brands_with_master": [brand for brand in observed_brands if points.get(brand)],
+        "brands_without_master": [brand for brand in observed_brands if not points.get(brand)],
         "per_brand": per_brand,
         "postcode_rows": len(rows),
         "resolved_dealer_rows": resolved,
         "dealer_coverage": round(resolved / eligible, 6) if eligible else 0,
-        "method": "geo_nearest_official_sales_point_proxy",
+        "method": "geo_nearest_sales_point_proxy",
         "warning": "Estimated from domicile postcode; not the observed selling dealer.",
     })
     return rows, summary

@@ -330,14 +330,17 @@ Antes de datos unitarios:
 
 La atribucion dealer requiere una nueva fuente contractual unit-level. Con el stack actual solo es defendible un analisis territorial proxy.
 
-## Actualizacion: piloto multibrand oficial
+## Actualizacion: cobertura de todas las marcas
 
-Se ha ampliado el proxy a Toyota, Renault, Dacia, Hyundai, Kia, SEAT y CUPRA con
-1.455 puntos de venta obtenidos de localizadores oficiales. BMW mantiene su master
-territorial separado. La auditoria reproducible de junio de 2026 resuelve un nombre
-estimado para 12.589 de 23.992 matriculaciones Private elegibles (52,5%). Las restantes
-se conservan como ambiguas, demasiado lejanas o sin centroide postal.
+La auditoria multibrand procesa las 74 marcas observadas en junio de 2026. El master
+contiene 3.802 puntos para 56 marcas: 1.447 de localizadores oficiales y 2.355 de
+OpenStreetMap con confianza comunitaria baja. Para las 18 marcas sin una red trazable
+se emite unmapped_brand; no se completa ningun nombre por intuicion.
 
-El detalle de fuentes, esquema, estados y cobertura por marca esta en
-[`MASTER_CONCESIONARIOS_PROXY.md`](MASTER_CONCESIONARIOS_PROXY.md). La conclusion no
-cambia: es cobertura de un proxy geografico, no accuracy ni prueba del vendedor real.
+Sobre 56.481 matriculaciones Private, el proxy resuelve un nombre estimado para
+26.956 (47,7%). Otras 22.339 quedan ambiguas, 6.946 demasiado lejos, 227 pertenecen
+a marcas sin master y 13 no tienen centroide postal.
+
+El detalle de fuentes, esquema, estados y cobertura esta en
+MASTER_CONCESIONARIOS_PROXY.md. La conclusion no cambia: es cobertura de un proxy
+geografico, no accuracy ni prueba del vendedor real.
