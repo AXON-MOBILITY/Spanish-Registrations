@@ -32,13 +32,7 @@ GRID = (
     (28.46, -16.25), (39.57, 2.65),
 )
 OSM_OVERPASS_URL = "https://overpass-api.de/api/interpreter"
-OSM_BBOXES = (
-    (35.0, -9.8, 39.7, -2.5),
-    (35.0, -2.5, 39.7, 4.5),
-    (39.7, -9.8, 43.9, -2.5),
-    (39.7, -2.5, 43.9, 4.5),
-    (27.5, -18.5, 29.7, -13.0),
-)
+
 DGT_BRAND_ALIASES = {
     "Toyota": ("Toyota",),
     "Dacia": ("Dacia",),
@@ -400,43 +394,43 @@ def match_osm_brands(tags):
 def fetch_osm_dealers(excluded=()):
     excluded = set(excluded)
     found = {}
-    raw_elements = 0
-    for south, west, north, east in OSM_BBOXES:
-        query = (
-            f'[out:json][timeout:120];nwr["shop"="car"]["name"]'
-            f'({south},{west},{north},{east});out center tags;'
-        )
-        url = f"{OSM_OVERPASS_URL}?{urllib.parse.urlencode({'data': query})}"
-        payload = json.loads(get(url, timeout=180))
-        if payload.get("remark"):
-            raise RuntimeError(f"Incomplete OpenStreetMap extraction: {payload['remark']}")
-        elements = payload.get("elements") or []
-        raw_elements += len(elements)
-        for item in elements:
-            tags = item.get("tags") or {}
-            if tags.get("second_hand") == "only":
+    query = (
+        '[out:json][timeout:180];'
+        'area["ISO3166-1"="ES"][admin_level=2]->.spain;'
+        'nwr["shop"="car"]["name"](area.spain);'
+        'out center tags;'
+    )
+    url = f"{OSM_OVERPASS_URL}?{urllib.parse.urlencode({'data': query})}"
+    payload = json.loads(get(url, timeout=240))
+    if payload.get("remark"):
+        raise RuntimeError(f"Incomplete OpenStreetMap extraction: {payload['remark']}")
+    elements = payload.get("elements") or []
+    raw_elements = len(elements)
+    for item in elements:
+        tags = item.get("tags") or {}
+        if tags.get("second_hand") == "only":
+            continue
+        if tags.get("service:vehicle:new_car_sales") == "no":
+            continue
+        center = item.get("center") or item
+        matches = match_osm_brands(tags)
+        for brand, source_kind in matches.items():
+            if brand in excluded:
                 continue
-            if tags.get("service:vehicle:new_car_sales") == "no":
-                continue
-            center = item.get("center") or item
-            matches = match_osm_brands(tags)
-            for brand, source_kind in matches.items():
-                if brand in excluded:
-                    continue
-                osm_id = f"osm:{item.get('type')}:{item.get('id')}"
-                name = tags.get("name")
-                address = clean(" ".join(filter(None, (
-                    tags.get("addr:street"), tags.get("addr:housenumber"),
-                ))))
-                row = make_point(
-                    brand, osm_id, name, name, osm_id, address,
-                    tags.get("addr:postcode"), tags.get("addr:city"),
-                    tags.get("addr:province"), center.get("lat"), center.get("lon"),
-                    source_kind, f"https://www.openstreetmap.org/{item.get('type')}/{item.get('id')}",
-                    source_confidence="community",
-                )
-                if row:
-                    found[(brand, osm_id)] = row
+            osm_id = f"osm:{item.get('type')}:{item.get('id')}"
+            name = tags.get("name")
+            address = clean(" ".join(filter(None, (
+                tags.get("addr:street"), tags.get("addr:housenumber"),
+            ))))
+            row = make_point(
+                brand, osm_id, name, name, osm_id, address,
+                tags.get("addr:postcode"), tags.get("addr:city"),
+                tags.get("addr:province"), center.get("lat"), center.get("lon"),
+                source_kind, f"https://www.openstreetmap.org/{item.get('type')}/{item.get('id')}",
+                source_confidence="community",
+            )
+            if row:
+                found[(brand, osm_id)] = row
     rows = list(found.values())
     if raw_elements < 1500 or len(rows) < 500:
         raise RuntimeError(

@@ -1,6 +1,7 @@
 """Coverage and confidence tests for the all-brand dealer proxy."""
 
 import csv
+import inspect
 import os
 import sys
 
@@ -100,3 +101,43 @@ def test_mercedes_vans_share_the_documented_mercedes_sales_network(tmp_path):
 
     assert points["Mercedes-V"][0]["dealer_id"] == "mercedes-madrid"
     assert points["Mercedes-V"][0]["brand"] == "Mercedes-V"
+
+def test_dealer_name_variants_collapse_to_one_canonical_label():
+    points = {
+        "Citroen": [
+            community_point("generic-upper", 40.0, -3.0),
+            community_point("generic-accent", 40.1, -3.0),
+            community_point("filinto-short", 40.2, -3.0),
+            community_point("filinto-brand", 40.3, -3.0),
+        ]
+    }
+    points["Citroen"][0]["dealer_name"] = "CITROEN"
+    points["Citroen"][1]["dealer_name"] = "Citröen"
+    points["Citroen"][2]["dealer_name"] = "Filinto Mota"
+    points["Citroen"][3]["dealer_name"] = "Filinto Mota - Citroën"
+
+    proxy.normalize_point_names(points)
+
+    assert [point["dealer_id"] for point in points["Citroen"]] == [
+        "generic-upper", "generic-accent", "filinto-short", "filinto-brand",
+    ]
+    assert [point["dealer_name"] for point in points["Citroen"]] == [
+        "Punto de venta sin nombre", "Punto de venta sin nombre",
+        "Filinto Mota", "Filinto Mota",
+    ]
+
+
+def test_osm_extraction_uses_the_spain_administrative_area():
+    source = inspect.getsource(master.fetch_osm_dealers)
+
+    assert '"ISO3166-1"="ES"' in source
+    assert "area.spain" in source
+    assert "OSM_BBOXES" not in source
+
+def test_brand_is_removed_from_the_dealer_display_name():
+    assert proxy._canonical_dealer_name(
+        "Citroen", ["Citroën - Cormotor"]
+    ) == "Cormotor"
+    assert proxy._canonical_dealer_name(
+        "Citroen", ["Citröen Automotor"]
+    ) == "Automotor"
