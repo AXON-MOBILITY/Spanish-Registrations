@@ -1,5 +1,6 @@
 """Coverage and confidence tests for the all-brand dealer proxy."""
 
+import csv
 import os
 import sys
 
@@ -80,3 +81,22 @@ def test_brand_aliases_are_canonicalized():
     assert proxy.canonical_brand("CITROEN") == "Citroen"
     assert proxy.canonical_brand("MERCEDES-BENZ VANS") == "Mercedes-V"
     assert proxy.canonical_brand("SSANGYONG") == "KG Mobility"
+
+def test_mercedes_vans_share_the_documented_mercedes_sales_network(tmp_path):
+    master_path = tmp_path / "dealers.csv"
+    row = community_point("mercedes-madrid", 40.4, -3.7)
+    row.update({
+        "brand": "Mercedes",
+        "address": "",
+        "province": "Madrid",
+        "retrieved_date": "2026-07-19",
+    })
+    with master_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=master.FIELDS)
+        writer.writeheader()
+        writer.writerow(row)
+
+    points = proxy.load_points(master_path)
+
+    assert points["Mercedes-V"][0]["dealer_id"] == "mercedes-madrid"
+    assert points["Mercedes-V"][0]["brand"] == "Mercedes-V"

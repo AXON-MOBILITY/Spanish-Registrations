@@ -33,6 +33,13 @@ F_MUNICIPIO_INE = (192, 197)
 F_RENTING = (242, 243)
 POSTCODE_RE = re.compile(r"^[0-5][0-9]{4}$")
 
+# Product lines that are separate brands in the DGT normalization but use the
+# same physical sales network. Keep this explicit so no unrelated network is
+# inferred merely because a brand has no master coverage.
+SHARED_SALES_NETWORKS = {
+    "Mercedes-V": "Mercedes",
+}
+
 OUTPUT_FIELDS = (
     "brand", "postcode", "dealer_method", "territory_status", "confidence",
     "dealer_estimated", "dealer_id", "point_of_sale_estimated", "point_of_sale_id",
@@ -56,6 +63,12 @@ def load_points(path):
                 continue
             row.setdefault("source_confidence", "official")
             result[row["brand"]].append(row)
+    for target_brand, source_brand in SHARED_SALES_NETWORKS.items():
+        if result.get(source_brand) and not result.get(target_brand):
+            result[target_brand] = [
+                {**row, "brand": target_brand}
+                for row in result[source_brand]
+            ]
     return result
 
 
