@@ -738,6 +738,23 @@ def load_prov_records(base):
     return records
 
 
+_DEALER_NAME_BY_ID = None
+
+
+def _dealer_name_by_id():
+    """Canonical dealer labels keyed by normalized brand and stable point ID."""
+    global _DEALER_NAME_BY_ID
+    if _DEALER_NAME_BY_ID is None:
+        import audit_multibrand_dealer_proxy as dealer_proxy
+        points = dealer_proxy.load_points(dealer_proxy.DEFAULT_MASTER)
+        _DEALER_NAME_BY_ID = {
+            (brand, row["dealer_id"]): row["dealer_name"]
+            for brand, brand_points in points.items()
+            for row in brand_points
+        }
+    return _DEALER_NAME_BY_ID
+
+
 def _load_dealer_records_file(path, yr, mo):
     """Read a resolved Private dealer aggregate produced while parsing DGT raw."""
     out = []
@@ -748,6 +765,10 @@ def _load_dealer_records_file(path, yr, mo):
             if n <= 0 or not dealer:
                 continue
             marca = _normalize_brand(row.get("marca", ""))
+            dealer_id = (row.get("dealer_id", "") or "").strip()
+            dealer = _dealer_name_by_id().get((marca, dealer_id))
+            if not dealer:
+                continue
             out.append({
                 "y": yr,
                 "m": mo,

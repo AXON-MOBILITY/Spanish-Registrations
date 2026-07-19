@@ -40,6 +40,10 @@ SHARED_SALES_NETWORKS = {
     "Mercedes-V": "Mercedes",
 }
 
+GENERIC_DEALER_WORDS = {
+    "CONCESIONARIO", "CONCESSIONARIO", "DEALER", "OFICIAL", "OFFICIAL",
+}
+
 OUTPUT_FIELDS = (
     "brand", "postcode", "dealer_method", "territory_status", "confidence",
     "dealer_estimated", "dealer_id", "point_of_sale_estimated", "point_of_sale_id",
@@ -50,6 +54,88 @@ OUTPUT_FIELDS = (
 
 def valid_postcode(value):
     return bool(POSTCODE_RE.fullmatch(value or "")) and value != "00000"
+
+
+def dealer_name_key(brand, value):
+    """Accent/case-insensitive key without redundant brand boilerplate."""
+    normalized = dealer_master.normalize_brand_text(value)
+    aliases = dealer_master.DGT_BRAND_ALIASES.get(brand, (brand,))
+    brand_terms = {
+        dealer_master.normalize_brand_text(alias)
+        for alias in (brand, *aliases)
+        if alias
+    }
+    for term in sorted(brand_terms, key=len, reverse=True):
+        normalized = re.sub(
+            r"(?<![A-Z0-9]){}(?![A-Z0-9])".format(re.escape(term)),
+            " ",
+            normalized,
+        )
+    words = [
+        word for word in normalized.split()
+        if word not in GENERIC_DEALER_WORDS
+    ]
+    return " ".join(words)
+
+
+def _strip_brand_from_display(brand, value):
+    """Remove brand text already supplied by the dashboard optgroup."""
+    aliases = dealer_master.DGT_BRAND_ALIASES.get(brand, (brand,))
+    patterns = [re.escape(alias) for alias in (brand, *aliases) if alias]
+    if brand == "Citroen":
+        patterns.append(r"Citr(?:o[eë]|öe)n")
+    for pattern in sorted(set(patterns), key=len, reverse=True):
+        value = re.sub(
+            r"(?<!\w){}(?!\w)".format(pattern),
+            " ",
+            value,
+            flags=re.IGNORECASE,
+        )
+    value = re.sub(r"\s+", " ", value)
+    return value.strip(" ,;|-/()")
+
+
+def _canonical_dealer_name(brand, names):
+    """Choose one stable display value for source variants of the same dealer."""
+    clean_names = sorted({
+        dealer_master.clean(name).strip(" ,;|-/")
+        for name in names if dealer_master.clean(name)
+    })
+    if not clean_names:
+        return "Punto de venta sin nombre"
+    key = dealer_name_key(brand, clean_names[0])
+    if not key:
+        return "Punto de venta sin nombre"
+
+    def score(name):
+        normalized = dealer_master.normalize_brand_text(name)
+        aliases = dealer_master.DGT_BRAND_ALIASES.get(brand, (brand,))
+        brand_hits = sum(
+            normalized.count(dealer_master.normalize_brand_text(alias))
+            for alias in (brand, *aliases) if alias
+        )
+        return brand_hits, len(normalized), normalized
+
+    selected = min(clean_names, key=score)
+    return _strip_brand_from_display(brand, selected) or "Punto de venta sin nombre"
+
+
+def normalize_point_names(points_by_brand):
+    """Collapse spelling/case variants while preserving every physical point ID."""
+    for brand, points in points_by_brand.items():
+        grouped = collections.defaultdict(list)
+        for point in points:
+            grouped[dealer_name_key(brand, point.get("dealer_name", ""))].append(
+                point.get("dealer_name", "")
+            )
+        canonical = {
+            key: _canonical_dealer_name(brand, names)
+            for key, names in grouped.items()
+        }
+        for point in points:
+            key = dealer_name_key(brand, point.get("dealer_name", ""))
+            point["dealer_name"] = canonical[key]
+    return points_by_brand
 
 
 def load_points(path):
@@ -63,6 +149,7 @@ def load_points(path):
                 continue
             row.setdefault("source_confidence", "official")
             result[row["brand"]].append(row)
+    normalize_point_names(result)
     for target_brand, source_brand in SHARED_SALES_NETWORKS.items():
         if result.get(source_brand) and not result.get(target_brand):
             result[target_brand] = [

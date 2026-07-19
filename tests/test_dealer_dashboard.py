@@ -112,3 +112,57 @@ def test_dealer_filter_is_a_brand_grouped_select():
     assert "document.createElement('optgroup')" in html
     assert "onDealerChange()" in html
     assert 'f-dealer-list' not in html
+
+def test_historical_rows_use_the_canonical_master_name(tmp_path, monkeypatch):
+    source = tmp_path / "dgt_dealer_202606.csv"
+    fields = [
+        "marca", "modelo", "canal", "fuel_type", "fuel", "segmento",
+        "subseg", "hp", "body_type", "provincia", "dealer_estimated",
+        "dealer_id", "confidence", "source_confidence", "count",
+    ]
+    with source.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerow({
+            "marca": "TOYOTA",
+            "modelo": "YARIS",
+            "canal": "Private",
+            "fuel_type": "ICE",
+            "fuel": "Gasolina",
+            "segmento": "UKL1",
+            "subseg": "FOCUS SEGMENT",
+            "hp": "Standard",
+            "body_type": "Hatchback",
+            "provincia": "Madrid",
+            "dealer_estimated": "TOYOTA Dealer Norte",
+            "dealer_id": "dealer-1",
+            "confidence": "low",
+            "source_confidence": "community",
+            "count": "3",
+        })
+    monkeypatch.setattr(
+        dashboard,
+        "_DEALER_NAME_BY_ID",
+        {("Toyota", "dealer-1"): "Dealer Norte"},
+    )
+
+    rows = dashboard._load_dealer_records_file(source, 2026, 6)
+
+    assert rows[0]["dealer"] == "Toyota | Dealer Norte"
+    assert rows[0]["n"] == 3
+
+def test_historical_rows_with_removed_point_ids_are_dropped(tmp_path, monkeypatch):
+    source = tmp_path / "dgt_dealer_202606.csv"
+    fields = ["marca", "dealer_estimated", "dealer_id", "count"]
+    with source.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerow({
+            "marca": "CITROEN",
+            "dealer_estimated": "Citroën Garage Foreign",
+            "dealer_id": "removed-osm-point",
+            "count": "4",
+        })
+    monkeypatch.setattr(dashboard, "_DEALER_NAME_BY_ID", {})
+
+    assert dashboard._load_dealer_records_file(source, 2026, 6) == []
