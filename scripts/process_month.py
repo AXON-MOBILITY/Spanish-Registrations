@@ -35,6 +35,9 @@ os.makedirs(DATA_DIR, exist_ok=True)
 OUT_DIR = DATA_DIR  # dgt_canal_*, dgt_prov_*, dgt_alerts_*
 MODEL_LOOKUP_FALLBACK = os.path.join(REPO_ROOT, 'public', 'data', 'simmix_model_lookup.json')
 LAST_PROCESS_ALERTS = []
+LAST_DEALER_COUNTS = None
+_DEALER_CONTEXT = None
+_DEALER_ASSIGNMENT_CACHE = {}
 DGT_MONTHLY_PAGE = 'https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-mensual.html'
 DGT_DAILY_PAGE = 'https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-diario.html'
 
@@ -114,6 +117,7 @@ F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
 F_SERVICIO    = (189, 192)
 F_MUNICIPIO   = (192, 197)
+F_CODIGO_POSTAL = (165, 170)
 F_RENTING     = (242, 243)
 F_MARCA       = (17,   47)
 F_MODELO      = (47,   77)   # modelo del vehiculo
@@ -1926,8 +1930,39 @@ def fuel_to_canal_counts(fuel_counts):
     return agg
 
 
-def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
-    global LAST_PROCESS_ALERTS
+def _load_dealer_context():
+    """Load the sales-point master and postcode centroids once per process."""
+    global _DEALER_CONTEXT
+    if _DEALER_CONTEXT is None:
+        import audit_multibrand_dealer_proxy as dealer_proxy
+        points = dealer_proxy.load_points(dealer_proxy.DEFAULT_MASTER)
+        centroids = dealer_proxy.load_postcode_centroids()
+        _DEALER_CONTEXT = (dealer_proxy, points, centroids)
+    return _DEALER_CONTEXT
+
+
+def _assign_dealer_proxy(marca, postcode, context):
+    """Return a cached, resolved geographic dealer proxy or None."""
+    dealer_proxy, points, centroids = context
+    brand = dealer_proxy.canonical_brand(marca)
+    cache_key = (brand, postcode)
+    if cache_key not in _DEALER_ASSIGNMENT_CACHE:
+        if not dealer_proxy.valid_postcode(postcode):
+            result = None
+        elif not points.get(brand) or postcode not in centroids:
+            result = None
+        else:
+            candidate = dealer_proxy.assign_point(
+                brand, postcode, centroids[postcode], points[brand]
+            )
+            result = candidate if candidate.get("dealer_estimated") else None
+        _DEALER_ASSIGNMENT_CACHE[cache_key] = result
+    return _DEALER_ASSIGNMENT_CACHE[cache_key]
+
+
+def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
+                  include_dealers=False):
+    global LAST_PROCESS_ALERTS, LAST_DEALER_COUNTS
     counts      = collections.Counter()
     fuel_counts = collections.Counter()
     prov_counts = collections.Counter()
@@ -1936,6 +1971,14 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
     carrocero_unmapped_pool = collections.Counter()
     invalid_scope_pool = collections.Counter()
     itv_quality_pool = collections.Counter()
+    dealer_counts = collections.Counter() if include_dealers else None
+    dealer_context = None
+    if include_dealers:
+        try:
+            dealer_context = _load_dealer_context()
+        except Exception as exc:
+            print("  WARN dealer proxy desactivado: {}".format(exc))
+            dealer_counts = None
     alerts = []
     for raw in lines_iter:
         line = raw.rstrip(b'\r\n')
@@ -2015,6 +2058,17 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
         fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
         if cod_prov.isdigit():
             prov_counts[(cod_prov, marca, modelo_canon, canal, fuel_code, seg, sub, hp, body)] += 1
+
+        if dealer_context is not None and canal == "Private":
+            buyer_postcode = line_s[F_CODIGO_POSTAL[0]:F_CODIGO_POSTAL[1]].strip()
+            dealer = _assign_dealer_proxy(marca, buyer_postcode, dealer_context)
+            if dealer:
+                dealer_counts[(
+                    marca, modelo_canon, canal, fuel_code, fuel_detail,
+                    seg, sub, hp, body, cod_prov,
+                    dealer["dealer_estimated"], dealer["dealer_id"],
+                    dealer["confidence"], dealer["source_confidence"],
+                )] += 1
 
         # Collect vin10 for N/U=N records so future tram=B dedup checks work
         if _nu_field == 'N':
@@ -2096,6 +2150,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
                 detail='pool_b00d_private={}; rate={:.4f}'.format(n, rate),
             ))
     LAST_PROCESS_ALERTS = alerts
+    LAST_DEALER_COUNTS = dealer_counts
     if not apply_calibration:
         return fuel_counts, prov_counts, retro_corrections
     calibrated = apply_scope_calibration(counts) if apply_calibration else counts
@@ -2117,23 +2172,31 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None):
 
 
 
-def process_zip(zip_path, apply_calibration=True, current_yyyymm=None):
+def process_zip(zip_path, apply_calibration=True, current_yyyymm=None,
+                include_dealers=False):
     with zipfile.ZipFile(zip_path, 'r') as zf:
         names = zf.namelist()
         txt_names = [n for n in names if n.lower().endswith('.txt')]
         if not txt_names:
             raise ValueError("ZIP sin .txt: {}".format(names))
         with zf.open(txt_names[0]) as f:
-            return process_lines(f, apply_calibration=apply_calibration,
-                                 current_yyyymm=current_yyyymm)
+            return process_lines(
+                f, apply_calibration=apply_calibration,
+                current_yyyymm=current_yyyymm,
+                include_dealers=include_dealers,
+            )
 
 
 
 
-def process_raw_txt(txt_path, apply_calibration=True, current_yyyymm=None):
+def process_raw_txt(txt_path, apply_calibration=True, current_yyyymm=None,
+                    include_dealers=False):
     with open(txt_path, 'rb') as f:
-        return process_lines(f, apply_calibration=apply_calibration,
-                             current_yyyymm=current_yyyymm)
+        return process_lines(
+            f, apply_calibration=apply_calibration,
+            current_yyyymm=current_yyyymm,
+            include_dealers=include_dealers,
+        )
 
 
 
@@ -2193,6 +2256,42 @@ def save_prov_csv(prov_counts, yyyymm):
             nombre = PROV_NAMES.get(cod_prov, 'Desconocida')
             w.writerow([year, month, marca, modelo, cod_prov, nombre, canal, fuel_type, segmento, subseg, hp, body, n])
     print("  -> {}  ({} combos provincia)".format(path, len(prov_counts)))
+    return path
+
+
+def save_dealer_csv(counts, period, daily=False):
+    """Persist resolved Private dealer proxies with product dimensions."""
+    if counts is None:
+        return None
+    year, month = period[:4], period[4:6]
+    day = period[6:8] if daily else ""
+    prefix = "dgt_dealer_daily_" if daily else "dgt_dealer_"
+    path = os.path.join(OUT_DIR, "{}{}.csv".format(prefix, period))
+    fields = [
+        "anyo", "mes",
+        *(["dia"] if daily else []),
+        "marca", "modelo", "canal", "fuel_type", "fuel", "segmento",
+        "subseg", "hp", "body_type", "cod_prov", "provincia",
+        "dealer_estimated", "dealer_id", "confidence",
+        "source_confidence", "count",
+    ]
+    with open(path, "w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle, quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(fields)
+        for key, n in sorted(counts.items()):
+            (marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body,
+             cod_prov, dealer_name, dealer_id, confidence,
+             source_confidence) = key
+            row = [year, month]
+            if daily:
+                row.append(day)
+            row.extend([
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body,
+                cod_prov, PROV_NAMES.get(cod_prov, "Desconocida"),
+                dealer_name, dealer_id, confidence, source_confidence, n,
+            ])
+            writer.writerow(row)
+    print("  -> {}  ({} combos dealer estimado)".format(path, len(counts)))
     return path
 
 
@@ -2363,6 +2462,7 @@ def finalize_month(result, yyyymm):
     fuel_counts, prov_counts, retro_corrections = result
     save_csv(fuel_counts, yyyymm)
     save_prov_csv(prov_counts, yyyymm)
+    save_dealer_csv(LAST_DEALER_COUNTS, yyyymm)
     canal_counts = fuel_to_canal_counts(fuel_counts)
     alerts = list(LAST_PROCESS_ALERTS)
     add_unknown_brand_alerts(yyyymm, canal_counts, alerts)
@@ -2378,6 +2478,7 @@ def finalize_day(result, yyyymmdd):
     fuel_counts, prov_counts, retro_corrections = result
     save_daily_csv(fuel_counts, yyyymmdd)
     save_prov_daily_csv(prov_counts, yyyymmdd)
+    save_dealer_csv(LAST_DEALER_COUNTS, yyyymmdd, daily=True)
     save_alerts(list(LAST_PROCESS_ALERTS), yyyymmdd)
     if retro_corrections:
         _apply_retro_dict(retro_corrections)
@@ -2387,11 +2488,12 @@ def finalize_day(result, yyyymmdd):
 
 def download_and_process(yyyymm, keep_raw=False, force=False):
     out_csv  = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
+    dealer_csv = os.path.join(OUT_DIR, "dgt_dealer_{}.csv".format(yyyymm))
     zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
     txt_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.txt".format(yyyymm))
 
 
-    if os.path.exists(out_csv) and not force:
+    if os.path.exists(out_csv) and os.path.exists(dealer_csv) and not force:
         if os.path.getsize(out_csv) > 100:
             print("[{}] Ya procesado, skip.".format(yyyymm))
             return
@@ -2406,7 +2508,7 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
     # procesar TXT legacy (ya descomprimido en /tmp/)
     if os.path.exists(txt_path):
         print("[{}] TXT raw en /tmp, procesando...".format(yyyymm))
-        counts = process_raw_txt(txt_path, current_yyyymm=yyyymm)
+        counts = process_raw_txt(txt_path, current_yyyymm=yyyymm, include_dealers=True)
         finalize_month(counts, yyyymm)
         if not keep_raw:
             os.remove(txt_path)
@@ -2427,7 +2529,7 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
     # procesar ZIP
     print("[{}] Procesando ZIP...".format(yyyymm))
     try:
-        counts = process_zip(zip_path, current_yyyymm=yyyymm)
+        counts = process_zip(zip_path, current_yyyymm=yyyymm, include_dealers=True)
     except Exception as e:
         print("  ERROR procesando ZIP: {}".format(e))
         return
@@ -2443,15 +2545,17 @@ def download_and_process(yyyymm, keep_raw=False, force=False):
 
 def download_and_process_month_url(yyyymm, url, keep_raw=False, force=False):
     out_csv = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
+    dealer_csv = os.path.join(OUT_DIR, "dgt_dealer_{}.csv".format(yyyymm))
     zip_path = os.path.join(TMP_DIR, "export_mensual_mat_{}.zip".format(yyyymm))
-    if os.path.exists(out_csv) and not force and os.path.getsize(out_csv) > 100:
+    if (os.path.exists(out_csv) and os.path.exists(dealer_csv)
+            and not force and os.path.getsize(out_csv) > 100):
         print("[{}] Mensual ya procesado, skip.".format(yyyymm))
         return None
     print("[{}] Procesando mensual publicado...".format(yyyymm))
     if not download_zip(url, zip_path):
         return None
     try:
-        counts = process_zip(zip_path, current_yyyymm=yyyymm)
+        counts = process_zip(zip_path, current_yyyymm=yyyymm, include_dealers=True)
     except Exception as e:
         print("  ERROR procesando ZIP: {}".format(e))
         return None
@@ -2466,8 +2570,10 @@ def download_and_process_month_url(yyyymm, url, keep_raw=False, force=False):
 
 def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
     out_csv = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
+    dealer_csv = os.path.join(OUT_DIR, "dgt_dealer_daily_{}.csv".format(yyyymmdd))
     zip_path = os.path.join(TMP_DIR, "export_mat_{}.zip".format(yyyymmdd))
-    if os.path.exists(out_csv) and not force and os.path.getsize(out_csv) > 100:
+    if (os.path.exists(out_csv) and os.path.exists(dealer_csv)
+            and not force and os.path.getsize(out_csv) > 100):
         print("[{}] Diario ya procesado, skip.".format(yyyymmdd))
         return None
     if url is None:
@@ -2479,8 +2585,10 @@ def download_and_process_daily(yyyymmdd, url=None, keep_raw=False, force=False):
         return None
     current_yyyymm = yyyymmdd[:6]
     try:
-        counts = process_zip(zip_path, apply_calibration=False,
-                             current_yyyymm=current_yyyymm)
+        counts = process_zip(
+            zip_path, apply_calibration=False,
+            current_yyyymm=current_yyyymm, include_dealers=True,
+        )
     except Exception as e:
         print("  ERROR procesando ZIP: {}".format(e))
         return None

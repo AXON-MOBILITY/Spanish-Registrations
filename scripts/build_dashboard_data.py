@@ -5,6 +5,7 @@ Salida principal:
   public/data/records.json   — registros planos con todas las dimensiones
   public/data/meta.json      — listas de valores únicos, meses disponibles
   public/data/provinces.json — datos por provincia
+  public/data/records_dealer.json — registros Private por dealer estimado
   public/data/daily_mtd.json — acumulado MTD diario del mes actual
 
 Columnas records.json (índices COL en index.html):
@@ -737,6 +738,131 @@ def load_prov_records(base):
     return records
 
 
+def _load_dealer_records_file(path, yr, mo):
+    """Read a resolved Private dealer aggregate produced while parsing DGT raw."""
+    out = []
+    for row in _read_csv(path):
+        try:
+            n = int(row.get("count", 0) or 0)
+            dealer = (row.get("dealer_estimated", "") or "").strip()
+            if n <= 0 or not dealer:
+                continue
+            marca = _normalize_brand(row.get("marca", ""))
+            out.append({
+                "y": yr,
+                "m": mo,
+                "marca": marca,
+                "modelo": (row.get("modelo", "") or "").strip().upper(),
+                "canal": row.get("canal", "Private") or "Private",
+                "fuel": row.get("fuel_type", "ICE") or "ICE",
+                "fuel_det": row.get("fuel", "") or "",
+                "seg": row.get("segmento", "") or "",
+                "sub": _focus_bucket(row.get("subseg", "")),
+                "hp": row.get("hp", "") or "",
+                "body": row.get("body_type", "") or "",
+                "prov": row.get("provincia", "") or "",
+                "dealer": "{} | {}".format(marca, dealer),
+                "confidence": row.get("confidence", "") or "",
+                "source_confidence": row.get("source_confidence", "") or "",
+                "n": n,
+            })
+        except (TypeError, ValueError, KeyError):
+            pass
+    return out
+
+
+def load_dealer_records(base):
+    """Load monthly dealer aggregates and daily rows only for incomplete months."""
+    records = []
+    completed = set()
+    pattern = str(base / "dgt_dealer_[0-9][0-9][0-9][0-9][0-9][0-9].csv")
+    for filename in sorted(glob.glob(pattern)):
+        match = re.match(r"dgt_dealer_(\d{4})(\d{2})$", Path(filename).stem)
+        if not match:
+            continue
+        yr, mo = int(match.group(1)), int(match.group(2))
+        completed.add((yr, mo))
+        records.extend(_load_dealer_records_file(filename, yr, mo))
+    for filename in sorted(glob.glob(str(base / "dgt_dealer_daily_[0-9]*.csv"))):
+        match = re.match(r"dgt_dealer_daily_(\d{4})(\d{2})(\d{2})$", Path(filename).stem)
+        if not match:
+            continue
+        yr, mo = int(match.group(1)), int(match.group(2))
+        if (yr, mo) in completed:
+            continue
+        records.extend(_load_dealer_records_file(filename, yr, mo))
+    return records
+
+
+def build_records_dealer_json(dealer_records, mtd_yr, mtd_mo, scope_info=None):
+    """Compact lazy dataset with the canonical record dimensions plus dealer."""
+    agg = defaultdict(int)
+    for row in dealer_records:
+        key = (
+            row["y"], row["m"], row["marca"], row["modelo"], row["canal"],
+            row["fuel"], row["fuel_det"], row["seg"], row["sub"], row["hp"],
+            row["body"], row["prov"], row["dealer"], row["confidence"],
+            row["source_confidence"],
+        )
+        agg[key] += row["n"]
+
+    if not agg:
+        return {
+            "cols": [], "rows": [], "enums": {}, "total": 0, "months": [],
+            "mtd": None, "scope": scope_info or {"mode": "dgt"},
+        }
+
+    enum_names = (
+        "marca", "modelo", "fuel_det", "seg", "sub", "hp", "body", "prov",
+        "dealer", "confidence", "source_confidence",
+    )
+    indexes = {name: {} for name in enum_names}
+    enums = {name: [] for name in enum_names}
+    canal_map = {"Private": 0, "Corporate": 1, "RAC": 2}
+    fuel_map = {"ICE": 0, "BEV": 1, "PHEV": 2}
+
+    def idx(name, value):
+        if value not in indexes[name]:
+            indexes[name][value] = len(enums[name])
+            enums[name].append(value)
+        return indexes[name][value]
+
+    rows = []
+    for key, n in agg.items():
+        (y, mo, marca, modelo, canal, fuel, fuel_det, seg, sub, hp, body,
+         prov, dealer, confidence, source_confidence) = key
+        rows.append([
+            y, mo, idx("marca", marca), idx("modelo", modelo),
+            canal_map.get(canal, 0), fuel_map.get(fuel, 0),
+            idx("fuel_det", fuel_det), idx("seg", seg), idx("sub", sub),
+            idx("hp", hp), idx("body", body), idx("prov", prov),
+            idx("dealer", dealer), idx("confidence", confidence),
+            idx("source_confidence", source_confidence), n,
+        ])
+
+    months_present = sorted({(row[0], row[1]) for row in rows})
+    enums.update({
+        "canal": ["Private", "Corporate", "RAC"],
+        "fuel": ["ICE", "BEV", "PHEV"],
+    })
+    return {
+        "cols": [
+            "y", "m", "marca", "modelo", "canal", "fuel", "fuel_det",
+            "seg", "sub", "hp", "body", "prov", "dealer", "confidence",
+            "source_confidence", "n",
+        ],
+        "enums": enums,
+        "rows": rows,
+        "total": sum(row[-1] for row in rows),
+        "months": [
+            {"y": y, "m": mo, "label": "{} {}".format(MONTHS_ES[mo], y)}
+            for y, mo in months_present
+        ],
+        "mtd": {"y": mtd_yr, "m": mtd_mo} if mtd_yr else None,
+        "scope": scope_info or {"mode": "dgt"},
+    }
+
+
 def build_records_prov_json(prov_records, mtd_yr, mtd_mo, scope_info=None):
     """records_prov.json: mismo formato columnar indexado que records.json pero
     con dimension prov. Se carga en el dashboard SOLO cuando el filtro de
@@ -1255,6 +1381,7 @@ def main():
     daily_data                   = load_daily(base)
     prov_data                    = load_provinces(base)
     prov_records                 = load_prov_records(base)
+    dealer_records               = load_dealer_records(base)
 
     scope_info = {
         "mode": args.scope,
@@ -1341,11 +1468,15 @@ def main():
     print("Generando JSONs...")
     records_obj = build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info)
     records_prov_obj = build_records_prov_json(prov_records, mtd_yr, mtd_mo, scope_info)
+    records_dealer_obj = build_records_dealer_json(
+        dealer_records, mtd_yr, mtd_mo, scope_info
+    )
     provinces_obj = build_provinces_json(prov_data)
 
     for fname, obj in [
         ("records.json",   records_obj),
         ("records_prov.json", records_prov_obj),
+        ("records_dealer.json", records_dealer_obj),
         ("daily_mtd.json", build_daily_mtd_json(daily_data, cy, cm)),
         ("provinces.json", provinces_obj),
         ("province_brands.json", ranking_obj),
@@ -1359,6 +1490,8 @@ def main():
         print(f"  {fname}: {p.stat().st_size/1024:.0f} KB  ({n_items} rows/items)")
 
     meta = build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data, scope_info)
+    meta["has_dealers"] = bool(dealer_records)
+    meta["dealer_months"] = len({(row["y"], row["m"]) for row in dealer_records})
     p    = out_dir / "meta.json"
     p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"  meta.json")

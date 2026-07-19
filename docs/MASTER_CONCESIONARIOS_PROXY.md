@@ -87,3 +87,17 @@ Shineray, Sin marca, SportEquipe, Tiger, Tripod y Zeekr.
 Estas 18 marcas tambien estan procesadas: sus 227 matriculaciones se conservan como
 unmapped_brand. La cobertura mide disponibilidad del proxy, no exactitud. Sin ventas
 observadas de la marca o del DMS no puede calcularse accuracy.
+## Filtro del dashboard
+
+El ETL genera dgt_dealer_YYYYMM.csv y dgt_dealer_daily_YYYYMMDD.csv mientras
+todavia dispone del codigo postal del domicilio. El dashboard los compacta en
+public/data/records_dealer.json y solo descarga ese fichero cuando se usa el
+selector Dealer (est.).
+
+El filtro afecta a Overview, Ranking y Channel & Monthly, y se puede combinar con
+marca, modelo, carroceria y provincia. Solo contiene asignaciones resueltas del
+canal Private; los estados ambiguos, lejanos o sin master quedan fuera.
+
+El repositorio incluye junio de 2026 como primer mes. Despues de fusionar el cambio,
+hay que ejecutar DGT auto sync en modo de reconstruccion completa para generar la
+dimension dealer en todo el historico disponible.
