@@ -15,23 +15,20 @@ domicilio registral puede ser una sede, una campa o una operadora de flota.
 
 ## Fuentes y confianza
 
-El master actual contiene 3.802 puntos de 56 marcas:
+El master general actual contiene 1.671 puntos de 9 marcas, todos procedentes de
+localizadores oficiales:
 
 | Confianza de fuente | Puntos | Uso |
 |---|---:|---|
-| official | 1.447 | Localizadores oficiales de Toyota, Renault, Dacia, Hyundai, Kia, SEAT y CUPRA |
-| community | 2.355 | OpenStreetMap, mediante shop=car y marca explicita o coincidencia de nombre |
+| official | 1.671 | Localizadores oficiales de Toyota, Renault, Dacia, Hyundai, Kia, SEAT, CUPRA, Nissan y Lexus |
 
-Cada fila conserva source_kind, source_confidence, source_url y retrieved_date. Las
-asignaciones basadas en OpenStreetMap siempre se limitan a confidence=low, aunque la
-distancia sea pequena.
+Cada fila conserva source_kind, source_confidence, source_url y retrieved_date. No se
+publican puntos obtenidos de OpenStreetMap, directorios comerciales ni nombres
+inferidos. En Lexus, la identidad y direccion proceden del localizador oficial y la
+coordenada se aproxima mediante el centroide publico de su codigo postal.
 
 BMW mantiene ademas su master territorial y auditoria especifica, con mejor cobertura
 que el fallback general de coordenadas.
-
-Los datos de OpenStreetMap estan sujetos a ODbL y requieren atribucion:
-https://www.openstreetmap.org/copyright. El enlace exacto al objeto se conserva en
-cada fila.
 
 ## Esquema
 
@@ -45,13 +42,13 @@ No se guardan telefonos, correos, NIF ni datos personales.
 
     python scripts/build_dealer_points.py
 
-Para regenerar solo las siete redes oficiales:
+Para regenerar las nueve redes oficiales:
 
     python scripts/build_dealer_points.py --official-only
 
-Los extractores oficiales aplican reintentos y minimos de integridad. La extraccion
-OpenStreetMap tambien falla si la respuesta global queda por debajo de sus umbrales,
-para evitar reemplazar el master con una descarga parcial.
+Los extractores oficiales aplican reintentos y minimos de integridad. La regeneracion
+falla si una respuesta queda por debajo de sus umbrales, para evitar reemplazar el
+master con una descarga parcial.
 
 ## Estados de auditoria
 
@@ -80,13 +77,12 @@ marcas. Se resolvio un nombre estimado para 26.956: cobertura del 47,7%.
 | Marca sin red trazable | 227 |
 | Sin centroide postal | 13 |
 
-Hay master para 56 de las 74 marcas observadas. Las 18 sin master son BAIC, BAW,
-Baojun, Cirelli, DR, Gruau, ICH-X, Ineos, Livan, Lynk & Co, Mercedes-V, Moke,
-Shineray, Sin marca, SportEquipe, Tiger, Tripod y Zeekr.
-
-Estas 18 marcas tambien estan procesadas: sus 227 matriculaciones se conservan como
+Estas cifras corresponden a una auditoria anterior y no deben interpretarse como la
+cobertura actual. La cobertura se recalcula al reconstruir el historico con el master
+oficial vigente. Las marcas sin red oficial integrada se conservan como
 unmapped_brand. La cobertura mide disponibilidad del proxy, no exactitud. Sin ventas
 observadas de la marca o del DMS no puede calcularse accuracy.
+
 ## Filtro del dashboard
 
 El ETL genera dgt_dealer_YYYYMM.csv y dgt_dealer_daily_YYYYMMDD.csv mientras

@@ -4,6 +4,7 @@
 import argparse
 import csv
 import html
+import io
 import json
 import re
 import time
@@ -11,6 +12,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import unicodedata
+import zipfile
 import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
@@ -19,10 +21,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUTPUT = ROOT / "masters" / "master_dealer_points.csv"
 USER_AGENT = "AxonMobilityDealerMaster/1.0"
-SUPPORTED = ("Toyota", "Renault", "Dacia", "Hyundai", "Kia", "Seat", "Cupra")
+SUPPORTED = (
+    "Toyota", "Renault", "Dacia", "Hyundai", "Kia", "Seat", "Cupra",
+    "Lexus", "Nissan",
+)
 MINIMUM_SALES_POINTS = {
     "Toyota": 140, "Renault": 300, "Dacia": 300,
     "Hyundai": 140, "Kia": 180, "Seat": 170, "Cupra": 85,
+    "Lexus": 25, "Nissan": 120,
 }
 GRID = (
     (43.36, -8.41), (43.26, -2.94), (42.82, -1.64), (41.65, -0.89),
@@ -32,6 +38,8 @@ GRID = (
     (28.46, -16.25), (39.57, 2.65),
 )
 OSM_OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+GEONAMES_URL = "https://download.geonames.org/export/zip/ES.zip"
+_POSTCODE_CENTROIDS = None
 
 DGT_BRAND_ALIASES = {
     "Toyota": ("Toyota",),
@@ -349,6 +357,119 @@ def fetch_seat_group(brand):
             rows.append(row)
     return rows
 
+def load_postcode_centroids():
+    global _POSTCODE_CENTROIDS
+    if _POSTCODE_CENTROIDS is not None:
+        return _POSTCODE_CENTROIDS
+    grouped = {}
+    with zipfile.ZipFile(io.BytesIO(get(GEONAMES_URL, timeout=120))) as archive:
+        name = next(
+            item for item in archive.namelist()
+            if item.upper().endswith("ES.TXT")
+        )
+        with archive.open(name) as handle:
+            for raw_line in handle:
+                fields = raw_line.decode("utf-8").rstrip("\n").split("\t")
+                if len(fields) < 11 or not re.fullmatch(r"[0-5][0-9]{4}", fields[1]):
+                    continue
+                grouped.setdefault(fields[1], []).append(
+                    (float(fields[9]), float(fields[10]))
+                )
+    _POSTCODE_CENTROIDS = {
+        cp: (
+            sum(lat for lat, _ in values) / len(values),
+            sum(lon for _, lon in values) / len(values),
+        )
+        for cp, values in grouped.items()
+    }
+    return _POSTCODE_CENTROIDS
+
+
+def parse_lexus_sales_points(page, centroids):
+    """Parse explicitly labelled Lexus showroom points from the official page."""
+    rows = []
+    blocks = re.split(r'<div class="retailer-details"[^>]*>', page)[1:]
+    for block in blocks:
+        title_match = re.search(r"<h2[^>]*>(.*?)</h2>", block, re.DOTALL)
+        if not title_match:
+            continue
+        title = html.unescape(re.sub(r"<[^>]+>", " ", title_match.group(1)))
+        if "EXPOSICION" not in normalize_brand_text(title):
+            continue
+        address_match = re.search(
+            r'<li class="address">(.*?)</li>', block, re.DOTALL
+        )
+        link_match = re.search(
+            r'<a[^>]+data-gt-action="view-dealer"[^>]+>', block, re.DOTALL
+        )
+        if not link_match:
+            continue
+        tag = link_match.group(0)
+        attrs = dict(re.findall(r'data-gt-([a-z]+)="([^"]*)"', tag))
+        href_match = re.search(r'href="([^"]+)"', tag)
+        cp = postcode(attrs.get("dealerzipcode"))
+        if cp not in centroids:
+            continue
+        lat, lon = centroids[cp]
+        dealer_name = re.sub(r"\s*\(.*$", "", title).strip(" -")
+        dealer_name = re.sub(
+            r"\s*-\s*(?:LEXUS|EXPOSICION).*$", "", dealer_name,
+            flags=re.IGNORECASE,
+        ).strip(" -")
+        dealer_id = normalize_brand_text(dealer_name)
+        source_url = (
+            html.unescape(href_match.group(1))
+            if href_match else "https://www.lexusauto.es/concesionarios"
+        )
+        row = make_point(
+            "Lexus", dealer_id, dealer_name, title, attrs.get("dealerid"),
+            html.unescape(re.sub(r"<[^>]+>", " ", address_match.group(1)))
+            if address_match else "",
+            cp, attrs.get("dealercity"), attrs.get("dealerregion"), lat, lon,
+            "official_page_postcode_centroid", source_url,
+        )
+        if row:
+            rows.append(row)
+    return rows
+
+
+def fetch_lexus():
+    url = "https://www.lexusauto.es/concesionarios"
+    page = get(url).decode("utf-8", errors="replace")
+    return parse_lexus_sales_points(page, load_postcode_centroids())
+
+
+def parse_nissan_sales_points(page):
+    """Parse Nissan points whose official activity includes new-vehicle sales."""
+    match = re.search(r"var\s+mijsontodas\s*=\s*(\{.*?\});", page, re.DOTALL)
+    if not match:
+        raise RuntimeError("Nissan dealer payload not found")
+    payload = json.loads(match.group(1))
+    rows = []
+    for item in payload.get("todas") or []:
+        activity = normalize_brand_text(item.get("ventasyservicios"))
+        if "VENTAS" not in activity or not postcode(item.get("cp")):
+            continue
+        link = clean(item.get("link"))
+        dealer_id = urllib.parse.urlparse(link).path.strip("/").split("/")[-1]
+        dealer_id = dealer_id or normalize_brand_text(item.get("nombre"))
+        row = make_point(
+            "Nissan", dealer_id, item.get("nombre"), item.get("nombre"),
+            item.get("id"), item.get("direccion"), item.get("cp"),
+            item.get("poblacion"), item.get("provincia"), item.get("latitud"),
+            item.get("longitud"), "official_page_payload",
+            link or "https://serviciosweb.nissan.es/dloc/concesionario/concesionario",
+        )
+        if row:
+            rows.append(row)
+    return rows
+
+
+def fetch_nissan():
+    url = "https://serviciosweb.nissan.es/dloc/concesionario/concesionario"
+    page = get(url).decode("iso-8859-1", errors="replace")
+    return parse_nissan_sales_points(page)
+
 def normalize_brand_text(value):
     value = unicodedata.normalize("NFKD", clean(value))
     value = "".join(char for char in value if not unicodedata.combining(char))
@@ -444,6 +565,7 @@ FETCHERS = {
     "Dacia": lambda: fetch_renault_group("Dacia"), "Hyundai": fetch_hyundai,
     "Kia": fetch_kia, "Seat": lambda: fetch_seat_group("Seat"),
     "Cupra": lambda: fetch_seat_group("Cupra"),
+    "Lexus": fetch_lexus, "Nissan": fetch_nissan,
 }
 
 

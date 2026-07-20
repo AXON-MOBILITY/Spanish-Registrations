@@ -751,7 +751,7 @@ def _dealer_name_by_id():
             dealer_proxy.DEFAULT_MASTER, official_only=True
         )
         _DEALER_NAME_BY_ID = {
-            (brand, row["dealer_id"]): row["dealer_name"]
+            (_normalize_brand(brand), row["dealer_id"]): row["dealer_name"]
             for brand, brand_points in points.items()
             if brand != "BMW"
             for row in brand_points
@@ -1525,6 +1525,7 @@ def main():
 
     meta = build_meta_json(monthly_records, mtd_yr, mtd_mo, prov_data, scope_info)
     meta["has_dealers"] = bool(dealer_records)
+    meta["dealer_source_policy"] = "official_or_internal"
     meta["dealer_months"] = len({(row["y"], row["m"]) for row in dealer_records})
     p    = out_dir / "meta.json"
     p.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
