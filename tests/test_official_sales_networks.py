@@ -1,5 +1,6 @@
 """Tests for official, new-vehicle dealer network ingestion."""
 
+import csv
 import os
 import sys
 
@@ -90,3 +91,51 @@ def test_dashboard_normalizes_master_brand_keys(monkeypatch):
     names = dashboard._dealer_name_by_id()
 
     assert names[("SEAT", "seat-1")] == "motor centro"
+
+
+def test_audi_snapshot_contains_only_official_sales_pages():
+    with open(master.AUDI_SALES_POINTS, encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+
+    assert len(rows) >= 60
+    assert len({row["source_url"] for row in rows}) == len(rows)
+    assert all(row["postcode"] and "audi.es/" in row["source_url"] for row in rows)
+    assert not any("/zamora/helmantica/" in row["source_url"] for row in rows)
+
+
+def test_mercedes_parser_separates_new_car_and_van_sales():
+    def service(service_id, product_group, valid=True):
+        return {
+            "service": {"id": service_id},
+            "productGroup": {"id": product_group},
+            "validity": {"valid": valid},
+        }
+
+    def dealer(outlet_id, offered_services):
+        return {
+            "companyId": "company-" + outlet_id,
+            "outletId": outlet_id,
+            "legalName": "Legal " + outlet_id,
+            "brands": [{"businessName": "Dealer " + outlet_id}],
+            "address": {
+                "street": "Calle Uno", "streetNumber": "1", "zipCode": "28001",
+                "city": "Madrid", "region": {"province": "Madrid"},
+                "coordinates": {"latitude": 40.4, "longitude": -3.7},
+            },
+            "offeredServices": offered_services,
+        }
+
+    payload = [
+        dealer("pc-sales", [service(120, "PC")]),
+        dealer("eq-sales", [service(900, "PC")]),
+        dealer("van-sales", [service(120, "VAN")]),
+        dealer("expired", [service(120, "PC", valid=False)]),
+        dealer("repair-only", [service(7, "PC")]),
+    ]
+
+    pc_rows = master.parse_mercedes_sales_points(payload, "Mercedes", "PC")
+    van_rows = master.parse_mercedes_sales_points(payload, "Mercedes-V", "VAN")
+
+    assert {row["point_of_sale_id"] for row in pc_rows} == {"pc-sales", "eq-sales"}
+    assert {row["point_of_sale_id"] for row in van_rows} == {"van-sales"}
+    assert all(row["source_confidence"] == "official" for row in pc_rows + van_rows)

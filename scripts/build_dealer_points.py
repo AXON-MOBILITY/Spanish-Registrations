@@ -20,15 +20,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUTPUT = ROOT / "masters" / "master_dealer_points.csv"
+AUDI_SALES_POINTS = ROOT / "masters" / "sources" / "audi_official_sales_points.csv"
 USER_AGENT = "AxonMobilityDealerMaster/1.0"
 SUPPORTED = (
     "Toyota", "Renault", "Dacia", "Hyundai", "Kia", "Seat", "Cupra",
-    "Lexus", "Nissan",
+    "Lexus", "Nissan", "Audi", "Mercedes", "Mercedes-V",
 )
 MINIMUM_SALES_POINTS = {
     "Toyota": 140, "Renault": 300, "Dacia": 300,
     "Hyundai": 140, "Kia": 180, "Seat": 170, "Cupra": 85,
-    "Lexus": 25, "Nissan": 120,
+    "Lexus": 25, "Nissan": 120, "Audi": 60,
+    "Mercedes": 130, "Mercedes-V": 110,
 }
 GRID = (
     (43.36, -8.41), (43.26, -2.94), (42.82, -1.64), (41.65, -0.89),
@@ -40,6 +42,7 @@ GRID = (
 OSM_OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 GEONAMES_URL = "https://download.geonames.org/export/zip/ES.zip"
 _POSTCODE_CENTROIDS = None
+_MERCEDES_DEALERS = None
 
 DGT_BRAND_ALIASES = {
     "Toyota": ("Toyota",),
@@ -470,6 +473,113 @@ def fetch_nissan():
     page = get(url).decode("iso-8859-1", errors="replace")
     return parse_nissan_sales_points(page)
 
+
+def load_audi_sales_points(path, centroids):
+    """Load sales locations verified against Audi's official dealer pages."""
+    rows = []
+    with open(path, encoding="utf-8-sig", newline="") as handle:
+        for item in csv.DictReader(handle):
+            cp = postcode(item.get("postcode"))
+            if cp not in centroids:
+                continue
+            lat, lon = centroids[cp]
+            source_url = clean(item.get("source_url"))
+            parts = urllib.parse.urlparse(source_url).path.strip("/").split("/")
+            dealer_name = clean(item.get("dealer_name"))
+            row = make_point(
+                "Audi", normalize_brand_text(dealer_name), dealer_name,
+                item.get("point_of_sale"), ":".join(parts[-2:]),
+                item.get("address"), cp, item.get("city"), item.get("province"),
+                lat, lon, "official_page_postcode_centroid", source_url,
+            )
+            if row:
+                rows.append(row)
+    return rows
+
+
+def fetch_audi():
+    return load_audi_sales_points(AUDI_SALES_POINTS, load_postcode_centroids())
+
+
+def mercedes_dealers():
+    """Fetch the complete Spanish network from Mercedes-Benz's public locator."""
+    global _MERCEDES_DEALERS
+    if _MERCEDES_DEALERS is not None:
+        return _MERCEDES_DEALERS
+    page_url = (
+        "https://www.mercedes-benz.es/passengercars/mercedes-benz-cars/"
+        "dealer-locator.html/"
+    )
+    page = html.unescape(text(page_url))
+    key = re.search(r'"apiKey"\s*:\s*"([^"]+)"', page)
+    profile = re.search(r'"searchProfileCode"\s*:\s*"([^"]+)"', page)
+    if not key or not profile:
+        raise RuntimeError("Mercedes-Benz locator configuration not found")
+    endpoint = (
+        "https://api.oneweb.mercedes-benz.com/dms-plus/v3/"
+        "api/dealers/market"
+    )
+    dealers = []
+    for page_number in range(1, 21):
+        query = urllib.parse.urlencode({
+            "marketCode": "ES", "searchProfile": profile.group(1),
+            "page": page_number, "size": 25, "includeFields": "*",
+        })
+        payload = json.loads(get(
+            f"{endpoint}?{query}", headers={"x-apikey": key.group(1)}
+        ))
+        current = payload.get("dealers") or []
+        dealers.extend(current)
+        if len(current) < 25:
+            break
+    if not dealers:
+        raise RuntimeError("Mercedes-Benz dealer payload is empty")
+    _MERCEDES_DEALERS = dealers
+    return dealers
+
+
+def parse_mercedes_sales_points(dealers, brand, product_group):
+    """Keep only valid new-vehicle sales services for one Mercedes product line."""
+    page_url = (
+        "https://www.mercedes-benz.es/passengercars/mercedes-benz-cars/"
+        "dealer-locator.html/"
+    )
+    rows = []
+    for item in dealers:
+        sells_new = any(
+            str((value.get("service") or {}).get("id")) in {"120", "900"}
+            and (value.get("productGroup") or {}).get("id") == product_group
+            and (value.get("validity") or {}).get("valid", True)
+            for value in item.get("offeredServices") or []
+        )
+        if not sells_new:
+            continue
+        address = item.get("address") or {}
+        coordinates = address.get("coordinates") or {}
+        names = [
+            clean(value.get("businessName")) for value in item.get("brands") or []
+            if clean(value.get("businessName"))
+        ]
+        dealer_name = names[0] if names else item.get("legalName")
+        street = clean(" ".join(filter(None, (
+            address.get("street"), address.get("streetNumber"),
+        ))))
+        row = make_point(
+            brand, item.get("companyId"), dealer_name, dealer_name,
+            item.get("outletId"), street, address.get("zipCode"),
+            address.get("city"), (address.get("region") or {}).get("province"),
+            coordinates.get("latitude"), coordinates.get("longitude"),
+            "official_api", page_url,
+        )
+        if row:
+            rows.append(row)
+    return rows
+
+
+def fetch_mercedes(brand, product_group):
+    return parse_mercedes_sales_points(mercedes_dealers(), brand, product_group)
+
+
 def normalize_brand_text(value):
     value = unicodedata.normalize("NFKD", clean(value))
     value = "".join(char for char in value if not unicodedata.combining(char))
@@ -565,7 +675,9 @@ FETCHERS = {
     "Dacia": lambda: fetch_renault_group("Dacia"), "Hyundai": fetch_hyundai,
     "Kia": fetch_kia, "Seat": lambda: fetch_seat_group("Seat"),
     "Cupra": lambda: fetch_seat_group("Cupra"),
-    "Lexus": fetch_lexus, "Nissan": fetch_nissan,
+    "Lexus": fetch_lexus, "Nissan": fetch_nissan, "Audi": fetch_audi,
+    "Mercedes": lambda: fetch_mercedes("Mercedes", "PC"),
+    "Mercedes-V": lambda: fetch_mercedes("Mercedes-V", "VAN"),
 }
 
 

@@ -15,17 +15,18 @@ domicilio registral puede ser una sede, una campa o una operadora de flota.
 
 ## Fuentes y confianza
 
-El master general actual contiene 1.671 puntos de 9 marcas, todos procedentes de
-localizadores oficiales:
+El master general actual contiene 1.998 puntos de 12 redes DGT, todos procedentes
+de localizadores oficiales. Mercedes turismos y Mercedes Vans se mantienen separados:
 
 | Confianza de fuente | Puntos | Uso |
 |---|---:|---|
-| official | 1.671 | Localizadores oficiales de Toyota, Renault, Dacia, Hyundai, Kia, SEAT, CUPRA, Nissan y Lexus |
+| official | 1.998 | Localizadores oficiales de Toyota, Renault, Dacia, Hyundai, Kia, SEAT, CUPRA, Nissan, Lexus, Audi, Mercedes y Mercedes Vans |
 
 Cada fila conserva source_kind, source_confidence, source_url y retrieved_date. No se
 publican puntos obtenidos de OpenStreetMap, directorios comerciales ni nombres
-inferidos. En Lexus, la identidad y direccion proceden del localizador oficial y la
-coordenada se aproxima mediante el centroide publico de su codigo postal.
+inferidos. En Lexus y Audi, la identidad y direccion proceden de paginas oficiales y
+la coordenada se aproxima mediante el centroide publico de su codigo postal. Mercedes
+se obtiene de su API oficial y se filtra por venta de vehiculo nuevo y linea de producto.
 
 BMW mantiene ademas su master territorial y auditoria especifica, con mejor cobertura
 que el fallback general de coordenadas.
@@ -42,7 +43,7 @@ No se guardan telefonos, correos, NIF ni datos personales.
 
     python scripts/build_dealer_points.py
 
-Para regenerar las nueve redes oficiales:
+Para regenerar las doce redes oficiales:
 
     python scripts/build_dealer_points.py --official-only
 
