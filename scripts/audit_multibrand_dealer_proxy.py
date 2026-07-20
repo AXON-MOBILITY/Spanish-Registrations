@@ -121,7 +121,7 @@ def _canonical_dealer_name(brand, names):
 
 
 def normalize_point_names(points_by_brand):
-    """Collapse spelling/case variants while preserving every physical point ID."""
+    """Collapse spelling/case and shared-ID variants into stable dealer labels."""
     for brand, points in points_by_brand.items():
         grouped = collections.defaultdict(list)
         for point in points:
@@ -135,8 +135,19 @@ def normalize_point_names(points_by_brand):
         for point in points:
             key = dealer_name_key(brand, point.get("dealer_name", ""))
             point["dealer_name"] = canonical[key]
-    return points_by_brand
 
+        by_dealer_id = collections.defaultdict(list)
+        for point in points:
+            by_dealer_id[point.get("dealer_id", "")].append(
+                point.get("dealer_name", "")
+            )
+        dealer_canonical = {
+            key: _canonical_dealer_name(brand, names)
+            for key, names in by_dealer_id.items()
+        }
+        for point in points:
+            point["dealer_name"] = dealer_canonical[point.get("dealer_id", "")]
+    return points_by_brand
 
 def load_points(path, official_only=False):
     result = collections.defaultdict(list)
