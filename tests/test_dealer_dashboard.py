@@ -137,18 +137,18 @@ def test_historical_rows_use_the_canonical_master_name(tmp_path, monkeypatch):
             "dealer_estimated": "TOYOTA Dealer Norte",
             "dealer_id": "dealer-1",
             "confidence": "low",
-            "source_confidence": "community",
+            "source_confidence": "official",
             "count": "3",
         })
     monkeypatch.setattr(
         dashboard,
         "_DEALER_NAME_BY_ID",
-        {("Toyota", "dealer-1"): "Dealer Norte"},
+        {("Toyota", "dealer-1"): "dealer norte"},
     )
 
     rows = dashboard._load_dealer_records_file(source, 2026, 6)
 
-    assert rows[0]["dealer"] == "Toyota | Dealer Norte"
+    assert rows[0]["dealer"] == "Toyota | dealer norte"
     assert rows[0]["n"] == 3
 
 def test_historical_rows_with_removed_point_ids_are_dropped(tmp_path, monkeypatch):

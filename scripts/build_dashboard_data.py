@@ -746,12 +746,20 @@ def _dealer_name_by_id():
     global _DEALER_NAME_BY_ID
     if _DEALER_NAME_BY_ID is None:
         import audit_multibrand_dealer_proxy as dealer_proxy
-        points = dealer_proxy.load_points(dealer_proxy.DEFAULT_MASTER)
+        import bmw_dealer_territory as bmw_dealer
+        points = dealer_proxy.load_points(
+            dealer_proxy.DEFAULT_MASTER, official_only=True
+        )
         _DEALER_NAME_BY_ID = {
             (brand, row["dealer_id"]): row["dealer_name"]
             for brand, brand_points in points.items()
+            if brand != "BMW"
             for row in brand_points
         }
+        _DEALER_NAME_BY_ID.update({
+            ("BMW", dealer_id): dealer_name
+            for dealer_id, dealer_name in bmw_dealer.load_active_dealers().items()
+        })
     return _DEALER_NAME_BY_ID
 
 
@@ -762,7 +770,12 @@ def _load_dealer_records_file(path, yr, mo):
         try:
             n = int(row.get("count", 0) or 0)
             dealer = (row.get("dealer_estimated", "") or "").strip()
-            if n <= 0 or not dealer:
+            source_confidence = (row.get("source_confidence", "") or "").strip()
+            if (
+                n <= 0
+                or not dealer
+                or source_confidence not in {"official", "internal"}
+            ):
                 continue
             marca = _normalize_brand(row.get("marca", ""))
             dealer_id = (row.get("dealer_id", "") or "").strip()

@@ -1348,9 +1348,10 @@ function refreshDealers(){
 }
 
 function onDealerChange(){
+  const value=g('f-dealer').value;
   ensureRECD().then(()=>{
-    const value=g('f-dealer').value;
     F.dealer=DEALER_CHOICES.has(value)?value:'';
+    g('f-dealer').value=F.dealer;
     rebuildActiveRecords();
     render();
   });

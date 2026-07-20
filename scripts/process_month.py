@@ -117,6 +117,7 @@ F_NUEVO_USADO = (178, 179)
 F_PERSONA_FJ  = (179, 180)
 F_SERVICIO    = (189, 192)
 F_MUNICIPIO   = (192, 197)
+F_MUNICIPIO_NOMBRE = (197, 227)
 F_CODIGO_POSTAL = (165, 170)
 F_RENTING     = (242, 243)
 F_MARCA       = (17,   47)
@@ -1935,16 +1936,34 @@ def _load_dealer_context():
     global _DEALER_CONTEXT
     if _DEALER_CONTEXT is None:
         import audit_multibrand_dealer_proxy as dealer_proxy
-        points = dealer_proxy.load_points(dealer_proxy.DEFAULT_MASTER)
+        import bmw_dealer_territory as bmw_dealer
+        points = dealer_proxy.load_points(
+            dealer_proxy.DEFAULT_MASTER, official_only=True
+        )
         centroids = dealer_proxy.load_postcode_centroids()
-        _DEALER_CONTEXT = (dealer_proxy, points, centroids)
+        bmw_context = bmw_dealer.load_context()
+        _DEALER_CONTEXT = (
+            dealer_proxy, points, centroids, bmw_dealer, bmw_context,
+        )
     return _DEALER_CONTEXT
 
 
-def _assign_dealer_proxy(marca, postcode, context):
+def _assign_dealer_proxy(
+    marca, postcode, context, municipality_code="", municipality_name="",
+):
     """Return a cached, resolved geographic dealer proxy or None."""
-    dealer_proxy, points, centroids = context
+    dealer_proxy, points, centroids = context[:3]
     brand = dealer_proxy.canonical_brand(marca)
+    if brand == "BMW" and len(context) >= 5:
+        bmw_dealer, bmw_context = context[3:5]
+        cache_key = (brand, municipality_code, municipality_name)
+        if cache_key not in _DEALER_ASSIGNMENT_CACHE:
+            province_code = (municipality_code or "")[:2]
+            _DEALER_ASSIGNMENT_CACHE[cache_key] = bmw_dealer.resolve(
+                province_code, municipality_name, bmw_context, PROV_NAMES
+            )
+        return _DEALER_ASSIGNMENT_CACHE[cache_key]
+
     cache_key = (brand, postcode)
     if cache_key not in _DEALER_ASSIGNMENT_CACHE:
         if not dealer_proxy.valid_postcode(postcode):
@@ -2061,7 +2080,12 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
 
         if dealer_context is not None and canal == "Private":
             buyer_postcode = line_s[F_CODIGO_POSTAL[0]:F_CODIGO_POSTAL[1]].strip()
-            dealer = _assign_dealer_proxy(marca, buyer_postcode, dealer_context)
+            municipality_name = line_s[
+                F_MUNICIPIO_NOMBRE[0]:F_MUNICIPIO_NOMBRE[1]
+            ].strip()
+            dealer = _assign_dealer_proxy(
+                marca, buyer_postcode, dealer_context, mun, municipality_name
+            )
             if dealer:
                 dealer_counts[(
                     marca, modelo_canon, canal, fuel_code, fuel_detail,
