@@ -102,10 +102,10 @@ def _canonical_dealer_name(brand, names):
         for name in names if dealer_master.clean(name)
     })
     if not clean_names:
-        return "Punto de venta sin nombre"
+        return ""
     key = dealer_name_key(brand, clean_names[0])
     if not key:
-        return "Punto de venta sin nombre"
+        return ""
 
     def score(name):
         normalized = dealer_master.normalize_brand_text(name)
@@ -117,7 +117,7 @@ def _canonical_dealer_name(brand, names):
         return brand_hits, len(normalized), normalized
 
     selected = min(clean_names, key=score)
-    return _strip_brand_from_display(brand, selected) or "Punto de venta sin nombre"
+    return _strip_brand_from_display(brand, selected).lower()
 
 
 def normalize_point_names(points_by_brand):
@@ -138,18 +138,24 @@ def normalize_point_names(points_by_brand):
     return points_by_brand
 
 
-def load_points(path):
+def load_points(path, official_only=False):
     result = collections.defaultdict(list)
     with open(path, encoding="utf-8-sig", newline="") as handle:
         for row in csv.DictReader(handle):
+            row.setdefault("source_confidence", "official")
+            if official_only and row["source_confidence"] != "official":
+                continue
             try:
                 row["latitude"] = float(row["latitude"])
                 row["longitude"] = float(row["longitude"])
             except (TypeError, ValueError):
                 continue
-            row.setdefault("source_confidence", "official")
             result[row["brand"]].append(row)
     normalize_point_names(result)
+    for brand in list(result):
+        result[brand] = [
+            row for row in result[brand] if row.get("dealer_name")
+        ]
     for target_brand, source_brand in SHARED_SALES_NETWORKS.items():
         if result.get(source_brand) and not result.get(target_brand):
             result[target_brand] = [

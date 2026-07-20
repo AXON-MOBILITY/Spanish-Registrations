@@ -122,8 +122,8 @@ def test_dealer_name_variants_collapse_to_one_canonical_label():
         "generic-upper", "generic-accent", "filinto-short", "filinto-brand",
     ]
     assert [point["dealer_name"] for point in points["Citroen"]] == [
-        "Punto de venta sin nombre", "Punto de venta sin nombre",
-        "Filinto Mota", "Filinto Mota",
+        "", "",
+        "filinto mota", "filinto mota",
     ]
 
 
@@ -137,7 +137,7 @@ def test_osm_extraction_uses_the_spain_administrative_area():
 def test_brand_is_removed_from_the_dealer_display_name():
     assert proxy._canonical_dealer_name(
         "Citroen", ["Citroën - Cormotor"]
-    ) == "Cormotor"
+    ) == "cormotor"
     assert proxy._canonical_dealer_name(
         "Citroen", ["Citröen Automotor"]
-    ) == "Automotor"
+    ) == "automotor"

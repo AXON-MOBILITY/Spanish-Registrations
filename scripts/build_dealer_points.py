@@ -472,7 +472,8 @@ def main():
         rows.extend(current)
         summary[brand] = {"sales_points": len(current), "dealer_names": len({r["dealer_name"] for r in current})}
     if not args.official_only:
-        community = fetch_osm_dealers(excluded=brands)
+        # BMW uses the internal active BUNO master and municipality territories.
+        community = fetch_osm_dealers(excluded=set(brands) | {"BMW"})
         rows.extend(community)
         for brand in sorted({row["brand"] for row in community}):
             current = [row for row in community if row["brand"] == brand]
