@@ -93,14 +93,22 @@ def test_official_only_loader_drops_community_and_generic_names(tmp_path):
     assert points["Toyota"][0]["dealer_name"] == "dealer norte"
 
 
-def test_dealer_change_captures_selection_before_async_refresh():
+def test_dealer_selection_validates_choice_and_resolves_synchronously():
+    # The dealer filter uses its own dropdown (not a native <datalist>, which
+    # truncates large lists and renders an uncontrollably tall native popup)
+    # so selection must resolve synchronously against DEALER_LABEL_TO_VALUE /
+    # DEALER_CHOICES with no async gap where the underlying data could change.
     html = (ROOT / "public" / "index.html").read_text(encoding="utf-8")
-    handler = html.split("function onDealerChange(){", 1)[1].split(
-        "// hay un subconjunto", 1
-    )[0]
 
-    assert handler.index("const label=g('f-dealer').value.trim()") < handler.index(
-        "ensureRECD().then"
-    )
-    assert "DEALER_LABEL_TO_VALUE.get(label)" in handler
-    assert "F.dealers.add(value)" in handler
+    select_fn = html.split("function selectDealerOption(value){", 1)[1].split(
+        "\n}\n", 1
+    )[0]
+    assert "DEALER_CHOICES.has(value)" in select_fn
+    assert "F.dealers.add(value)" in select_fn
+    assert "await" not in select_fn and ".then(" not in select_fn
+
+    keydown_fn = html.split("function onDealerKeydown(event){", 1)[1].split(
+        "\n}\n", 1
+    )[0]
+    assert "DEALER_LABEL_TO_VALUE.get(label)" in keydown_fn
+    assert "selectDealerOption(value)" in keydown_fn

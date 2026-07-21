@@ -93,6 +93,12 @@ input.tf-dealer-input::placeholder{color:var(--text3)}
 .dealer-chip{display:inline-flex;align-items:center;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2px 4px 2px 10px;font-size:11px;color:var(--text);white-space:nowrap}
 .dealer-chip-x{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;line-height:1;padding:2px 6px;border-radius:50%}
 .dealer-chip-x:hover{color:var(--acc)}
+.dealer-search-wrap{position:relative}
+.dealer-dropdown{display:none;position:absolute;top:100%;left:0;margin-top:2px;width:280px;max-height:260px;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.15);z-index:50}
+.dealer-dropdown.open{display:block}
+.dealer-opt{padding:6px 10px;font-size:11px;color:var(--text);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dealer-opt:hover,.dealer-opt.active{background:rgba(37,99,235,.08)}
+.dealer-opt-empty{padding:8px 10px;font-size:11px;color:var(--text3);font-style:italic}
 .btn-xpd{background:none;border:none;cursor:pointer;color:var(--text3);font-size:9px;padding:0 4px 0 0;line-height:1;display:inline-block;transition:transform .15s;vertical-align:middle}
 .btn-xpd.open{transform:rotate(90deg);color:var(--acc)}
 tr.model-sub td{padding:2px 6px 2px 22px;font-size:10px;color:var(--text2);background:rgba(0,0,0,.02);border-bottom:none}
@@ -196,11 +202,18 @@ tr.model-sub-unknown td{color:var(--text3);font-style:italic}
 /* ── MAIN GRID ───────────────────────────────────────── */
 .main-grid{
   display:grid;
-  grid-template-columns:minmax(280px,2fr) minmax(220px,1.5fr) minmax(180px,1fr);
+  grid-template-columns:minmax(280px,1.8fr) minmax(240px,1.5fr) minmax(210px,1.1fr);
   grid-template-rows:auto auto;
-  gap:16px;align-items:start;
+  gap:20px;align-items:start;
 }
 .span2{grid-row:1/3}
+
+/* Overview breathes a bit more than the denser multi-column tabs */
+#pane-overview .card-hdr{padding:13px 16px}
+#pane-overview .tbl-wrap{max-height:480px}
+#pane-overview tbody td{padding:9px 12px}
+#pane-overview .ch-body{padding:18px 20px}
+#pane-overview .ch-legend{margin-bottom:12px}
 
 /* ── CARDS ───────────────────────────────────────────── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden}
@@ -568,13 +581,14 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <span class="tf-lbl">Brand</span>
       <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
     </div>
-    <div class="tf-grp">
+    <div class="tf-grp dealer-search-wrap">
       <span class="tf-lbl" title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta.">Dealer (est.)</span>
-      <input id="f-dealer" class="tf-dealer-input" type="text" list="f-dealer-list"
-             placeholder="Añadir dealer..." autocomplete="off"
+      <input id="f-dealer" class="tf-dealer-input" type="text" autocomplete="off"
+             placeholder="Añadir dealer..."
              title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta."
-             onfocus="ensureRECD()" oninput="ensureRECD()" onchange="onDealerChange()">
-      <datalist id="f-dealer-list"></datalist>
+             onfocus="ensureRECD().then(showDealerDropdown)" oninput="ensureRECD().then(showDealerDropdown)"
+             onkeydown="onDealerKeydown(event)" onblur="scheduleHideDealerDropdown()">
+      <div id="f-dealer-dropdown" class="dealer-dropdown"></div>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Model</span>
@@ -1226,6 +1240,7 @@ let _recdPromise=null;
 let DEALER_CHOICES=new Set();
 let DEALER_LABEL_TO_VALUE=new Map();
 let DEALER_VALUE_TO_LABEL=new Map();
+let DEALER_OPTIONS=[];
 
 // Carga PEREZOSA: records_prov.json (varios MB) solo se descarga la primera vez
 // que el usuario filtra por un subconjunto de provincias, para no penalizar la
@@ -1326,8 +1341,8 @@ function tryBuildDealerProjection(){
 }
 
 function refreshDealers(keepInput){
-  const input=g('f-dealer'),list=g('f-dealer-list');
-  if(!input||!list)return new Set();
+  const input=g('f-dealer');
+  if(!input)return new Set();
   const brand=F.marca;
   DEALER_CHOICES=new Set((RECD_PROJ||[])
     .filter(item=>!brand||REC.enums.marca[item.row[COL.MARCA]]===brand)
@@ -1335,24 +1350,91 @@ function refreshDealers(keepInput){
     .filter(Boolean));
   DEALER_LABEL_TO_VALUE=new Map();
   DEALER_VALUE_TO_LABEL=new Map();
-  list.innerHTML='';
-  [...DEALER_CHOICES].map(value=>{
+  DEALER_OPTIONS=[...DEALER_CHOICES].map(value=>{
     const split=value.indexOf(' | ');
     const dealerBrand=split>=0?value.slice(0,split):'Other';
     const dealerName=split>=0?value.slice(split+3):value;
     const name=titleCaseDealer(dealerName);
     return {value,label:brand?name:dealerBrand+' - '+name};
-  }).sort((a,b)=>a.label.localeCompare(b.label,'es')).forEach(({value,label})=>{
-    const option=document.createElement('option');
-    option.value=label;
-    list.appendChild(option);
+  }).sort((a,b)=>a.label.localeCompare(b.label,'es'));
+  DEALER_OPTIONS.forEach(({value,label})=>{
     DEALER_LABEL_TO_VALUE.set(label,value);
     DEALER_VALUE_TO_LABEL.set(value,label);
   });
+  hideDealerDropdown();
   if(!keepInput){
     input.value='';
   }
   return DEALER_CHOICES;
+}
+
+// ── DEALER: dropdown propio (el <datalist> nativo trunca listas grandes
+// y su popup no se puede acotar en tamaño) ──────────────────────────
+let _dealerActiveIdx=-1;
+function showDealerDropdown(){
+  const box=g('f-dealer-dropdown');
+  if(!box)return;
+  const q=g('f-dealer').value.trim().toLocaleLowerCase('es-ES');
+  const matches=(q?DEALER_OPTIONS.filter(o=>o.label.toLocaleLowerCase('es-ES').includes(q)):DEALER_OPTIONS);
+  _dealerActiveIdx=-1;
+  box.innerHTML='';
+  if(!matches.length){
+    const empty=document.createElement('div');
+    empty.className='dealer-opt-empty';
+    empty.textContent='Sin resultados';
+    box.appendChild(empty);
+  } else {
+    matches.forEach(({value,label})=>{
+      const opt=document.createElement('div');
+      opt.className='dealer-opt';
+      opt.textContent=label;
+      opt.onmousedown=e=>{e.preventDefault();selectDealerOption(value);};
+      box.appendChild(opt);
+    });
+  }
+  box.classList.add('open');
+}
+function hideDealerDropdown(){
+  const box=g('f-dealer-dropdown');
+  if(box){box.classList.remove('open');box.innerHTML='';}
+  _dealerActiveIdx=-1;
+}
+function scheduleHideDealerDropdown(){
+  setTimeout(hideDealerDropdown,120);
+}
+function selectDealerOption(value){
+  if(!value||!DEALER_CHOICES.has(value))return;
+  F.dealers.add(value);
+  g('f-dealer').value='';
+  hideDealerDropdown();
+  renderDealerChips();
+  rebuildActiveRecords();
+  render();
+}
+function onDealerKeydown(event){
+  const box=g('f-dealer-dropdown');
+  const opts=box?[...box.querySelectorAll('.dealer-opt')]:[];
+  if(event.key==='Escape'){hideDealerDropdown();return;}
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+    if(!opts.length)return;
+    event.preventDefault();
+    opts.forEach(o=>o.classList.remove('active'));
+    _dealerActiveIdx+=event.key==='ArrowDown'?1:-1;
+    if(_dealerActiveIdx<0)_dealerActiveIdx=opts.length-1;
+    if(_dealerActiveIdx>=opts.length)_dealerActiveIdx=0;
+    const active=opts[_dealerActiveIdx];
+    active.classList.add('active');
+    active.scrollIntoView({block:'nearest'});
+    return;
+  }
+  if(event.key==='Enter'){
+    event.preventDefault();
+    const label=(_dealerActiveIdx>=0&&opts[_dealerActiveIdx])
+      ?opts[_dealerActiveIdx].textContent
+      :g('f-dealer').value.trim();
+    const value=DEALER_LABEL_TO_VALUE.get(label);
+    if(value)selectDealerOption(value);
+  }
 }
 
 function renderDealerChips(){
@@ -1383,20 +1465,6 @@ function titleCaseDealer(value){
   return String(value||'').toLocaleLowerCase('es-ES')
     .replace(/(^|[\s/('\u2019&.\-])(\p{L})/gu,(_,prefix,letter)=>
       prefix+letter.toLocaleUpperCase('es-ES'));
-}
-
-function onDealerChange(){
-  const label=g('f-dealer').value.trim();
-  if(!label)return;
-  ensureRECD().then(()=>{
-    const value=DEALER_LABEL_TO_VALUE.get(label);
-    if(!value||!DEALER_CHOICES.has(value))return;
-    F.dealers.add(value);
-    g('f-dealer').value='';
-    renderDealerChips();
-    rebuildActiveRecords();
-    render();
-  });
 }
 
 // hay un subconjunto propio de provincias seleccionado con dataset ya cargado
@@ -2126,7 +2194,7 @@ function addTotalRow(tbody,cells){
 // ── CHARTS ───────────────────────────────────────────────
 function drawHBar(canvasId,wrapId,labels,datasets){
   const wrap=g(wrapId);
-  wrap.style.height=Math.max(150,labels.length*22)+'px';
+  wrap.style.height=Math.max(150,labels.length*28)+'px';
   if(CHARTS[canvasId]){CHARTS[canvasId].destroy();delete CHARTS[canvasId];}
   const old=g(canvasId);const cnv=document.createElement('canvas');cnv.id=canvasId;old.replaceWith(cnv);
   CHARTS[canvasId]=new Chart(cnv,{
@@ -2135,6 +2203,7 @@ function drawHBar(canvasId,wrapId,labels,datasets){
     options:{
       indexAxis:'y',responsive:true,maintainAspectRatio:false,
       layout:{padding:{right:4}},
+      categoryPercentage:0.75,barPercentage:0.85,
       scales:{
         x:{stacked:true,max:100,display:false,grid:{display:false}},
         y:{stacked:true,ticks:{font:{size:10},color:'#6b7280'},grid:{display:false}}

@@ -109,8 +109,11 @@ def test_dealer_filter_is_searchable_and_title_cased():
     )
 
     assert '<input id="f-dealer"' in html
-    assert 'list="f-dealer-list"' in html
-    assert '<datalist id="f-dealer-list">' in html
+    # Custom dropdown, not a native <datalist>: large dealer lists get
+    # truncated by the browser's own datalist rendering and its popup size
+    # can't be constrained, so selection uses our own filtered dropdown.
+    assert 'id="f-dealer-dropdown"' in html
+    assert "function showDealerDropdown()" in html
     assert "DEALER_LABEL_TO_VALUE.get(label)" in html
     assert "function titleCaseDealer(value)" in html
 
