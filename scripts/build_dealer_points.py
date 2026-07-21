@@ -21,16 +21,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUTPUT = ROOT / "masters" / "master_dealer_points.csv"
 AUDI_SALES_POINTS = ROOT / "masters" / "sources" / "audi_official_sales_points.csv"
+PORSCHE_SALES_POINTS = ROOT / "masters" / "sources" / "porsche_official_sales_points.csv"
+VOLVO_SALES_POINTS = ROOT / "masters" / "sources" / "volvo_official_sales_points.csv"
 USER_AGENT = "AxonMobilityDealerMaster/1.0"
 SUPPORTED = (
     "Toyota", "Renault", "Dacia", "Hyundai", "Kia", "Seat", "Cupra",
-    "Lexus", "Nissan", "Audi", "Mercedes", "Mercedes-V",
+    "Lexus", "Nissan", "Audi", "Mercedes", "Mercedes-V", "Porsche", "Volvo",
 )
 MINIMUM_SALES_POINTS = {
     "Toyota": 140, "Renault": 300, "Dacia": 300,
     "Hyundai": 140, "Kia": 180, "Seat": 170, "Cupra": 85,
     "Lexus": 25, "Nissan": 120, "Audi": 60,
-    "Mercedes": 130, "Mercedes-V": 110,
+    "Mercedes": 130, "Mercedes-V": 110, "Porsche": 20, "Volvo": 70,
 }
 GRID = (
     (43.36, -8.41), (43.26, -2.94), (42.82, -1.64), (41.65, -0.89),
@@ -501,6 +503,59 @@ def fetch_audi():
     return load_audi_sales_points(AUDI_SALES_POINTS, load_postcode_centroids())
 
 
+def load_porsche_sales_points(path, centroids):
+    """Load sales locations verified against Porsche's official dealer-search page."""
+    rows = []
+    with open(path, encoding="utf-8-sig", newline="") as handle:
+        for item in csv.DictReader(handle):
+            cp = postcode(item.get("postcode"))
+            if cp not in centroids:
+                continue
+            lat, lon = centroids[cp]
+            dealer_name = clean(item.get("dealer_name"))
+            row = make_point(
+                "Porsche", normalize_brand_text(dealer_name), dealer_name,
+                item.get("point_of_sale"), normalize_brand_text(item.get("point_of_sale")),
+                item.get("address"), cp, item.get("city"), item.get("province"),
+                lat, lon, "official_page_postcode_centroid",
+                clean(item.get("source_url")),
+            )
+            if row:
+                rows.append(row)
+    return rows
+
+
+def fetch_porsche():
+    return load_porsche_sales_points(PORSCHE_SALES_POINTS, load_postcode_centroids())
+
+
+def load_volvo_sales_points(path):
+    """Load sales locations verified against Volvo's official dealer-locator page.
+
+    Volvo's page embeds each dealer's own latitude/longitude in its Next.js
+    payload, so no postcode-centroid approximation is needed here.
+    """
+    rows = []
+    with open(path, encoding="utf-8-sig", newline="") as handle:
+        for item in csv.DictReader(handle):
+            dealer_name = clean(item.get("dealer_name"))
+            pos = clean(item.get("point_of_sale"))
+            row = make_point(
+                "Volvo", normalize_brand_text(dealer_name), dealer_name,
+                pos, normalize_brand_text(pos), "",
+                item.get("postcode"), item.get("city"), "",
+                item.get("latitude"), item.get("longitude"),
+                "official_page_payload", clean(item.get("source_url")),
+            )
+            if row:
+                rows.append(row)
+    return rows
+
+
+def fetch_volvo():
+    return load_volvo_sales_points(VOLVO_SALES_POINTS)
+
+
 def mercedes_dealers():
     """Fetch the complete Spanish network from Mercedes-Benz's public locator."""
     global _MERCEDES_DEALERS
@@ -678,6 +733,8 @@ FETCHERS = {
     "Lexus": fetch_lexus, "Nissan": fetch_nissan, "Audi": fetch_audi,
     "Mercedes": lambda: fetch_mercedes("Mercedes", "PC"),
     "Mercedes-V": lambda: fetch_mercedes("Mercedes-V", "VAN"),
+    "Porsche": fetch_porsche,
+    "Volvo": fetch_volvo,
 }
 
 
