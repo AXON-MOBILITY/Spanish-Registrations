@@ -103,6 +103,84 @@ def _normalize_brand(raw):
     canon = _BRAND_NORM.get(s.upper())
     return canon if canon else (s.title() if s else s)
 
+# Modelo != version. DGT's free-text "modelo" field is riddled with spacing/
+# hyphenation variants, word-order swaps (BMW "3 SERIES" vs "SERIES 3" vs
+# "SERIE 3"), typos, and the occasional version/trim code that leaked in as
+# if it were its own model (BMW "228", "123 XDRIVE" are 2-series/1-series
+# trims, not separate models). Keyed by the already-_normalize_brand()-ed
+# brand name. Canonical choice = whichever spelling has the most registered
+# units for that brand, except where the "wrong" spelling is objectively the
+# official name (Ford F-150) or where the real model exists as a bare
+# entry that a rogue "<BRAND> <MODEL>" duplicate should fold into.
+_MODEL_NORM = {
+    "BMW": {
+        "3 SERIES": "SERIE 3", "SERIES 3": "SERIE 3",
+        "2 SERIES": "SERIE 2", "228": "SERIE 2", "228 IXDRIVE": "SERIE 2",
+        "123 XDRIVE": "SERIE 1",
+        "4SERIES": "SERIE 4",
+        "5 SERIES": "SERIE 5",
+        "6401 XDRIVE": "SERIE 6",
+        "7 SERIES": "SERIE 7",
+        "SERIES 8": "SERIE 8",
+        "X1XDRIVE28I": "X1",
+    },
+    "Mercedes": {
+        "E-CLASS": "CLASE E", "T-CLASS": "CLASE T", "C-CLASS": "CLASE C",
+        "E220CDI": "E220 CDI", "C220CDI": "C220 CDI",
+    },
+    "Citroen": {"SPACE TOURER": "SPACETOURER"},
+    "Faw": {"YUEYI 07PHEV": "YUEYI 07 PHEV"},
+    "Ford": {"F150": "F-150"},
+    "Honda": {"CRV": "CR-V", "CR V": "CR-V", "HRV": "HR-V"},
+    "Mazda": {"CX9": "CX-9"},
+    "Opel": {"INSIGNIA LIMOUSINENB": "INSIGNIA LIMOUSINE NB"},
+    "Rehatrans": {
+        "TRAVELLER_EXPERT": "TRAVELLER EXPERT", "TRAVELLER-EXPERT": "TRAVELLER EXPERT",
+        "TGEPMR": "TGE PMR", "SPACETOURER_JUMPY": "SPACETOURER JUMPY",
+    },
+    "Sin Marca": {
+        "DS 7 ETENSE 225": "DS 7 E-TENSE 225", "DS 9 ETENSE 250": "DS 9 E-TENSE 250",
+        "NUEVO DS 3 ETENSE": "NUEVO DS 3 E-TENSE",
+        "DS4 BLUEHDI 130 AUTO": "DS 4 BLUEHDI 130 AUTO",
+        "DS4 PLUG-IN HYBRID": "DS 4 PLUG-IN HYBRID",
+        "DS4 BLUEHDI 130": "DS 4 BLUEHDI 130", "DS 4 BLUE HDI 130": "DS 4 BLUEHDI 130",
+        "DS 4 PURE TECH 130": "DS 4 PURETECH 130",
+        "DS 7 BLUE HDI 130": "DS 7 BLUEHDI 130",
+    },
+    "Tesla": {"MODEL3": "MODEL 3", "MODELY": "MODEL Y"},
+    "Volkswagen": {"ID 3": "ID.3"},
+    "Tripod": {
+        "T-CLASS TRIPOD": "T CLASS TRIPOD", "CLASE T TRIPOD": "T CLASS TRIPOD",
+        "T CLASS TRIPO": "T CLASS TRIPOD", "T CLASSS TRIPOD": "T CLASS TRIPOD",
+    },
+    "Caterham Cars Ltd": {"SEVEN SV(DA VARIANT)": "SEVEN SV (DA VARIANT)"},
+    "Jaguar": {"JAGUAR XF": "XF"},
+    "Fiat": {"FIAT 500X": "500X"},
+    "Infiniti": {"INFINITI Q50": "Q50"},
+    "Nissan": {
+        "NISSAN OASHQAI": "QASHQAI", "NISSAZN QASHQAI": "QASHQAI",
+        "NISSAN X-TRIL": "X-TRAIL", "NISSAN X- TRAIL": "X-TRAIL",
+    },
+    "Chevrolet": {"CHEVROLET CORVETTE": "CORVETTE"},
+}
+
+_VIN_FRAGMENT_RE = re.compile(r"\s[0-3][A-Z0-9]{7}$")
+
+def _normalize_modelo(brand, raw):
+    m = (raw or "").strip().upper()
+    if not m:
+        return m
+    # Version/trim leaked into the model field ("SERIE 1, 118D" -> "SERIE 1").
+    m = m.split(",", 1)[0].strip()
+    # DGT placeholder codes for unclassified models (just dashes), not a model.
+    if re.fullmatch(r"-+", m):
+        return ""
+    # A stray trailing WMI/VDS-shaped VIN fragment leaked in for some rows
+    # ("E-TRON 50 3WAUZZZG" -> "E-TRON 50"). Exactly 8 chars starting with
+    # 0-3 to stay clear of real trim badges like Mercedes "4MATIC".
+    m = _VIN_FRAGMENT_RE.sub("", m).strip()
+    return _MODEL_NORM.get(brand, {}).get(m, m)
+
 _FOCUS_SUBSEGMENTS = {
     "FOCUS SEGMENT",
     "TRADITIONAL COMPETITION",
@@ -484,11 +562,12 @@ def _load_channel_records(path, yr, mo):
         try:
             n = int(row.get("count", 0) or 0)
             if n <= 0: continue
+            brand = _normalize_brand(row.get("marca", ""))
             records.append({
                 "y":        yr,
                 "m":        mo,
-                "marca":    _normalize_brand(row.get("marca", "")),
-                "modelo":   row.get("modelo", "").strip().upper(),
+                "marca":    brand,
+                "modelo":   _normalize_modelo(brand, row.get("modelo", "")),
                 "canal":    row.get("canal", ""),
                 "fuel":     row.get("fuel_type", "ICE") or "ICE",
                 "fuel_det": row.get("fuel", "").strip(),
@@ -693,11 +772,12 @@ def _load_prov_records_file(path, yr, mo):
             canal = row.get("canal", "")
             if canal not in CANALES:
                 continue
+            brand = _normalize_brand(row.get("marca", ""))
             out.append({
                 "y":      yr,
                 "m":      mo,
-                "marca":  _normalize_brand(row.get("marca", "")),
-                "modelo": (row.get("modelo", "") or "").strip().upper(),
+                "marca":  brand,
+                "modelo": _normalize_modelo(brand, row.get("modelo", "")),
                 "cod":    row.get("cod_prov", ""),
                 "prov":   row.get("provincia", "") or "",
                 "canal":  canal,
@@ -792,7 +872,7 @@ def _load_dealer_records_file(path, yr, mo):
                 "y": yr,
                 "m": mo,
                 "marca": marca,
-                "modelo": (row.get("modelo", "") or "").strip().upper(),
+                "modelo": _normalize_modelo(marca, row.get("modelo", "")),
                 "canal": row.get("canal", "Private") or "Private",
                 "fuel": row.get("fuel_type", "ICE") or "ICE",
                 "fuel_det": row.get("fuel", "") or "",
