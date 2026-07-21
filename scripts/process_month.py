@@ -1954,9 +1954,14 @@ def _assign_dealer_proxy(
     """Return a cached, resolved geographic dealer proxy or None."""
     dealer_proxy, points, centroids = context[:3]
     brand = dealer_proxy.canonical_brand(marca)
-    if brand == "BMW" and len(context) >= 5:
+    # MINI is sold in Spain through the same BMW Group dealer groups (BMW's
+    # internal active-dealer master lists the same names — Pruna, Cuzco,
+    # Bernesga, Unicars Ponent, etc. — under both brands), so it reuses BMW's
+    # higher-confidence municipality-territory proxy instead of the sparser
+    # OSM-community master.
+    if brand in ("BMW", "Mini") and len(context) >= 5:
         bmw_dealer, bmw_context = context[3:5]
-        cache_key = (brand, municipality_code, municipality_name)
+        cache_key = ("BMW", municipality_code, municipality_name)
         if cache_key not in _DEALER_ASSIGNMENT_CACHE:
             province_code = (municipality_code or "")[:2]
             _DEALER_ASSIGNMENT_CACHE[cache_key] = bmw_dealer.resolve(
