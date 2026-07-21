@@ -760,6 +760,12 @@ def _dealer_name_by_id():
             ("BMW", dealer_id): dealer_name
             for dealer_id, dealer_name in bmw_dealer.load_active_dealers().items()
         })
+        # MINI is sold through the same BMW Group dealer groups in Spain and
+        # resolves via the same municipality-territory proxy (process_month.py).
+        _DEALER_NAME_BY_ID.update({
+            ("MINI", dealer_id): dealer_name
+            for dealer_id, dealer_name in bmw_dealer.load_active_dealers().items()
+        })
     return _DEALER_NAME_BY_ID
 
 
