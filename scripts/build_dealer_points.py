@@ -24,18 +24,19 @@ AUDI_SALES_POINTS = ROOT / "masters" / "sources" / "audi_official_sales_points.c
 PORSCHE_SALES_POINTS = ROOT / "masters" / "sources" / "porsche_official_sales_points.csv"
 VOLVO_SALES_POINTS = ROOT / "masters" / "sources" / "volvo_official_sales_points.csv"
 TESLA_SALES_POINTS = ROOT / "masters" / "sources" / "tesla_official_sales_points.csv"
+BYD_SALES_POINTS = ROOT / "masters" / "sources" / "byd_official_sales_points.csv"
 USER_AGENT = "AxonMobilityDealerMaster/1.0"
 SUPPORTED = (
     "Toyota", "Renault", "Dacia", "Hyundai", "Kia", "Seat", "Cupra",
     "Lexus", "Nissan", "Audi", "Mercedes", "Mercedes-V", "Porsche", "Volvo",
-    "Tesla",
+    "Tesla", "BYD",
 )
 MINIMUM_SALES_POINTS = {
     "Toyota": 140, "Renault": 300, "Dacia": 300,
     "Hyundai": 140, "Kia": 180, "Seat": 170, "Cupra": 85,
     "Lexus": 25, "Nissan": 120, "Audi": 60,
     "Mercedes": 130, "Mercedes-V": 110, "Porsche": 20, "Volvo": 70,
-    "Tesla": 15,
+    "Tesla": 15, "BYD": 80,
 }
 GRID = (
     (43.36, -8.41), (43.26, -2.94), (42.82, -1.64), (41.65, -0.89),
@@ -585,6 +586,33 @@ def fetch_tesla():
     return load_tesla_sales_points(TESLA_SALES_POINTS, load_postcode_centroids())
 
 
+def load_byd_sales_points(path):
+    """Load BYD's official Spain sales network (eu-site-api.byd.com, type=sales).
+
+    Excludes points still in "Próxima Apertura" (not yet open) even though the
+    API marks them as softLaunch; BYD's own lat/lon are used directly.
+    """
+    rows = []
+    with open(path, encoding="utf-8-sig", newline="") as handle:
+        for item in csv.DictReader(handle):
+            dealer_name = clean(item.get("dealer_name"))
+            pos = clean(item.get("point_of_sale"))
+            row = make_point(
+                "BYD", normalize_brand_text(dealer_name), dealer_name,
+                pos, normalize_brand_text(pos), "",
+                item.get("postcode"), item.get("city"), "",
+                item.get("latitude"), item.get("longitude"),
+                "official_api", clean(item.get("source_url")),
+            )
+            if row:
+                rows.append(row)
+    return rows
+
+
+def fetch_byd():
+    return load_byd_sales_points(BYD_SALES_POINTS)
+
+
 def mercedes_dealers():
     """Fetch the complete Spanish network from Mercedes-Benz's public locator."""
     global _MERCEDES_DEALERS
@@ -765,6 +793,7 @@ FETCHERS = {
     "Porsche": fetch_porsche,
     "Volvo": fetch_volvo,
     "Tesla": fetch_tesla,
+    "BYD": fetch_byd,
 }
 
 
@@ -777,7 +806,11 @@ def main():
         help="Skip the lower-confidence OpenStreetMap fallback",
     )
     args = parser.parse_args()
-    brands = [value.strip().title() for value in args.brands.split(",") if value.strip()]
+    canonical_by_upper = {name.upper(): name for name in FETCHERS}
+    brands = [
+        canonical_by_upper.get(value.strip().upper(), value.strip().title())
+        for value in args.brands.split(",") if value.strip()
+    ]
     unsupported = sorted(set(brands) - set(FETCHERS))
     if unsupported:
         parser.error("Unsupported brands: " + ", ".join(unsupported))
