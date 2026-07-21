@@ -81,12 +81,12 @@ _BRAND_NORM = {
 # Cuando clasifiques una marca nueva, añádela aquí → deja de aparecer en el panel.
 _EXTRA_CLASSIFIED = {
     # Marcas chinas (espejo de _CHINESE_BRANDS en index.html)
-    'Aion', 'Arcfox', 'Baic', 'Baojun', 'Baw', 'BydDidi', 'Byvin',
-    'Changan', 'Chery', 'Dayun', 'Dongfeng', 'Ebro', 'Exlantix',
+    'Aion', 'Arcfox', 'Baic', 'Baojun', 'Baw', 'Bestune', 'BydDidi', 'Byvin',
+    'Changan', 'Chery', 'Dayun', 'DFSK', 'Dongfeng', 'Ebro', 'Exlantix',
     'Faw', 'Foton Motor', 'Funky Cat', 'Geely', 'Great Wall', 'Huanghai',
     'JAC', 'Jaecoo', 'Jetour', 'Jiyue', 'JMC', 'Leapmotor',
     'Li', 'Livan', 'Neta', 'NIO', 'Qiantu', 'Tiger', 'Tiggo', 'VGV',
-    'Xpeng', 'Zeekr',
+    'Xpeng', 'Yudo', 'Zeekr',
     # Focus Segment / otras marcas conocidas no cubiertas por _BRAND_NORM
     'Genesis', 'Bugatti', 'Donkervoort', 'Lucid Motors', 'Lancia',
     'BAW', 'Wuling',

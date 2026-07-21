@@ -577,9 +577,13 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 <!-- BARRA DE FILTROS (fila propia, nunca se solapa) -->
   <div class="tb-filters">
-    <div class="tf-grp">
+    <div class="tf-grp dealer-search-wrap">
       <span class="tf-lbl">Brand</span>
-      <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
+      <input id="f-marca" class="tf-modelo-input" type="text" autocomplete="off"
+             placeholder="Añadir marca…"
+             onfocus="showMarcaDropdown()" oninput="showMarcaDropdown()"
+             onkeydown="onMarcaKeydown(event)" onblur="scheduleHideMarcaDropdown()">
+      <div id="f-marca-dropdown" class="dealer-dropdown"></div>
     </div>
     <div class="tf-grp dealer-search-wrap">
       <span class="tf-lbl" title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta.">Dealer (est.)</span>
@@ -609,6 +613,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="btn-clear" onclick="resetFilters()">Clear Filters</button>
   </div>
 
+  <div id="f-marca-chips" class="dealer-chips"></div>
   <div id="f-dealer-chips" class="dealer-chips"></div>
 
 <!-- SHELL -->
@@ -1135,9 +1140,9 @@ const _BRAND_CONCEPT={
 const CONCEPTS=['TRAD. COMP.','NEW PLAYERS & TESLA'];
 const _CHINESE_BRANDS=new Set([
   'Aion','Aiways','Arcfox',
-  'Baic','Baw','Baojun','BYD','BydDidi','Byvin',
+  'Baic','Baw','Baojun','Bestune','BYD','BydDidi','Byvin',
   'Changan','Chery',
-  'Dayun','Deepal','Dongfeng','DR',
+  'Dayun','Deepal','DFSK','Dongfeng','DR',
   'Ebro',
   'Faw','Foton Motors','Foton Motor','Funky Cat',
   'Geely','Great Wall','GWM',
@@ -1150,10 +1155,11 @@ const _CHINESE_BRANDS=new Set([
   'Polestar',
   'Qiantu',
   'Seres','Shineray','Skywell','Smart',
-  'Tiggo',
+  'Tiger','Tiggo',
   'VGV','Voyah',
   'Exlantix',
   'Xpeng',
+  'Yudo',
   'Zeekr',
 ]);
 
@@ -1204,7 +1210,7 @@ const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
   provs:new Set(),
-  marca:'',modelo:'',body:'',dealers:new Set()
+  marcas:new Set(),modelo:'',body:'',dealers:new Set()
 };
 const CHARTS={};
 
@@ -1348,9 +1354,10 @@ function tryBuildDealerProjection(){
 function refreshDealers(keepInput){
   const input=g('f-dealer');
   if(!input)return new Set();
-  const brand=F.marca;
+  const brands=F.marcas;
+  const singleBrand=brands.size===1?[...brands][0]:null;
   DEALER_CHOICES=new Set((RECD_PROJ||[])
-    .filter(item=>!brand||REC.enums.marca[item.row[COL.MARCA]]===brand)
+    .filter(item=>!brands.size||brands.has(REC.enums.marca[item.row[COL.MARCA]]))
     .map(item=>item.dealer)
     .filter(Boolean));
   DEALER_LABEL_TO_VALUE=new Map();
@@ -1360,7 +1367,7 @@ function refreshDealers(keepInput){
     const dealerBrand=split>=0?value.slice(0,split):'Other';
     const dealerName=split>=0?value.slice(split+3):value;
     const name=titleCaseDealer(dealerName);
-    return {value,label:brand?name:dealerBrand+' - '+name};
+    return {value,label:singleBrand?name:dealerBrand+' - '+name};
   }).sort((a,b)=>a.label.localeCompare(b.label,'es'));
   DEALER_OPTIONS.forEach(({value,label})=>{
     DEALER_LABEL_TO_VALUE.set(label,value);
@@ -1732,8 +1739,7 @@ function updateCount(id,sel,total){
 // ── TOP FILTERS ──────────────────────────────────────────
 function buildTopFilters(){
   const E=REC.enums;
-  const bSel=g('f-marca');
-  // Desplegable: marcas conocidas + cualquiera con >=250 uds desde 2025.
+  // Marcas conocidas + cualquiera con >=250 uds desde 2025.
   // (INCLUDED_MARCA_IDX se mantiene integro para los totales del mercado.)
   const volReciente={};
   REC.rows.forEach(r=>{
@@ -1744,10 +1750,6 @@ function buildTopFilters(){
   BRAND_CHOICES=Object.keys(volReciente)
     .filter(b=>KNOWN_BRANDS.has(b)||volReciente[b]>=250)
     .sort((a,b)=>a.localeCompare(b));
-  BRAND_CHOICES.forEach(b=>{
-    const o=document.createElement('option');o.value=b;o.textContent=b;
-    bSel.appendChild(o);
-  });
   E.body.filter(b=>b).sort().forEach(b=>{
     const o=document.createElement('option');o.value=b;o.textContent=b;
     g('f-body').appendChild(o);
@@ -1772,8 +1774,13 @@ function buildTopFilters(){
 
 let _topDebounce=null;
 function onTopChange(){
-  const marcaChanged=F.marca!==g('f-marca').value;
-  F.marca=g('f-marca').value;F.body=g('f-body').value;
+  F.body=g('f-body').value;
+  onBrandFilterChanged();
+}
+
+// Efectos secundarios compartidos cuando cambia el conjunto de marcas
+// seleccionadas (añadir/quitar un chip) o el body filter.
+function onBrandFilterChanged(){
   if(RECD_PROJ){
     refreshDealers();
     let dealersChanged=false;
@@ -1784,9 +1791,9 @@ function onTopChange(){
     rebuildActiveRecords();
   }
   const modelSet=refreshModels();
-  // Si cambia la marca y el modelo seleccionado no pertenece a ella, se limpia
+  // Si el modelo seleccionado ya no pertenece a las marcas activas, se limpia
   // (antes se quedaba un modelo huérfano y la vista salía vacía sin aviso).
-  if(marcaChanged&&F.modelo&&!modelSet.has(F.modelo)){
+  if(F.modelo&&!modelSet.has(F.modelo)){
     F.modelo='';
     g('f-modelo').value='';
   }
@@ -1797,9 +1804,9 @@ function onTopChange(){
 function refreshModels(){
   const E=REC.enums;
   let modelSet;
-  if(F.marca){
-    const mIdx=E.marca.indexOf(F.marca);
-    modelSet=new Set(REC.rows.filter(r=>r[COL.MARCA]===mIdx).map(r=>E.modelo[r[COL.MODELO]]));
+  if(F.marcas.size){
+    const idxSet=new Set([...F.marcas].map(b=>E.marca.indexOf(b)));
+    modelSet=new Set(REC.rows.filter(r=>idxSet.has(r[COL.MARCA])).map(r=>E.modelo[r[COL.MODELO]]));
   } else {
     modelSet=new Set(REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])).map(r=>E.modelo[r[COL.MODELO]]));
   }
@@ -1894,11 +1901,101 @@ function onModelKeydown(event){
   }
 }
 
+// ── BRAND: mismo patrón de dropdown+chips que Dealer, para poder
+// seleccionar varias marcas a la vez. BRAND_CHOICES ya son nombres
+// limpios (no hace falta mapear label<->value como en Dealer/Model).
+function renderMarcaChips(){
+  const box=g('f-marca-chips');
+  if(!box)return;
+  box.innerHTML='';
+  [...F.marcas].sort((a,b)=>a.localeCompare(b,'es')).forEach(value=>{
+    const chip=document.createElement('span');
+    chip.className='dealer-chip';
+    chip.appendChild(document.createTextNode(value));
+    const rm=document.createElement('button');
+    rm.type='button';rm.className='dealer-chip-x';rm.textContent='×';
+    rm.title='Quitar';
+    rm.onclick=()=>{
+      F.marcas.delete(value);
+      renderMarcaChips();
+      onBrandFilterChanged();
+    };
+    chip.appendChild(rm);
+    box.appendChild(chip);
+  });
+}
+
+let _marcaActiveIdx=-1;
+function showMarcaDropdown(){
+  const box=g('f-marca-dropdown');
+  if(!box)return;
+  const q=g('f-marca').value.trim().toLocaleLowerCase('es-ES');
+  const matches=(q?BRAND_CHOICES.filter(b=>b.toLocaleLowerCase('es-ES').includes(q)):BRAND_CHOICES)
+    .filter(b=>!F.marcas.has(b));
+  _marcaActiveIdx=-1;
+  box.innerHTML='';
+  if(!matches.length){
+    const empty=document.createElement('div');
+    empty.className='dealer-opt-empty';
+    empty.textContent='Sin resultados';
+    box.appendChild(empty);
+  } else {
+    matches.forEach(value=>{
+      const opt=document.createElement('div');
+      opt.className='dealer-opt';
+      opt.textContent=value;
+      opt.onmousedown=e=>{e.preventDefault();selectMarcaOption(value);};
+      box.appendChild(opt);
+    });
+  }
+  box.classList.add('open');
+}
+function hideMarcaDropdown(){
+  const box=g('f-marca-dropdown');
+  if(box){box.classList.remove('open');box.innerHTML='';}
+  _marcaActiveIdx=-1;
+}
+function scheduleHideMarcaDropdown(){
+  setTimeout(hideMarcaDropdown,120);
+}
+function selectMarcaOption(value){
+  if(!value||!BRAND_CHOICES.includes(value))return;
+  F.marcas.add(value);
+  g('f-marca').value='';
+  hideMarcaDropdown();
+  renderMarcaChips();
+  onBrandFilterChanged();
+}
+function onMarcaKeydown(event){
+  const box=g('f-marca-dropdown');
+  const opts=box?[...box.querySelectorAll('.dealer-opt')]:[];
+  if(event.key==='Escape'){hideMarcaDropdown();return;}
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+    if(!opts.length)return;
+    event.preventDefault();
+    opts.forEach(o=>o.classList.remove('active'));
+    _marcaActiveIdx+=event.key==='ArrowDown'?1:-1;
+    if(_marcaActiveIdx<0)_marcaActiveIdx=opts.length-1;
+    if(_marcaActiveIdx>=opts.length)_marcaActiveIdx=0;
+    const active=opts[_marcaActiveIdx];
+    active.classList.add('active');
+    active.scrollIntoView({block:'nearest'});
+    return;
+  }
+  if(event.key==='Enter'){
+    event.preventDefault();
+    const value=(_marcaActiveIdx>=0&&opts[_marcaActiveIdx])
+      ?opts[_marcaActiveIdx].textContent
+      :g('f-marca').value.trim();
+    selectMarcaOption(value);
+  }
+}
+
 // ── FILTERS ───────────────────────────────────────────────
 // Base = all filters except year (used for YoY prevYear lookup)
 function applyFiltersBase(){
   const E=REC.enums;
-  const mIdx=F.marca?E.marca.indexOf(F.marca):-1;
+  const mIdxSet=F.marcas.size?new Set([...F.marcas].map(b=>E.marca.indexOf(b))):null;
   const moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
   const bIdx=F.body?E.body.indexOf(F.body):-1;
   return REC.rows.filter(r=>{
@@ -1918,7 +2015,7 @@ function applyFiltersBase(){
       if(!isChinese&&!F.oem.has('REST'))return false;
     }
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
-    if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
+    if(mIdxSet&&!mIdxSet.has(r[COL.MARCA]))return false;
     if(moIdx>=0&&r[COL.MODELO]!==moIdx)return false;
     if(bIdx>=0&&r[COL.BODY]!==bIdx)return false;
     return true;
@@ -1949,7 +2046,7 @@ function render(){
   const commonM=new Set([...refM].filter(m=>prevM.has(m)));
   const hasPrev=prevRows.length>0&&commonM.size>0;
   // ── Monthly + YTD for ranking dual bars ──
-  const _mIdx=F.marca?E.marca.indexOf(F.marca):-1;
+  const _mIdxSet=F.marcas.size?new Set([...F.marcas].map(b=>E.marca.indexOf(b))):null;
   const _moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
   const _bIdx=F.body?E.body.indexOf(F.body):-1;
   const _allRefYearRows=refYear?REC.rows.filter(r=>{
@@ -1962,7 +2059,7 @@ function render(){
     if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
     if(F.oem.size<2){const _isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);if(_isCN&&!F.oem.has('CHINESE'))return false;if(!_isCN&&!F.oem.has('REST'))return false;}
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
-    if(_mIdx>=0&&r[COL.MARCA]!==_mIdx)return false;
+    if(_mIdxSet&&!_mIdxSet.has(r[COL.MARCA]))return false;
     if(_moIdx>=0&&r[COL.MODELO]!==_moIdx)return false;
     if(_bIdx>=0&&r[COL.BODY]!==_bIdx)return false;
     return true;
@@ -2505,7 +2602,7 @@ function renderProv(){
     return allFuelNames.has(k)?parts[k]:0;
   };
   const provBrandAllowed=(brand)=>{
-    if(F.marca&&brand!==F.marca)return false;
+    if(F.marcas.size&&!F.marcas.has(brand))return false;
     if(F.oem.size<2){
       const isChinese=_CHINESE_BRANDS.has(brand);
       if(isChinese&&!F.oem.has('CHINESE'))return false;
@@ -2765,7 +2862,7 @@ function trendSubRows(){
 
 function trendBaseRows(){
   const E=REC.enums;
-  const mIdx=F.marca?E.marca.indexOf(F.marca):-1;
+  const mIdxSet=F.marcas.size?new Set([...F.marcas].map(b=>E.marca.indexOf(b))):null;
   const moIdx=F.modelo?E.modelo.indexOf(F.modelo):-1;
   const bIdx=F.body?E.body.indexOf(F.body):-1;
   return REC.rows.filter(r=>{
@@ -2780,7 +2877,7 @@ function trendBaseRows(){
       if(!isCN&&!F.oem.has('REST'))return false;
     }
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
-    if(mIdx>=0&&r[COL.MARCA]!==mIdx)return false;
+    if(mIdxSet&&!mIdxSet.has(r[COL.MARCA]))return false;
     if(moIdx>=0&&r[COL.MODELO]!==moIdx)return false;
     if(bIdx>=0&&r[COL.BODY]!==bIdx)return false;
     return true;
@@ -2789,7 +2886,7 @@ function trendBaseRows(){
 
 function trendSelectedBrands(){
   const brandOk=(b)=>{
-    if(F.marca&&b!==F.marca)return false;
+    if(F.marcas.size&&!F.marcas.has(b))return false;
     if(F.oem.size<2){
       const isCN=_CHINESE_BRANDS.has(b);
       if(isCN&&!F.oem.has('CHINESE'))return false;
@@ -2797,7 +2894,7 @@ function trendSelectedBrands(){
     }
     return true;
   };
-  return (F.marca?[F.marca]:TR.sel).filter(brandOk);
+  return (F.marcas.size?[...F.marcas]:TR.sel).filter(brandOk);
 }
 
 function initTrend(){
@@ -3008,7 +3105,7 @@ function renderTrend(){
         const brands=dailyMap[pd]||{};
         let v=0;
         Object.entries(brands).forEach(([b,val])=>{
-          if(!selectedBrands.includes(b)&&F.marca)return;
+          if(!selectedBrands.includes(b)&&F.marcas.size)return;
           if(F.oem.size<2){
             const isBrandCN=_CHINESE_BRANDS.has(b);
             if(isBrandCN&&!F.oem.has('CHINESE'))return;
@@ -3947,7 +4044,9 @@ function resetFilters(){
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
   g('f-dealer').value='';
-  F.marca='';F.modelo='';F.body='';F.dealers.clear();
+  F.marcas.clear();F.modelo='';F.body='';F.dealers.clear();
+  renderMarcaChips();
+  hideMarcaDropdown();
   renderDealerChips();
   refreshDealers();
   hideModelDropdown();
