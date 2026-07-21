@@ -103,4 +103,4 @@ def test_dealer_change_captures_selection_before_async_refresh():
         "ensureRECD().then"
     )
     assert "DEALER_LABEL_TO_VALUE.get(label)" in handler
-    assert "DEALER_VALUE_TO_LABEL.get(F.dealer)" in handler
+    assert "F.dealers.add(value)" in handler

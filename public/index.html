@@ -88,6 +88,11 @@ input.tf-modelo-input::placeholder{color:var(--text3)}
 input.tf-dealer-input{background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:3px 8px;font-size:11px;width:220px;min-width:190px;max-width:260px;outline:none;height:24px;}
 input.tf-dealer-input:focus{border-color:var(--acc)}
 input.tf-dealer-input::placeholder{color:var(--text3)}
+.dealer-chips{display:flex;flex-wrap:wrap;gap:6px;padding:6px 16px;background:var(--hdr);border-bottom:1px solid var(--border)}
+.dealer-chips:empty{display:none;border-bottom:none;padding:0}
+.dealer-chip{display:inline-flex;align-items:center;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2px 4px 2px 10px;font-size:11px;color:var(--text);white-space:nowrap}
+.dealer-chip-x{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;line-height:1;padding:2px 6px;border-radius:50%}
+.dealer-chip-x:hover{color:var(--acc)}
 .btn-xpd{background:none;border:none;cursor:pointer;color:var(--text3);font-size:9px;padding:0 4px 0 0;line-height:1;display:inline-block;transition:transform .15s;vertical-align:middle}
 .btn-xpd.open{transform:rotate(90deg);color:var(--acc)}
 tr.model-sub td{padding:2px 6px 2px 22px;font-size:10px;color:var(--text2);background:rgba(0,0,0,.02);border-bottom:none}
@@ -566,7 +571,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="tf-grp">
       <span class="tf-lbl" title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta.">Dealer (est.)</span>
       <input id="f-dealer" class="tf-dealer-input" type="text" list="f-dealer-list"
-             placeholder="Buscar dealer..." autocomplete="off"
+             placeholder="Añadir dealer..." autocomplete="off"
              title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta."
              onfocus="ensureRECD()" oninput="ensureRECD()" onchange="onDealerChange()">
       <datalist id="f-dealer-list"></datalist>
@@ -587,6 +592,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     </div>
     <button class="btn-clear" onclick="resetFilters()">Clear Filters</button>
   </div>
+
+  <div id="f-dealer-chips" class="dealer-chips"></div>
 
 <!-- SHELL -->
 <div id="shell">
@@ -1181,7 +1188,7 @@ const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
   provs:new Set(),
-  marca:'',modelo:'',body:'',dealer:''
+  marca:'',modelo:'',body:'',dealers:new Set()
 };
 const CHARTS={};
 
@@ -1343,10 +1350,33 @@ function refreshDealers(keepInput){
     DEALER_VALUE_TO_LABEL.set(value,label);
   });
   if(!keepInput){
-    input.value=DEALER_CHOICES.has(F.dealer)
-      ?DEALER_VALUE_TO_LABEL.get(F.dealer)||'':'';
+    input.value='';
   }
   return DEALER_CHOICES;
+}
+
+function renderDealerChips(){
+  const box=g('f-dealer-chips');
+  if(!box)return;
+  box.innerHTML='';
+  [...F.dealers].map(value=>({value,label:DEALER_VALUE_TO_LABEL.get(value)||value}))
+    .sort((a,b)=>a.label.localeCompare(b.label,'es'))
+    .forEach(({value,label})=>{
+      const chip=document.createElement('span');
+      chip.className='dealer-chip';
+      chip.appendChild(document.createTextNode(label));
+      const rm=document.createElement('button');
+      rm.type='button';rm.className='dealer-chip-x';rm.textContent='×';
+      rm.title='Quitar';
+      rm.onclick=()=>{
+        F.dealers.delete(value);
+        renderDealerChips();
+        rebuildActiveRecords();
+        render();
+      };
+      chip.appendChild(rm);
+      box.appendChild(chip);
+    });
 }
 
 function titleCaseDealer(value){
@@ -1357,11 +1387,13 @@ function titleCaseDealer(value){
 
 function onDealerChange(){
   const label=g('f-dealer').value.trim();
+  if(!label)return;
   ensureRECD().then(()=>{
-    const value=DEALER_LABEL_TO_VALUE.get(label)||'';
-    F.dealer=DEALER_CHOICES.has(value)?value:'';
-    g('f-dealer').value=F.dealer
-      ?DEALER_VALUE_TO_LABEL.get(F.dealer)||'':'';
+    const value=DEALER_LABEL_TO_VALUE.get(label);
+    if(!value||!DEALER_CHOICES.has(value))return;
+    F.dealers.add(value);
+    g('f-dealer').value='';
+    renderDealerChips();
     rebuildActiveRecords();
     render();
   });
@@ -1374,10 +1406,10 @@ function provFilterActive(){
 // intercambia REC.rows segun la seleccion de provincias
 function rebuildActiveRecords(){
   if(!REC)return;
-  if(F.dealer&&RECD_PROJ){
+  if(F.dealers.size&&RECD_PROJ){
     const byProvince=needProvData();
     REC.rows=RECD_PROJ
-      .filter(o=>o.dealer===F.dealer&&(!byProvince||F.provs.has(o.prov)))
+      .filter(o=>F.dealers.has(o.dealer)&&(!byProvince||F.provs.has(o.prov)))
       .map(o=>o.row);
     _dealerFilterOn=true;
     _provFilterOn=byProvince;
@@ -1398,7 +1430,7 @@ function needProvData(){
 // handler unico cuando cambia la seleccion de provincias
 function onProvChange(){
   if(PROV)renderProv();
-  if(F.dealer){
+  if(F.dealers.size){
     ensureRECD().then(()=>{ rebuildActiveRecords(); render(); });
   } else if(needProvData()&&!RECP_PROJ){
     ensureRECP().then(()=>{ rebuildActiveRecords(); render(); });
@@ -1658,10 +1690,11 @@ function onTopChange(){
   F.marca=g('f-marca').value;F.body=g('f-body').value;
   if(RECD_PROJ){
     refreshDealers();
-    if(F.dealer&&!DEALER_CHOICES.has(F.dealer)){
-      F.dealer='';
-      g('f-dealer').value='';
-    }
+    let dealersChanged=false;
+    [...F.dealers].forEach(v=>{
+      if(!DEALER_CHOICES.has(v)){F.dealers.delete(v);dealersChanged=true;}
+    });
+    if(dealersChanged)renderDealerChips();
     rebuildActiveRecords();
   }
   const modelSet=refreshModels();
@@ -2342,7 +2375,7 @@ function renderProv(){
     const noApply=[];
     if(F.modelo)noApply.push('Model');
     if(F.body)noApply.push('Body');
-    if(F.dealer)noApply.push('Dealer');
+    if(F.dealers.size)noApply.push('Dealer');
     if(noApply.length){notice.textContent='Filters with no effect on Provinces: '+noApply.join(', ')+'.';notice.style.display='';}
     else notice.style.display='none';
   }
@@ -3747,7 +3780,8 @@ function resetFilters(){
   document.querySelectorAll('#f-hp input').forEach(cb=>cb.checked=false);
   g('f-marca').value='';g('f-modelo').value='';g('f-body').value='';
   g('f-dealer').value='';
-  F.marca='';F.modelo='';F.body='';F.dealer='';
+  F.marca='';F.modelo='';F.body='';F.dealers.clear();
+  renderDealerChips();
   refreshDealers();
   if(ALL_PROV_NAMES.length){
     F.provs=new Set(ALL_PROV_NAMES);
