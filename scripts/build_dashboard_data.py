@@ -132,24 +132,35 @@ _MODEL_NORM = {
         "E220CDI": "E220 CDI", "C220CDI": "C220 CDI",
     },
     "Citroen": {"SPACE TOURER": "SPACETOURER"},
-    "Faw": {"YUEYI 07PHEV": "YUEYI 07 PHEV"},
+    "Faw": {
+        "YUEYI 07PHEV": "YUEYI 07 PHEV", "YUEYYI 07 PHEV": "YUEYI 07 PHEV",
+        "YUEYL 07 PHEV": "YUEYI 07 PHEV",
+    },
     "Ford": {"F150": "F-150", "FORD MODEL Y 8HP 399006": "", "TRANSIT/TRANSIT": "TRANSIT"},
     "Honda": {"CRV": "CR-V", "CR V": "CR-V", "HRV": "HR-V"},
-    "Mazda": {"CX9": "CX-9"},
+    "Mazda": {"CX9": "CX-9", "MAZADA5": "MAZDA 5"},
     "Opel": {"INSIGNIA LIMOUSINENB": "INSIGNIA LIMOUSINE NB"},
     "Rehatrans": {
         "TRAVELLER_EXPERT": "TRAVELLER EXPERT", "TRAVELLER-EXPERT": "TRAVELLER EXPERT",
+        "TRAVELER_EXPERT": "TRAVELLER EXPERT",
         "TGEPMR": "TGE PMR", "SPACETOURER_JUMPY": "SPACETOURER JUMPY",
+        "SPACETORUER JUMPY": "SPACETOURER JUMPY", "CRAFER PMR": "CRAFTER PMR",
     },
     "Peugeot": {
         "PART TEP ACT": "PARTNER",  # truncated "Partner Tepee Active"
         "207SW": "207", "207 1.6 16V TURBO": "207",
     },
     "Tesla": {"MODEL3": "MODEL 3", "MODELY": "MODEL Y"},
-    "Volkswagen": {"ID 3": "ID.3"},
+    "Volkswagen": {
+        "ID 3": "ID.3", "T-ROCK": "T-ROC", "TOURNAN": "TOURAN",
+        "CRAFER": "CRAFTER", "GOL": "GOLF",
+    },
     "Tripod": {
         "T-CLASS TRIPOD": "T CLASS TRIPOD", "CLASE T TRIPOD": "T CLASS TRIPOD",
         "T CLASS TRIPO": "T CLASS TRIPOD", "T CLASSS TRIPOD": "T CLASS TRIPOD",
+        "GRAND TOURNEO CONECT": "GRAND TOURNEO CONNECT",
+        "GRAND TOURNEO CONCECT": "GRAND TOURNEO CONNECT",
+        "TOURNEO CONEECT": "TOURNEO CONNECT",
     },
     "Caterham Cars Ltd": {"SEVEN SV(DA VARIANT)": "SEVEN SV (DA VARIANT)"},
     "Jaguar": {"JAGUAR XF": "XF"},
@@ -159,7 +170,22 @@ _MODEL_NORM = {
         "NISSAN OASHQAI": "QASHQAI", "NISSAZN QASHQAI": "QASHQAI",
         "NISSAN X-TRIL": "X-TRAIL", "NISSAN X- TRAIL": "X-TRAIL",
     },
-    "Chevrolet": {"CHEVROLET CORVETTE": "CORVETTE"},
+    "Chevrolet": {"CHEVROLET CORVETTE": "CORVETTE", "TRAIBLAZER": "TRAILBLAZER"},
+    "Land Rover": {"RANG ROVER": "RANGE ROVER"},
+    "Cupra": {"TERAMAR": "TERRAMAR", "FORMENTRO": "FORMENTOR"},
+    "Jeep": {"GRAN CHEROKE": "GRAND CHEROKEE", "CHEROKE": "CHEROKEE"},
+    "Toyota": {"HIGLANDER": "HIGHLANDER", "HIHLNDER": "HIGHLANDER", "TAC0MA": "TACOMA"},
+    "Hyundai": {"ELENTRA": "ELANTRA"},
+    "Kia": {"FORTTE": "FORTE"},
+    "Suzuki": {"GRAN VITARA": "GRAND VITARA"},
+    "Yudo": {"YDO K3": "YUDO K3"},
+    "Rolls-Royce": {
+        "BLACK EDGE CULLINAN": "BLACK BADGE CULLINAN",
+        "BLAXK BADGE SPECTRE": "BLACK BADGE SPECTRE",
+    },
+    "Allied Vehicles Ltd": {
+        "GRAN FREEDOM RS": "GRAND FREEDOM RS", "VISTGA RS PLUS": "VISTA RS PLUS",
+    },
 }
 
 _VIN_FRAGMENT_RE = re.compile(r"\s[0-3][A-Z0-9]{7}$")
