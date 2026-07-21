@@ -29,14 +29,14 @@ USER_AGENT = "AxonMobilityDealerMaster/1.0"
 SUPPORTED = (
     "Toyota", "Renault", "Dacia", "Hyundai", "Kia", "Seat", "Cupra",
     "Lexus", "Nissan", "Audi", "Mercedes", "Mercedes-V", "Porsche", "Volvo",
-    "Tesla", "BYD",
+    "Tesla", "BYD", "Land Rover", "Jaguar",
 )
 MINIMUM_SALES_POINTS = {
     "Toyota": 140, "Renault": 300, "Dacia": 300,
     "Hyundai": 140, "Kia": 180, "Seat": 170, "Cupra": 85,
     "Lexus": 25, "Nissan": 120, "Audi": 60,
     "Mercedes": 130, "Mercedes-V": 110, "Porsche": 20, "Volvo": 70,
-    "Tesla": 15, "BYD": 80,
+    "Tesla": 15, "BYD": 80, "Land Rover": 25, "Jaguar": 4,
 }
 GRID = (
     (43.36, -8.41), (43.26, -2.94), (42.82, -1.64), (41.65, -0.89),
@@ -613,6 +613,60 @@ def fetch_byd():
     return load_byd_sales_points(BYD_SALES_POINTS)
 
 
+def fetch_jlr_group(brand):
+    """Grid-sample Jaguar Land Rover's shared, unauthenticated retailer-locator API.
+
+    The API caps results at 30 per call and ignores radius beyond that, so
+    coverage comes from sampling many points (like the Renault/Dacia grid)
+    and deduplicating by the dealer's stable ciCode.
+    """
+    page_url = "https://www.landrover.es/national-dealer-locator.html"
+    endpoint = "https://retailerlocator.jaguarlandrover.com/dealers"
+    found = {}
+    for lat, lon in GRID:
+        query = urllib.parse.urlencode({
+            "latitude": lat, "longitude": lon, "requestMarketLocale": "es_es",
+            "brand": brand, "filter": "dealer", "radius": 150,
+            "unitOfMeasure": "Kilometres", "country": "es",
+            "fetchOpeningTimes": "false",
+        })
+        payload = json.loads(get(f"{endpoint}?{query}"))
+        for item in payload.get("dealers") or []:
+            code = item.get("ciCode")
+            if code:
+                found[code] = item
+    rows = []
+    for item in found.values():
+        sells_new = any(
+            (service.get("type") or "") == "sales"
+            for service in item.get("services") or []
+        )
+        if not sells_new:
+            continue
+        address = item.get("address") or {}
+        street = clean(" ".join(filter(None, (
+            address.get("line1"), address.get("line2"),
+        ))))
+        row = make_point(
+            brand, item.get("ciCode"), item.get("name"), item.get("name"),
+            item.get("ciCode"), street, address.get("postCode"),
+            address.get("town"), address.get("county"),
+            item.get("latitude"), item.get("longitude"),
+            "official_api", page_url,
+        )
+        if row:
+            rows.append(row)
+    return rows
+
+
+def fetch_landrover():
+    return fetch_jlr_group("Land Rover")
+
+
+def fetch_jaguar():
+    return fetch_jlr_group("Jaguar")
+
+
 def mercedes_dealers():
     """Fetch the complete Spanish network from Mercedes-Benz's public locator."""
     global _MERCEDES_DEALERS
@@ -794,6 +848,8 @@ FETCHERS = {
     "Volvo": fetch_volvo,
     "Tesla": fetch_tesla,
     "BYD": fetch_byd,
+    "Land Rover": fetch_landrover,
+    "Jaguar": fetch_jaguar,
 }
 
 
