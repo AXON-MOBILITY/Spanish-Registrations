@@ -123,6 +123,9 @@ _MODEL_NORM = {
         "7 SERIES": "SERIE 7",
         "SERIES 8": "SERIE 8",
         "X1XDRIVE28I": "X1",
+        "Z REIHE": "Z4",  # "Z Reihe" = German "Z Series"; only Z4 is sold in the 2023+ window this data covers
+        # Unrecoverable single rows: no real model can be inferred from these.
+        "SERIE X": "", "3.0": "", "2600L 365067": "",
     },
     "Mercedes": {
         "E-CLASS": "CLASE E", "T-CLASS": "CLASE T", "C-CLASS": "CLASE C",
@@ -130,7 +133,7 @@ _MODEL_NORM = {
     },
     "Citroen": {"SPACE TOURER": "SPACETOURER"},
     "Faw": {"YUEYI 07PHEV": "YUEYI 07 PHEV"},
-    "Ford": {"F150": "F-150"},
+    "Ford": {"F150": "F-150", "FORD MODEL Y 8HP 399006": "", "TRANSIT/TRANSIT": "TRANSIT"},
     "Honda": {"CRV": "CR-V", "CR V": "CR-V", "HRV": "HR-V"},
     "Mazda": {"CX9": "CX-9"},
     "Opel": {"INSIGNIA LIMOUSINENB": "INSIGNIA LIMOUSINE NB"},
@@ -138,14 +141,9 @@ _MODEL_NORM = {
         "TRAVELLER_EXPERT": "TRAVELLER EXPERT", "TRAVELLER-EXPERT": "TRAVELLER EXPERT",
         "TGEPMR": "TGE PMR", "SPACETOURER_JUMPY": "SPACETOURER JUMPY",
     },
-    "Sin Marca": {
-        "DS 7 ETENSE 225": "DS 7 E-TENSE 225", "DS 9 ETENSE 250": "DS 9 E-TENSE 250",
-        "NUEVO DS 3 ETENSE": "NUEVO DS 3 E-TENSE",
-        "DS4 BLUEHDI 130 AUTO": "DS 4 BLUEHDI 130 AUTO",
-        "DS4 PLUG-IN HYBRID": "DS 4 PLUG-IN HYBRID",
-        "DS4 BLUEHDI 130": "DS 4 BLUEHDI 130", "DS 4 BLUE HDI 130": "DS 4 BLUEHDI 130",
-        "DS 4 PURE TECH 130": "DS 4 PURETECH 130",
-        "DS 7 BLUE HDI 130": "DS 7 BLUEHDI 130",
+    "Peugeot": {
+        "PART TEP ACT": "PARTNER",  # truncated "Partner Tepee Active"
+        "207SW": "207", "207 1.6 16V TURBO": "207",
     },
     "Tesla": {"MODEL3": "MODEL 3", "MODELY": "MODEL Y"},
     "Volkswagen": {"ID 3": "ID.3"},
@@ -165,6 +163,11 @@ _MODEL_NORM = {
 }
 
 _VIN_FRAGMENT_RE = re.compile(r"\s[0-3][A-Z0-9]{7}$")
+# DS (Citroen's premium spin-off) has no clean brand code in DGT's export and
+# lands in "Sin Marca" with every trim/engine/generation variant fragmenting
+# the model field: "DS 7 BLUEHDI 130", "DS 7 E-TENSE 4X4 300", "DS7 HC 16E
+# HYA X", "NUEVO DS 3 E-TENSE"... all belong to one of DS 3/4/7/9.
+_DS_MODEL_RE = re.compile(r"^(?:NUEVO\s+)?DS\s?(\d)\b")
 
 def _normalize_modelo(brand, raw):
     m = (raw or "").strip().upper()
@@ -179,6 +182,10 @@ def _normalize_modelo(brand, raw):
     # ("E-TRON 50 3WAUZZZG" -> "E-TRON 50"). Exactly 8 chars starting with
     # 0-3 to stay clear of real trim badges like Mercedes "4MATIC".
     m = _VIN_FRAGMENT_RE.sub("", m).strip()
+    if brand == "Sin Marca":
+        ds = _DS_MODEL_RE.match(m)
+        if ds:
+            return "DS " + ds.group(1)
     return _MODEL_NORM.get(brand, {}).get(m, m)
 
 _FOCUS_SUBSEGMENTS = {
