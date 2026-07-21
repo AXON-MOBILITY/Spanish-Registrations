@@ -564,9 +564,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <select id="f-marca" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
     </div>
     <div class="tf-grp">
-      <span class="tf-lbl">Dealer (est.)</span>
+      <span class="tf-lbl" title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta.">Dealer (est.)</span>
       <input id="f-dealer" class="tf-dealer-input" type="text" list="f-dealer-list"
              placeholder="Buscar dealer..." autocomplete="off"
+             title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta."
              onfocus="ensureRECD()" oninput="ensureRECD()" onchange="onDealerChange()">
       <datalist id="f-dealer-list"></datalist>
     </div>
@@ -1262,10 +1263,7 @@ function tryBuildProvProjection(){
 }
 
 function ensureRECD(){
-  if(RECD_PROJ){
-    refreshDealers();
-    return Promise.resolve();
-  }
+  if(RECD_PROJ)return Promise.resolve();
   if(_recdPromise)return _recdPromise;
   _recdPromise=fetch('data/records_dealer.json?v='+Date.now())
     .then(r=>{
@@ -1275,12 +1273,12 @@ function ensureRECD(){
     .then(data=>{
       RECD=data;
       tryBuildDealerProjection();
-      refreshDealers();
+      refreshDealers(true);
     })
     .catch(()=>{
       RECD=null;
       RECD_PROJ=[];
-      refreshDealers();
+      refreshDealers(true);
     });
   return _recdPromise;
 }
@@ -1320,7 +1318,7 @@ function tryBuildDealerProjection(){
   }));
 }
 
-function refreshDealers(){
+function refreshDealers(keepInput){
   const input=g('f-dealer'),list=g('f-dealer-list');
   if(!input||!list)return new Set();
   const brand=F.marca;
@@ -1344,8 +1342,10 @@ function refreshDealers(){
     DEALER_LABEL_TO_VALUE.set(label,value);
     DEALER_VALUE_TO_LABEL.set(value,label);
   });
-  input.value=DEALER_CHOICES.has(F.dealer)
-    ?DEALER_VALUE_TO_LABEL.get(F.dealer)||'':'';
+  if(!keepInput){
+    input.value=DEALER_CHOICES.has(F.dealer)
+      ?DEALER_VALUE_TO_LABEL.get(F.dealer)||'':'';
+  }
   return DEALER_CHOICES;
 }
 
