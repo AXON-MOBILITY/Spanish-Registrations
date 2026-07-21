@@ -590,11 +590,13 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
              onkeydown="onDealerKeydown(event)" onblur="scheduleHideDealerDropdown()">
       <div id="f-dealer-dropdown" class="dealer-dropdown"></div>
     </div>
-    <div class="tf-grp">
+    <div class="tf-grp dealer-search-wrap">
       <span class="tf-lbl">Model</span>
-      <input id="f-modelo" class="tf-modelo-input" type="text" list="f-modelo-list"
-             placeholder="Buscar modelo…" autocomplete="off" oninput="onTopChange()">
-      <datalist id="f-modelo-list"></datalist>
+      <input id="f-modelo" class="tf-modelo-input" type="text" autocomplete="off"
+             placeholder="Buscar modelo…"
+             onfocus="showModelDropdown()" oninput="showModelDropdown()"
+             onkeydown="onModelKeydown(event)" onblur="scheduleHideModelDropdown()">
+      <div id="f-modelo-dropdown" class="dealer-dropdown"></div>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Body</span>
@@ -1241,6 +1243,9 @@ let DEALER_CHOICES=new Set();
 let DEALER_LABEL_TO_VALUE=new Map();
 let DEALER_VALUE_TO_LABEL=new Map();
 let DEALER_OPTIONS=[];
+let MODEL_OPTIONS=[];
+let MODEL_LABEL_TO_VALUE=new Map();
+let MODEL_VALUE_TO_LABEL=new Map();
 
 // Carga PEREZOSA: records_prov.json (varios MB) solo se descarga la primera vez
 // que el usuario filtra por un subconjunto de provincias, para no penalizar la
@@ -1465,6 +1470,19 @@ function titleCaseDealer(value){
   return String(value||'').toLocaleLowerCase('es-ES')
     .replace(/(^|[\s/('\u2019&.\-])(\p{L})/gu,(_,prefix,letter)=>
       prefix+letter.toLocaleUpperCase('es-ES'));
+}
+
+// Modelo: solo se pone en min\u00fasculas+capitalizado cada palabra "real" (4+
+// letras). Los c\u00f3digos cortos de serie/trim (X5, TT, RS, GT, C-HR, GR86,
+// #1 de smart\u2026) siguen siendo may\u00fasculas de origen tal como los estiliza
+// cada fabricante; titleCaseDealer los romper\u00eda (TT \u2192 Tt, X5 ser\u00eda A-ok
+// pero XE/XF/RS/GT no).
+function titleCaseModel(value){
+  return String(value||'').replace(/\p{L}+/gu,word=>
+    word.length>=4
+      ? word.toLocaleLowerCase('es-ES').replace(/^\p{L}/u,c=>c.toLocaleUpperCase('es-ES'))
+      : word
+  );
 }
 
 // hay un subconjunto propio de provincias seleccionado con dataset ya cargado
@@ -1766,22 +1784,18 @@ function onTopChange(){
     rebuildActiveRecords();
   }
   const modelSet=refreshModels();
-  const inp=g('f-modelo');
-  // Si cambia la marca y el modelo escrito no pertenece a ella, se limpia
+  // Si cambia la marca y el modelo seleccionado no pertenece a ella, se limpia
   // (antes se quedaba un modelo huérfano y la vista salía vacía sin aviso).
-  if(marcaChanged&&inp.value.trim()&&!modelSet.has(inp.value.trim())){
-    inp.value='';
+  if(marcaChanged&&F.modelo&&!modelSet.has(F.modelo)){
+    F.modelo='';
+    g('f-modelo').value='';
   }
-  const _mv=inp.value.trim();
-  F.modelo=(_mv&&modelSet.has(_mv))?_mv:'';
-  // Debounce: el input de modelo dispara en cada tecla; 66k filas por render
   clearTimeout(_topDebounce);
   _topDebounce=setTimeout(render,180);
 }
 
 function refreshModels(){
-  const E=REC.enums,dl=g('f-modelo-list');
-  dl.innerHTML='';
+  const E=REC.enums;
   let modelSet;
   if(F.marca){
     const mIdx=E.marca.indexOf(F.marca);
@@ -1790,10 +1804,94 @@ function refreshModels(){
     modelSet=new Set(REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])).map(r=>E.modelo[r[COL.MODELO]]));
   }
   modelSet.delete('');modelSet.delete(undefined);
-  [...modelSet].sort().forEach(m=>{
-    const opt=document.createElement('option');opt.value=m;dl.appendChild(opt);
+  // Códigos DGT sin clasificar (solo guiones); modelos numéricos/con símbolo
+  // legítimos (108, #1 de smart, etc.) se mantienen tal cual.
+  [...modelSet].filter(m=>/^-+$/.test(m)).forEach(m=>modelSet.delete(m));
+  MODEL_LABEL_TO_VALUE=new Map();
+  MODEL_VALUE_TO_LABEL=new Map();
+  MODEL_OPTIONS=[...modelSet].map(value=>({value,label:titleCaseModel(value)}))
+    .sort((a,b)=>a.label.localeCompare(b.label,'es'));
+  MODEL_OPTIONS.forEach(({value,label})=>{
+    MODEL_LABEL_TO_VALUE.set(label,value);
+    MODEL_VALUE_TO_LABEL.set(value,label);
   });
+  hideModelDropdown();
   return modelSet;
+}
+
+// ── MODEL: mismo dropdown propio que Dealer (datalist nativo truncaba
+// listas grandes y mostraba los códigos de modelo en mayúsculas tal cual
+// vienen de origen, sin el formato legible del desglose por marca) ─────
+let _modelActiveIdx=-1;
+function showModelDropdown(){
+  const box=g('f-modelo-dropdown');
+  if(!box)return;
+  const raw=g('f-modelo').value;
+  if(!raw.trim()&&F.modelo){
+    F.modelo='';
+    clearTimeout(_topDebounce);
+    _topDebounce=setTimeout(render,180);
+  }
+  const q=raw.trim().toLocaleLowerCase('es-ES');
+  const matches=(q?MODEL_OPTIONS.filter(o=>o.label.toLocaleLowerCase('es-ES').includes(q)):MODEL_OPTIONS);
+  _modelActiveIdx=-1;
+  box.innerHTML='';
+  if(!matches.length){
+    const empty=document.createElement('div');
+    empty.className='dealer-opt-empty';
+    empty.textContent='Sin resultados';
+    box.appendChild(empty);
+  } else {
+    matches.forEach(({value,label})=>{
+      const opt=document.createElement('div');
+      opt.className='dealer-opt';
+      opt.textContent=label;
+      opt.onmousedown=e=>{e.preventDefault();selectModelOption(value);};
+      box.appendChild(opt);
+    });
+  }
+  box.classList.add('open');
+}
+function hideModelDropdown(){
+  const box=g('f-modelo-dropdown');
+  if(box){box.classList.remove('open');box.innerHTML='';}
+  _modelActiveIdx=-1;
+}
+function scheduleHideModelDropdown(){
+  setTimeout(hideModelDropdown,120);
+}
+function selectModelOption(value){
+  if(!value||!MODEL_VALUE_TO_LABEL.has(value))return;
+  F.modelo=value;
+  g('f-modelo').value=MODEL_VALUE_TO_LABEL.get(value);
+  hideModelDropdown();
+  clearTimeout(_topDebounce);
+  render();
+}
+function onModelKeydown(event){
+  const box=g('f-modelo-dropdown');
+  const opts=box?[...box.querySelectorAll('.dealer-opt')]:[];
+  if(event.key==='Escape'){hideModelDropdown();return;}
+  if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+    if(!opts.length)return;
+    event.preventDefault();
+    opts.forEach(o=>o.classList.remove('active'));
+    _modelActiveIdx+=event.key==='ArrowDown'?1:-1;
+    if(_modelActiveIdx<0)_modelActiveIdx=opts.length-1;
+    if(_modelActiveIdx>=opts.length)_modelActiveIdx=0;
+    const active=opts[_modelActiveIdx];
+    active.classList.add('active');
+    active.scrollIntoView({block:'nearest'});
+    return;
+  }
+  if(event.key==='Enter'){
+    event.preventDefault();
+    const label=(_modelActiveIdx>=0&&opts[_modelActiveIdx])
+      ?opts[_modelActiveIdx].textContent
+      :g('f-modelo').value.trim();
+    const value=MODEL_LABEL_TO_VALUE.get(label);
+    if(value)selectModelOption(value);
+  }
 }
 
 // ── FILTERS ───────────────────────────────────────────────
@@ -3852,6 +3950,7 @@ function resetFilters(){
   F.marca='';F.modelo='';F.body='';F.dealers.clear();
   renderDealerChips();
   refreshDealers();
+  hideModelDropdown();
   if(ALL_PROV_NAMES.length){
     F.provs=new Set(ALL_PROV_NAMES);
     updateCount('cnt-provs',F.provs.size,ALL_PROV_NAMES.length);
