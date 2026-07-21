@@ -99,7 +99,8 @@ def test_dealer_change_captures_selection_before_async_refresh():
         "// hay un subconjunto", 1
     )[0]
 
-    assert handler.index("const value=g('f-dealer').value") < handler.index(
+    assert handler.index("const label=g('f-dealer').value.trim()") < handler.index(
         "ensureRECD().then"
     )
-    assert "g('f-dealer').value=F.dealer" in handler
+    assert "DEALER_LABEL_TO_VALUE.get(label)" in handler
+    assert "DEALER_VALUE_TO_LABEL.get(F.dealer)" in handler
