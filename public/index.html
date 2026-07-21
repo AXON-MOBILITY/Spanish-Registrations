@@ -85,6 +85,9 @@ select.tf-sel:focus{outline:none;border-color:var(--acc)}
 input.tf-modelo-input{background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:3px 8px;font-size:11px;min-width:110px;max-width:155px;outline:none;height:24px;}
 input.tf-modelo-input:focus{border-color:var(--acc)}
 input.tf-modelo-input::placeholder{color:var(--text3)}
+input.tf-dealer-input{background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);padding:3px 8px;font-size:11px;width:220px;min-width:190px;max-width:260px;outline:none;height:24px;}
+input.tf-dealer-input:focus{border-color:var(--acc)}
+input.tf-dealer-input::placeholder{color:var(--text3)}
 .btn-xpd{background:none;border:none;cursor:pointer;color:var(--text3);font-size:9px;padding:0 4px 0 0;line-height:1;display:inline-block;transition:transform .15s;vertical-align:middle}
 .btn-xpd.open{transform:rotate(90deg);color:var(--acc)}
 tr.model-sub td{padding:2px 6px 2px 22px;font-size:10px;color:var(--text2);background:rgba(0,0,0,.02);border-bottom:none}
@@ -562,10 +565,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Dealer (est.)</span>
-      <select id="f-dealer" class="tf-sel" style="min-width:190px;max-width:260px"
-              onfocus="ensureRECD()" onchange="onDealerChange()">
-        <option value="">All</option>
-      </select>
+      <input id="f-dealer" class="tf-dealer-input" type="text" list="f-dealer-list"
+             placeholder="Buscar dealer..." autocomplete="off"
+             onfocus="ensureRECD()" oninput="ensureRECD()" onchange="onDealerChange()">
+      <datalist id="f-dealer-list"></datalist>
     </div>
     <div class="tf-grp">
       <span class="tf-lbl">Model</span>
@@ -1213,6 +1216,8 @@ let RECD=null;
 let RECD_PROJ=null;
 let _recdPromise=null;
 let DEALER_CHOICES=new Set();
+let DEALER_LABEL_TO_VALUE=new Map();
+let DEALER_VALUE_TO_LABEL=new Map();
 
 // Carga PEREZOSA: records_prov.json (varios MB) solo se descarga la primera vez
 // que el usuario filtra por un subconjunto de provincias, para no penalizar la
@@ -1316,42 +1321,47 @@ function tryBuildDealerProjection(){
 }
 
 function refreshDealers(){
-  const select=g('f-dealer');
-  if(!select)return new Set();
+  const input=g('f-dealer'),list=g('f-dealer-list');
+  if(!input||!list)return new Set();
   const brand=F.marca;
   DEALER_CHOICES=new Set((RECD_PROJ||[])
     .filter(item=>!brand||REC.enums.marca[item.row[COL.MARCA]]===brand)
     .map(item=>item.dealer)
     .filter(Boolean));
-  select.innerHTML='<option value="">All</option>';
-  const groups=new Map();
-  [...DEALER_CHOICES].sort((a,b)=>a.localeCompare(b)).forEach(value=>{
+  DEALER_LABEL_TO_VALUE=new Map();
+  DEALER_VALUE_TO_LABEL=new Map();
+  list.innerHTML='';
+  [...DEALER_CHOICES].map(value=>{
     const split=value.indexOf(' | ');
     const dealerBrand=split>=0?value.slice(0,split):'Other';
     const dealerName=split>=0?value.slice(split+3):value;
-    if(!groups.has(dealerBrand))groups.set(dealerBrand,[]);
-    groups.get(dealerBrand).push({value,label:dealerName});
+    const name=titleCaseDealer(dealerName);
+    return {value,label:brand?name:dealerBrand+' - '+name};
+  }).sort((a,b)=>a.label.localeCompare(b.label,'es')).forEach(({value,label})=>{
+    const option=document.createElement('option');
+    option.value=label;
+    list.appendChild(option);
+    DEALER_LABEL_TO_VALUE.set(label,value);
+    DEALER_VALUE_TO_LABEL.set(value,label);
   });
-  groups.forEach((options,dealerBrand)=>{
-    const group=document.createElement('optgroup');
-    group.label=dealerBrand;
-    options.forEach(({value,label})=>{
-      const option=document.createElement('option');
-      option.value=value;
-      option.textContent=label;
-      group.appendChild(option);
-    });
-    select.appendChild(group);
-  });
-  select.value=DEALER_CHOICES.has(F.dealer)?F.dealer:'';
+  input.value=DEALER_CHOICES.has(F.dealer)
+    ?DEALER_VALUE_TO_LABEL.get(F.dealer)||'':'';
   return DEALER_CHOICES;
 }
 
+function titleCaseDealer(value){
+  return String(value||'').toLocaleLowerCase('es-ES')
+    .replace(/(^|[\s/('\u2019&.\-])(\p{L})/gu,(_,prefix,letter)=>
+      prefix+letter.toLocaleUpperCase('es-ES'));
+}
+
 function onDealerChange(){
-  const value=g('f-dealer').value;
+  const label=g('f-dealer').value.trim();
   ensureRECD().then(()=>{
+    const value=DEALER_LABEL_TO_VALUE.get(label)||'';
     F.dealer=DEALER_CHOICES.has(value)?value:'';
-    g('f-dealer').value=F.dealer;
+    g('f-dealer').value=F.dealer
+      ?DEALER_VALUE_TO_LABEL.get(F.dealer)||'':'';
     rebuildActiveRecords();
     render();
   });

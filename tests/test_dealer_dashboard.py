@@ -103,15 +103,16 @@ def test_compact_dealer_dataset_preserves_dashboard_dimensions():
     assert result["rows"][0][-1] == 3
     assert result["total"] == 3
 
-def test_dealer_filter_is_a_brand_grouped_select():
+def test_dealer_filter_is_searchable_and_title_cased():
     html = (Path(__file__).parent.parent / "public" / "index.html").read_text(
         encoding="utf-8"
     )
 
-    assert '<select id="f-dealer"' in html
-    assert "document.createElement('optgroup')" in html
-    assert "onDealerChange()" in html
-    assert 'f-dealer-list' not in html
+    assert '<input id="f-dealer"' in html
+    assert 'list="f-dealer-list"' in html
+    assert '<datalist id="f-dealer-list">' in html
+    assert "DEALER_LABEL_TO_VALUE.get(label)" in html
+    assert "function titleCaseDealer(value)" in html
 
 def test_historical_rows_use_the_canonical_master_name(tmp_path, monkeypatch):
     source = tmp_path / "dgt_dealer_202606.csv"
