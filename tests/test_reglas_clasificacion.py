@@ -131,25 +131,38 @@ def test_filtros_scope_dgt_aceptan_m1_homologacion_cod_tipo_0g():
     assert pm.passes_dgt_scope_filters(line)
 
 
-def test_filtros_scope_dgt_excluyen_n1_homologacion_cod_tipo_20():
-    """COD_TIPO '20' + N1 queda fuera del scope general (solo vía excepciones explícitas)."""
+def test_filtros_scope_dgt_aceptan_n1_homologacion_cod_tipo_20():
+    """COD_TIPO '20' + N1 entra en scope — verificado 2026-07-27 contra export
+    diario Simmix: Kangoo/Master/Trafic/Transit*/Jumpy/Berlingo/Jumper/Partner/
+    Expert/Boxer/Caddy/Transporter/Crafter/Doblo/Ducato/Scudo/Ulysse/Combo/
+    Vivaro/Movano/Daily/Vito/Citan van todos con COD_TIPO=20 y N1 en DGT, y
+    Simmix los cuenta como N1 sin excepción de marca."""
     line = _scope_filter_line(cod_tipo='20', homologacion='N1', plazas='2', mma=' 2100')
-    assert not pm.passes_dgt_scope_filters(line)
+    assert pm.passes_dgt_scope_filters(line)
 
 
 # ── normalize_marca Mercedes-V ──────────────────────────────────────────────
 
-def test_normalize_marca_clase_v_es_mercedes_v():
-    assert pm.normalize_marca('MERCEDES', 'CLASE V') == 'MERCEDES-V'
+def test_normalize_marca_clase_v_sigue_mercedes():
+    """Verificado 2026-07-27 contra export diario Simmix: su marca 'Mercedes-V'
+    solo contiene Vito; Clase V/Marco Polo/EQV/V220-300 van bajo 'Mercedes'."""
+    assert pm.normalize_marca('MERCEDES', 'CLASE V') == 'MERCEDES'
 
-def test_normalize_marca_v220_es_mercedes_v():
-    assert pm.normalize_marca('MERCEDES', 'V 220 D') == 'MERCEDES-V'
+def test_normalize_marca_v220_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'V 220 D') == 'MERCEDES'
 
-def test_normalize_marca_eqv_es_mercedes_v():
-    assert pm.normalize_marca('MERCEDES', 'EQV 300') == 'MERCEDES-V'
+def test_normalize_marca_eqv_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'EQV 300') == 'MERCEDES'
 
-def test_normalize_marca_marco_polo_es_mercedes_v():
-    assert pm.normalize_marca('MERCEDES', 'MARCO POLO ACTIVITY') == 'MERCEDES-V'
+def test_normalize_marca_marco_polo_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'MARCO POLO ACTIVITY') == 'MERCEDES'
+
+def test_normalize_marca_vito_es_mercedes_v():
+    assert pm.normalize_marca('MERCEDES', 'VITO 116 TOURER') == 'MERCEDES-V'
+
+def test_normalize_marca_evito_sigue_mercedes():
+    """eVito sí lo cuenta Simmix bajo 'Mercedes', no 'Mercedes-V'."""
+    assert pm.normalize_marca('MERCEDES', 'EVITO TOURER') == 'MERCEDES'
 
 def test_normalize_marca_citan_sigue_mercedes():
     assert pm.normalize_marca('MERCEDES', 'CITAN 110') == 'MERCEDES'
@@ -195,7 +208,11 @@ def test_filtros_scope_dgt_aceptan_toyota_proace_city_verso_m1_0g():
     assert pm.passes_dgt_scope_filters(line)
 
 
-def test_filtros_scope_dgt_no_abren_toyota_proace_city_furgon_20():
+def test_filtros_scope_dgt_aceptan_toyota_proace_city_furgon_20():
+    """Antes se excluía todo Proace City furgón con COD_TIPO=20 asumiendo que
+    Simmix no lo contaba. Verificado 2026-07-27: Simmix SÍ cuenta Proace City
+    como N1 (741/3.771 en el YTD) y DGT lo tenía por debajo, no por encima —
+    la exclusión previa era la causa del undercount, no una protección real."""
     line = _scope_filter_line(
         cod_tipo='20',
         marca='TOYOTA',
@@ -204,7 +221,7 @@ def test_filtros_scope_dgt_no_abren_toyota_proace_city_furgon_20():
         plazas='2',
         mma='2370',
     )
-    assert not pm.passes_dgt_scope_filters(line)
+    assert pm.passes_dgt_scope_filters(line)
 
 
 def test_filtros_scope_dgt_aceptan_peugeot_partner_n1_version_permitida():
@@ -221,7 +238,13 @@ def test_filtros_scope_dgt_aceptan_peugeot_partner_n1_version_permitida():
     assert pm.passes_dgt_scope_filters(line)
 
 
-def test_filtros_scope_dgt_no_abren_peugeot_partner_version_no_permitida():
+def test_filtros_scope_dgt_aceptan_peugeot_partner_otras_versiones_n1():
+    """Antes solo se admitían 2 códigos de versión de Partner furgón (lista
+    blanca de PEUGEOT_REST_SCOPE_PARTNER_VERSIONS); el resto se excluía.
+    Verificado 2026-07-27: con el criterio general de homologación N1,
+    Peugeot Partner queda muy cerca de Simmix (±3% por canal, sin patrón de
+    sobreconteo) — la lista blanca estrecha ya no hace falta como filtro
+    excluyente, el criterio general basta."""
     line = _scope_filter_line(
         cod_tipo='20',
         marca='PEUGEOT',
@@ -232,7 +255,7 @@ def test_filtros_scope_dgt_no_abren_peugeot_partner_version_no_permitida():
         plazas='2',
         mma='2025',
     )
-    assert not pm.passes_dgt_scope_filters(line)
+    assert pm.passes_dgt_scope_filters(line)
 
 
 def test_b00_empresa_es_corporate():
