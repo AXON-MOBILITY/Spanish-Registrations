@@ -1,6 +1,8 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
+202302,INFO,CARROCERO_UNMAPPED,GRAU,,registros_carrocero_sin_chasis_detectado,34,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
 202302,INFO,ITV_QUALITY_SUSPECT,FIAT,Private,registros_ficha_itv_sospechosa_no_excluidos,1,1,"vin10=124CS10140; ficha ITV con MMA invalida pendiente de revision (homologacion=M1, mma=0)"
-202302,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,124,100,pool_b00d_private=1545; rate=0.0802
-202302,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,117,100,pool_b00d_private=2037; rate=0.0573
-202302,INFO,KM0_FALLBACK,OPEL,Corporate,b00d_private_moved_to_corporate,115,100,pool_b00d_private=777; rate=0.1484
-202302,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,123,100,pool_b00d_private=1306; rate=0.0939
+202302,INFO,KM0_FALLBACK,PEUGEOT,Corporate,b00d_private_moved_to_corporate,105,100,pool_b00d_private=1901; rate=0.0553
+202302,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,131,100,pool_b00d_private=1627; rate=0.0802
+202302,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,120,100,pool_b00d_private=2093; rate=0.0573
+202302,INFO,KM0_FALLBACK,OPEL,Corporate,b00d_private_moved_to_corporate,119,100,pool_b00d_private=799; rate=0.1484
+202302,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,129,100,pool_b00d_private=1370; rate=0.0939

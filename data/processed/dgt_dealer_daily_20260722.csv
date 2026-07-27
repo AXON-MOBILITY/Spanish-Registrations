@@ -394,13 +394,13 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,cod_
 2026,07,22,MERCEDES,CLASE GLC,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,28,Madrid,mobility centro,GC00110545,medium,official,1
 2026,07,22,MERCEDES,CLASE GLC,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,29,Málaga,caetano benet,GC0008614,high,official,1
 2026,07,22,MERCEDES,CLASE GLC,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,49,Zamora,adarsa,GC0008566,high,official,1
-2026,07,22,MERCEDES,CLASE V,Private,ICE,Gasolina Mild Hybrid,MKL,REST,Standard,MPV,08,Barcelona,movento stern,GC0008417,medium,official,1
-2026,07,22,MERCEDES,CLASE V,Private,ICE,Gasolina Mild Hybrid,MKL,REST,Standard,MPV,18,Granada,granada premium,GC0062700,high,official,1
-2026,07,22,MERCEDES,CLASE V,Private,ICE,Gasolina Mild Hybrid,MKL,REST,Standard,MPV,45,Toledo,autokrator,GC0010465,high,official,1
 2026,07,22,MERCEDES,EQA,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,28,Madrid,mobility centro,GC00110545,medium,official,1
 2026,07,22,MERCEDES,EQA,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,41,Sevilla,fervial,GC0008425,medium,official,1
 2026,07,22,MERCEDES,EQE,Private,BEV,Electrico,MKL,FOCUS SEGMENT,Standard,SEDAN,07,Baleares,autovidal,GC0010464,medium,official,1
 2026,07,22,MERCEDES,EQE,Private,BEV,Electrico,MKL,FOCUS SEGMENT,Standard,SEDAN,08,Barcelona,movento stern,GC0008417,high,official,1
+2026,07,22,MERCEDES-V,CLASE V,Private,ICE,Diesel,,REST,Standard,,08,Barcelona,movento stern,GC0008417,medium,official,1
+2026,07,22,MERCEDES-V,CLASE V,Private,ICE,Diesel,,REST,Standard,,18,Granada,granada premium,GC0062700,high,official,1
+2026,07,22,MERCEDES-V,CLASE V,Private,ICE,Diesel,,REST,Standard,,45,Toledo,autokrator,GC0010465,high,official,1
 2026,07,22,MERCEDES-V,VITO,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,43,Tarragona,movento stern,GC0008417,medium,official,1
 2026,07,22,MINI,ACEMAN,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,08,Barcelona,quadis munich,100909,high,internal,1
 2026,07,22,MINI,ACEMAN,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,28,Madrid,bymycar madrid,100873,high,internal,1
@@ -490,12 +490,14 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,cod_
 2026,07,22,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,44,Teruel,"autersa servicios de movilidad, s.a.",72436000,high,official,1
 2026,07,22,RENAULT,ESPACE,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SAV,11,Cádiz,"sauto, s.l.(sanluqueña de automoviles",72450920,high,official,1
 2026,07,22,RENAULT,ESPACE,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SAV,25,Lleida,"autansa 3000,s.l.u.",72405179,high,official,1
+2026,07,22,RENAULT,KANGOO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,04,Almería,"syrsa automocion, s.l.",72405321,high,official,1
 2026,07,22,RENAULT,RAFALE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,13,Ciudad Real,"inbado, s.l.",72419005,medium,official,1
 2026,07,22,RENAULT,RAFALE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,23,Jaén,"japemasa solar, s.l",72405349,high,official,1
 2026,07,22,RENAULT,RAFALE,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,37,Salamanca,"auto salamanca cars, s.l.",72405460,high,official,1
 2026,07,22,RENAULT,SYMBIOZ,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,29,Málaga,"tahermo, s.l.u",72405399,high,official,1
 2026,07,22,RENAULT,SYMBIOZ,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,46,Valencia,"talleres ginestar, s.l.u.",72405333,high,official,1
 2026,07,22,RENAULT,TRAFIC,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,18,Granada,"japemasa solar, s.l",72405353,high,official,1
+2026,07,22,RENAULT,TRAFIC,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,29,Málaga,"talleres colorado, s.a.",72455000,medium,official,1
 2026,07,22,RENAULT,TRAFIC,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,31,Navarra,"aramburu belloso, s.l.",72420100,high,official,1
 2026,07,22,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,46,Valencia,"talleres ginestar, s.l.u.",72405169,high,official,1
 2026,07,22,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,07,Baleares,motor illes,00626R,high,official,1
@@ -652,6 +654,9 @@ anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,cod_
 2026,07,22,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,48,Bizkaia,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
 2026,07,22,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,50,Zaragoza,"artal vehículos zaragoza, s.l. (artal",6dafa392-8e69-4220-b295-9cb8ffbe3936,medium,official,1
 2026,07,22,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,52,Melilla,"nipon melilla, s.a.",00CD0-E9EAD-15C83-C2E00-01260-3,medium,official,1
+2026,07,22,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,04,Almería,"alborán motor, s.l.",00CD0-E9EAD-17A44-88800-01350-3,high,official,1
+2026,07,22,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,49,Zamora,"legio cars zamora, s.l.u.",00CD0-E9EAD-17726-45000-01350-3,medium,official,1
+2026,07,22,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,50,Zaragoza,"artal vehículos zaragoza, s.l. (artal",6dafa392-8e69-4220-b295-9cb8ffbe3936,medium,official,1
 2026,07,22,TOYOTA,PROACE,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,24,León,"neumáticos navaliegos, s.a.",00CD0-E9EAD-15B0C-81600-01260-3,high,official,1
 2026,07,22,TOYOTA,PROACE,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,48,Bizkaia,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
 2026,07,22,TOYOTA,PROACE VERSO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,03,Alicante,"medimotors premium, s.l.",a878988b-42d6-4ed4-944e-3eb04a3c072c,high,official,1
