@@ -1727,12 +1727,14 @@ def normalize_marca(marca, modelo=''):
     if m == 'SPORTEQUIPE' and ('ICH-X' in mo or mo.startswith('X K')):
         return 'ICH-X'
     if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG'):
-        # Mercedes V-Class derivatives → Mercedes-V scope (separate brand in Simmix)
-        # DGT raw F_MODELO: 'V 220 D...', 'VITO 116...', 'EQV 300...', 'MARCO POLO'
-        if 'VITO' in mo:
+        # Mercedes V-Class / Vito family → Mercedes-V scope (separate brand in Simmix)
+        # DGT raw F_MODELO: 'VITO 116...', 'EVITO TOURER...', 'CLASE V...', 'V 220 D...',
+        #                    'V 250...', 'V 300...', 'EQV 300...', 'MARCO POLO...'
+        if ('VITO' in mo
+                or mo.startswith(('CLASE V', 'V 220', 'V 250', 'V 300',
+                                   'EQV', 'EVITO', 'MARCO POLO', 'V-KLASSE'))):
             return 'MERCEDES-V'
-        # T-Class and commercial vans → outside Simmix scope (exclude)
-        # DGT raw F_MODELO: 'T 180 D...', 'CITAN 110...', 'ECITAN...', 'EQT...', 'SPRINTER...'
+        # Citan/T-Class/Sprinter/EQT → stay as MERCEDES (passenger/commercial scope)
     return m
 
 
@@ -1892,7 +1894,16 @@ def _is_tram_b_extended_allowlisted(line_s):
 
 
 def passes_dgt_scope_filters(line_s):
-    """Criterios base de conteo DGT/Simmix antes de clasificar canal."""
+    """Criterios base de conteo DGT/Simmix antes de clasificar canal.
+
+    Scope primario: vehículos M1 (turismos) y N1 (furgonetas ligeras ≤3.500 kg).
+    Simmix incluye todos los M1 y N1 independientemente del COD_TIPO, usando la
+    categoría de homologación UE como criterio definitivo.  El campo homologacion
+    (F_HOMOLOGACION, posiciones 426-430) contiene valores tipo 'M1', 'N1', 'N1G'…
+    y es la forma canónica de identificar el tipo de vehículo.
+    El filtro COD_TIPO {'25','40'} queda como vía alternativa para registros sin
+    homologación (datos más antiguos o incompletos).
+    """
     if line_s[F_CLASE_MAT[0]:F_CLASE_MAT[1]].strip() != '0':
         return False
     if (line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() != 'N'
@@ -1903,7 +1914,15 @@ def passes_dgt_scope_filters(line_s):
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == '5':
         return False
     cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
+    homologacion = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
+    # Admitir si: COD_TIPO conocido, O homologación M1/N1 (criterio Simmix),
+    # O excepción de marca específica (Mercedes/Toyota/Peugeot vans).
+    # Excepción: COD_TIPO '20' solo se admite mediante las excepciones explícitas
+    # de marca (Sprinters, Partner), no por la regla general de homologación.
+    # La evidencia empírica muestra que '20' incluye variantes cargo que Simmix
+    # excluye salvo en los casos muy específicos ya codificados.
     if (cod_tipo not in DGT_SCOPE_COD_TIPO
+            and not (homologacion.startswith(('M1', 'N1')) and cod_tipo != '20')
             and not is_mercedes_rest_scope_cod_tipo_exception(line_s)
             and not is_toyota_rest_scope_cod_tipo_exception(line_s)
             and not is_peugeot_rest_scope_cod_tipo_exception(line_s)):

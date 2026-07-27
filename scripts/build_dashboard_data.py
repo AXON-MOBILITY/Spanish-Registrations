@@ -364,12 +364,28 @@ def _candidate_simmix_2026_product_paths(base):
         pass
     return paths
 
+_MONTH_NAME_TO_NUM = {
+    'january': 1, 'enero': 1,
+    'february': 2, 'febrero': 2,
+    'march': 3, 'marzo': 3,
+    'april': 4, 'abril': 4,
+    'may': 5, 'mayo': 5,
+    'june': 6, 'junio': 6,
+    'july': 7, 'julio': 7,
+    'august': 8, 'agosto': 8,
+    'september': 9, 'septiembre': 9,
+    'october': 10, 'octubre': 10,
+    'november': 11, 'noviembre': 11,
+    'december': 12, 'diciembre': 12,
+}
+
 def load_simmix_2026_targets(base, fallback_path):
     fallback_path = Path(fallback_path)
     for path in _candidate_simmix_2026_product_paths(base):
         if not path.exists():
             continue
         targets = defaultdict(int)
+        monthly_targets = defaultdict(int)
         brands = {}
         with open(path, encoding="utf-8-sig", newline="") as fh:
             reader = csv.DictReader(fh)
@@ -387,16 +403,25 @@ def load_simmix_2026_targets(base, fallback_path):
                 brand = _normalize_brand(raw_brand)
                 brand_key = brand.upper()
                 sub = _focus_bucket(row.get("SubSegmento_2026", ""))
+                month_str = (row.get("Month_2026") or "").strip().lower()
+                month_num = _MONTH_NAME_TO_NUM.get(month_str, 0)
                 brands[brand_key] = brand
                 targets[(brand_key, canal, sub)] += n
+                if month_num:
+                    monthly_targets[(brand_key, canal, sub, month_num)] += n
         if targets:
+            max_month = max((m for (_, _, _, m) in monthly_targets), default=6)
             payload = {
                 "source": path.name,
                 "year": 2026,
-                "month": 6,
+                "month": max_month,
                 "rows": [
-                    {"brand": brands[brand], "canal": canal, "sub": sub, "n": n}
-                    for (brand, canal, sub), n in sorted(targets.items())
+                    {"brand": brands[bk], "canal": canal, "sub": sub, "n": n}
+                    for (bk, canal, sub), n in sorted(targets.items())
+                ],
+                "monthly_rows": [
+                    {"brand": brands[bk], "canal": canal, "sub": sub, "month": m, "n": n}
+                    for (bk, canal, sub, m), n in sorted(monthly_targets.items())
                 ],
             }
             fallback_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -439,20 +464,42 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     if not target_year or not target_month:
         return monthly_records, mtd_records, {"status": "skipped", "reason": "invalid_target_period"}
 
-    targets = {}
     brand_display = {}
-    for row in payload.get("rows", []):
-        brand = _normalize_brand(row.get("brand", ""))
-        brand_key = brand.upper()
-        canal = row.get("canal", "")
-        sub = _focus_bucket(row.get("sub", ""))
-        try:
-            n = int(row.get("n", 0))
-        except (TypeError, ValueError):
-            n = 0
-        if brand_key and canal in CANALES and n > 0:
-            targets[(brand_key, canal, sub)] = targets.get((brand_key, canal, sub), 0) + n
-            brand_display[brand_key] = brand
+    # Prefer per-month targets for exact per-month alignment; fall back to H1-cumulative
+    use_monthly = bool(payload.get("monthly_rows"))
+    if use_monthly:
+        targets = {}
+        for row in payload.get("monthly_rows", []):
+            brand = _normalize_brand(row.get("brand", ""))
+            brand_key = brand.upper()
+            canal = row.get("canal", "")
+            sub = _focus_bucket(row.get("sub", ""))
+            month = int(row.get("month", 0) or 0)
+            try:
+                n = int(row.get("n", 0))
+            except (TypeError, ValueError):
+                n = 0
+            if brand_key and canal in CANALES and n > 0 and 1 <= month <= target_month:
+                key = (brand_key, canal, sub, month)
+                targets[key] = targets.get(key, 0) + n
+                brand_display[brand_key] = brand
+        # Pre-compute (brand, canal, sub) set for O(1) scope lookup
+        brands_in_scope = {(bk, c, s) for (bk, c, s, _) in targets}
+    else:
+        targets = {}
+        for row in payload.get("rows", []):
+            brand = _normalize_brand(row.get("brand", ""))
+            brand_key = brand.upper()
+            canal = row.get("canal", "")
+            sub = _focus_bucket(row.get("sub", ""))
+            try:
+                n = int(row.get("n", 0))
+            except (TypeError, ValueError):
+                n = 0
+            if brand_key and canal in CANALES and n > 0:
+                targets[(brand_key, canal, sub)] = targets.get((brand_key, canal, sub), 0) + n
+                brand_display[brand_key] = brand
+        brands_in_scope = set(targets.keys())
 
     all_records = [r.copy() for r in monthly_records] + [r.copy() for r in mtd_records]
     def in_target_period(r):
@@ -464,9 +511,13 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     for r in all_records:
         if not in_target_period(r):
             continue
-        key = (r["marca"].upper(), r["canal"], _focus_bucket(r["sub"]))
-        if key in targets:
-            r["sub"] = key[2]
+        bk = r["marca"].upper()
+        canal = r["canal"]
+        sub = _focus_bucket(r["sub"])
+        base_key = (bk, canal, sub)
+        if base_key in brands_in_scope:
+            r["sub"] = sub
+            key = (bk, canal, sub, r["m"]) if use_monthly else base_key
             grouped[key].append(r)
         else:
             dropped += r["n"]
@@ -482,12 +533,17 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
             aligned.extend(_allocate_to_target(rows, target))
             continue
 
-        brand_key, canal, sub = key
+        # No DGT records for this (brand, canal, sub[, month]) → synthetic
+        if use_monthly:
+            bk, canal, sub, month = key
+        else:
+            bk, canal, sub = key
+            month = target_month
         synthetic += target
         aligned.append({
             "y": target_year,
-            "m": target_month,
-            "marca": brand_display.get(brand_key, brand_key.title()),
+            "m": month,
+            "marca": brand_display.get(bk, bk.title()),
             "modelo": "",
             "canal": canal,
             "fuel": "ICE",
@@ -503,6 +559,7 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     mtd_out = [r for r in aligned if r["y"] == mtd_yr and r["m"] == mtd_mo]
     stats = {
         "status": "applied",
+        "mode": "per-month" if use_monthly else "cumulative-h1",
         "year": target_year,
         "month": target_month,
         "groups": len(targets),

@@ -119,6 +119,45 @@ def test_filtros_scope_dgt_excluyen_cod_tipo_fuera_de_scope():
     assert not pm.passes_dgt_scope_filters(_scope_filter_line(cod_tipo='30'))
 
 
+def test_filtros_scope_dgt_aceptan_n1_homologacion_cod_tipo_0g():
+    """Furgonetas N1 con COD_TIPO '0G' y homologación N1 entran en scope Simmix."""
+    line = _scope_filter_line(cod_tipo='0G', homologacion='N1', plazas='2', mma=' 2100')
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_m1_homologacion_cod_tipo_0g():
+    """Furgones passenger (turismo) con COD_TIPO '0G' y homologación M1 entran en scope."""
+    line = _scope_filter_line(cod_tipo='0G', homologacion='M1', plazas='5')
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_excluyen_n1_homologacion_cod_tipo_20():
+    """COD_TIPO '20' + N1 queda fuera del scope general (solo vía excepciones explícitas)."""
+    line = _scope_filter_line(cod_tipo='20', homologacion='N1', plazas='2', mma=' 2100')
+    assert not pm.passes_dgt_scope_filters(line)
+
+
+# ── normalize_marca Mercedes-V ──────────────────────────────────────────────
+
+def test_normalize_marca_clase_v_es_mercedes_v():
+    assert pm.normalize_marca('MERCEDES', 'CLASE V') == 'MERCEDES-V'
+
+def test_normalize_marca_v220_es_mercedes_v():
+    assert pm.normalize_marca('MERCEDES', 'V 220 D') == 'MERCEDES-V'
+
+def test_normalize_marca_eqv_es_mercedes_v():
+    assert pm.normalize_marca('MERCEDES', 'EQV 300') == 'MERCEDES-V'
+
+def test_normalize_marca_marco_polo_es_mercedes_v():
+    assert pm.normalize_marca('MERCEDES', 'MARCO POLO ACTIVITY') == 'MERCEDES-V'
+
+def test_normalize_marca_citan_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'CITAN 110') == 'MERCEDES'
+
+def test_normalize_marca_clase_a_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'CLASE A') == 'MERCEDES'
+
+
 # ── Canal (SERVICIO + persona física/jurídica) ──────────────────────────────
 
 def test_filtros_scope_dgt_aceptan_mercedes_rest_mpv_0g():
