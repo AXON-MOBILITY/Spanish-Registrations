@@ -100,7 +100,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,MERCEDES,CLASE GLC,06,Badajoz,Private,ICE,KKL,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,MERCEDES,CLASE GLE COUPE,06,Badajoz,Corporate,PHEV,MKL,FOCUS SEGMENT,M Performance,SAV,1
 2026,07,02,NISSAN,X-TRAIL,06,Badajoz,Private,ICE,KKL,REST,Standard,SUV,1
-2026,07,02,RENAULT TRUCKS,MASTER,06,Badajoz,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,RENAULT,MASTER,06,Badajoz,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,TOYOTA,C-HR,06,Badajoz,Private,ICE,UKL1,REST,Standard,SAV,2
 2026,07,02,TOYOTA,YARIS,06,Badajoz,Private,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,TOYOTA,YARIS CROSS,06,Badajoz,Private,ICE,UKL1,REST,Standard,SAV,1
@@ -150,7 +150,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,ALFA ROMEO,JUNIOR,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,2
 2026,07,02,ASTON MARTIN,DB12,08,Barcelona,Corporate,PHEV,GKL+,FOCUS SEGMENT,Standard,CABRIO,1
 2026,07,02,AUDI,Q5 SPORTBACK,08,Barcelona,Private,ICE,KKL,FOCUS SEGMENT,Standard,SAV,1
-2026,07,02,BARBANY,MASTER,08,Barcelona,Corporate,ICE,,REST,Standard,,1
 2026,07,02,BMW,SERIE 2,08,Barcelona,Corporate,ICE,UKL2,FOCUS SEGMENT,Standard,MPV,1
 2026,07,02,BMW,SERIE 2,08,Barcelona,Corporate,PHEV,UKL2,FOCUS SEGMENT,Standard,MPV,3
 2026,07,02,BMW,X1,08,Barcelona,Corporate,ICE,UKL2,FOCUS SEGMENT,Standard,SAV,4
@@ -177,7 +176,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,EBRO,S400,08,Barcelona,Private,ICE,UKL2,REST,Standard,SAV,3
 2026,07,02,EBRO,S700,08,Barcelona,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,EBRO,S700,08,Barcelona,Private,PHEV,UKL2,REST,Standard,SAV,1
-2026,07,02,ESMI,NISSAN INTERSTAR,08,Barcelona,RAC,ICE,,REST,Standard,,1
 2026,07,02,FAW,YUEYI 07 PHEV,08,Barcelona,RAC,PHEV,,REST,Standard,,1
 2026,07,02,FIAT,500,08,Barcelona,Corporate,ICE,UKL0,REST,Standard,HACH 3P,10
 2026,07,02,FIAT,500,08,Barcelona,Private,ICE,UKL0,REST,Standard,HACH 3P,1
@@ -244,6 +242,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,MINI,HATCHBACK,08,Barcelona,Private,ICE,UKL1,FOCUS SEGMENT,Standard,HACH 3P,1
 2026,07,02,MITSUBISHI,OUTLANDER,08,Barcelona,Corporate,PHEV,KKL,REST,Standard,SAV,1
 2026,07,02,NISSAN,INTERSTAR,08,Barcelona,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,NISSAN,INTERSTAR,08,Barcelona,RAC,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,NISSAN,LEAF,08,Barcelona,Corporate,BEV,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,NISSAN,MICRA,08,Barcelona,Private,BEV,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,NISSAN,QASHQAI,08,Barcelona,Corporate,ICE,UKL2,REST,Standard,SAT,1
@@ -263,8 +262,9 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,PORSCHE,MACAN,08,Barcelona,Private,BEV,KKL,FOCUS SEGMENT,M,SAV,1
 2026,07,02,RENAULT,CAPTUR,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,RENAULT,ESPACE,08,Barcelona,Private,ICE,KKL,REST,Standard,SAV,1
+2026,07,02,RENAULT,MASTER,08,Barcelona,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,RENAULT,MASTER,08,Barcelona,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,RENAULT,SYMBIOZ,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,1
-2026,07,02,RENAULT TRUCKS,MASTER,08,Barcelona,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,SEAT,ARONA,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,2
 2026,07,02,SEAT,ATECA,08,Barcelona,Private,ICE,UKL2,REST,Standard,SAT,2
 2026,07,02,SEAT,IBIZA,08,Barcelona,Private,ICE,UKL1,REST,Standard,HACH 5P,2
@@ -291,10 +291,10 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,TOYOTA,YARIS,08,Barcelona,Private,ICE,UKL1,REST,Standard,HACH 5P,7
 2026,07,02,TOYOTA,YARIS CROSS,08,Barcelona,Corporate,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,TOYOTA,YARIS CROSS,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,7
-2026,07,02,TVI,CRAFTER,08,Barcelona,Corporate,ICE,,REST,Standard,,1
 2026,07,02,VOLKSWAGEN,AMAROK,08,Barcelona,RAC,ICE,SKL,REST,Standard,PICKUP,18
 2026,07,02,VOLKSWAGEN,CADDY,08,Barcelona,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,VOLKSWAGEN,CADDY,08,Barcelona,Private,PHEV,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,VOLKSWAGEN,CRAFTER,08,Barcelona,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,VOLKSWAGEN,GOLF,08,Barcelona,Private,ICE,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,VOLKSWAGEN,TAIGO,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,VOLKSWAGEN,TAYRON,08,Barcelona,Private,ICE,UKL2,REST,Standard,SAV,1
@@ -333,6 +333,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,MERCEDES,EQE,11,Cádiz,Private,BEV,MKL,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,PEUGEOT,2008,11,Cádiz,Private,ICE,UKL1,REST,Standard,SAV,2
 2026,07,02,PEUGEOT,308,11,Cádiz,Private,ICE,UKL2,REST,Standard,HACH 5P,1
+2026,07,02,RENAULT,MASTER,11,Cádiz,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,RENAULT,SYMBIOZ,11,Cádiz,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,SKODA,ELROQ,11,Cádiz,Private,BEV,UKL2,REST,Standard,SAV,1
 2026,07,02,SKODA,ENYAQ,11,Cádiz,Private,BEV,UKL2,REST,Standard,SAV,1
@@ -341,7 +342,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,SKODA,KAROQ,11,Cádiz,Private,ICE,UKL2,REST,Standard,SAT,4
 2026,07,02,TOYOTA,LAND CRUISER,11,Cádiz,Corporate,ICE,GKL,REST,Standard,SUV,1
 2026,07,02,TOYOTA,YARIS CROSS,11,Cádiz,Private,ICE,UKL1,REST,Standard,SAV,3
-2026,07,02,VOLTEGO,MASTER,11,Cádiz,Corporate,ICE,,REST,Standard,,1
 2026,07,02,BYD,DOLPHIN SURF,12,Castellón,Private,BEV,UKL0,REST,Standard,HACH 5P,1
 2026,07,02,CHANGAN,DEEPAL S05,12,Castellón,Private,BEV,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,DACIA,SANDERO,12,Castellón,Private,ICE,UKL1,REST,Standard,HACH 5P,1
@@ -401,7 +401,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,DACIA,BIGSTER,15,A Coruña,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,DACIA,DUSTER,15,A Coruña,Private,ICE,SKL,REST,Standard,PICKUP,1
 2026,07,02,DACIA,SANDERO,15,A Coruña,Private,ICE,UKL1,REST,Standard,HACH 5P,1
-2026,07,02,GRUAUTO,CANTER TYBFEA0,15,A Coruña,Corporate,ICE,,REST,Standard,,1
 2026,07,02,HYUNDAI,I20,15,A Coruña,Corporate,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,HYUNDAI,I20,15,A Coruña,Private,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,HYUNDAI,KONA,15,A Coruña,Corporate,ICE,UKL1,REST,Standard,SAV,1
@@ -415,6 +414,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,MERCEDES,CLASE GLB,15,A Coruña,Corporate,BEV,UKL2,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,MERCEDES,CLASE GLC,15,A Coruña,Private,PHEV,KKL,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,MITSUBISHI,OUTLANDER,15,A Coruña,Private,PHEV,KKL,REST,Standard,SAV,1
+2026,07,02,MITSUBISHI-FUSO,CANTER,15,A Coruña,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,RENAULT,CAPTUR,15,A Coruña,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,SEAT,LEON,15,A Coruña,Private,ICE,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,SKODA,KAMIQ,15,A Coruña,Private,ICE,UKL1,REST,Standard,SAV,1
@@ -537,7 +537,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,CUPRA,RAVAL,22,Huesca,Private,BEV,UKL1,REST,Standard,HACH 5P,2
 2026,07,02,KNAUS,R07,22,Huesca,RAC,ICE,,REST,Standard,,1
 2026,07,02,MERCEDES-V,VITO,22,Huesca,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
-2026,07,02,RENAULT TRUCKS,TRAFIC,22,Huesca,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,RENAULT,TRAFIC,22,Huesca,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,SKODA,FABIA,22,Huesca,Corporate,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,TOYOTA,HI LUX,22,Huesca,Corporate,ICE,SKL,REST,Standard,PICKUP,1
 2026,07,02,VOLKSWAGEN,TIGUAN,22,Huesca,Corporate,ICE,UKL2,REST,Standard,SAV,1
@@ -662,7 +662,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,BYD,SEAL U,28,Madrid,Corporate,PHEV,KKL,REST,Standard,SAV,1
 2026,07,02,BYD,SEAL U,28,Madrid,Private,PHEV,KKL,REST,Standard,SAV,2
 2026,07,02,BYD,SEALION 7,28,Madrid,Corporate,BEV,KKL,REST,Standard,SAV,2
-2026,07,02,CARROCERIAS SANCA,MASTER,28,Madrid,Corporate,ICE,,REST,Standard,,1
 2026,07,02,"CARROCERIAS SANCA, S.A.",N/A,28,Madrid,Corporate,ICE,,REST,Standard,,1
 2026,07,02,CHANGAN,DEEPAL S05,28,Madrid,Private,BEV,UKL2,REST,Standard,HACH 5P,6
 2026,07,02,CI,HORON 79 M,28,Madrid,RAC,ICE,,REST,Standard,,1
@@ -883,6 +882,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,RENAULT,KANGOO,28,Madrid,Corporate,BEV,SKL,REST,Standard,TRANSPORTER,3
 2026,07,02,RENAULT,KANGOO,28,Madrid,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,10
 2026,07,02,RENAULT,KANGOO,28,Madrid,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,RENAULT,MASTER,28,Madrid,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,RENAULT,RAFALE,28,Madrid,Corporate,ICE,UKL2,REST,Standard,SAV,2
 2026,07,02,RENAULT,RAFALE,28,Madrid,Corporate,PHEV,UKL2,REST,Standard,SAV,1
 2026,07,02,RENAULT,RAFALE,28,Madrid,Private,PHEV,UKL2,REST,Standard,SAV,1
@@ -982,7 +982,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,IVECO,DAILY,29,Málaga,RAC,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,JAECOO,JAECOO 5,29,Málaga,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,JAECOO,JAECOO 8,29,Málaga,Private,PHEV,KKL,REST,Standard,SAV,2
-2026,07,02,JIMECA,CANTER 3C13,29,Málaga,Corporate,ICE,,REST,Standard,,1
 2026,07,02,KIA,EV2,29,Málaga,Private,BEV,UKL1,REST,Standard,SAV,1
 2026,07,02,KIA,PICANTO,29,Málaga,Corporate,ICE,UKL0,REST,Standard,HACH 5P,1
 2026,07,02,KIA,PV5,29,Málaga,Private,BEV,SKL,REST,Standard,TRANSPORTER,1
@@ -995,6 +994,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,MERCEDES,CLASE G,29,Málaga,Corporate,ICE,GKL,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,MERCEDES,CLASE GLC,29,Málaga,Corporate,PHEV,KKL,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,MERCEDES,EQA,29,Málaga,Private,BEV,UKL2,FOCUS SEGMENT,Standard,SAV,1
+2026,07,02,MITSUBISHI-FUSO,CANTER,29,Málaga,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,NISSAN,QASHQAI,29,Málaga,Private,ICE,UKL2,REST,Standard,SAT,1
 2026,07,02,PEUGEOT,2008,29,Málaga,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,POLESTAR,POLESTAR 4,29,Málaga,Private,BEV,KKL,FOCUS SEGMENT,Standard,SAV,1
@@ -1036,8 +1036,8 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,OPEL,FRONTERA,30,Murcia,Private,ICE,KKL,REST,Standard,SUV,1
 2026,07,02,RENAULT,AUSTRAL,30,Murcia,Corporate,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,RENAULT,CLIO,30,Murcia,Private,ICE,UKL1,REST,Standard,HACH 5P,2
+2026,07,02,RENAULT,MASTER,30,Murcia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,RENAULT,RAFALE,30,Murcia,Corporate,PHEV,UKL2,REST,Standard,SAV,1
-2026,07,02,RENAULT TRUCKS,MASTER,30,Murcia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,TOYOTA,BZ4X,30,Murcia,Private,BEV,UKL2,REST,Standard,SAV,1
 2026,07,02,TOYOTA,C-HR,30,Murcia,Private,ICE,UKL1,REST,Standard,SAV,2
 2026,07,02,TOYOTA,C-HR,30,Murcia,Private,PHEV,UKL1,REST,Standard,SAV,1
@@ -1166,6 +1166,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,CITROEN,BERLINGO,36,Pontevedra,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,CUPRA,FORMENTOR,36,Pontevedra,Private,ICE,UKL2,REST,Standard,SAT,1
 2026,07,02,DACIA,SANDERO,36,Pontevedra,Private,ICE,UKL1,REST,Standard,HACH 5P,4
+2026,07,02,FORD,TRANSIT,36,Pontevedra,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,IVECO,120EL,36,Pontevedra,Corporate,ICE,,REST,Standard,,1
 2026,07,02,IVECO,DAILY,36,Pontevedra,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,KIA,EV2,36,Pontevedra,Private,BEV,UKL1,REST,Standard,SAV,1
@@ -1181,7 +1182,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,TOYOTA,C-HR,36,Pontevedra,Corporate,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,TOYOTA,COROLLA,36,Pontevedra,Private,ICE,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,TOYOTA,PROACE CITY,36,Pontevedra,Corporate,BEV,SKL,REST,Standard,TRANSPORTER,1
-2026,07,02,TRIPOD,TOURNEO CONNECT,36,Pontevedra,Private,ICE,,REST,Standard,,1
 2026,07,02,CITROEN,C3 AIRCROSS,37,Salamanca,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,DACIA,SANDERO,37,Salamanca,Private,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,EBRO,S400,37,Salamanca,Private,ICE,UKL2,REST,Standard,SAV,1
@@ -1393,7 +1393,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,PEUGEOT,EXPERT,46,Valencia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,PORSCHE,CAYENNE,46,Valencia,Corporate,BEV,MKL,FOCUS SEGMENT,M,SAV,1
 2026,07,02,RENAULT,KANGOO,46,Valencia,Private,ICE,SKL,REST,Standard,TRANSPORTER,2
-2026,07,02,RENAULT TRUCKS,MASTER,46,Valencia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,02,RENAULT,MASTER,46,Valencia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,SEAT,ARONA,46,Valencia,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,SEAT,LEON,46,Valencia,Private,ICE,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,SKODA,KAROQ,46,Valencia,Private,ICE,UKL2,REST,Standard,SAT,1
@@ -1401,13 +1401,13 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,TOYOTA,C-HR,46,Valencia,Corporate,PHEV,UKL1,REST,Standard,SAV,1
 2026,07,02,TOYOTA,C-HR,46,Valencia,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,TOYOTA,COROLLA,46,Valencia,Private,ICE,UKL2,REST,Standard,HACH 5P,5
+2026,07,02,TOYOTA,PROACE,46,Valencia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,2
 2026,07,02,TOYOTA,RAV 4,46,Valencia,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,TOYOTA,YARIS,46,Valencia,Private,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,TOYOTA,YARIS CROSS,46,Valencia,Corporate,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,TOYOTA,YARIS CROSS,46,Valencia,Private,ICE,UKL1,REST,Standard,SAV,10
 2026,07,02,VOLKSWAGEN,AMAROK,46,Valencia,Corporate,ICE,SKL,REST,Standard,PICKUP,1
 2026,07,02,VOLKSWAGEN,MULTIVAN,46,Valencia,Corporate,PHEV,SKL,REST,Standard,TRANSPORTER,1
-2026,07,02,VOLQUETES GONZALVEZ,PROACE MAX,46,Valencia,Corporate,ICE,,REST,Standard,,2
 2026,07,02,CHANGAN,DEEPAL S05,47,Valladolid,Private,BEV,UKL2,REST,Standard,HACH 5P,1
 2026,07,02,DACIA,BIGSTER,47,Valladolid,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,DACIA,SANDERO,47,Valladolid,Private,ICE,UKL1,REST,Standard,HACH 5P,2
@@ -1426,7 +1426,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,RENAULT,TWINGO,47,Valladolid,Private,BEV,UKL0,REST,Standard,HACH 5P,1
 2026,07,02,BMW,X1,48,Bizkaia,Corporate,PHEV,UKL2,FOCUS SEGMENT,Standard,SAV,1
 2026,07,02,BMW,X3,48,Bizkaia,Corporate,PHEV,KKL,FOCUS SEGMENT,Standard,SAV,1
-2026,07,02,CARROCERIAS EL GALLO,35C16,48,Bizkaia,Corporate,ICE,,REST,Standard,,1
 2026,07,02,CITROEN,C3,48,Bizkaia,Private,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,02,CITROEN,C3 AIRCROSS,48,Bizkaia,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,02,CUPRA,RAVAL,48,Bizkaia,Private,BEV,UKL1,REST,Standard,HACH 5P,1
@@ -1441,6 +1440,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,02,FORD,KUGA,48,Bizkaia,Private,PHEV,UKL2,REST,Standard,SAV,1
 2026,07,02,FORD,TRANSIT CUSTOM,48,Bizkaia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,2
 2026,07,02,HYUNDAI,TUCSON,48,Bizkaia,Private,ICE,UKL2,REST,Standard,SAV,1
+2026,07,02,IVECO,DAILY,48,Bizkaia,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,02,JEEP,AVENGER,48,Bizkaia,Corporate,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,KIA,STONIC,48,Bizkaia,Private,ICE,UKL1,REST,Standard,SAV,1
 2026,07,02,KIA,XCEED,48,Bizkaia,Private,ICE,UKL2,REST,Standard,HACH 5P,1

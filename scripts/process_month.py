@@ -401,6 +401,73 @@ CARROCERO_BRANDS = {
     'STIL CONVERSION', 'SUBIELA', 'TECNOVE', 'TECNOVE FIBERGLASS', 'TSD', 'ULTRAND',
     'VSVE', 'ZAGO AUTOMOTIVE',
     'MULTITEL', 'WEINSBERG',
+    # Carroceros/conversores sobre chasis Sprinter (ambulancias, isotermos,
+    # frigoríficos, minibuses) hallados 2026-07-27 en export mensual DGT
+    # 202606: marca=nombre del conversor en vez de Mercedes, exactamente el
+    # mismo patrón que las entradas de arriba, solo que no estaban listadas.
+    'ALTAS AUTO', 'ANGEL BRUGUERA FONT', 'BALEAR DE CARROSSERIES', 'BARBANY',
+    'BEYERLAND', 'CALVO', 'CARROCERIAS CREVILLENTE', 'CARROCERIAS EL GALLO',
+    'CARROCERIAS FRIGOASTUR', 'CARROCERIAS FRIGORIFICAS SEVIL',
+    'CARROCERIAS JEREZ', 'CARROCERIAS MINDA', 'CARROCERIAS MR',
+    'CARROCERIAS SANCA', 'CERRAJERIA AURELIO', 'CIBAD', 'ECOGAM', 'EQUIPFRED',
+    'ERJOMA', 'ESMI', 'FENIKS', 'FURCAR', 'GARCIA BLAZQUEZ  MORENO', 'HORSCH',
+    'IBERICA DE ISOTERMIZACIONES', 'ITS SYSTEM', 'LAMAR', 'LIDERKIT',
+    'MENGERLER', 'MERCUS', 'MINIBUS LUXURY', 'NPS', 'ROMERO', 'SCORA',
+    'SERVI CAR', 'SERVICAR', 'TALLERES PRAT-RUSIÑOL', 'TEKAYDINLAR',
+    'THERMOEUROP', 'URO-CAMPER', 'VALLOR', 'VOLQUETES GONZALVEZ',
+    'YILDIZ KAROSER',
+    # Carroceros/conversores hallados 2026-07-27 barriendo 6 meses de export
+    # mensual DGT completo (enero-junio 2026) sobre TODOS los chasis conocidos
+    # (Sprinter/Ducato/Boxer/Jumper/Transit/Master/Trafic/Daily/Crafter/
+    # Canter/TGE/...), no solo Sprinter: mismo patron, lista incompleta.
+    'AGUINAGA', 'ALFOZ', 'ALMANSA', 'ALONSO', 'AMELINE', 'ANTONIO JURADO GONZALEZ',
+    'APLITECH', 'ARB ARBUCIES', 'ATALAYA', 'ATM', 'AUTAL', 'AUTOBALERMA', 'AVEURO',
+    'AYATS', 'BAHIA V.I.', 'BALLESTAS REUS', 'BASREAL', 'BAYCAR', 'BEMAR', 'BERGADA',
+    'BORRA', 'BRETCHA', 'BULLFUEGO', 'BUS-PRESTIGE', 'C.T.E.', 'CACESA', 'CAFRAN',
+    'CAFRISE', 'CAJISA', 'CALLAU', 'CALZADA', 'CARGAN', 'CARPOL', 'CARR. AITOR',
+    'CARRALSER', 'CARRO', 'CARROCER SANCHEZ RENEO', 'CARROCER.FRIGOR.SEVILLA',
+    'CARROCERIAS AITOR', 'CARROCERIAS ALAMOS', 'CARROCERIAS CITY', 'CARROCERIAS CONRADO',
+    'CARROCERIAS CORRAL', 'CARROCERIAS DAFER', 'CARROCERIAS DEL VALLE',
+    'CARROCERIAS FRANCAR', 'CARROCERIAS GIL-MA-FER', 'CARROCERIAS GRANADA',
+    'CARROCERIAS HNOS CASES', 'CARROCERIAS JANKAR', 'CARROCERIAS JAZ', 'CARROCERIAS OKA',
+    'CARROCERIAS PROCAR', 'CARROCERIAS PUERTO', 'CARROCERIAS RAFAEL MIRALLES',
+    'CARROCERIAS REVERTE', 'CARROCERIAS SALAMANCA', 'CARROCERIAS SANCA SA',
+    'CARROCERIAS SIGLER', 'CARROCERIAS VASALLO', 'CARROCERIAS VICAM',
+    'CARROCERIAS VILLAVERDE', 'CARROCERIAS VILLFER', 'CARROCERIAS YECLA',
+    'CARROSSERIES TOLOSA', 'CAYVOL', 'CBF NAVARRO', 'CERRAPALMA', 'CHAPINSA',
+    'CHAPISTERIA V.I.', 'CISVAN CARROCERIAS', 'COCAR', 'COLD CAR',
+    'COMPOSITES REFORZADOS', 'CONGRUAL', 'CONSA', 'COOLGADES', 'CORNELLA',
+    'COSMEA ESPINEDO', 'COSTA', 'CRASTIR', 'CTE', 'CUBY', 'DANGEL',
+    'DAVID INDUSTRIAS MET', 'DIAZCUTILLAS', 'DIGAL', 'DIVISEGUR CATALUNYA', 'DONOSO',
+    'ECOAUTO', 'ECOINDUSTRY', 'EGA', 'ELECTROHIDRAULICA S P', 'ENAIRE', 'ENCABO',
+    'ERROBITRAK', 'ESCALANTE', 'ESCARDA', 'ESQUERDA', 'ESREF KAROSER', 'ESTESO',
+    'ETXEBERRIA', 'FEGAMAR', 'FIREMAR', 'FLUVIA', 'FOIMA', 'FRAGUA', 'FRAMIREZ',
+    'FRANCAL', 'FRANGU', 'FRISACUL', 'FROILAN', 'GALO HEREDIA', 'GAPA',
+    'GARCIA BLAZQUEZ MORENO', 'GARRIDO', 'GEMA PENINSULAR', 'GENERALIFE', 'GEYCODIESEL',
+    'GOMEZ', 'GONZALO-GARCIA', 'GORBEA', 'GRUAS BASCULANTE GUZMAN', 'GRUAU', 'GRUAUTO',
+    'GRUCEX', 'GURSOZLER', 'HALCON', 'HENALES', 'HENALES ALVAREZ', 'HERCOV',
+    'HERMANOS GARRID  MARTOS', 'HERMONT', 'HICAVAL', 'HIDRAULICOS JOMAR', 'HIDROMAYORAL',
+    'HITRAVI', 'IGH INDUSTRIAS GONZALEZ HERMAN', 'IMO', 'INCASE', 'INDUCAE', 'IREGUA',
+    'ISO BLU', 'ITURRI', 'JASPE', 'JEBLA', 'JIMECA', 'JONUF', 'JOSE MARIA GLEZ DIAZ',
+    'JOSE R MENENDEZ E HIJOS', 'JOSE REYES CARROCERO', 'JUAN FERIA', 'JUAN SUAREZ',
+    'JULIAN HERMOSA HERRERO', 'LA JUNQUERA', 'LA RUEDA', 'LAMBERET', 'LORCA',
+    'LOS MAÑOS', 'LUIS GARCIA', 'M TORRE', 'MACROMER', 'MANUEL ZUÑIGA MARTINEZ', 'MAR',
+    'MARZASA', 'MATURANA', 'MAZZOCCHIA', 'MECACLIMA', 'MODELCAR HNOS', 'MONZA',
+    'MOTOWEKTOR', 'MOVEX', 'MULTIGOM', 'MYCSA', 'NARROTRAILER FRUEHAUF', 'NOM',
+    'NORANTZ', 'NOROESTE', 'NORTH CAPE', 'ODL', 'OIL&STEEL', 'OLIAT', 'ONTIYENT',
+    'PALFINGER', 'PERIANES', 'PERTASA', 'PIRINEUS', 'POLIGRUA', 'POLYCAR', 'PONIENTE',
+    'PROCHASIS', 'PUJOL', 'RECHE', 'REGA', 'REHATRANS', 'REMAOP', 'REMASFRI', 'REVOLSA',
+    'RIGUAL', 'ROS ROCA', 'ROS-ROCA', 'ROTOMAR', 'SARTRUCK', 'SERRANO', 'SIGLER', 'SILA',
+    'SNOEKS', 'SNOEKS AUTOMOTIVE', 'SOMONTE', 'SPRINTCAR', 'STX', 'SUCARRATS',
+    'SUN LIVING', 'SURTRUCK', 'TAGASA', 'TAILON', 'TALLERES AGUILAR',
+    'TALLERES LAS GANDARAS', 'TALLERES PRAT', 'TALLERES PRAT RUSIÑOL', 'TAMAME',
+    'TAMBRE', 'TECME', 'TECNO TRAILER MURCIA', 'TECNOCARROCERA', 'TECNOCARSA',
+    'TECNOCARSA, S.L.', 'TECNOVE CUSTOM TRUCKS', 'TEICAR', 'TERRADAS', 'THEAULT',
+    'THERMOBUS', 'THV', 'TMMA', 'TODOGRUAS', 'TRANSPOL', 'TREMONIA MOBILITY', 'TRIPOD',
+    'TRUCK DEAL', 'TVI', 'UBEMAR', 'UNVI', 'URBAN TRUCKS', 'VAG', 'VALLEJO', 'VALSAT',
+    'VEBLINTER', 'VEMASUR', 'VICTOR HERNANDEZ', 'VIEL CARROCERIAS', 'VLOCON', 'VOLMUR',
+    'VOLQUETES DEL SUR', 'VOLQUETES Y CAR GALICIA', 'VOLQUETES Y CARROCERIAS GALICI',
+    'VOLTEGO', 'VPS', 'YAGUE', 'YOLDI',
 }
 _CHASSIS_RULES = [
     (re.compile(r'\bDUCATO'),                      'FIAT',            'DUCATO'),
@@ -412,10 +479,20 @@ _CHASSIS_RULES = [
     (re.compile(r'\bTRANSIT\s*CUSTOM'),            'FORD',            'TRANSIT CUSTOM'),
     (re.compile(r'\bTRANSIT\s*COURIER'),           'FORD',            'TRANSIT COURIER'),
     (re.compile(r'\bTRANSIT|\bTOURNEO'),           'FORD',            'TRANSIT'),
-    (re.compile(r'\bMASTER'),                      'RENAULT TRUCKS',  'MASTER'),
-    (re.compile(r'\bTRAFIC'),                      'RENAULT TRUCKS',  'TRAFIC'),
+    # Master/Trafic carrozados por terceros -> RENAULT (no RENAULT TRUCKS).
+    # Verificado 2026-07-27: el bucket 'Renault Trucks' de Simmix (Master 754 +
+    # Trafic 302) ya cuadraba via el rescate N2 de fabrica (n2_van_target,
+    # variantes N2 de fabrica con marca=RENAULT); al ampliar CARROCERO_BRANDS
+    # y mandar tambien las conversiones de terceros a RENAULT TRUCKS, el
+    # bucket se disparo muy por encima de Simmix. Los carrozados de terceros
+    # (ambulancias, isotermos...) sobre chasis Master/Trafic los cuenta
+    # Simmix bajo RENAULT normal, igual que las furgonetas Sprinter con
+    # MERCEDES.
+    (re.compile(r'\bMASTER'),                      'RENAULT',         'MASTER'),
+    (re.compile(r'\bTRAFIC'),                      'RENAULT',         'TRAFIC'),
     (re.compile(r'\bTGE\b'),                       'MAN',             'TGE'),
     (re.compile(r'\bCANTER|\bFUSO'),               'MITSUBISHI-FUSO', 'CANTER'),
+    (re.compile(r'\bE-?SPRINTER'),                 'MERCEDES',        'E-SPRINTER'),
     (re.compile(r'\bSPRINTER'),                    'MERCEDES',        'SPRINTER'),
     (re.compile(r'\bCRAFTER'),                     'VOLKSWAGEN',      'CRAFTER'),
     (re.compile(r'\bAMAROK'),                      'VOLKSWAGEN',      'AMAROK'),
@@ -492,6 +569,9 @@ _BMW_IMODEL_FIX = {
 _BRAND_NORM = {
     'MERCEDES-BENZ': 'MERCEDES', 'MERCEDES BENZ': 'MERCEDES',
     'MERCEDES-AMG': 'MERCEDES',   # AMG cars map to Mercedes scope brand
+    'DAIMLER': 'MERCEDES', 'MERCEDES IDILIS': 'MERCEDES',
+    'MERCEDES BENZ AG': 'MERCEDES', 'MERCEDES-BENZ MINIBUS': 'MERCEDES',
+    'MFTBC': 'MITSUBISHI-FUSO', 'IVECO DAILY': 'IVECO',
     'LYNK&CO': 'LYNK & CO',
     "ALKE'": 'ALKE',
     '212': 'BAW',

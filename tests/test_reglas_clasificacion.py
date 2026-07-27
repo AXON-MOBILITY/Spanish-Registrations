@@ -300,9 +300,12 @@ def test_carrozado_transit_custom_va_a_ford():
     assert (marca, modelo) == ('FORD', 'TRANSIT CUSTOM')
     assert not unmapped
 
-def test_carrozado_master_va_a_renault_trucks():
+def test_carrozado_master_va_a_renault():
+    """Verificado 2026-07-27: Simmix cuenta los Master/Trafic carrozados por
+    terceros bajo RENAULT normal, no RENAULT TRUCKS (esa marca en Simmix solo
+    tiene las variantes N2 de fabrica, via n2_van_target)."""
     marca, modelo, _ = pm.reassign_carrocero('EUROCARROCERA', 'MASTER L3H2')
-    assert (marca, modelo) == ('RENAULT TRUCKS', 'MASTER')
+    assert (marca, modelo) == ('RENAULT', 'MASTER')
 
 def test_carrozado_tge_va_a_man():
     marca, modelo, _ = pm.reassign_carrocero('CAPRON', 'MAN TGE 3.140')
