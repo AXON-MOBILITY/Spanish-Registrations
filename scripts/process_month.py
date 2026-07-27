@@ -456,7 +456,8 @@ def reassign_carrocero(marca, modelo):
 # ── Rescate N2 de derivados de furgoneta (scope Simmix) ─────────────────────
 # Simmix incluye variantes N2 (>3.500 kg) de furgonetas grandes que el filtro
 # M1/N1 excluiría: Renault Trucks Master 4.5t, MAN TGE, Fuso Canter, Isuzu
-# serie N, Iveco Daily. Devuelve la marca destino o None si no aplica.
+# serie N, Iveco Daily, Mercedes Sprinter 400/500. Devuelve la marca destino
+# o None si no aplica.
 def n2_van_target(marca, modelo):
     m = marca.strip().upper()
     mo = (modelo or '').upper()
@@ -472,6 +473,8 @@ def n2_van_target(marca, modelo):
         return 'ISUZU'
     if m == 'IVECO':
         return 'IVECO'  # Daily y variantes (35C17, 40C15, 50C18, 70C17…)
+    if m == 'MERCEDES' and 'SPRINTER' in mo:
+        return 'MERCEDES'  # Sprinter 400/500 N2 — Simmix los cuenta bajo Mercedes normal
     return None
 
 
@@ -1115,7 +1118,14 @@ def lookup_enrichment(marca_raw, raw_modelo_field, raw_line=None):
     """Devuelve (modelo_canon, seg, sub, hp, body, fuel_detail) o 6x ''."""
     sbrand = _BRAND_NORM.get(marca_raw, marca_raw)
     # L1: exact match en _ENRICHMENT (version_dgt exacto → modelo)
-    enr_key = (sbrand, raw_modelo_field.strip().upper())
+    # El campo DGT crudo trae el modelo/version seguido de un codigo tecnico
+    # (WMI/chasis, 6+ alfanumerico) que master_version_enrichment.csv no
+    # incluye en version_dgt — hay que quitarlo antes del match, igual que
+    # hace _model_candidates, o el L1 nunca acierta. Verificado 2026-07-27:
+    # sin este fix, GLC Coupe/GLE Coupe/Corolla Cross/C3 Aircross caian
+    # siempre en el modelo base porque el match exacto nunca se producia.
+    _l1_clean = _APPROVAL_RE.sub('', raw_modelo_field.replace('\xa0', ' ')).strip()
+    enr_key = (sbrand, _l1_clean.upper())
     if enr_key in _ENRICHMENT:
         enr = _ENRICHMENT[enr_key]
         return enr['modelo'], enr['seg'], enr['sub'], enr['hp'], enr['body'], enr.get('fuel_detail', '')
@@ -1643,14 +1653,14 @@ def normalize_marca(marca, modelo=''):
     if m == 'SPORTEQUIPE' and ('ICH-X' in mo or mo.startswith('X K')):
         return 'ICH-X'
     if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG'):
-        # Mercedes V-Class / Vito family → Mercedes-V scope (separate brand in Simmix)
-        # DGT raw F_MODELO: 'VITO 116...', 'EVITO TOURER...', 'CLASE V...', 'V 220 D...',
-        #                    'V 250...', 'V 300...', 'EQV 300...', 'MARCO POLO...'
-        if ('VITO' in mo
-                or mo.startswith(('CLASE V', 'V 220', 'V 250', 'V 300',
-                                   'EQV', 'EVITO', 'MARCO POLO', 'V-KLASSE'))):
+        # Mercedes-V scope: verificado 2026-07-27 contra export diario Simmix
+        # (marca literal 'Mercedes-V' en su fichero) — SOLO contiene Vito.
+        # Clase V, Marco Polo, EQV, V 220/250/300, V-Klasse y eVito los cuenta
+        # Simmix bajo 'Mercedes' normal, no bajo 'Mercedes-V'. Antes esta regla
+        # los redirigia todos a MERCEDES-V, lo que descuadraba ambas marcas.
+        if 'VITO' in mo and not mo.startswith(('EVITO', 'E-VITO')):
             return 'MERCEDES-V'
-        # Citan/T-Class/Sprinter/EQT → stay as MERCEDES (passenger/commercial scope)
+        # Citan/T-Class/Sprinter/EQT/Clase V/Marco Polo → stay as MERCEDES
     return m
 
 
@@ -1831,18 +1841,30 @@ def passes_dgt_scope_filters(line_s):
         return False
     cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
     homologacion = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
-    # Admitir si: COD_TIPO conocido, O homologación M1/N1 (criterio Simmix),
-    # O excepción de marca específica (Mercedes/Toyota/Peugeot vans).
-    # Excepción: COD_TIPO '20' solo se admite mediante las excepciones explícitas
-    # de marca (Sprinters, Partner), no por la regla general de homologación.
-    # La evidencia empírica muestra que '20' incluye variantes cargo que Simmix
-    # excluye salvo en los casos muy específicos ya codificados.
+    # Admitir si: COD_TIPO conocido, O homologación M1/N1 (criterio Simmix,
+    # independientemente del COD_TIPO — verificado 2026-07-27 contra export
+    # diario Simmix: Kangoo/Master/Trafic/Transit*/Jumpy/Berlingo/Jumper/
+    # Partner/Expert/Boxer/Caddy/Transporter/Crafter/Doblo/Ducato/Scudo/
+    # Ulysse/Combo/Vivaro/Movano/Daily/Vito/Citan van todos con COD_TIPO='20'
+    # y homologación N1 en DGT, y Simmix los cuenta como N1 sin excepción),
+    # O excepción de marca específica (Mercedes/Toyota/Peugeot vans con ficha
+    # ITV sin homologación rellena), O N2 rescatable (ver n2_van_target: esta
+    # puerta se ejecuta ANTES que el rescate N2 de process_lines, así que si
+    # no se deja pasar aquí, el registro nunca llega a esa lógica y el
+    # rescate no sirve de nada — bug detectado 2026-07-27 al comprobar que
+    # el rescate de Mercedes Sprinter 400/500 no cambiaba ningún número).
     if (cod_tipo not in DGT_SCOPE_COD_TIPO
-            and not (homologacion.startswith(('M1', 'N1')) and cod_tipo != '20')
+            and not homologacion.startswith(('M1', 'N1'))
             and not is_mercedes_rest_scope_cod_tipo_exception(line_s)
             and not is_toyota_rest_scope_cod_tipo_exception(line_s)
             and not is_peugeot_rest_scope_cod_tipo_exception(line_s)):
-        return False
+        if not homologacion.startswith('N2'):
+            return False
+        marca_raw = line_s[F_MARCA[0]:F_MARCA[1]]
+        modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
+        marca = normalize_marca(marca_raw, modelo)
+        if n2_van_target(marca, modelo) is None:
+            return False
     return True
 
 
