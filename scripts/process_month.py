@@ -1417,101 +1417,17 @@ KM0_BRAND_FALLBACK_RATE = {
 }
 
 
-# Residual scope calibration by brand/channel, learned from Simmix exports
-# after deterministic brand/model/channel rules and Km.0 fallback.
-# This handles small remaining scope differences between the DGT microdata and
-# Simmix business rules while keeping the adjustment tied to source exports.
-CHANNEL_SCOPE_FACTOR = {
-    ('AUDI', 'Corporate'): 1.0303030303,  # recalibrado jul-2026: S=306, D=297 → 306/297
-    ('AUDI', 'Private'): 0.9536082474,    # recalibrado jul-2026: S=185, D=194 → 185/194
-    ('AUDI', 'RAC'): 1.0000000000,        # RAC cuadra exacto
-    ('BMW', 'Corporate'): 0.9971098267,
-    ('BMW', 'Private'): 0.9895104896,
-    ('BMW', 'RAC'): 1.0012953369,
-    ('MINI', 'Corporate'): 0.9930362118,
-    ('MINI', 'Private'): 1.0011111112,
-    ('MINI', 'RAC'): 0.9973118281,
-    ('MERCEDES', 'Corporate'): 1.0216586450,
-    ('MERCEDES', 'Private'): 1.0005296611,
-    ('MERCEDES', 'RAC'): 1.0173891130,
-    ('BYD', 'Corporate'): 0.96574882,
-    # CITROEN/FIAT/FORD/OPEL/RENAULT Private, IVECO, MAN e ISUZU eliminados
-    # 2026-07-02: compensaban estadísticamente los carrozados/camperizados y
-    # los N2 derivados de furgoneta; ahora lo cubren las reglas deterministas
-    # reassign_carrocero() y n2_van_target(). Mantenerlos duplicaría.
-    ('CITROEN', 'RAC'): 0.99078595,
-    ('DACIA', 'Private'): 1.00758472,
-    # DS eliminado 2026-07-02: el gap 2023-25 era de alias (DS AUTOMOBILES),
-    # ya resuelto. Con factor, H1 2026 sobreestimaba +843 uds; sin factor,
-    # delta -4/-2/-2 por canal vs Simmix.
-    ('EVO', 'Private'): 2.17007874,
-    ('FIAT', 'RAC'): 1.01984023,
-    ('FORD', 'RAC'): 0.90588365,
-    ('HYUNDAI', 'RAC'): 0.99352733,
-    ('KIA', 'Corporate'): 0.99571533,
-    ('LAND ROVER', 'Corporate'): 0.9970238096,
-    ('LAND ROVER', 'Private'): 0.9659090910,
-    ('LAND ROVER', 'RAC'): 1.0106382980,
-    # LEAPMOTOR eliminado 2026-07-02: el factor 2023-25 borraba ~1.050 uds
-    # reales en H1 2026; sin factor, delta -29/+42/+1 por canal vs Simmix.
-    ('LEXUS', 'Corporate'): 0.9924924926,
-    ('LEXUS', 'Private'): 1.0009041592,
-    ('LEXUS', 'RAC'): 0.9875000001,
-    ('MERCEDES-V', 'Corporate'): 1.0138121548,
-    ('MERCEDES-V', 'Private'): 1.1363636365,
-    ('MERCEDES-V', 'RAC'): 0.9901574804,
-    ('MG', 'Corporate'): 0.94479441,
-    ('MG', 'Private'): 1.00496327,
-    ('NISSAN', 'Private'): 1.01034865,
-    ('NISSAN', 'RAC'): 0.92680608,
-    ('OPEL', 'RAC'): 0.95423341,
-    ('PEUGEOT', 'Private'): 1.07181872,
-    ('PEUGEOT', 'RAC'): 1.01310178,
-    ('PORSCHE', 'Corporate'): 0.9779874215,
-    ('PORSCHE', 'Private'): 1.0035211269,
-    ('PORSCHE', 'RAC'): 1.1170212767,
-    ('RENAULT', 'RAC'): 0.97824095,
-    ('SEAT', 'Private'): 1.03028465,
-    ('SEAT', 'RAC'): 0.94677806,
-    ('SKODA', 'Corporate'): 0.97607462,
-    ('SKODA', 'RAC'): 1.05566792,
-    ('SSANGYONG', 'Private'): 1.07851385,
-    ('SUZUKI', 'Corporate'): 0.91580977,
-    ('SUZUKI', 'RAC'): 1.14340263,
-    ('TESLA', 'Corporate'): 0.8838383839,
-    ('TESLA', 'Private'): 1.0255102042,
-    ('TESLA', 'RAC'): 0.9500000001,
-    ('TOYOTA', 'Private'): 1.01480633,
-    ('TOYOTA', 'RAC'): 0.98402966,
-    ('VOLKSWAGEN', 'Corporate'): 0.99806854,
-    ('VOLKSWAGEN', 'Private'): 1.00295073,
-    ('VOLKSWAGEN', 'RAC'): 1.06340502,
-    ('VOLVO', 'Corporate'): 0.9877250410,
-    ('VOLVO', 'Private'): 1.0079365080,
-    ('VOLVO', 'RAC'): 0.9989247313,
-}
+# Residual scope calibration eliminada 2026-07-27: los factores estadísticos
+# por (marca, canal) contradecían la regla de no tocar datos en bruto con
+# cantidades hardcodeadas. El filtrado determinista (passes_dgt_scope_filters,
+# homologación EU M1/N1, reassign_carrocero, n2_van_target) ya replica la
+# lógica de Simmix sin ajustes numéricos manuales.
+CHANNEL_SCOPE_FACTOR = {}
 
 
-# 2026 Simmix residuals are not always distributed evenly across Focus/Rest.
-# Mercedes is the relevant case: most residual scope appears in commercial Rest
-# models, so a brand+channel factor incorrectly inflates passenger Focus.
-CHANNEL_SUBSEG_SCOPE_FACTOR = {
-    ('MERCEDES', 'Corporate', 'FOCUS SEGMENT'): 1.0180512627,
-    ('MERCEDES', 'Corporate', 'REST'): 1.1226966292,
-    ('MERCEDES', 'Private', 'FOCUS SEGMENT'): 0.9532303901,
-    ('MERCEDES', 'Private', 'REST'): 1.2984870968,
-    ('MERCEDES', 'RAC', 'FOCUS SEGMENT'): 1.0035294118,
-    ('MERCEDES', 'RAC', 'REST'): 1.0987903226,
-    ('LEXUS', 'Corporate', 'FOCUS SEGMENT'): 0.9927686217,
-    ('LEXUS', 'Corporate', 'REST'): 0.7501000000,
-    ('LEXUS', 'Private', 'FOCUS SEGMENT'): 1.0012468174,
-    ('LEXUS', 'Private', 'REST'): 0.2500000000,
-    ('LEXUS', 'RAC', 'FOCUS SEGMENT'): 1.0000000000,
-    ('VOLVO', 'Corporate', 'FOCUS SEGMENT'): 1.0015505367,
-    ('VOLVO', 'Private', 'FOCUS SEGMENT'): 0.9864429752,
-    ('VOLVO', 'Private', 'REST'): 0.0000000000,
-    ('VOLVO', 'RAC', 'FOCUS SEGMENT'): 1.0000000000,
-}
+# CHANNEL_SUBSEG_SCOPE_FACTOR eliminado 2026-07-27: mismo criterio que
+# CHANNEL_SCOPE_FACTOR — factores hardcodeados prohibidos.
+CHANNEL_SUBSEG_SCOPE_FACTOR = {}
 
 
 ALERT_DRIFT_START_YEAR = 2026
