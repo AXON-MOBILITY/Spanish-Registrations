@@ -95,6 +95,9 @@ _EXTRA_CLASSIFIED = {
     'Rapido', 'Secma', 'Plymouth', 'La Hispano Suiza', 'Abt',
     'Feniks', 'Gruau',
     'Lepas', 'Tecnove',
+    # Revisadas 2026-07-28: marcas reales sin chasis de furgoneta detectable
+    # (no se reasignan, se quedan como marca propia)
+    'Farizon', 'Zeroid', 'Evitalia', 'Feidi', 'Kyc',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 

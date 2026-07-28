@@ -468,6 +468,53 @@ CARROCERO_BRANDS = {
     'VEBLINTER', 'VEMASUR', 'VICTOR HERNANDEZ', 'VIEL CARROCERIAS', 'VLOCON', 'VOLMUR',
     'VOLQUETES DEL SUR', 'VOLQUETES Y CAR GALICIA', 'VOLQUETES Y CARROCERIAS GALICI',
     'VOLTEGO', 'VPS', 'YAGUE', 'YOLDI',
+    # Hallados 2026-07-28 via alerta "Unclassified new brands": variantes de
+    # texto de marcas ya listadas (guion/gmbh) y camperizadoras nuevas cuyo
+    # codigo de chasis (WMI) en el modelo ya reconocen las reglas existentes.
+    'ROLLER-TEAM', 'BURSTNER GMBH', 'WINGAMM', 'ACROSS CAR', 'FORSTER',
+    'CASELANI', 'NOMADE NATION', 'XTREMOBILITY', 'XGO', 'SIRUS AUTOMOTIVE LTD',
+    'WESTFALEN MOBIL GMBH', 'MAMSA FVO',
+    # Hallados 2026-07-28 barriendo TODOS los codigos de chasis (WMI) en
+    # bruto de los 6 meses (ZFA=Fiat, WF0=Ford, VF7=Citroen, VF3=Peugeot,
+    # VF1=Renault, ZCF=Iveco, W1V=Mercedes), no solo palabras clave de
+    # texto: caravanas/conversores cuyo modelo no dice el nombre del
+    # chasis en ningun sitio, solo el codigo.
+    '3 CARROCEROS', 'A.R. PICHEL SA', 'ACROSS', 'ACTIVITY', 'AEBI-SCHMIDT',
+    'ALLIED VEHICLES LTD', 'ALQUIBER QUALITY', 'AMS', 'ANGEL BRUGUERA FONT', 'ASTIZ',
+    'ATIS', 'AUTOBALERMA', 'BAHIA V.I.', 'BARBANY', 'BARYSERV', 'BAVARIA', 'BAYCAR',
+    'BEMAR', 'BLUCAMP', 'BRAVIA', 'BUCHER', 'BUNKERVAN', 'BURSTNER', 'BÜRSTNER GMBH',
+    'CACESA', 'CAPRON GMBH', 'CAR-BUS.NET', 'CARROCERIAS ALAMOS', 'CARROCERIAS CONRADO',
+    'CARROCERIAS DEL VALLE', 'CARROCERIAS FRIGOASTUR', 'CARROCERIAS FRIGORIFICAS SEVIL',
+    'CARROCERIAS GIL-MA-FER', 'CARROCERIAS JANKAR', 'CARROCERIAS MINDA',
+    'CARROCERIAS PROCAR', 'CARROCERIAS PUERTO', 'CARROCERIAS SALAMANCA',
+    'CARROCERIAS SEVILLA', 'CARROCERIAS VILLAVERDE', 'CARROSSERIES TOLOSA',
+    'CARROZADOS TECAI', 'CARTHAGO', 'CAYVOL', 'CELA', 'CERRAJERIA AURELIO', 'CHAPINSA',
+    'CHAUSSON', 'CI', 'COBO HERMANOS SL', 'COCAR', 'COGRUAS', 'COLD CAR', 'CONCORDE',
+    'CONGRUAL', 'CONSA', 'COSMEA ESPINEDO', 'CRASTIR', 'CTE', 'CUBAS SEGRE', 'DONOSO',
+    'DREAM', 'DREAMER', 'ECOINDUSTRY', 'ELIOS', 'ELNAGH', 'ENCABO', 'EQUIPFRED',
+    'ERJOMA', 'ERROBITRAK', 'ERROBITRAK, S.L.', 'ESCALANTE', 'ESMI', 'ESTESO', 'ETRUSCO',
+    'EURA MOBIL', 'FARID INDUSTRIE', 'FAVELIM', 'FENIKS', 'FERQUI', 'FLEURETTE', 'FOIMA',
+    'FRANGU', 'FRISACUL', 'FRUMECAR', 'FURCAR', 'FURGOK', 'FURGOKARAVANING',
+    'GALO HEREDIA', 'GICALLA', 'GIOTTLINE', 'HALLER BENELUX', 'HANSA', 'HERCOV',
+    'HERMONT', 'HERRERO', 'HIDROMAYORAL', 'HITRAVI', 'HOBBY', 'HYMER', 'IGLUVAN',
+    'ILUSION', 'INDCAR', 'INDOX', 'INGETECAR', 'INTEGRALIA', 'IREGUA', 'ITINEO',
+    'ITURRI', 'JAP', 'JEANJE', 'JIMECA', 'JOA CAMP', 'JOSE REYES CARROCERO',
+    'JULIA CAMPER', 'KNAUS', 'LA JUNQUERA', 'LAIKA', 'LAIKA CARAVANS SPA', 'LECITRAILER',
+    'LIDERKIT', 'M TORRE', 'MAGIRUS', 'MANUEL ZUÑIGA MARTINEZ', 'MAR', 'MARZASA',
+    'MAZZOCCHIA', 'MEBAUTO', 'METCAR MEDIOAMBIENTAL', 'MOBILIZE', 'MOBILVETTA',
+    'MOBILVETTA DESIGN', 'MOBILVETTA DESING', 'MORELO', 'MYCSA', 'NIESMANN BISCHOFF',
+    'NIESMANN+BISCHOFF', 'OLIAT', 'OMB TECHNOLOGY', 'PALFINGER', 'PALVI', 'PANAMA',
+    'PERIANES', 'PERTASA', 'PILOTE', 'PIRINEUS', 'POESSL', 'POSSI', 'POSSL', 'PUJOL',
+    'RANDGER', 'RAPID', 'RAPIDO', 'RECAPOL', 'REVOLSA', 'RIGUAL', 'RIMOR', 'ROBLES',
+    'ROMERO', 'ROMINSTAL SEGRIA', 'ROMU', 'ROS ROCA', 'ROS-ROCA', 'RYT', 'SARTRUCK',
+    'SEMICARFRAN,S.L', 'SERRANO', 'SILA', 'SOCAGE', 'SORIBERICA',
+    'STELLANTIS EUROPE S.P.A.', 'SUN LIVING', 'SURTRUCK', 'T Y B TORREBLANCA', 'TAGASA',
+    'TAILON', 'TALLERES DILLA', 'TALLERES PRAT RUSIÑOL', 'TECME', 'TECNO TRAILER MURCIA',
+    'TECNOCARROCERA', 'TECNOGRUA', 'TECNOVE FIBERGLASS', 'TERRADAS', 'THERMOBUS', 'THV',
+    'TOMCISA', 'TOTH ES FIAI', 'TRANSGRUAS', 'TRANSPOL', 'TRIGANO', 'TRIGANO S.P.A.',
+    'TVI', 'UNVI', 'URBAN TRUCKS', 'VALLOR', 'VALSAT', 'VEFCA SL', 'VEMASUR',
+    'VICTOR HERNANDEZ', 'VIEL CARROCERIAS', 'VOLTEGO', 'WAZENMIX', 'WESTFALIA',
+    'WESTFALIA MOBIL GMBH', 'YAGUE', 'ZAMARBU',
 }
 _CHASSIS_RULES = [
     (re.compile(r'\bDUCATO'),                      'FIAT',            'DUCATO'),
@@ -494,13 +541,21 @@ _CHASSIS_RULES = [
     (re.compile(r'\bCANTER|\bFUSO'),               'MITSUBISHI-FUSO', 'CANTER'),
     (re.compile(r'\bE-?SPRINTER'),                 'MERCEDES',        'E-SPRINTER'),
     (re.compile(r'\bSPRINTER'),                    'MERCEDES',        'SPRINTER'),
-    (re.compile(r'\bCRAFTER'),                     'VOLKSWAGEN',      'CRAFTER'),
+    (re.compile(r'CRAFTER'),                       'VOLKSWAGEN',      'CRAFTER'),
     (re.compile(r'\bAMAROK'),                      'VOLKSWAGEN',      'AMAROK'),
     (re.compile(r'\bDAILY'),                       'IVECO',           'DAILY'),
+    (re.compile(r'\b[0-9]?ZCF'),                    'IVECO',           'DAILY'),  # WMI Iveco (Daily/Eurocargo), verificado 2026-07-28
     (re.compile(r'\b(?:35|50|70)[CS]\d*|\b120E\b'), 'IVECO',          'DAILY'),
     (re.compile(r'\bMOVANO'),                      'OPEL',            'MOVANO'),
     (re.compile(r'\bVIVARO'),                      'OPEL',            'VIVARO'),
     (re.compile(r'\bCORSA'),                       'OPEL',            'CORSA'),
+    (re.compile(r'\bCOMBO'),                       'OPEL',            'COMBO'),
+    (re.compile(r'\bKANGOO'),                      'RENAULT',         'KANGOO'),
+    (re.compile(r'\bDOBLO'),                       'FIAT',            'DOBLO'),
+    (re.compile(r'\bJOGGER'),                      'DACIA',           'JOGGER'),
+    (re.compile(r'\bDUSTER'),                      'DACIA',           'DUSTER'),
+    (re.compile(r'\bNUGGET'),                      'FORD',            'TRANSIT CUSTOM'),
+    (re.compile(r'\bDFSK\b.*\bEC35\b'),            'DFSK',            'EC35'),
     (re.compile(r'\bINTERSTAR|\bNV400'),           'NISSAN',          'INTERSTAR'),
     (re.compile(r'\bPROACE'),                      'TOYOTA',          'PROACE'),
     (re.compile(r'\bHILUX|\bHI\s*LUX'),            'TOYOTA',          'HI LUX'),
@@ -572,6 +627,8 @@ _BRAND_NORM = {
     'DAIMLER': 'MERCEDES', 'MERCEDES IDILIS': 'MERCEDES',
     'MERCEDES BENZ AG': 'MERCEDES', 'MERCEDES-BENZ MINIBUS': 'MERCEDES',
     'MFTBC': 'MITSUBISHI-FUSO', 'IVECO DAILY': 'IVECO',
+    'M.A.N.': 'MAN', 'FIAT/TRANSPOL': 'FIAT', 'FARIZON AUTO': 'FARIZON',
+    'FORD/CHALLENGER': 'FORD', 'AUTOMOBILES PEUGEOT': 'PEUGEOT',
     'LYNK&CO': 'LYNK & CO',
     "ALKE'": 'ALKE',
     '212': 'BAW',
@@ -1473,7 +1530,16 @@ DEALER_MUN_ALL = {
     '49227',  # Valcabado
     '50224',  # Retascon
 }
-DEALER_MUN_ALL_EXCLUDED_BRANDS = {'SKODA'}
+DEALER_MUN_ALL_EXCLUDED_BRANDS = {
+    'SKODA',
+    # Tesla vende directo (sin red de concesionarios independientes); el
+    # heuristico Km0 (particular que matricula en municipio con
+    # concesionario -> Corporate) asume el patron de venta de flota/demo de
+    # un concesionario tradicional, que no aplica a las tiendas propias de
+    # Tesla. Verificado 2026-07-28: explica ~27% del intercambio
+    # Private/Corporate de Model 3/Model Y vs Simmix.
+    'TESLA',
+}
 NO_DEALER_MUN = set()
 
 
@@ -1724,6 +1790,7 @@ def normalize_marca(marca, modelo=''):
                 or 'EXPERT' in mo_norm or 'PARTNER' in mo_norm):
             return 'PEUGEOT'
         if ('CITROEN' in mo_norm or 'BERLINGO' in mo_norm
+                or 'JUMPY' in mo_norm or 'JUMPER' in mo_norm
                 or re.match(r'^(?:NUEVO\s+)?(?:E-)?C[345]\b', mo_norm)
                 or mo_norm.startswith(('C3 ', 'C4 ', 'C5 '))):
             return 'CITROEN'

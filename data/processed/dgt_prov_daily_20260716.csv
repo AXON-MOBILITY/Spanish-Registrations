@@ -203,7 +203,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,16,DACIA,SANDERO,07,Baleares,Private,ICE,UKL1,REST,Standard,HACH 5P,5
 2026,07,16,EBRO,S400,07,Baleares,Private,ICE,UKL2,REST,Standard,SAV,1
 2026,07,16,EBRO,S700,07,Baleares,Private,PHEV,UKL2,REST,Standard,SAV,1
-2026,07,16,ETRUSCO,540 DB,07,Baleares,Private,ICE,,REST,Standard,,1
+2026,07,16,FIAT,DUCATO,07,Baleares,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,16,FIAT,DUCATO,07,Baleares,RAC,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,16,FIAT,E-ULYSSE,07,Baleares,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,4
 2026,07,16,FIAT,PANDA,07,Baleares,Private,ICE,UKL0,REST,Standard,HACH 5P,1
@@ -293,6 +293,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,16,EBRO,S700,08,Barcelona,Private,ICE,UKL2,REST,Standard,SAV,4
 2026,07,16,EBRO,S700,08,Barcelona,Private,PHEV,UKL2,REST,Standard,SAV,2
 2026,07,16,FIAT,500,08,Barcelona,Private,ICE,UKL0,REST,Standard,HACH 3P,1
+2026,07,16,FIAT,DUCATO,08,Barcelona,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,16,FIAT,DUCATO,08,Barcelona,Private,ICE,SKL,REST,Standard,TRANSPORTER,2
 2026,07,16,FIAT,DUCATO,08,Barcelona,RAC,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,16,FIAT,PANDA,08,Barcelona,Private,ICE,UKL0,REST,Standard,HACH 5P,2
@@ -332,7 +333,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,16,KIA,SPORTAGE,08,Barcelona,Corporate,ICE,UKL2,REST,Standard,SAV,1
 2026,07,16,KIA,SPORTAGE,08,Barcelona,Private,ICE,UKL2,REST,Standard,SAV,2
 2026,07,16,KIA,STONIC,08,Barcelona,Private,ICE,UKL1,REST,Standard,SAV,2
-2026,07,16,KNAUS,R07,08,Barcelona,Corporate,ICE,,REST,Standard,,1
 2026,07,16,LEAPMOTOR,B10,08,Barcelona,Private,BEV,UKL2,REST,Standard,SAV,3
 2026,07,16,LEXUS,LBX,08,Barcelona,Private,ICE,UKL1,FOCUS SEGMENT,Standard,SAV,3
 2026,07,16,LYNK & CO,LYNK&CO 01,08,Barcelona,Private,PHEV,UKL2,REST,Standard,SAV,1
@@ -971,7 +971,6 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,16,CITROEN,JUMPER,28,Madrid,Private,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,16,CITROEN,JUMPER,28,Madrid,RAC,ICE,SKL,REST,Standard,TRANSPORTER,1
 2026,07,16,CITROEN,JUMPY,28,Madrid,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,2
-2026,07,16,COINPOL,COMBO COINPOL,28,Madrid,Corporate,ICE,,REST,Standard,,10
 2026,07,16,CUPRA,CUPRA LEON,28,Madrid,Corporate,ICE,UKL2,REST,Standard,HACH 5P,1
 2026,07,16,CUPRA,CUPRA LEON,28,Madrid,Corporate,PHEV,UKL2,REST,Standard,HACH 5P,2
 2026,07,16,CUPRA,FORMENTOR,28,Madrid,Corporate,ICE,UKL2,REST,Standard,SAT,5
@@ -1163,6 +1162,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,16,OMODA,OMODA 7,28,Madrid,Private,PHEV,KKL,REST,Standard,SAV,2
 2026,07,16,OMODA,OMODA 9,28,Madrid,Corporate,PHEV,KKL,REST,Standard,SAV,1
 2026,07,16,OMODA,OMODA 9,28,Madrid,Private,PHEV,KKL,REST,Standard,SAV,1
+2026,07,16,OPEL,COMBO,28,Madrid,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,10
 2026,07,16,OPEL,CORSA,28,Madrid,Corporate,ICE,UKL1,REST,Standard,HACH 5P,5
 2026,07,16,OPEL,CORSA,28,Madrid,Private,BEV,UKL1,REST,Standard,HACH 5P,1
 2026,07,16,OPEL,CORSA,28,Madrid,Private,ICE,UKL1,REST,Standard,HACH 5P,1
@@ -1553,8 +1553,7 @@ anyo,mes,dia,marca,modelo,cod_prov,provincia,canal,fuel_type,segmento,subseg,hp,
 2026,07,16,RENAULT,ARKANA,35,Las Palmas,Corporate,ICE,UKL2,REST,Standard,SAV,1
 2026,07,16,RENAULT,CLIO,35,Las Palmas,Private,ICE,UKL1,REST,Standard,HACH 5P,1
 2026,07,16,RENAULT,CLIO,35,Las Palmas,RAC,ICE,UKL1,REST,Standard,HACH 5P,6
-2026,07,16,RENAULT,KANGOO,35,Las Palmas,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
-2026,07,16,RENAULT,MASTER,35,Las Palmas,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,1
+2026,07,16,RENAULT,KANGOO,35,Las Palmas,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,2
 2026,07,16,RENAULT,SYMBIOZ,35,Las Palmas,Corporate,ICE,UKL1,REST,Standard,SAV,1
 2026,07,16,RENAULT,TRAFIC,35,Las Palmas,Corporate,ICE,SKL,REST,Standard,TRANSPORTER,7
 2026,07,16,SEAT,ATECA,35,Las Palmas,Corporate,ICE,UKL2,REST,Standard,SAT,1
