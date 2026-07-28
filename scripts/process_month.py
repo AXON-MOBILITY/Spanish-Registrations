@@ -471,7 +471,7 @@ CARROCERO_BRANDS = {
     # Hallados 2026-07-28 via alerta "Unclassified new brands": variantes de
     # texto de marcas ya listadas (guion/gmbh) y camperizadoras nuevas cuyo
     # codigo de chasis (WMI) en el modelo ya reconocen las reglas existentes.
-    'ROLLER-TEAM', 'BURSTNER GMBH', 'WINGAMM', 'ACROSS CAR', 'FORSTER',
+    'ROLLER-TEAM', 'ROLLER', 'BURSTNER GMBH', 'WINGAMM', 'ACROSS CAR', 'FORSTER',
     'CASELANI', 'NOMADE NATION', 'XTREMOBILITY', 'XGO', 'SIRUS AUTOMOTIVE LTD',
     'WESTFALEN MOBIL GMBH', 'MAMSA FVO',
     # Hallados 2026-07-28 barriendo TODOS los codigos de chasis (WMI) en
@@ -544,7 +544,7 @@ _CHASSIS_RULES = [
     (re.compile(r'CRAFTER'),                       'VOLKSWAGEN',      'CRAFTER'),
     (re.compile(r'\bAMAROK'),                      'VOLKSWAGEN',      'AMAROK'),
     (re.compile(r'\bDAILY'),                       'IVECO',           'DAILY'),
-    (re.compile(r'\b[0-9]?ZCF'),                    'IVECO',           'DAILY'),  # WMI Iveco (Daily/Eurocargo), verificado 2026-07-28
+    (re.compile(r'[0-9]?ZCF'),                    'IVECO',           'DAILY'),  # WMI Iveco (Daily/Eurocargo), verificado 2026-07-28
     (re.compile(r'\b(?:35|50|70)[CS]\d*|\b120E\b'), 'IVECO',          'DAILY'),
     (re.compile(r'\bMOVANO'),                      'OPEL',            'MOVANO'),
     (re.compile(r'\bVIVARO'),                      'OPEL',            'VIVARO'),
@@ -564,12 +564,12 @@ _CHASSIS_RULES = [
     (re.compile(r'\bSANDERO'),                     'DACIA',           'SANDERO'),
     (re.compile(r'\bCADDY'),                       'VOLKSWAGEN',      'CADDY'),
     (re.compile(r'\bREXTON|\bKG\s+MOBILITY'),      'SSANGYONG',       'REXTON'),
-    (re.compile(r'\b[0-9]?ZFA'),                    'FIAT',            'DUCATO'),
-    (re.compile(r'\b[0-9]?WF0'),                    'FORD',            'TRANSIT'),
-    (re.compile(r'\b[0-9]?VF7'),                    'CITROEN',         'JUMPER'),
-    (re.compile(r'\b[0-9]?VF3'),                    'PEUGEOT',         'BOXER'),
-    (re.compile(r'\b[0-9]?VF1'),                    'RENAULT',         'MASTER'),
-    (re.compile(r'\b[0-9]?W1V'),                    'MERCEDES',        'SPRINTER'),
+    (re.compile(r'[0-9]?ZFA'),                    'FIAT',            'DUCATO'),
+    (re.compile(r'[0-9]?WF0'),                    'FORD',            'TRANSIT'),
+    (re.compile(r'[0-9]?VF7'),                    'CITROEN',         'JUMPER'),
+    (re.compile(r'[0-9]?VF3'),                    'PEUGEOT',         'BOXER'),
+    (re.compile(r'[0-9]?VF1'),                    'RENAULT',         'MASTER'),
+    (re.compile(r'[0-9]?W1V'),                    'MERCEDES',        'SPRINTER'),
     (re.compile(r'\bN[LMPQN]R|\bN-?SERIE'),        'ISUZU',           'N-SERIES'),
 ]
 
@@ -1787,10 +1787,12 @@ def normalize_marca(marca, modelo=''):
         mo_compact = mo_norm.replace(' ', '')
         if (re.match(r'^(?:NUEVO\s+)?(?:E-)?(?:208|2008|3008|308|408|5008)\b', mo_norm)
                 or mo_compact.startswith(('E-208', 'E208', 'E-2008', 'E2008'))
-                or 'EXPERT' in mo_norm or 'PARTNER' in mo_norm):
+                or 'EXPERT' in mo_norm or 'PARTNER' in mo_norm
+                or 'BOXER' in mo_norm or 'TRAVELLER' in mo_norm):
             return 'PEUGEOT'
         if ('CITROEN' in mo_norm or 'BERLINGO' in mo_norm
                 or 'JUMPY' in mo_norm or 'JUMPER' in mo_norm
+                or 'SPACETOURER' in mo_norm
                 or re.match(r'^(?:NUEVO\s+)?(?:E-)?C[345]\b', mo_norm)
                 or mo_norm.startswith(('C3 ', 'C4 ', 'C5 '))):
             return 'CITROEN'

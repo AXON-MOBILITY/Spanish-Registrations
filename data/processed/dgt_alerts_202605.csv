@@ -1,15 +1,15 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202605,INFO,CARROCERO_UNMAPPED,ULTRAND,,registros_carrocero_sin_chasis_detectado,28,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
-202605,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,106,100,pool_b00d_private=1128; rate=0.0939
-202605,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,119,100,pool_b00d_private=1481; rate=0.0802
+202605,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,106,100,pool_b00d_private=1129; rate=0.0939
+202605,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,119,100,pool_b00d_private=1487; rate=0.0802
 202605,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,167,100,pool_b00d_private=2907; rate=0.0573
-202605,INFO,KM0_FALLBACK,FIAT,Corporate,b00d_private_moved_to_corporate,101,100,pool_b00d_private=387; rate=0.2598
+202605,INFO,KM0_FALLBACK,FIAT,Corporate,b00d_private_moved_to_corporate,102,100,pool_b00d_private=391; rate=0.2598
 202605,WARN,NEW_BRAND,CHANGAN,,monthly_count,441,250,Marca con volumen relevante no vista en outputs historicos previos
 202605,WARN,CHANNEL_DRIFT,AUDI,RAC,count_vs_same_month_history,332,+/-250 and +/-25%,"actual=1497; media_mismo_mes=1165.0; historico=1086,1166,1243; rel=+28.5%"
 202605,WARN,CHANNEL_DRIFT,BMW,RAC,count_vs_same_month_history,337,+/-250 and +/-25%,"actual=1160; media_mismo_mes=822.7; historico=359,795,1314; rel=+41.0%"
 202605,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,637,+/-250 and +/-25%,"actual=828; media_mismo_mes=191.0; historico=11,52,510; rel=+333.5%"
 202605,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,2156,+/-250 and +/-25%,"actual=2649; media_mismo_mes=493.0; historico=17,151,1311; rel=+437.3%"
-202605,WARN,CHANNEL_DRIFT,CITROEN,Private,count_vs_same_month_history,378,+/-250 and +/-25%,"actual=1383; media_mismo_mes=1004.7; historico=817,1023,1174; rel=+37.7%"
+202605,WARN,CHANNEL_DRIFT,CITROEN,Private,count_vs_same_month_history,384,+/-250 and +/-25%,"actual=1389; media_mismo_mes=1004.7; historico=817,1023,1174; rel=+38.3%"
 202605,CRITICAL,CHANNEL_DRIFT,CITROEN,RAC,count_vs_same_month_history,-1283,+/-250 and +/-25%,"actual=919; media_mismo_mes=2201.7; historico=1738,2724,2143; rel=-58.3%"
 202605,CRITICAL,CHANNEL_DRIFT,FORD,Corporate,count_vs_same_month_history,1030,+/-250 and +/-25%,"actual=2839; media_mismo_mes=1809.0; historico=2072,1578,1777; rel=+56.9%"
 202605,CRITICAL,CHANNEL_DRIFT,HYUNDAI,Corporate,count_vs_same_month_history,854,+/-250 and +/-25%,"actual=1992; media_mismo_mes=1137.7; historico=1051,1107,1255; rel=+75.1%"

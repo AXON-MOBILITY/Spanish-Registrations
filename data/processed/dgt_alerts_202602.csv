@@ -7,7 +7,7 @@ yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
 202602,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,632,+/-250 and +/-25%,"actual=732; media_mismo_mes=100.0; historico=22,178; rel=+632.0%"
 202602,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,1000,+/-250 and +/-25%,"actual=1489; media_mismo_mes=489.0; historico=164,814; rel=+204.5%"
 202602,WARN,CHANNEL_DRIFT,CITROEN,Corporate,count_vs_same_month_history,700,+/-250 and +/-25%,"actual=2297; media_mismo_mes=1597.0; historico=1848,1736,1207; rel=+43.8%"
-202602,WARN,CHANNEL_DRIFT,CITROEN,RAC,count_vs_same_month_history,498,+/-250 and +/-25%,"actual=1699; media_mismo_mes=1201.0; historico=773,2076,754; rel=+41.5%"
+202602,WARN,CHANNEL_DRIFT,CITROEN,RAC,count_vs_same_month_history,499,+/-250 and +/-25%,"actual=1700; media_mismo_mes=1201.0; historico=773,2076,754; rel=+41.5%"
 202602,CRITICAL,CHANNEL_DRIFT,CUPRA,RAC,count_vs_same_month_history,706,+/-250 and +/-25%,"actual=794; media_mismo_mes=88.3; historico=7,93,165; rel=+798.9%"
 202602,CRITICAL,CHANNEL_DRIFT,DACIA,RAC,count_vs_same_month_history,541,+/-250 and +/-25%,"actual=935; media_mismo_mes=393.7; historico=108,315,758; rel=+137.5%"
 202602,WARN,CHANNEL_DRIFT,FIAT,Corporate,count_vs_same_month_history,-393,+/-250 and +/-25%,"actual=610; media_mismo_mes=1003.0; historico=1644,1092,273; rel=-39.2%"

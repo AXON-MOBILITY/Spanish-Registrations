@@ -98,6 +98,9 @@ _EXTRA_CLASSIFIED = {
     # Revisadas 2026-07-28: marcas reales sin chasis de furgoneta detectable
     # (no se reasignan, se quedan como marca propia)
     'Farizon', 'Zeroid', 'Evitalia', 'Feidi', 'Kyc',
+    # Anomalias de captura de 1 ud (marca mal grabada por la propia DGT o
+    # modelo no identificado), volumen insignificante, no perseguibles
+    'Master', 'Volmur',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 
