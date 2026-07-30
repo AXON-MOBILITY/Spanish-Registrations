@@ -161,8 +161,6 @@ RETRO_CORRECTIONS_HEADER = [
     'fuel_type', 'fuel', 'segmento', 'subseg', 'hp', 'body_type', 'renting', 'delta',
 ]
 
-RENTING_LABELS = {'S': 'Renting', 'N': 'No Renting', '': 'No Renting'}
-
 
 # Mapa código INE provincia (2 dígitos) → nombre
 PROV_NAMES = {
@@ -2141,7 +2139,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
         servicio  = line_s[F_SERVICIO[0]:F_SERVICIO[1]]
         persona   = line_s[F_PERSONA_FJ[0]:F_PERSONA_FJ[1]]
         renting   = line_s[F_RENTING[0]:F_RENTING[1]]
-        renting_norm = RENTING_LABELS.get(renting.strip(), '')
+        renting_norm = 'Renting' if renting.strip() == 'S' else 'No Renting'
         mun       = line_s[F_MUNICIPIO[0]:F_MUNICIPIO[1]]
         canal     = classify(servicio, persona, renting, mun, marca)
         invalid_reason = invalid_itv_scope_reason(
@@ -2487,7 +2485,7 @@ def read_channel_counts(path):
             sub       = (row.get('subseg') or '').strip()
             hp        = (row.get('hp') or '').strip()
             body      = (row.get('body_type') or '').strip()
-            renting   = (row.get('renting') or '').strip()  # ausente en CSVs antiguos
+            renting   = (row.get('renting') or 'No Renting').strip() or 'No Renting'  # ausente en CSVs antiguos
             if not marca or not canal:
                 continue
             try:

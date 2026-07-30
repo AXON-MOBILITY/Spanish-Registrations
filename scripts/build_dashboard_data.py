@@ -671,7 +671,7 @@ def _load_channel_records(path, yr, mo):
                 "sub":      _focus_bucket(row.get("subseg", "")),
                 "hp":       row.get("hp", ""),
                 "body":     row.get("body_type", ""),
-                "renting":  row.get("renting", "") or "",
+                "renting":  row.get("renting") or "No Renting",
                 "n":        n,
             })
         except (ValueError, KeyError):
