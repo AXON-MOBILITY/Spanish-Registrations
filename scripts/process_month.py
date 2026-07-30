@@ -161,7 +161,7 @@ RETRO_CORRECTIONS_HEADER = [
     'fuel_type', 'fuel', 'segmento', 'subseg', 'hp', 'body_type', 'renting', 'delta',
 ]
 
-RENTING_LABELS = {'S': 'Renting', 'N': 'No Renting'}
+RENTING_LABELS = {'S': 'Renting', 'N': 'No Renting', '': 'No Renting'}
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
