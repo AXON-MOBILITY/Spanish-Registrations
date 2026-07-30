@@ -9,7 +9,7 @@ Salida principal:
   public/data/daily_mtd.json — acumulado MTD diario del mes actual
 
 Columnas records.json (índices COL en index.html):
-  0:y  1:m  2:marca  3:modelo  4:canal  5:fuel  6:fuel_det  7:seg  8:sub  9:hp  10:body  11:n
+  0:y  1:m  2:marca  3:modelo  4:canal  5:fuel  6:fuel_det  7:seg  8:sub  9:hp  10:body  11:renting  12:n
 """
 import argparse, csv, glob, json, os, re
 from collections import defaultdict
@@ -671,6 +671,7 @@ def _load_channel_records(path, yr, mo):
                 "sub":      _focus_bucket(row.get("subseg", "")),
                 "hp":       row.get("hp", ""),
                 "body":     row.get("body_type", ""),
+                "renting":  row.get("renting", "") or "",
                 "n":        n,
             })
         except (ValueError, KeyError):
@@ -791,7 +792,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
     """
     Layout columnas (sincronizado con COL en index.html):
       0:y  1:m  2:marca  3:modelo  4:canal(0-2)  5:fuel(0-2)
-      6:fuel_det  7:seg  8:sub  9:hp  10:body  11:n
+      6:fuel_det  7:seg  8:sub  9:hp  10:body  11:renting  12:n
     """
     completed = {(r["y"], r["m"]) for r in monthly_records}
     all_records = list(monthly_records)
@@ -808,6 +809,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
     sub_idx      = {}; subs      = []
     hp_idx       = {}; hps       = []
     body_idx     = {}; bodies    = []
+    renting_idx  = {}; rentings  = []
 
     canal_map = {"Private": 0, "Corporate": 1, "RAC": 2}
     fuel_map  = {"ICE": 0, "BEV": 1, "PHEV": 2}
@@ -831,6 +833,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
             idx(r["sub"],      sub_idx,      subs),
             idx(r["hp"],       hp_idx,       hps),
             idx(r["body"],     body_idx,     bodies),
+            idx(r["renting"],  renting_idx,  rentings),
             r["n"],
         ])
 
@@ -838,7 +841,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
     months_present = sorted({(r[0], r[1]) for r in rows})
 
     return {
-        "cols": ["y","m","marca","modelo","canal","fuel","fuel_det","seg","sub","hp","body","n"],
+        "cols": ["y","m","marca","modelo","canal","fuel","fuel_det","seg","sub","hp","body","renting","n"],
         "enums": {
             "canal":    ["Private","Corporate","RAC"],
             "fuel":     ["ICE","BEV","PHEV"],
@@ -849,6 +852,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
             "sub":      subs,
             "hp":       hps,
             "body":     bodies,
+            "renting":  rentings,
         },
         "rows":   rows,
         "total":  total,

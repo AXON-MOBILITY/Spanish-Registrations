@@ -1,3 +1,4 @@
 yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
-202412,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,206,100,pool_b00d_private=3587; rate=0.0573
-202412,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,122,100,pool_b00d_private=1301; rate=0.0939
+202412,INFO,CARROCERO_UNMAPPED,DIVISEGUR CATALUNYA,,registros_carrocero_sin_chasis_detectado,31,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202412,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,208,100,pool_b00d_private=3625; rate=0.0573
+202412,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,124,100,pool_b00d_private=1317; rate=0.0939

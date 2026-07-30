@@ -647,6 +647,12 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       </div>
       <div class="sg-body"><div class="sg-pills" id="sb-canales"></div></div>
     </div>
+    <div class="sg open" id="sg-renting">
+      <div class="sg-hdr" onclick="toggleSg('sg-renting')">
+        <span>Renting</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body"><div class="sg-pills" id="sb-renting"></div></div>
+    </div>
     <div class="sg" id="sg-subs">
       <div class="sg-hdr" onclick="toggleSg('sg-subs')">
         <span>Subsegment</span><span class="sg-arrow">▼</span>
@@ -1016,7 +1022,7 @@ function doLogin(){
 // ─────────────────────────────────────────────────
 Chart.register(ChartDataLabels);
 
-const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,N:11};
+const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,RENTING:11,N:12};
 let _OVD=null; // snapshot for PDF export
 
 function _brandColor(name){
@@ -1209,7 +1215,7 @@ let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
-  provs:new Set(),
+  provs:new Set(),renting:new Set(),
   marcas:new Set(),modelo:'',body:'',dealers:new Set()
 };
 const CHARTS={};
@@ -1286,12 +1292,16 @@ function tryBuildProvProjection(){
   const mHp    =remap(P.hp    ,E.hp    ,false);
   const mBody  =remap(P.body  ,E.body  ,false);
   let fdIdx=E.fuel_det.indexOf(''); if(fdIdx<0){ fdIdx=E.fuel_det.length; E.fuel_det.push(''); }
+  // records_prov.json no lleva dimension renting (binaria, ortogonal a provincia):
+  // se proyecta con un indice "sin dato" para no desalinear COL.RENTING/COL.N.
+  let rentIdx=E.renting.indexOf(''); if(rentIdx<0){ rentIdx=E.renting.length; E.renting.push(''); }
+  F.renting.add(rentIdx); // sin pill propia: siempre visible, provincia no lleva grano renting
   const provNames=P.prov;
   RECP_PROJ=RECP.rows.map(r=>({
     prov: provNames[r[C.PROV]],
     row: [ r[C.Y], r[C.M], mMarca[r[C.MARCA]], mModelo[r[C.MODELO]],
            r[C.CANAL], r[C.FUEL], fdIdx,
-           mSeg[r[C.SEG]], mSub[r[C.SUB]], mHp[r[C.HP]], mBody[r[C.BODY]], r[C.N] ]
+           mSeg[r[C.SEG]], mSub[r[C.SUB]], mHp[r[C.HP]], mBody[r[C.BODY]], rentIdx, r[C.N] ]
   }));
 }
 
@@ -1340,13 +1350,17 @@ function tryBuildDealerProjection(){
   const mHp=remap(D.hp,E.hp,false);
   const mBody=remap(D.body,E.body,false);
   const provs=D.prov||[],dealers=D.dealer||[];
+  // records_dealer.json tampoco lleva dimension renting: mismo indice "sin dato"
+  // que la proyeccion de provincia, siempre incluido en F.renting.
+  let rentIdx=E.renting.indexOf(''); if(rentIdx<0){ rentIdx=E.renting.length; E.renting.push(''); }
+  F.renting.add(rentIdx);
   RECD_PROJ=RECD.rows.map(r=>({
     prov:provs[r[C.PROV]]||'',
     dealer:dealers[r[C.DEALER]]||'',
     row:[
       r[C.Y],r[C.M],mMarca[r[C.MARCA]],mModelo[r[C.MODELO]],
       r[C.CANAL],r[C.FUEL],mFuelDet[r[C.FUEL_DET]],
-      mSeg[r[C.SEG]],mSub[r[C.SUB]],mHp[r[C.HP]],mBody[r[C.BODY]],r[C.N]
+      mSeg[r[C.SEG]],mSub[r[C.SUB]],mHp[r[C.HP]],mBody[r[C.BODY]],rentIdx,r[C.N]
     ]
   }));
 }
@@ -1622,6 +1636,26 @@ function buildSidebar(){
       render();
     };
     g('sb-canales').appendChild(pill);
+  });
+
+  // Renting — pills
+  const rentingOrder=['No Renting','Renting'];
+  const rentingIdx=[...E.renting.keys()].sort((a,b)=>{
+    const ia=rentingOrder.indexOf(E.renting[a]), ib=rentingOrder.indexOf(E.renting[b]);
+    return (ia<0?99:ia)-(ib<0?99:ib);
+  });
+  rentingIdx.forEach(i=>{
+    const label=E.renting[i]||'Sin dato';
+    F.renting.add(i);
+    const pill=document.createElement('div');
+    pill.className='sg-pill on';
+    pill.textContent=label;
+    pill.onclick=()=>{
+      if(F.renting.has(i)){if(F.renting.size>1){F.renting.delete(i);pill.classList.remove('on');}}
+      else{F.renting.add(i);pill.classList.add('on');}
+      render();
+    };
+    g('sb-renting').appendChild(pill);
   });
 
   // Subsegment — with parent-child logic for FOCUS SEGMENT concepts
@@ -2003,6 +2037,7 @@ function applyFiltersBase(){
     if(!F.months.has(r[COL.M]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(r[COL.SUB]))return false;
     if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){
@@ -2054,6 +2089,7 @@ function render(){
     if(r[COL.Y]!==refYear)return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(r[COL.SUB]))return false;
     if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
@@ -2869,6 +2905,7 @@ function trendBaseRows(){
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!trendSubOk(r))return false;
     if(F.oem.size<2){
@@ -3135,6 +3172,7 @@ function renderTrend(){
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return;
     if(!F.fuels.has(r[COL.FUEL]))return;
     if(!F.canales.has(r[COL.CANAL]))return;
+    if(!F.renting.has(r[COL.RENTING]))return;
     if(!trendSubOk(r))return;
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
     const n=r[COL.N];
@@ -3209,6 +3247,7 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
       if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return;
       if(!F.fuels.has(r[COL.FUEL]))return;
       if(!F.canales.has(r[COL.CANAL]))return;
+      if(!F.renting.has(r[COL.RENTING]))return;
       if(!trendSubOk(r))return;
       if(!F.months.has(r[COL.M]))return;
       const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
@@ -4036,6 +4075,7 @@ function resetFilters(){
   F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
   F.fuels=new Set(E.fuel.map((_,i)=>i));
   F.canales=new Set(E.canal.map((_,i)=>i));
+  F.renting=new Set(E.renting.map((_,i)=>i));
   F.segs=new Set(E.seg.map((_,i)=>i));
   F.subs=new Set(E.sub.map((_,i)=>i));
   F.oem=new Set(['CHINESE','REST']);

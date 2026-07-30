@@ -158,8 +158,10 @@ VIN10_INDEX_FILE = os.path.join(DATA_DIR, 'dgt_vin10_index.txt')
 RETRO_CORRECTIONS_FILE = os.path.join(DATA_DIR, 'dgt_retro_corrections.csv')
 RETRO_CORRECTIONS_HEADER = [
     'processed_date', 'target_yyyymm', 'marca', 'modelo', 'canal',
-    'fuel_type', 'fuel', 'segmento', 'subseg', 'hp', 'body_type', 'delta',
+    'fuel_type', 'fuel', 'segmento', 'subseg', 'hp', 'body_type', 'renting', 'delta',
 ]
+
+RENTING_LABELS = {'S': 'Renting', 'N': 'No Renting'}
 
 
 # Mapa código INE provincia (2 dígitos) → nombre
@@ -1619,7 +1621,7 @@ def apply_scope_calibration(counts):
 
 
 def scope_group_for_fuel_key(key):
-    if len(key) == 9:
+    if len(key) in (10, 9):
         marca, canal, sub = key[0], key[2], key[6]
     elif len(key) == 8:
         marca, canal, sub = key[0], key[2], key[5]
@@ -2023,11 +2025,9 @@ def fuel_to_canal_counts(fuel_counts):
     """Agrega fuel_counts (clave extendida) → {(marca, canal): n}."""
     agg = collections.Counter()
     for key, n in fuel_counts.items():
-        # key puede ser (marca, modelo, canal, fuel, seg, sub, hp, body)
+        # key puede ser (marca, modelo, canal, fuel, seg, sub, hp, body, renting)
         #            o  (marca, canal, fuel)  (formato antiguo)
-        if len(key) == 9:
-            marca, canal = key[0], key[2]
-        elif len(key) == 8:
+        if len(key) in (10, 9, 8):
             marca, canal = key[0], key[2]
         elif len(key) == 3:
             marca, canal = key[0], key[1]
@@ -2141,6 +2141,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
         servicio  = line_s[F_SERVICIO[0]:F_SERVICIO[1]]
         persona   = line_s[F_PERSONA_FJ[0]:F_PERSONA_FJ[1]]
         renting   = line_s[F_RENTING[0]:F_RENTING[1]]
+        renting_norm = RENTING_LABELS.get(renting.strip(), '')
         mun       = line_s[F_MUNICIPIO[0]:F_MUNICIPIO[1]]
         canal     = classify(servicio, persona, renting, mun, marca)
         invalid_reason = invalid_itv_scope_reason(
@@ -2185,7 +2186,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
         # ─────────────────────────────────────────────────────────────────────
 
         counts[(marca, canal)] += 1
-        fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body)] += 1
+        fuel_counts[(marca, modelo_canon, canal, fuel_code, fuel_detail, seg, sub, hp, body, renting_norm)] += 1
         if cod_prov.isdigit():
             prov_counts[(cod_prov, marca, modelo_canon, canal, fuel_code, seg, sub, hp, body)] += 1
 
@@ -2221,7 +2222,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
             retro_month = _tram_b_retro_yyyymm(line_s, current_yyyymm)
             if retro_month:
                 retro_key = (retro_month, marca, modelo_canon, canal,
-                             fuel_code, fuel_detail, seg, sub, hp, body)
+                             fuel_code, fuel_detail, seg, sub, hp, body, renting_norm)
                 retro_corrections[retro_key] -= 1
         if canal == 'Private' and servicio.strip() == 'B00' and persona.strip() == 'D':
             rate_brand = km0_rate_brand(marca)
@@ -2292,12 +2293,12 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
     raw_totals = {}
     for key, n in fuel_counts.items():
         marca = key[0]
-        canal = key[2] if len(key) in (8, 9) else key[1]
+        canal = key[2] if len(key) in (8, 9, 10) else key[1]
         raw_totals[(marca, canal)] = raw_totals.get((marca, canal), 0) + n
     calibrated_fuel = collections.Counter()
     for key, n in fuel_counts.items():
         marca = key[0]
-        canal = key[2] if len(key) in (8, 9) else key[1]
+        canal = key[2] if len(key) in (8, 9, 10) else key[1]
         raw = raw_totals.get((marca, canal), 0)
         cal = calibrated.get((marca, canal), raw)
         calibrated[(marca, canal)] = cal
@@ -2337,22 +2338,25 @@ def process_raw_txt(txt_path, apply_calibration=True, current_yyyymm=None,
 
 
 def save_csv(counts, yyyymm):
-    """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
+    """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body, renting): n}"""
     year, month = yyyymm[:4], yyyymm[4:]
     path = os.path.join(OUT_DIR, "dgt_canal_{}.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","count"])
+        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","renting","count"])
         for key, n in sorted(counts.items()):
-            if len(key) == 9:
+            if len(key) == 10:
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting = key
+            elif len(key) == 9:
                 marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body = key
+                renting = ''
             elif len(key) == 8:
                 marca, modelo, canal, fuel_type, seg, sub, hp, body = key
-                fuel_det = ''
+                fuel_det = renting = ''
             else:
                 marca, canal, fuel_type = key[0], key[1], key[2]
-                modelo = seg = sub = hp = body = fuel_det = ''
-            w.writerow([year, month, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, n])
+                modelo = seg = sub = hp = body = fuel_det = renting = ''
+            w.writerow([year, month, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
@@ -2431,22 +2435,25 @@ def save_dealer_csv(counts, period, daily=False):
 
 
 def save_daily_csv(counts, yyyymmdd):
-    """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
+    """counts: {(marca, modelo, canal, fuel_type, seg, sub, hp, body, renting): n}"""
     year, month, day = yyyymmdd[:4], yyyymmdd[4:6], yyyymmdd[6:]
     path = os.path.join(OUT_DIR, "dgt_canal_daily_{}.csv".format(yyyymmdd))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","dia","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","count"])
+        w.writerow(["anyo","mes","dia","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","renting","count"])
         for key, n in sorted(counts.items()):
-            if len(key) == 9:
+            if len(key) == 10:
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting = key
+            elif len(key) == 9:
                 marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body = key
+                renting = ''
             elif len(key) == 8:
                 marca, modelo, canal, fuel_type, seg, sub, hp, body = key
-                fuel_det = ''
+                fuel_det = renting = ''
             else:
                 marca, canal, fuel_type = key[0], key[1], key[2]
-                modelo = seg = sub = hp = body = fuel_det = ''
-            w.writerow([year, month, day, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, n])
+                modelo = seg = sub = hp = body = fuel_det = renting = ''
+            w.writerow([year, month, day, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting, n])
     total = sum(counts.values())
     print("  -> {}  ({:,} registros nuevos, {} combos)".format(path, total, len(counts)))
     return path
@@ -2467,7 +2474,7 @@ def save_prov_daily_csv(prov_counts, yyyymmdd):
 
 
 def read_channel_counts(path):
-    """Lee CSV daily → {(marca, modelo, canal, fuel_type, seg, sub, hp, body): n}"""
+    """Lee CSV daily → {(marca, modelo, canal, fuel_type, seg, sub, hp, body, renting): n}"""
     counts = collections.Counter()
     with open(path, 'r', encoding='utf-8-sig', newline='') as f:
         for row in csv.DictReader(f):
@@ -2480,13 +2487,14 @@ def read_channel_counts(path):
             sub       = (row.get('subseg') or '').strip()
             hp        = (row.get('hp') or '').strip()
             body      = (row.get('body_type') or '').strip()
+            renting   = (row.get('renting') or '').strip()  # ausente en CSVs antiguos
             if not marca or not canal:
                 continue
             try:
                 n = int(float(row.get('count', 0)))
             except (TypeError, ValueError):
                 continue
-            counts[(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body)] += n
+            counts[(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting)] += n
     return counts
 
 
@@ -2503,17 +2511,20 @@ def save_mtd_from_daily(yyyymm):
     path = os.path.join(OUT_DIR, "dgt_canal_{}_mtd.csv".format(yyyymm))
     with open(path, 'w', encoding='utf-8', newline='') as f:
         w = csv_mod.writer(f, quoting=csv_mod.QUOTE_MINIMAL)
-        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","count"])
+        w.writerow(["anyo","mes","marca","modelo","canal","fuel_type","fuel","segmento","subseg","hp","body_type","renting","count"])
         for key, n in sorted(counts.items()):
-            if len(key) == 9:
+            if len(key) == 10:
+                marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting = key
+            elif len(key) == 9:
                 marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body = key
+                renting = ''
             elif len(key) == 8:
                 marca, modelo, canal, fuel_type, seg, sub, hp, body = key
-                fuel_det = ''
+                fuel_det = renting = ''
             else:
                 marca, canal, fuel_type = key[0], key[1], key[2]
-                modelo = seg = sub = hp = body = fuel_det = ''
-            w.writerow([year, month, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, n])
+                modelo = seg = sub = hp = body = fuel_det = renting = ''
+            w.writerow([year, month, marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting, n])
     print("  -> {}  ({:,} registros MTD)".format(path, sum(counts.values())))
     return path
 
@@ -2541,7 +2552,7 @@ def save_alerts(alerts, yyyymm):
 def apply_retro_corrections_to_csv(target_yyyymm, corrections):
     """Subtract provisional-month counts from a completed monthly CSV.
 
-    corrections: {(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body): delta}
+    corrections: {(marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting): delta}
                  delta values are negative (−1 per vehicle).
 
     Only modifies buckets that exist and have count > 0.  Buckets not found
@@ -2575,17 +2586,17 @@ def save_retro_corrections_log(retro_corrections, processed_date):
         if not file_exists:
             w.writerow(RETRO_CORRECTIONS_HEADER)
         for (target_yyyymm, marca, modelo, canal,
-             fuel_type, fuel_det, seg, sub, hp, body), delta in retro_corrections.items():
+             fuel_type, fuel_det, seg, sub, hp, body, renting), delta in retro_corrections.items():
             w.writerow([processed_date, target_yyyymm, marca, modelo, canal,
-                        fuel_type, fuel_det, seg, sub, hp, body, delta])
+                        fuel_type, fuel_det, seg, sub, hp, body, renting, delta])
 
 
 def _apply_retro_dict(retro_corrections):
     """Group retro_corrections Counter by target_yyyymm and apply to each CSV."""
     by_month = collections.defaultdict(collections.Counter)
     for (target_yyyymm, marca, modelo, canal,
-         fuel_type, fuel_det, seg, sub, hp, body), delta in retro_corrections.items():
-        bucket = (marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body)
+         fuel_type, fuel_det, seg, sub, hp, body, renting), delta in retro_corrections.items():
+        bucket = (marca, modelo, canal, fuel_type, fuel_det, seg, sub, hp, body, renting)
         by_month[target_yyyymm][bucket] += delta
     total = 0
     for target_yyyymm, corrections in by_month.items():
