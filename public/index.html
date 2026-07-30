@@ -49,6 +49,10 @@ body{display:flex;flex-direction:column;overflow:hidden}
   border-right:1px solid var(--border);height:100%;
 }
 .app-brand-img{height:38px;width:auto;display:block;object-fit:contain}
+.app-brand-copy{display:flex;flex-direction:column;gap:2px}
+.app-brand-name{font-size:1.05rem;font-weight:800;letter-spacing:0;color:#1e293b;line-height:1}
+.app-brand-name span{font-weight:300;color:#475569}
+.app-brand-tag{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3b82f6;line-height:1}
 .axon-lockup{display:flex;align-items:center;gap:9px}
 .axon-mark{width:34px;height:34px;flex-shrink:0;display:block}
 .axon-word{display:flex;flex-direction:column;gap:1px;line-height:1}
@@ -536,9 +540,9 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <div id="topbar">
   <div class="tb-logo" style="display:flex;align-items:center;gap:10px">
     <img class="app-brand-img" src="/brand/axon-mobility-mark-light.png" alt="">
-    <div style="display:flex;flex-direction:column;gap:1px">
-      <div style="font-size:.9rem;font-weight:800;letter-spacing:-0.03em;color:#1e293b;line-height:1">AXON <span style="font-weight:300;color:#475569">Mobility</span></div>
-      <div style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#3b82f6">Market Intelligence</div>
+    <div class="app-brand-copy">
+      <div class="app-brand-name">AXON <span>Mobility</span></div>
+      <div class="app-brand-tag">Market Intelligence</div>
     </div>
   </div>
   <div class="tb-tabs">
