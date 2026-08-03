@@ -3638,6 +3638,13 @@ async function downloadInforme(){
     const _pdfBrands=[...new Set(REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])).map(r=>REC.enums.marca[r[COL.MARCA]]).filter(Boolean))];
     await Promise.all(_pdfBrands.map(_fetchLogo));
 
+    // Logo Axon Mobility (version clara, para fondo navy de portada)
+    let _axonLogoData=null;
+    try{
+      const r=await fetch('brand/axon-mobility-logo-dark.png');
+      if(r.ok){const blob=await r.blob();_axonLogoData=await _blobToDataUrl(blob);}
+    }catch(e){}
+
     // ── Colores de marca Axon Mobility ────────────────────────────────────
     const AX_NAVY=[6,13,41];      // fondo portada / barras de titulo oscuras
     const AX_NAVY2=[15,27,58];    // tarjetas KPI / tarjeta "Total Market"
@@ -3911,8 +3918,12 @@ async function downloadInforme(){
     // ══ PORTADA (pagina 1, fondo navy Axon Mobility) ═══════════════════════
     doc.setFillColor(...AX_NAVY);
     doc.rect(0,0,W,H,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(255,255,255);
-    doc.text('AXON MOBILITY',M,20);
+    if(_axonLogoData){
+      doc.addImage(_axonLogoData,'PNG',M,9,52,14.6);
+    } else {
+      doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(255,255,255);
+      doc.text('AXON MOBILITY',M,20);
+    }
     doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(120,150,210);
     doc.text('EXECUTIVE DASHBOARD',M,42);
     doc.setFont('helvetica','bold');doc.setFontSize(30);doc.setTextColor(255,255,255);
