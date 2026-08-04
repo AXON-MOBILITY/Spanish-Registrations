@@ -38,7 +38,7 @@ HEADERS_DGT = {"User-Agent": "Mozilla/5.0 (compatible; DGT-pipeline/1.0)"}
 URL_MENSUAL_PAGE = "https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-mensual.html"
 URL_DIARIO_PAGE  = "https://www.dgt.es/menusecundario/dgt-en-cifras/matraba-listados/matriculaciones-automoviles-diario.html"
 
-# Columnas de salida (orden Simmix)
+# Columnas de salida (orden Benchmark)
 COLS_OUT = [
     "Brand","Model","Fuel","Channel","SubCanales","Provincia","Zona",
     "Year","Month","Segment_Origin","SubSegmento","High Performance",

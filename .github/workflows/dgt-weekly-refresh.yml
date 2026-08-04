@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: false   # no cancelar si hay uno en marcha; esperar
 
 env:
-  SIMMIX_ALIGN: "0"
+  BENCHMARK_ALIGN: "0"
 
 jobs:
   weekly-refresh:

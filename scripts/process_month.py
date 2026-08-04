@@ -33,7 +33,7 @@ MASTERS_DIR    = os.path.join(REPO_ROOT, 'masters')
 VALIDATION_DIR = os.path.join(REPO_ROOT, 'validation')
 os.makedirs(DATA_DIR, exist_ok=True)
 OUT_DIR = DATA_DIR  # dgt_canal_*, dgt_prov_*, dgt_alerts_*
-MODEL_LOOKUP_FALLBACK = os.path.join(REPO_ROOT, 'public', 'data', 'simmix_model_lookup.json')
+MODEL_LOOKUP_FALLBACK = os.path.join(REPO_ROOT, 'public', 'data', 'benchmark_model_lookup.json')
 LAST_PROCESS_ALERTS = []
 LAST_DEALER_COUNTS = None
 _DEALER_CONTEXT = None
@@ -150,7 +150,7 @@ RECENT_TEMP_TO_FINAL_MAX_DAYS = 60        # legacy constant kept for reference
 TRAM_B_MAX_PROVISIONAL_DAYS = 60         # gate for is_recent_temp_to_final_used (no VIN check)
 TRAM_B_VIN_DEDUP_MAX_DAYS   = 60         # disabled: set equal to TRAM_B_MAX_PROVISIONAL_DAYS
 TRAM_B_EXTENDED_ALLOWLIST = {
-    # Present in Simmix July 2026, but DGT has no prior N/U=N record to index.
+    # Present in Benchmark July 2026, but DGT has no prior N/U=N record to index.
     # Keep this exact: opening the generic 61-730 day window overcounts GLCs.
     ('W1NKM8HB5R', '08072026', '01072025'),
 }
@@ -178,7 +178,7 @@ PROV_NAMES = {
 }
 
 
-# Modelos excluidos del scope (no estan en Simmix)
+# Modelos excluidos del scope (no estan en Benchmark)
 EXCLUIR_MARCA_MODELO = {}
 EXCLUIR_MARCA_RAW = {
     'MERCEDES BENZ AG',
@@ -199,7 +199,7 @@ def is_excluded_scope(marca_raw, marca, modelo):
     mo = modelo.strip().upper()
     if raw in EXCLUIR_MARCA_RAW:
         return True
-    if m.endswith(' AG'):  # Marcas con sufijo AG (BMW AG, Audi AG, Mercedes-Benz AG…) - excluidas por Simmix
+    if m.endswith(' AG'):  # Marcas con sufijo AG (BMW AG, Audi AG, Mercedes-Benz AG…) - excluidas por Benchmark
         return True
     if m == 'MERCEDES' and mo.startswith(MERCEDES_EXCLUDED_MODEL_PREFIXES):
         return True
@@ -268,10 +268,10 @@ def _parse_dgt_date(raw):
         return None
 
 def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS):
-    """Simmix counts some recent temporary-to-final registrations marked U by DGT.
+    """Benchmark counts some recent temporary-to-final registrations marked U by DGT.
 
     BMW is excluded: BMW always issues an initial N/U=N registration in the prior
-    month before finalising with tram=B N/U=U.  Simmix deduplicates by VIN and
+    month before finalising with tram=B N/U=U.  Benchmark deduplicates by VIN and
     counts the vehicle in the first-registration month, so including the tram=B
     record would double-count it.
 
@@ -280,7 +280,7 @@ def is_recent_temp_to_final_used(line_s, max_days=RECENT_TEMP_TO_FINAL_MAX_DAYS)
     and prior-year provisionals while still blocking DGT data anomalies such as
     8-year-old provisional dates.  process_lines() generates a retroactive
     correction (−1) for the provisional month whenever fec_prim falls in a
-    different month, mirroring Simmix's VIN-deduplication logic.
+    different month, mirroring Benchmark's VIN-deduplication logic.
     """
     if line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() != 'B':
         return False
@@ -306,9 +306,9 @@ def _tram_b_retro_yyyymm(line_s, current_yyyymm):
     """Retroactive cross-month correction — disabled.
 
     The correction mechanism moved tram=B counts from the provisional month to
-    the finalisation month, but Simmix assigns vehicles to the *first*
+    the finalisation month, but Benchmark assigns vehicles to the *first*
     registration month, not the finalisation month.  Applying the correction
-    therefore creates a monthly mismatch vs Simmix even though the yearly total
+    therefore creates a monthly mismatch vs Benchmark even though the yearly total
     stays the same.  Keeping the function signature so callers don't need to
     change; it always returns None so no corrections are ever generated.
     """
@@ -353,12 +353,12 @@ def invalid_itv_scope_reason(line_s, marca, canal, servicio, persona, renting):
     if plazas_s not in ('', '0'):
         return ''
     # Furgonetas eléctricas Mercedes (e-Sprinter, eVito, eCitan, EQT): DGT no rellena
-    # siempre los campos ITV para eléctricos pero son N1 válidas en scope Simmix.
+    # siempre los campos ITV para eléctricos pero son N1 válidas en scope Benchmark.
     _MERCEDES_ELEC_VANS = {'E-SPRINTER', 'EVITO', 'ECITAN', 'EQT'}
     _modelo_first = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
     _modelo_first = _modelo_first.split()[0] if _modelo_first else ''
     if marca.upper() == 'MERCEDES' and _modelo_first in _MERCEDES_ELEC_VANS:
-        return ''  # No excluir — furgoneta eléctrica N1 válida en scope Simmix
+        return ''  # No excluir — furgoneta eléctrica N1 válida en scope Benchmark
     # Furgonetas N1 de marcas comerciales: algunas tienen plazas=0 en DGT
     # pero homologación N1 explícita → deben incluirse (ISUZU N-series, DFSK C35/Glory)
     homol = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
@@ -386,8 +386,8 @@ def itv_quality_warning_reason(line_s, marca):
         mma_s or 'vacio',
     )
 
-# ── Regla carroceros/camperizadores → marca del chasis (metodología Simmix) ──
-# Simmix atribuye los vehículos carrozados/camperizados a la marca y modelo del
+# ── Regla carroceros/camperizadores → marca del chasis (metodología Benchmark) ──
+# Benchmark atribuye los vehículos carrozados/camperizados a la marca y modelo del
 # chasis base. En DGT aparecen con la marca del carrocero. Detectamos el chasis
 # por palabras clave en el MODELO_ITV; si no se detecta, se mantiene la marca
 # original y se emite alerta CARROCERO_UNMAPPED para ampliar el mapeo.
@@ -531,13 +531,13 @@ _CHASSIS_RULES = [
     (re.compile(r'\bTRANSIT\s*COURIER'),           'FORD',            'TRANSIT COURIER'),
     (re.compile(r'\bTRANSIT|\bTOURNEO'),           'FORD',            'TRANSIT'),
     # Master/Trafic carrozados por terceros -> RENAULT (no RENAULT TRUCKS).
-    # Verificado 2026-07-27: el bucket 'Renault Trucks' de Simmix (Master 754 +
+    # Verificado 2026-07-27: el bucket 'Renault Trucks' de Benchmark (Master 754 +
     # Trafic 302) ya cuadraba via el rescate N2 de fabrica (n2_van_target,
     # variantes N2 de fabrica con marca=RENAULT); al ampliar CARROCERO_BRANDS
     # y mandar tambien las conversiones de terceros a RENAULT TRUCKS, el
-    # bucket se disparo muy por encima de Simmix. Los carrozados de terceros
+    # bucket se disparo muy por encima de Benchmark. Los carrozados de terceros
     # (ambulancias, isotermos...) sobre chasis Master/Trafic los cuenta
-    # Simmix bajo RENAULT normal, igual que las furgonetas Sprinter con
+    # Benchmark bajo RENAULT normal, igual que las furgonetas Sprinter con
     # MERCEDES.
     (re.compile(r'\bMASTER'),                      'RENAULT',         'MASTER'),
     (re.compile(r'\bTRAFIC'),                      'RENAULT',         'TRAFIC'),
@@ -565,18 +565,18 @@ _CHASSIS_RULES = [
     (re.compile(r'\bPROACE'),                      'TOYOTA',          'PROACE'),
     (re.compile(r'\bHILUX|\bHI\s*LUX'),            'TOYOTA',          'HI LUX'),
     (re.compile(r'\bEXPERT'),                      'PEUGEOT',         'EXPERT'),
-    # Hallados 2026-08-04 comparando drift vs Simmix BBDD_2026_PRODUCTO
+    # Hallados 2026-08-04 comparando drift vs Benchmark BBDD_2026_PRODUCTO
     # (cierre julio). SORTIMO reviste furgonetas VW Transporter (uso normal,
-    # mobile workshop) -> redirigir mejora el ajuste con Simmix (VW Corporate
+    # mobile workshop) -> redirigir mejora el ajuste con Benchmark (VW Corporate
     # -1.17% -> -0.49%), confirmado con reproceso real de los 7 meses.
     # OJO: se probo tambien Ranger->Ford (Eurocarrocera/Vsve/Sortimo/Erke) y
     # Yaris->Toyota (Codetrans) y Rifter->Peugeot (Erke), pero el reproceso
     # real EMPEORO el ajuste (Ford Corporate delta +4.04% -> +6.93%, Toyota
-    # Corporate +1.67% -> +2.13%): Simmix no cuenta estas conversiones bajo
+    # Corporate +1.67% -> +2.13%): Benchmark no cuenta estas conversiones bajo
     # la marca del chasis (probablemente fuera de su scope: ambulancias/
     # adaptados de accesibilidad), asi que se dejan sin mapear a proposito
     # (mantienen su marca DGT original / alerta CARROCERO_UNMAPPED) en vez
-    # de asumir un chasis. No reintroducir sin evidencia de que Simmix si
+    # de asumir un chasis. No reintroducir sin evidencia de que Benchmark si
     # las cuenta.
     (re.compile(r'\bTRANSPORTER'),                 'VOLKSWAGEN',      'TRANSPORTER'),
     (re.compile(r'\bSCUDO'),                       'FIAT',            'SCUDO'),
@@ -604,8 +604,8 @@ def reassign_carrocero(marca, modelo):
     return marca, modelo, True
 
 
-# ── Rescate N2 de derivados de furgoneta (scope Simmix) ─────────────────────
-# Simmix incluye variantes N2 (>3.500 kg) de furgonetas grandes que el filtro
+# ── Rescate N2 de derivados de furgoneta (scope Benchmark) ─────────────────────
+# Benchmark incluye variantes N2 (>3.500 kg) de furgonetas grandes que el filtro
 # M1/N1 excluiría: Renault Trucks Master 4.5t, MAN TGE, Fuso Canter, Isuzu
 # serie N, Iveco Daily, Mercedes Sprinter 400/500. Devuelve la marca destino
 # o None si no aplica.
@@ -625,11 +625,11 @@ def n2_van_target(marca, modelo):
     if m == 'IVECO':
         return 'IVECO'  # Daily y variantes (35C17, 40C15, 50C18, 70C17…)
     if m == 'MERCEDES' and 'SPRINTER' in mo:
-        return 'MERCEDES'  # Sprinter 400/500 N2 — Simmix los cuenta bajo Mercedes normal
+        return 'MERCEDES'  # Sprinter 400/500 N2 — Benchmark los cuenta bajo Mercedes normal
     return None
 
 
-# ── Enriquecimiento modelo → segmento/body_type (desde Simmix) ────────────
+# ── Enriquecimiento modelo → segmento/body_type (desde Benchmark) ────────────
 _APPROVAL_RE   = re.compile(r'\s+[A-Z0-9]{6,}\s*$')
 _BMW_SERIE_RE  = re.compile(r'^([1-9])\d{2}[A-Z]')
 _LEXUS_PFX_RE  = re.compile(r'^([A-Z]{2,3})\d')
@@ -974,7 +974,7 @@ def _model_candidates(sbrand, s):
 
 
 # Cargado una vez al inicio del proceso
-_ENRICHMENT = {}   # (simmix_brand, simmix_model) → {modelo, seg, sub, hp, body}
+_ENRICHMENT = {}   # (benchmark_brand, benchmark_model) → {modelo, seg, sub, hp, body}
 
 
 def _load_enrichment():
@@ -1014,8 +1014,8 @@ def _load_eea_lookup():
                     _EEA_LOOKUP[key] = modelo
     print(f'  -> EEA lookup: {len(_EEA_LOOKUP):,} variante codes cargados')
 
-# Carga lookup brand+model desde Simmix BBDD directamente
-_MODEL_LOOKUP = {}  # (simmix_brand, simmix_model) → {seg, sub, hp, body}
+# Carga lookup brand+model desde Benchmark BBDD directamente
+_MODEL_LOOKUP = {}  # (benchmark_brand, benchmark_model) → {seg, sub, hp, body}
 _MODEL_LOOKUP_PATCHES = {
     ('MINI', 'ACEMAN'): {
         'modelo': 'ACEMAN', 'seg': '2.UKL1', 'sub': 'FOCUS SEGMENT',
@@ -1061,7 +1061,7 @@ _SEG_PREFIX_RE = re.compile(r'^\d+\.')
 def _canon_seg(value):
     """Canoniza el segmento: '3.UKL2'→'UKL2', '7.GKL++1'→'GKL+', 'MKL'→'MKL'.
 
-    Simmix mezcla Segment ('UKL2') y Segment_Origin ('3.UKL2') según el export;
+    Benchmark mezcla Segment ('UKL2') y Segment_Origin ('3.UKL2') según el export;
     sin canonizar, el dashboard duplica segmentos y sus filtros pierden filas.
     """
     s = _SEG_PREFIX_RE.sub('', (value or '').strip())
@@ -1082,7 +1082,7 @@ def _load_manual_master():
 
     Maxima prioridad: se carga el ULTIMO y sobreescribe cualquier otra fuente.
     Es el mecanismo para clasificar marcas/modelos nuevos sin depender de
-    Simmix ni tocar codigo: una fila por (brand, model).
+    Benchmark ni tocar codigo: una fila por (brand, model).
     Columnas: brand,model,seg,sub,hp,body,fuel_detail
     """
     fname = os.path.join(MASTERS_DIR, 'master_clasificacion_manual.csv')
@@ -1133,11 +1133,11 @@ def _load_model_lookup_fallback():
             }
         return bool(_MODEL_LOOKUP)
     except Exception as exc:
-        print(f'  WARN: no se pudo cargar fallback de modelos Simmix: {exc}')
+        print(f'  WARN: no se pudo cargar fallback de modelos Benchmark: {exc}')
         return False
 
 
-def _candidate_simmix_2026_product_paths():
+def _candidate_benchmark_2026_product_paths():
     paths = [os.path.join(VALIDATION_DIR, 'BBDD_2026_PRODUCTO_06_30.csv'),
              os.path.join(REPO_ROOT, 'BBDD_2026_PRODUCTO_06_30.csv')]
     downloads = os.path.join(os.path.expanduser('~'), 'Downloads')
@@ -1152,8 +1152,8 @@ def _candidate_simmix_2026_product_paths():
     return paths
 
 
-def _load_simmix_2026_product_lookup():
-    for fname in _candidate_simmix_2026_product_paths():
+def _load_benchmark_2026_product_lookup():
+    for fname in _candidate_benchmark_2026_product_paths():
         if not os.path.exists(fname):
             continue
         try:
@@ -1204,12 +1204,12 @@ def _save_model_lookup_fallback():
     os.makedirs(os.path.dirname(MODEL_LOOKUP_FALLBACK), exist_ok=True)
     with open(MODEL_LOOKUP_FALLBACK, 'w', encoding='utf-8') as f:
         json.dump({
-            'source': 'Derived from local Simmix BBDD exports; used by GitHub Actions when BBDD files are absent.',
+            'source': 'Derived from local Benchmark BBDD exports; used by GitHub Actions when BBDD files are absent.',
             'rows': rows,
         }, f, ensure_ascii=False, indent=2)
 
 
-def _load_simmix_bbdd():
+def _load_benchmark_bbdd():
     global _MODEL_LOOKUP
     loaded_from_bbdd = False
     for yr in (2023, 2024, 2025):
@@ -1242,13 +1242,13 @@ def _load_simmix_bbdd():
         except Exception:
             pass
     if loaded_from_bbdd:
-        _load_simmix_2026_product_lookup()
+        _load_benchmark_2026_product_lookup()
         _apply_model_lookup_patches()
         _load_manual_master()
         _save_model_lookup_fallback()
     elif not _MODEL_LOOKUP:
         _load_model_lookup_fallback()
-        _load_simmix_2026_product_lookup()
+        _load_benchmark_2026_product_lookup()
         _apply_model_lookup_patches()
         _load_manual_master()
 
@@ -1390,14 +1390,14 @@ CAMPA_PEUGEOT_RS_MUN = {'38038','35025'}
 
 
 # Municipios concesionario BMW/Volvo: registros B00+D aquí = Km.0 → Corporate
-# Simmix clasifica como Corporate los B00+D cuyo CP coincide con el de un concesionario.
+# Benchmark clasifica como Corporate los B00+D cuyo CP coincide con el de un concesionario.
 # Al no tener CP en DGT usamos el municipio INE (PPMMM).
 # Solo incluimos poblaciones pequeñas/medianas (<50k hab) donde toda la actividad es dealer.
 # Las grandes ciudades (Madrid, Barcelona, Valencia…) se excluyen: hay compradores privados reales.
 # Códigos verificados via Wikipedia (INE PPMMM).
 DEALER_MUN_BMW = {
     # Pequeñas (<5k) — prácticamente 100% Km.0
-    '28151',  # Torrelaguna (343 BMW Km.0/36m en Simmix)
+    '28151',  # Torrelaguna (343 BMW Km.0/36m en Benchmark)
     '28128',  # Rozas de Puerto Real (145)
     '30040',  # Ulea (481)
     '17093',  # Llers (249)
@@ -1451,7 +1451,7 @@ DEALER_MUN_VOLVO = {
 
 
 # Dealer municipalities by brand for B00+D Km.0 classification.
-# Built from Simmix Corporate Km.0 / Automatr / Excedentes by brand and municipality.
+# Built from Benchmark Corporate Km.0 / Automatr / Excedentes by brand and municipality.
 # Large or ambiguous cities are intentionally excluded.
 DEALER_MUN = {
     'BMW': DEALER_MUN_BMW,
@@ -1556,7 +1556,7 @@ DEALER_MUN_ALL_EXCLUDED_BRANDS = {
     # concesionario -> Corporate) asume el patron de venta de flota/demo de
     # un concesionario tradicional, que no aplica a las tiendas propias de
     # Tesla. Verificado 2026-07-28: explica ~27% del intercambio
-    # Private/Corporate de Model 3/Model Y vs Simmix.
+    # Private/Corporate de Model 3/Model Y vs Benchmark.
     'TESLA',
 }
 NO_DEALER_MUN = set()
@@ -1596,7 +1596,7 @@ KM0_BRAND_FALLBACK_RATE = {
 # por (marca, canal) contradecían la regla de no tocar datos en bruto con
 # cantidades hardcodeadas. El filtrado determinista (passes_dgt_scope_filters,
 # homologación EU M1/N1, reassign_carrocero, n2_van_target) ya replica la
-# lógica de Simmix sin ajustes numéricos manuales.
+# lógica de Benchmark sin ajustes numéricos manuales.
 CHANNEL_SCOPE_FACTOR = {}
 
 
@@ -1821,10 +1821,10 @@ def normalize_marca(marca, modelo=''):
     if m == 'SPORTEQUIPE' and ('ICH-X' in mo or mo.startswith('X K')):
         return 'ICH-X'
     if m in ('MERCEDES', 'MERCEDES BENZ', 'MERCEDES-BENZ', 'MERCEDES-AMG'):
-        # Mercedes-V scope: verificado 2026-07-27 contra export diario Simmix
+        # Mercedes-V scope: verificado 2026-07-27 contra export diario Benchmark
         # (marca literal 'Mercedes-V' en su fichero) — SOLO contiene Vito.
         # Clase V, Marco Polo, EQV, V 220/250/300, V-Klasse y eVito los cuenta
-        # Simmix bajo 'Mercedes' normal, no bajo 'Mercedes-V'. Antes esta regla
+        # Benchmark bajo 'Mercedes' normal, no bajo 'Mercedes-V'. Antes esta regla
         # los redirigia todos a MERCEDES-V, lo que descuadraba ambas marcas.
         if 'VITO' in mo and not mo.startswith(('EVITO', 'E-VITO')):
             return 'MERCEDES-V'
@@ -1865,7 +1865,7 @@ def classify(servicio, persona, renting, mun, marca):
     if s == 'B00':
         if p == 'X': return 'Corporate'
         # Km.0 en municipio concesionario: B00+D matriculado en CP de dealer → Corporate
-        # (Simmix clasifica así; en DGT solo tenemos municipio, no CP)
+        # (Benchmark clasifica así; en DGT solo tenemos municipio, no CP)
         if mu in DEALER_MUN.get(m, NO_DEALER_MUN): return 'Corporate'
         if m not in DEALER_MUN_ALL_EXCLUDED_BRANDS and mu in DEALER_MUN_ALL: return 'Corporate'
         return 'Private'
@@ -1988,10 +1988,10 @@ def _is_tram_b_extended_allowlisted(line_s):
 
 
 def passes_dgt_scope_filters(line_s):
-    """Criterios base de conteo DGT/Simmix antes de clasificar canal.
+    """Criterios base de conteo DGT/Benchmark antes de clasificar canal.
 
     Scope primario: vehículos M1 (turismos) y N1 (furgonetas ligeras ≤3.500 kg).
-    Simmix incluye todos los M1 y N1 independientemente del COD_TIPO, usando la
+    Benchmark incluye todos los M1 y N1 independientemente del COD_TIPO, usando la
     categoría de homologación UE como criterio definitivo.  El campo homologacion
     (F_HOMOLOGACION, posiciones 426-430) contiene valores tipo 'M1', 'N1', 'N1G'…
     y es la forma canónica de identificar el tipo de vehículo.
@@ -2009,12 +2009,12 @@ def passes_dgt_scope_filters(line_s):
         return False
     cod_tipo = line_s[F_COD_TIPO[0]:F_COD_TIPO[1]].strip()
     homologacion = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
-    # Admitir si: COD_TIPO conocido, O homologación M1/N1 (criterio Simmix,
+    # Admitir si: COD_TIPO conocido, O homologación M1/N1 (criterio Benchmark,
     # independientemente del COD_TIPO — verificado 2026-07-27 contra export
-    # diario Simmix: Kangoo/Master/Trafic/Transit*/Jumpy/Berlingo/Jumper/
+    # diario Benchmark: Kangoo/Master/Trafic/Transit*/Jumpy/Berlingo/Jumper/
     # Partner/Expert/Boxer/Caddy/Transporter/Crafter/Doblo/Ducato/Scudo/
     # Ulysse/Combo/Vivaro/Movano/Daily/Vito/Citan van todos con COD_TIPO='20'
-    # y homologación N1 en DGT, y Simmix los cuenta como N1 sin excepción),
+    # y homologación N1 en DGT, y Benchmark los cuenta como N1 sin excepción),
     # O excepción de marca específica (Mercedes/Toyota/Peugeot vans con ficha
     # ITV sin homologación rellena), O N2 rescatable (ver n2_van_target: esta
     # puerta se ejecuta ANTES que el rescate N2 de process_lines, así que si
@@ -2141,7 +2141,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
         modelo = line_s[F_MODELO[0]:F_MODELO[1]].strip().upper()
         marca  = normalize_marca(marca_raw, modelo)
         if not es_turismo_o_furgoneta(line_s):
-            # Rescate N2: derivados de furgoneta que Simmix sí incluye
+            # Rescate N2: derivados de furgoneta que Benchmark sí incluye
             cat_homol = line_s[F_HOMOLOGACION[0]:F_HOMOLOGACION[1]].strip().upper()
             if not cat_homol.startswith('N2'):
                 continue
@@ -2149,7 +2149,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
             if n2_target is None:
                 continue
             marca = n2_target
-        # Carrozados/camperizados → marca del chasis (metodología Simmix)
+        # Carrozados/camperizados → marca del chasis (metodología Benchmark)
         marca, modelo, carro_unmapped = reassign_carrocero(marca, modelo)
         if carro_unmapped:
             carrocero_unmapped_pool[marca] += 1
@@ -2232,7 +2232,7 @@ def process_lines(lines_iter, apply_calibration=True, current_yyyymm=None,
         # Retroactive correction: when a tram=B vehicle's provisional was in a
         # prior month, we must subtract that provisional count from that month so
         # the vehicle is counted only once (in the definitive month), matching
-        # Simmix's VIN-deduplication behaviour.
+        # Benchmark's VIN-deduplication behaviour.
         if (current_yyyymm is not None
                 and line_s[F_CLAVE_TRAMITE[0]:F_CLAVE_TRAMITE[1]].strip() == 'B'
                 and line_s[F_NUEVO_USADO[0]:F_NUEVO_USADO[1]].strip() == 'U'):
@@ -2810,11 +2810,11 @@ def all_months(start='202301', end='202512'):
 
 if __name__ == '__main__':
     # Cargar lookup de enriquecimiento marca+modelo → segmento/body_type
-    _load_simmix_bbdd()
+    _load_benchmark_bbdd()
     _load_enrichment()
     _load_eea_lookup()
     _load_vin10_index()
-    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Simmix)")
+    print(f"  -> Model lookup: {len(_MODEL_LOOKUP):,} combos (Benchmark)")
 
 
     arg   = sys.argv[1] if len(sys.argv) > 1 else 'all'

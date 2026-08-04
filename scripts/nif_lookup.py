@@ -2,7 +2,7 @@
 nif_lookup.py - Maestro de NIFs y municipios para clasificacion canal DGT
 =========================================================================
 Fuentes: infonif.es, datoscif.es, einforma.com, iberinform.es, INE DIRCE
-Analisis multi-mes DGT vs Simmix 2025
+Analisis multi-mes DGT vs Benchmark 2025
 
 LIMITACION: DGT publico NO incluye NIF comprador (anonimizado).
 Este modulo sirve para:
@@ -10,7 +10,7 @@ Este modulo sirve para:
   2. Uso directo si se obtiene acceso al fichero completo con NIF.
   3. Cross-reference municipio+marca para nuevas reglas.
 
-METODOLOGIA SIMMIX (inferida):
+METODOLOGIA BENCHMARK (inferida):
   - NIF = importador/fabricante -> Corporate (campa pre-registro)
   - NIF = empresa CNAE 7711 (alquiler sin conductor) -> RAC
   - NIF = empresa CNAE 7712 (renting) -> Corporate "E|Renting"
@@ -79,45 +79,45 @@ CAMPA_MUNICIPIOS = {
         "municipio": "Navacerrada",
         "tipo": "campa_fabricante",
         "marcas_confirmadas": ["SKODA"],
-        "evidencia": "136 SKODA RS ene-2025 = Simmix Corp exacto. VW Group campa.",
+        "evidencia": "136 SKODA RS ene-2025 = Benchmark Corp exacto. VW Group campa.",
         "empresas_ine": 281,
     },
     "28169": {
         "municipio": "Venturada",
         "tipo": "campa_fabricante",
         "marcas_confirmadas": ["TOYOTA", "LEXUS", "MERCEDES-BENZ"],
-        "evidencia": "Toyota(33)/Lexus(14)/MB(10) ene-2025 = Simmix Corp.",
+        "evidencia": "Toyota(33)/Lexus(14)/MB(10) ene-2025 = Benchmark Corp.",
         "empresas_ine": 268,
     },
     "28022": {
         "municipio": "Boadilla del Monte",
         "tipo": "campa_fabricante",
         "marcas_confirmadas": ["OPEL","PEUGEOT","CITROEN","CITROËN","DS","ALFA ROMEO","RENAULT","JEEP"],
-        "evidencia": "OPEL 248 ene=Corp Simmix. JEEP avg +24/mes RS=total Simmix RAC=0.",
+        "evidencia": "OPEL 248 ene=Corp Benchmark. JEEP avg +24/mes RS=total Benchmark RAC=0.",
         "empresas_ine": 6811,
     },
     "38038": {
         "municipio": "Santa Cruz de Tenerife",
         "tipo": "campa_fabricante",
         "marcas_confirmadas": ["PEUGEOT"],
-        "evidencia": "PEUGEOT RS=31=Corp Simmix exacto.",
+        "evidencia": "PEUGEOT RS=31=Corp Benchmark exacto.",
     },
     "35025": {
         "municipio": "Tejeda",
         "tipo": "campa_fabricante",
         "marcas_confirmadas": ["PEUGEOT"],
-        "evidencia": "PEUGEOT RS=24=Corp Simmix exacto.",
+        "evidencia": "PEUGEOT RS=24=Corp Benchmark exacto.",
     },
 }
 
 # -- MUNICIPIOS DEPOSITO ALQUILER (A01 -> RAC) ---------------------------------
 DEPOT_ALQUILER = {
     "28069": {"municipio": "La Hiruela",       "empresas_ine": 9,
-              "evidencia": "9 empresas INE. DGT RAC total = Simmix RAC total por marca."},
+              "evidencia": "9 empresas INE. DGT RAC total = Benchmark RAC total por marca."},
     "28125": {"municipio": "Robledo de Chavela","empresas_ine": 349,
-              "evidencia": "PEUGEOT RS=300 = Simmix RAC=300 exacto."},
+              "evidencia": "PEUGEOT RS=300 = Benchmark RAC=300 exacto."},
     "28090": {"municipio": "Moralzarzal",       "empresas_ine": 976,
-              "evidencia": "PEUGEOT RS=205 = Simmix RAC=205 exacto."},
+              "evidencia": "PEUGEOT RS=205 = Benchmark RAC=205 exacto."},
 }
 
 

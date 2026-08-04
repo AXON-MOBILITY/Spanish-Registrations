@@ -1,4 +1,4 @@
-# Protocolo de marcas y modelos nuevos (sin Simmix)
+# Protocolo de marcas y modelos nuevos (sin Benchmark)
 
 Objetivo: cuando entra una marca o modelo nuevo en el mercado, detectarlo automáticamente, clasificarlo con criterio propio y persistir la decisión — sin depender de las BBDD del proveedor.
 
@@ -30,7 +30,7 @@ brand,model,seg,sub,hp,body,fuel_detail
 XPENG,G6,UKL2,FOCUS SEGMENT,Standard,SAV,Electrico
 ```
 
-Este maestro se carga el ÚLTIMO en el pipeline y **sobreescribe cualquier otra fuente** (incluidos los antiguos lookups derivados de Simmix). Basta commitear el CSV: el siguiente run diario lo aplica y el modelo desaparece de la cola de pendientes.
+Este maestro se carga el ÚLTIMO en el pipeline y **sobreescribe cualquier otra fuente** (incluidos los antiguos lookups derivados de Benchmark). Basta commitear el CSV: el siguiente run diario lo aplica y el modelo desaparece de la cola de pendientes.
 
 Para que la marca aparezca también en el desplegable del dashboard antes de llegar a 250 uds: añadirla a `KNOWN_BRANDS` en `public/index.html`.
 
@@ -40,7 +40,7 @@ Para que la marca aparezca también en el desplegable del dashboard antes de lle
 2. Decidir con la tabla del §2 →
 3. Fila en `master_clasificacion_manual.csv` + commit →
 4. El run diario reclasifica y la cola se vacía →
-5. (Mientras exista Simmix) el `simmix_drift.json` confirma que la decisión cuadra.
+5. (Mientras exista Benchmark) el `benchmark_drift.json` confirma que la decisión cuadra.
 
 ## Pendientes detectados a fecha 2026-07-03
 

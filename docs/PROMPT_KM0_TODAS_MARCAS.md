@@ -2,15 +2,15 @@
 
 ## Contexto del proyecto
 
-Estamos construyendo un pipeline que sustituye a **Simmix** (datos de matriculaciones de pago) usando los **microdatos públicos de la DGT**. El pipeline está en `process_month.py` y genera ficheros `dgt_canal_YYYYMM.csv` (1 por mes, 2023–2025 = 36 meses) con el desglose de matriculaciones por marca y canal (Corporate / Private / RAC).
+Estamos construyendo un pipeline que sustituye a **Benchmark** (datos de matriculaciones de pago) usando los **microdatos públicos de la DGT**. El pipeline está en `process_month.py` y genera ficheros `dgt_canal_YYYYMM.csv` (1 por mes, 2023–2025 = 36 meses) con el desglose de matriculaciones por marca y canal (Corporate / Private / RAC).
 
-El objetivo es que los totales DGT coincidan con Simmix por marca y canal. Para ello hay que replicar la lógica de clasificación de Simmix.
+El objetivo es que los totales DGT coincidan con Benchmark por marca y canal. Para ello hay que replicar la lógica de clasificación de Benchmark.
 
 ---
 
 ## El problema: canal split en Km.0
 
-### Cómo clasifica Simmix (confirmado directamente con ellos)
+### Cómo clasifica Benchmark (confirmado directamente con ellos)
 
 > *"Usan estadísticas por zona donde se matricula. Cuando es en el mismo CP que los concesionarios, entonces estiman que es Corporate."*
 
@@ -24,9 +24,9 @@ La regla actual en `process_month.py` solo está implementada para **BMW y VOLVO
 
 ---
 
-## Estado actual del delta DGT vs Simmix (36 meses, 2023–2025)
+## Estado actual del delta DGT vs Benchmark (36 meses, 2023–2025)
 
-La columna `ΔCorp = DGT_Corp − SIM_Corp`. Negativo = DGT tiene menos Corporate que Simmix (estamos perdiendo Km.0). La columna `Km0_36m` = total Km.0 que Simmix tiene para esa marca en 36 meses.
+La columna `ΔCorp = DGT_Corp − SIM_Corp`. Negativo = DGT tiene menos Corporate que Benchmark (estamos perdiendo Km.0). La columna `Km0_36m` = total Km.0 que Benchmark tiene para esa marca en 36 meses.
 
 ```
 Marca              DGT_Corp  SIM_Corp   ΔCorp  DGT_Priv  SIM_Priv   ΔPriv   Km0_36m
@@ -59,15 +59,15 @@ BMW                  76,776    76,836     -60    36,523    35,870    +653     6,
 SKODA                49,529    48,344  +1,185    41,139    41,078     +61     4,526  ← sobreclasifica
 ```
 
-> **Nota importante**: Algunos gaps (Ford -6k Priv, DS -2.5k Corp) tienen parte de diferencia de scope (vehículos que DGT incluye pero Simmix no, o viceversa), no solo Km.0. Sin embargo, la mayoría del gap Corp negativo es recuperable con la regla de municipio de concesionario.
+> **Nota importante**: Algunos gaps (Ford -6k Priv, DS -2.5k Corp) tienen parte de diferencia de scope (vehículos que DGT incluye pero Benchmark no, o viceversa), no solo Km.0. Sin embargo, la mayoría del gap Corp negativo es recuperable con la regla de municipio de concesionario.
 
 ---
 
 ## Tarea a realizar
 
-### 1. Extraer los top municipios Km.0 por marca desde Simmix
+### 1. Extraer los top municipios Km.0 por marca desde Benchmark
 
-**Ficheros Simmix disponibles en la carpeta del proyecto:**
+**Ficheros Benchmark disponibles en la carpeta del proyecto:**
 - `BBDD_2023_PRODUCTO.csv`
 - `BBDD_2024_PRODUCTO.csv`
 - `BBDD_2025_PRODUCTO.csv`
@@ -76,8 +76,8 @@ SKODA                49,529    48,344  +1,185    41,139    41,078     +61     4,
 ```
 Brand_{yr}         → nombre de marca (ej. "BMW", "RENAULT", "CITROEN"...)
 Channel_{yr}       → "Corporate" / "Private" / "RAC"
-SubCanales_{yr}    → sub-canal Simmix. Km.0 = contiene 'Km.0', 'Automatr', o 'Excedentes'
-Municipio_{yr}     → nombre del municipio según Simmix (texto libre, no código INE)
+SubCanales_{yr}    → sub-canal Benchmark. Km.0 = contiene 'Km.0', 'Automatr', o 'Excedentes'
+Municipio_{yr}     → nombre del municipio según Benchmark (texto libre, no código INE)
 Registrations_{yr} → número de unidades
 ```
 
@@ -233,7 +233,7 @@ python process_month.py 202301 --force && python process_month.py 202302 --force
 ### 5. Validar mejora
 
 ```python
-# Calcular delta DGT vs Simmix después del reprocesado
+# Calcular delta DGT vs Benchmark después del reprocesado
 # Para cada marca: ΔCorp = DGT_Corp - SIM_Corp
 # Objetivo: llevar todos los ΔCorp lo más cerca posible de 0
 # (el gap residual = grandes ciudades sin CP exacto + diferencias de scope)
@@ -282,21 +282,21 @@ Para las demás marcas se espera mejora proporcional al Km.0 que tienen en munic
 
 ```
 process_month.py              ← pipeline principal (MODIFICAR)
-BBDD_2023_PRODUCTO.csv        ← Simmix 2023 (36 meses total con 2024+2025)
-BBDD_2024_PRODUCTO.csv        ← Simmix 2024
-BBDD_2025_PRODUCTO.csv        ← Simmix 2025
+BBDD_2023_PRODUCTO.csv        ← Benchmark 2023 (36 meses total con 2024+2025)
+BBDD_2024_PRODUCTO.csv        ← Benchmark 2024
+BBDD_2025_PRODUCTO.csv        ← Benchmark 2025
 dgt_canal_YYYYMM.csv (×36)   ← outputs actuales a reprocesar
-delta_dgt_simmix_36m.csv      ← delta actual por marca/canal para validación
+delta_dgt_benchmark_36m.csv      ← delta actual por marca/canal para validación
 ```
 
 ---
 
 ## Resumen de la tarea en orden
 
-1. **Leer** los CSV Simmix → extraer top municipios Km.0 por marca (excluyendo grandes ciudades)
+1. **Leer** los CSV Benchmark → extraer top municipios Km.0 por marca (excluyendo grandes ciudades)
 2. **Buscar INE codes** de los municipios nuevos via Wikipedia (Chrome MCP, batches de 4)  
    ⚠️ NUNCA usar códigos de memoria — siempre verificar en Wikipedia
 3. **Actualizar** `process_month.py`: añadir `DEALER_MUN` dict con sets por marca
 4. **Modificar** `classify()` para aplicar la regla a TODAS las marcas (no solo BMW/Volvo)
 5. **Reprocesar** 36 meses: `python process_month.py all --force` (en lotes de 6 meses)
-6. **Validar**: recalcular delta DGT vs Simmix y verificar mejora en todas las marcas
+6. **Validar**: recalcular delta DGT vs Benchmark y verificar mejora en todas las marcas

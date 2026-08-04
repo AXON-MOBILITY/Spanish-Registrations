@@ -2339,7 +2339,7 @@ function render(){
     else byBM[brand][m].prev+=r[COL.N];
   });
 
-  // Only include brands that pass the current filter (SIMMIX_BRANDS + other filters)
+  // Only include brands that pass the current filter (BENCHMARK_BRANDS + other filters)
   const monthBrands=sortedVis.map(([b])=>b);
   const allBrandsForTotals=sorted.map(([b])=>b);
   const otherBrandNames=others.map(([b])=>b);

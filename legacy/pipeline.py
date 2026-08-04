@@ -1,6 +1,6 @@
 """
 pipeline.py — DGT Matriculaciones Parser + Enrichment
-Replica los 29 campos del formato Simmix (BBDD_AAAA_PRODUCTO)
+Replica los 29 campos del formato Benchmark (BBDD_AAAA_PRODUCTO)
 a partir de microdatos DGT (formato fijo 714 chars/línea).
 
 Uso:
@@ -106,14 +106,14 @@ MESES_EN = {1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",
 # Derivado del campo [178:180] del fichero DGT
 
 # ── Lookup de campas de fabricante → Corporate ──────────────────────────────
-# Simmix clasifica A01 como Corporate cuando el NIF registrante es el propio
+# Benchmark clasifica A01 como Corporate cuando el NIF registrante es el propio
 # fabricante/importador almacenando coches en una campa (no un alquilador real).
 # Sin NIF en DGT (GDPR), identificamos campas por:
 #   1. MARCA+RENTING='S': fabricantes que marcan RENTING='S' en sus campas
 #   2. MUNICIPIO: municipios pequeños con concentración anómala = campa probada
 #
 # Validación estadística enero-2025:
-#   SKODA+RENTING='S' → Corporate: 136 = delta Simmix exacto ✓
+#   SKODA+RENTING='S' → Corporate: 136 = delta Benchmark exacto ✓
 #   BOADILLA (28022) all A01 → Corporate: ~336 (PSA, Toyota, Renault campa) ✓
 #   VENTURADA (28169) all A01 → Corporate: ~96 (Toyota, Lexus, MB campa) ✓
 
@@ -122,8 +122,8 @@ MESES_EN = {1:"January",2:"February",3:"March",4:"April",5:"May",6:"June",
 # Análisis multi-mes mostró que SKODA+RENTING_S aparece en ALCOBENDAS (28006) en feb/mar/oct
 # = empresas de renting reales comprando SKODA (esas deben ser RAC).
 # Solo Navacerrada (28093) es la campa de fabricante → Corporate.
-#   Jan: 136 en 28093 → Simmix Skoda RAC=445=DGT_RN ✓ (validado)
-#   Feb: 289 en 28006 (Alcobendas) → Simmix Skoda RAC=1,041 (regla RENTING_S era incorrecta)
+#   Jan: 136 en 28093 → Benchmark Skoda RAC=445=DGT_RN ✓ (validado)
+#   Feb: 289 en 28006 (Alcobendas) → Benchmark Skoda RAC=1,041 (regla RENTING_S era incorrecta)
 CAMPA_SKODA_MUNS = {'28093'}  # Navacerrada (Madrid)
 
 # Municipios de campa (toda marca): municipio <5k hab, >100 A01/mes = imposible alquiler real
@@ -139,21 +139,21 @@ CAMPA_MUNICIPIOS_TODOS = {
 CAMPA_MUNICIPIOS_PSA  = {'28022'}   # Boadilla del Monte
 CAMPA_PSA_MARCAS = {'OPEL', 'PEUGEOT', 'CITROËN', 'CITROEN', 'DS', 'ALFA ROMEO', 'RENAULT', 'JEEP'}
 #   OPEL:     248 → Corporate ✓ (Stellantis España)
-#   RENAULT:   16 → Corporate ✓ (0 RAC en Simmix para Boadilla Renault)
-#   JEEP:       9 → Corporate ✓ (análisis multi-mes: avg +24/mes, RS=total, Simmix RAC=0 en Boadilla)
-#   PEUGEOT:    3 → Corporate (pequeño, Simmix muestra 7 RAC = scope diff)
-#   CITROËN:    8 → Corporate (Simmix muestra 8 RAC → posible over-classify, pero <10)
+#   RENAULT:   16 → Corporate ✓ (0 RAC en Benchmark para Boadilla Renault)
+#   JEEP:       9 → Corporate ✓ (análisis multi-mes: avg +24/mes, RS=total, Benchmark RAC=0 en Boadilla)
+#   PEUGEOT:    3 → Corporate (pequeño, Benchmark muestra 7 RAC = scope diff)
+#   CITROËN:    8 → Corporate (Benchmark muestra 8 RAC → posible over-classify, pero <10)
 
 # Municipios donde PEUGEOT+RENTING='S' = registro de fabricante/importador, NO alquiler real
-# Validado por comparación directa DGT×municipio vs Simmix×municipio:
-#   38038 (SC Tenerife): DGT=73(RS=31,N=42), Simmix RAC=42(=N), Simmix Corp=31(=RS) → RS=Corporate ✓
-#   35025 (Tejeda GC):   DGT=49(RS=24,N=25), Simmix RAC=25(=N), Simmix Corp=24(=RS) → RS=Corporate ✓
-# EXCLUIDO Robledo (28125): DGT RS=300, Simmix RAC=300 → todos RAC (gran depot alquiler)
-# EXCLUIDO Moralzarzal (28090): DGT RS=205, Simmix RAC=205 → todos RAC (idem)
+# Validado por comparación directa DGT×municipio vs Benchmark×municipio:
+#   38038 (SC Tenerife): DGT=73(RS=31,N=42), Benchmark RAC=42(=N), Benchmark Corp=31(=RS) → RS=Corporate ✓
+#   35025 (Tejeda GC):   DGT=49(RS=24,N=25), Benchmark RAC=25(=N), Benchmark Corp=24(=RS) → RS=Corporate ✓
+# EXCLUIDO Robledo (28125): DGT RS=300, Benchmark RAC=300 → todos RAC (gran depot alquiler)
+# EXCLUIDO Moralzarzal (28090): DGT RS=205, Benchmark RAC=205 → todos RAC (idem)
 CAMPA_PEUGEOT_RS_MUNS = {'38038', '35025'}
 
 # ── Municipios concesionario por marca (Km.0) → Corporate ───────────────────
-# Simmix clasifica B00+D como Corporate cuando el CP de matriculación coincide
+# Benchmark clasifica B00+D como Corporate cuando el CP de matriculación coincide
 # con el CP de un concesionario (Km.0 / automatriculaciones / excedentes).
 # Sin CP en DGT usamos el código INE de municipio (PPMMM) como proxy.
 # Sincronizado con process_month.py.
@@ -217,7 +217,7 @@ def derive_canal(servicio, persona_fj, renting='', mun_code='', marca_upper=''):
       mun_code    -- COD_MUNICIPIO_INE [192:197]: para detección de campas
       marca_upper -- MARCA_ITV normalizada en mayúsculas
 
-    Canales de salida (replica Simmix):
+    Canales de salida (replica Benchmark):
       Private   · B00+D, B17, B19, B21, A04, A07, A03
       RAC       · A01 alquiler genuino (sin conductor)
       Corporate · A01-campa-fabricante, B00+X, B18, A18, A05
@@ -236,7 +236,7 @@ def derive_canal(servicio, persona_fj, renting='', mun_code='', marca_upper=''):
     if s == "A01":
         # ── Detección de campas de fabricante → Corporate ──────────────────
         # Regla 1: SKODA en Navacerrada (28093) = VW Group campa
-        #   Validado: 136 registros en 28093 = Simmix Corp exacto; A01_N=445 = Simmix RAC Skoda ✓
+        #   Validado: 136 registros en 28093 = Benchmark Corp exacto; A01_N=445 = Benchmark RAC Skoda ✓
         #   OJO: SKODA+RENTING='S' en Alcobendas (28006) = empresas renting reales → deben ser RAC
         if marc == 'SKODA' and mun in CAMPA_SKODA_MUNS:
             return "Corporate", "E | Empresas Detall"
@@ -247,12 +247,12 @@ def derive_canal(servicio, persona_fj, renting='', mun_code='', marca_upper=''):
             return "Corporate", "E | Empresas Detall"
 
         # Regla 3: Boadilla del Monte (28022) = polígono industrial con fabricantes/importadores
-        #   Incluye JEEP (Stellantis): avg +24/mes, RS=total, Simmix RAC=0 en Boadilla → confirmado
+        #   Incluye JEEP (Stellantis): avg +24/mes, RS=total, Benchmark RAC=0 en Boadilla → confirmado
         if mun in CAMPA_MUNICIPIOS_PSA and marc in CAMPA_PSA_MARCAS:
             return "Corporate", "E | Empresas Detall"
 
         # Regla 4: PEUGEOT+RENTING='S' en municipios con NIF fabricante confirmado
-        #   Validado: en 38038 y 35025, RS≡Corporate y N≡RAC en Simmix (match exacto)
+        #   Validado: en 38038 y 35025, RS≡Corporate y N≡RAC en Benchmark (match exacto)
         #   Distinción clave vs Robledo/Moralzarzal donde RS=RAC (depots de alquiler masivos)
         if marc == 'PEUGEOT' and rent == 'S' and mun in CAMPA_PEUGEOT_RS_MUNS:
             return "Corporate", "E | Empresas Detall"
@@ -280,7 +280,7 @@ def derive_canal(servicio, persona_fj, renting='', mun_code='', marca_upper=''):
             return "Corporate", "E | Empresas Detall"
         else:
             # B00+D (persona física): puede ser Km.0 si el municipio es un concesionario.
-            # Simmix clasifica como Corporate los B00+D cuyo CP coincide con el del dealer.
+            # Benchmark clasifica como Corporate los B00+D cuyo CP coincide con el del dealer.
             brand_set = _DEALER_MUN_BY_BRAND.get(marc)
             if brand_set and mun in brand_set:
                 return "Corporate", "E | Km.0"
@@ -307,7 +307,7 @@ HP_M_PATTERNS  = re.compile(r'\b(M2|M3|M4|M5|M6|M8|XM)\b')
 HP_MP_PATTERNS = re.compile(r'\b(M PERFORMANCE|M SPORT|COMPETITION|M-SPORT)\b|AMG\b|QUATTRO\s*S\b|RS\s*\d|ABARTH|JCW|JOHN COOPER WORKS')
 HP_JCW_PATTERNS= re.compile(r'\bJCW\b|JOHN COOPER WORKS\b')
 
-# Homologación DGT → Simmix
+# Homologación DGT → Benchmark
 def homologacion(cat):
     cat = (cat or "").strip().upper()
     if cat.startswith("M"):
@@ -515,7 +515,7 @@ def parse_line(line):
 def is_passenger_or_lcv(cat):
     """
     Incluye M1/M1G (Turismo) y N1/N1G (Comercial ligero).
-    Replica el filtro de Simmix: ambas categorías, excluye M2/M3/N2/N3/L/O/T.
+    Replica el filtro de Benchmark: ambas categorías, excluye M2/M3/N2/N3/L/O/T.
     """
     c = (cat or "").strip().upper()
     return c.startswith("M1") or c.startswith("N1")
@@ -698,7 +698,7 @@ def enrich(rec, eea_l1, eea_l2, idae_va, idae_kw, seg_map, concesin_map):
         "Fuel_Type":         fuel_type_code,
         "Segment":           bmw_segment,
         "Sort_Segment":      _seg_sort(bmw_segment),
-        # Extra (no en Simmix pero útil para debug)
+        # Extra (no en Benchmark pero útil para debug)
         "_version_source":   version_source,
         "_zona_dealer":      zona_dealer_d,
         "_prov_ine":         prov_code,
@@ -746,7 +746,7 @@ def download_dgt(year, month):
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(description="Pipeline DGT → formato Simmix")
+    parser = argparse.ArgumentParser(description="Pipeline DGT → formato Benchmark")
     parser.add_argument("--file",  help="Fichero TXT DGT descomprimido")
     parser.add_argument("--year",  type=int, help="Año (descarga auto)")
     parser.add_argument("--month", type=int, help="Mes (descarga auto)")
@@ -766,8 +766,8 @@ def main():
         print("ERROR: especifica --file o --year + --month", file=sys.stderr)
         sys.exit(1)
 
-    # Columnas de salida (orden Simmix)
-    COLS_SIMMIX = [
+    # Columnas de salida (orden Benchmark)
+    COLS_BENCHMARK = [
         "Brand","Model","Fuel","Channel","SubCanales","Provincia","Zona",
         "Year","Month","Segment_Origin","SubSegmento","High Performance",
         "Version","Body Type","Brand & Model","Homologation_Origin",
@@ -781,7 +781,7 @@ def main():
     brand_filter = args.brand.upper() if args.brand else None
 
     with open(out_path, "w", newline="", encoding="utf-8-sig") as fout:
-        writer = csv.DictWriter(fout, fieldnames=COLS_SIMMIX + ["_version_source","_variante","_kw"])
+        writer = csv.DictWriter(fout, fieldnames=COLS_BENCHMARK + ["_version_source","_variante","_kw"])
         writer.writeheader()
 
         for i, raw_line in enumerate(fh):
@@ -801,7 +801,7 @@ def main():
 
             # Filtro IND_NUEVO_USADO: solo vehículos nuevos (N), excluir usados (U)
             # [178:179] = IND_NUEVO_USADO: N=nuevo, U=usado/transferencia
-            # Simmix solo cuenta matriculaciones de coches nuevos
+            # Benchmark solo cuenta matriculaciones de coches nuevos
             if rec.get("IND_NUEVO_USADO", "N") != "N":
                 skipped += 1
                 continue
