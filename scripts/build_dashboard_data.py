@@ -110,6 +110,9 @@ _EXTRA_CLASSIFIED = {
     # Galloper: marca real (SUV historico, base Mitsubishi Pajero), no un
     # carrocero. Se queda con su propia marca, no se reasigna a chasis.
     'Galloper',
+    # Lorca: 2 uds, modelo "K01H" no identificable. Volumen insignificante,
+    # no perseguible.
+    'Lorca',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 
