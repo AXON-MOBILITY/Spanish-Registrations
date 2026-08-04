@@ -101,6 +101,15 @@ _EXTRA_CLASSIFIED = {
     # Anomalias de captura de 1 ud (marca mal grabada por la propia DGT o
     # modelo no identificado), volumen insignificante, no perseguibles
     'Master', 'Volmur',
+    # Revisadas 2026-08-04: carroceros/camperizadoras ya en CARROCERO_BRANDS
+    # (process_month.py) sin chasis detectable en el texto del modelo — se
+    # quedan con su propia marca (alerta correcta: CARROCERO_UNMAPPED, no
+    # "marca nueva"). Ver tambien seccion 7 de docs/AUDITORIA_INDEPENDENCIA_SIMMIX.md.
+    'North Cape', 'Odl', 'Eriba', 'Sunlight',
+    'Carrocerias Procar', 'Firemar', 'Volquetes Y Carrocerias Galici', 'Chapinsa',
+    # Galloper: marca real (SUV historico, base Mitsubishi Pajero), no un
+    # carrocero. Se queda con su propia marca, no se reasigna a chasis.
+    'Galloper',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 

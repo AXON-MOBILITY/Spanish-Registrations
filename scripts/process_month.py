@@ -474,6 +474,10 @@ CARROCERO_BRANDS = {
     'ROLLER-TEAM', 'ROLLER', 'BURSTNER GMBH', 'WINGAMM', 'ACROSS CAR', 'FORSTER',
     'CASELANI', 'NOMADE NATION', 'XTREMOBILITY', 'XGO', 'SIRUS AUTOMOTIVE LTD',
     'WESTFALEN MOBIL GMBH', 'MAMSA FVO',
+    # Hallados 2026-08-04 en alerta "Unclassified new brands" del dashboard:
+    # camperizadoras sin chasis detectable en el texto del modelo (mismo
+    # patron que el resto de esta lista).
+    'NORTH CAPE', 'ODL', 'ERIBA', 'SUNLIGHT',
     # Hallados 2026-07-28 barriendo TODOS los codigos de chasis (WMI) en
     # bruto de los 6 meses (ZFA=Fiat, WF0=Ford, VF7=Citroen, VF3=Peugeot,
     # VF1=Renault, ZCF=Iveco, W1V=Mercedes), no solo palabras clave de
@@ -521,7 +525,7 @@ _CHASSIS_RULES = [
     (re.compile(r'\bBOXER'),                       'PEUGEOT',         'BOXER'),
     (re.compile(r'\bJUMPER'),                      'CITROEN',         'JUMPER'),
     (re.compile(r'\bJUMPY'),                       'CITROEN',         'JUMPY'),
-    (re.compile(r'\bBERLINGO'),                    'CITROEN',         'BERLINGO'),
+    (re.compile(r'\bBERLINGO|\bBE+RLI[GN]{2}O\b'),  'CITROEN',         'BERLINGO'),
     (re.compile(r'\bPARTNER'),                     'PEUGEOT',         'PARTNER'),
     (re.compile(r'\bTRANSIT\s*CUSTOM'),            'FORD',            'TRANSIT CUSTOM'),
     (re.compile(r'\bTRANSIT\s*COURIER'),           'FORD',            'TRANSIT COURIER'),
@@ -551,6 +555,7 @@ _CHASSIS_RULES = [
     (re.compile(r'\bCORSA'),                       'OPEL',            'CORSA'),
     (re.compile(r'\bCOMBO'),                       'OPEL',            'COMBO'),
     (re.compile(r'\bKANGOO'),                      'RENAULT',         'KANGOO'),
+    (re.compile(r'\bTOWNSTAR'),                    'RENAULT',         'TOWNSTAR'),
     (re.compile(r'\bDOBLO'),                       'FIAT',            'DOBLO'),
     (re.compile(r'\bJOGGER'),                      'DACIA',           'JOGGER'),
     (re.compile(r'\bDUSTER'),                      'DACIA',           'DUSTER'),
@@ -560,6 +565,20 @@ _CHASSIS_RULES = [
     (re.compile(r'\bPROACE'),                      'TOYOTA',          'PROACE'),
     (re.compile(r'\bHILUX|\bHI\s*LUX'),            'TOYOTA',          'HI LUX'),
     (re.compile(r'\bEXPERT'),                      'PEUGEOT',         'EXPERT'),
+    # Hallados 2026-08-04 comparando drift vs Simmix BBDD_2026_PRODUCTO
+    # (cierre julio). SORTIMO reviste furgonetas VW Transporter (uso normal,
+    # mobile workshop) -> redirigir mejora el ajuste con Simmix (VW Corporate
+    # -1.17% -> -0.49%), confirmado con reproceso real de los 7 meses.
+    # OJO: se probo tambien Ranger->Ford (Eurocarrocera/Vsve/Sortimo/Erke) y
+    # Yaris->Toyota (Codetrans) y Rifter->Peugeot (Erke), pero el reproceso
+    # real EMPEORO el ajuste (Ford Corporate delta +4.04% -> +6.93%, Toyota
+    # Corporate +1.67% -> +2.13%): Simmix no cuenta estas conversiones bajo
+    # la marca del chasis (probablemente fuera de su scope: ambulancias/
+    # adaptados de accesibilidad), asi que se dejan sin mapear a proposito
+    # (mantienen su marca DGT original / alerta CARROCERO_UNMAPPED) en vez
+    # de asumir un chasis. No reintroducir sin evidencia de que Simmix si
+    # las cuenta.
+    (re.compile(r'\bTRANSPORTER'),                 'VOLKSWAGEN',      'TRANSPORTER'),
     (re.compile(r'\bSCUDO'),                       'FIAT',            'SCUDO'),
     (re.compile(r'\bSANDERO'),                     'DACIA',           'SANDERO'),
     (re.compile(r'\bCADDY'),                       'VOLKSWAGEN',      'CADDY'),
