@@ -1198,11 +1198,12 @@ def build_daily_mtd_json(daily_data, cy, cm):
 
 
 def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
-    """province_brands.json: provincia x marca Focus x [total, BEV, PHEV, canal*fuel...].
+    """province_brands.json: provincia x TODAS las marcas x [total, BEV, PHEV, canal*fuel...].
 
-    Alimenta el ranking Top-5 provincial del dashboard. Las marcas Focus se
-    derivan de los datos (mayoria de volumen en FOCUS SEGMENT), sin listas
-    hardcodeadas, para que altas nuevas (Xpeng, Polestar...) entren solas.
+    Alimenta el ranking Top-5 provincial del dashboard. Incluye todas las
+    marcas (no solo el subconjunto Focus Segment) para que el ranking
+    refleje las marcas de mayor volumen real en cada provincia, sean o no
+    parte del set competitivo de ninguna organizacion en particular.
     """
     vol = defaultdict(lambda: [0, 0])
     for r in list(monthly_records) + list(mtd_records):
@@ -1210,8 +1211,10 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
         v[0] += r["n"]
         if r["sub"] == "FOCUS SEGMENT":
             v[1] += r["n"]
+    # Se conserva focus_brands en el output (informativo) aunque ya no se usa
+    # para restringir que marcas entran al ranking provincial.
     focus = {m for m, (t, f) in vol.items() if t > 0 and f / t >= 0.5}
-    focus |= {"BYD"}   # inclusion explicita solicitada (no es Focus por volumen)
+    focus |= {"BYD"}
 
     out = {}
     years = set()
@@ -1228,7 +1231,7 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
             seg = sub = hp = ""
         else:
             continue
-        if canal not in CANALES or marca not in focus:
+        if canal not in CANALES:
             continue
         years.add(yr)
         ym = f"{yr}-{mo:02d}"

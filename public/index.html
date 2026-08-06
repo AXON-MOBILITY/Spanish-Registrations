@@ -520,6 +520,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     window.ORG=data;
     const settingsBtn=document.getElementById('btn-org-settings');
     if(settingsBtn) settingsBtn.style.display='';
+    if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data}));
   }
 
@@ -540,6 +541,18 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       body: JSON.stringify({ slug, display_name, username, password }),
+    });
+    const body = await resp.json().catch(()=>({ error: 'Invalid server response' }));
+    return resp.ok ? body : { error: body.error || 'Unknown error' };
+  };
+
+  window.deleteOrg=async function(slug){
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session) return { error: 'No active session' };
+    const resp = await fetch('/api/delete-org', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({ slug }),
     });
     const body = await resp.json().catch(()=>({ error: 'Invalid server response' }));
     return resp.ok ? body : { error: body.error || 'Unknown error' };
@@ -702,7 +715,7 @@ async function submitOrgSettings(){
 
 <!-- MODAL: crear organizacion (solo platform admins) -->
 <div id="create-org-modal" class="hidden">
-  <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:320px;box-shadow:0 8px 30px rgba(0,0,0,.3)">
+  <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:340px;max-height:80vh;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3)">
     <div style="font-weight:700;font-size:1rem;margin-bottom:14px">New organization</div>
     <input id="co-slug" class="login-input" type="text" placeholder="Slug (e.g. audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
     <input id="co-name" class="login-input" type="text" placeholder="Name (e.g. Audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
@@ -713,13 +726,53 @@ async function submitOrgSettings(){
       <button type="button" onclick="closeCreateOrgModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancel</button>
     </div>
     <div class="login-err" id="co-err" style="margin-top:10px"></div>
+    <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:12px">
+      <div style="font-size:.72rem;font-weight:600;color:var(--text2);margin-bottom:8px">Existing organizations</div>
+      <div id="org-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
   </div>
 </div>
 <script>
+async function loadOrgList(){
+  const list=document.getElementById('org-list');
+  list.textContent='Loading…';
+  const { data, error } = await window.sbClient.from('organizations').select('slug,display_name').order('slug');
+  if(error){ list.textContent='Could not load organizations.'; return; }
+  list.innerHTML='';
+  (data||[]).forEach(o=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;font-size:.8rem;padding:4px 0';
+    const label=document.createElement('span');
+    label.textContent=o.display_name+' ('+o.slug+')';
+    row.appendChild(label);
+    if(o.slug!=='bmw'){
+      const del=document.createElement('button');
+      del.type='button';
+      del.textContent='Delete';
+      del.style.cssText='background:none;border:1px solid #dc2626;color:#dc2626;border-radius:6px;padding:2px 8px;font-size:.7rem;cursor:pointer';
+      del.onclick=()=>deleteOrgConfirm(o.slug,o.display_name);
+      row.appendChild(del);
+    }
+    list.appendChild(row);
+  });
+  if(!data || !data.length) list.textContent='No organizations found.';
+}
+async function deleteOrgConfirm(slug,name){
+  if(!confirm('Delete organization "'+name+'" and its login? This cannot be undone.'))return;
+  const err=document.getElementById('co-err');
+  err.style.color='';
+  err.textContent='Deleting '+name+'…';
+  const result=await window.deleteOrg(slug);
+  if(result && result.error){ err.textContent=result.error; return; }
+  err.style.color='#10b981';
+  err.textContent='Deleted '+name+'.';
+  loadOrgList();
+}
 function openCreateOrgModal(){
   ['co-slug','co-name','co-user','co-pass'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
   const err=document.getElementById('co-err'); if(err) err.textContent='';
   document.getElementById('create-org-modal').classList.remove('hidden');
+  loadOrgList();
 }
 function closeCreateOrgModal(){
   document.getElementById('create-org-modal').classList.add('hidden');
@@ -739,7 +792,7 @@ async function submitCreateOrg(){
   if(result && result.error){ err.textContent=result.error; return; }
   err.style.color='#10b981';
   err.textContent='Created: '+name+' (username "'+user+'")';
-  setTimeout(closeCreateOrgModal, 1800);
+  loadOrgList();
 }
 </script>
 
@@ -774,7 +827,7 @@ async function submitCreateOrg(){
       <span class="tf-lbl">Body</span>
       <select id="f-body" class="tf-sel" onchange="onTopChange()"><option value="">All</option></select>
     </div>
-    <div class="tf-grp">
+    <div class="tf-grp" id="grp-hp" style="display:none">
       <span class="tf-lbl">High Perf.</span>
       <div class="hp-row" id="f-hp"></div>
     </div>
@@ -1278,6 +1331,15 @@ function watchBrands(){
 }
 function isRivalBrand(brand){
   return watchBrands().includes(brand) && !isHomeBrand(brand);
+}
+
+// Filtro "High Perf." (M / M Performance / JCW / Standard): terminologia
+// propia de BMW Group (M = division deportiva BMW, JCW = John Cooper Works
+// de MINI), no tiene sentido para otras organizaciones. Solo visible para
+// la org 'bmw'.
+function applyHighPerfVisibility(){
+  const grp=g('grp-hp');
+  if(grp) grp.style.display=(window.ORG && window.ORG.slug==='bmw') ? '' : 'none';
 }
 
 // Set competitivo (Focus vs Resto) por organizacion. Si la org define su
@@ -2530,6 +2592,8 @@ function render(){
       return `<td>${fN(regs)}</td><td>${fP1(distrib)}</td><td class="${cls(yPct2)}">${yPctStr(yPct2)}</td>`;
     };
     tr.innerHTML=`<td>${brand}</td>${cRow('Corporate','corp')}${cRow('Private','priv')}${cRow('RAC','rac')}`;
+    if(isHomeBrand(brand))tr.style.background='rgba(217,119,6,.12)';
+    else if(isRivalBrand(brand))tr.style.background='rgba(198,42,42,.06)';
     canalBody.appendChild(tr);
   });
   if(otherRow){
@@ -2559,6 +2623,8 @@ function render(){
       <td>${fuelTots.ICE?fP1(d.ICE/fuelTots.ICE*100):'—'}</td>
       <td>${fuelTots.PHEV?fP1(d.PHEV/fuelTots.PHEV*100):'—'}</td>
       <td><b>${fP2(share)}</b></td>`;
+    if(isHomeBrand(brand))tr.style.background='rgba(217,119,6,.12)';
+    else if(isRivalBrand(brand))tr.style.background='rgba(198,42,42,.06)';
     ms2B.appendChild(tr);
   });
   addTotalRow(ms2B,['Total','100%','100%','100%','100%']);
@@ -2601,12 +2667,15 @@ function render(){
       const yPct3=d.prev?(d.ref-d.prev)/d.prev*100:null;
       cells+=`<td>${fN(d.ref)}</td><td class="${cls(yPct3)}">${yPctStr(yPct3)}</td>`;
     });
-    tr.innerHTML=cells;monthBody.appendChild(tr);
+    tr.innerHTML=cells;
+    if(isHomeBrand(brand))tr.style.background='rgba(217,119,6,.12)';
+    else if(isRivalBrand(brand))tr.style.background='rgba(198,42,42,.06)';
+    monthBody.appendChild(tr);
   });
   // Total row
   if(otherBrandNames.length){
     const tr=document.createElement('tr');
-    let cells=`<td style="color:var(--text2);font-style:italic">Otras</td>`;
+    let cells=`<td style="color:var(--text2);font-style:italic">Other</td>`;
     refMonths.forEach(m=>{
       let ref=0,prev=0;
       otherBrandNames.forEach(b=>{const d=(byBM[b]||{})[m];if(d){ref+=d.ref;prev+=d.prev;}});
