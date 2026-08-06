@@ -486,36 +486,83 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 .ov-brand-badge.color-logo{background:#F1F5F9;padding:3px}
 .ov-brand-badge.white-logo{background:#1a2a40}
 </style>
-<!-- LOGIN SAFE BOOTSTRAP -->
+<!-- AUTH (Supabase) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (function(){
-  const KEY='dgt_auth_v2';
-  const PWD='BMW2026';
-  const clean=v=>String(v||'').replace(/\s+/g,'').toUpperCase();
+  const SUPABASE_URL='https://oazxgmzhwqbfyfanwiir.supabase.co';
+  const SUPABASE_ANON_KEY='sb_publishable_XI9OEZpCHlZ8ZCAbjGA7UQ_1lAxsZBG';
+  const EMAIL_DOMAIN='accounts.axonmobility.internal';
+  const sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.sbClient=sb;
+  const toEmail=u=>String(u||'').trim().toLowerCase().replace(/\s+/g,'')+'@'+EMAIL_DOMAIN;
+
   function hideLogin(){
     const screen=document.getElementById('login-screen');
     if(screen) screen.classList.add('hidden');
   }
-  window.doLogin=function(){
-    const input=document.getElementById('login-pw');
+  function showLogin(){
+    const screen=document.getElementById('login-screen');
+    if(screen) screen.classList.remove('hidden');
+  }
+
+  async function loadOrgConfig(){
+    const { data, error } = await sb.from('organizations').select('*').single();
+    if(error || !data){
+      console.warn('No se pudo cargar la organizacion:', error && error.message);
+      window.ORG=null;
+      return;
+    }
+    window.ORG=data;
+    document.dispatchEvent(new CustomEvent('org-ready',{detail:data}));
+  }
+
+  window.doLogin=async function(){
+    const uInput=document.getElementById('login-user');
+    const pInput=document.getElementById('login-pw');
     const err=document.getElementById('login-err');
-    if(clean(input && input.value)===PWD){
-      try{sessionStorage.setItem(KEY,PWD);}catch(e){}
-      hideLogin();
-      if(err) err.textContent='';
+    const btn=document.getElementById('login-submit');
+    if(err) err.textContent='';
+    const username=uInput && uInput.value;
+    const password=pInput && pInput.value;
+    if(!username || !password){
+      if(err) err.textContent='Completa usuario y contraseña';
       return false;
     }
-    if(err) err.textContent='Wrong password';
-    if(input){input.value=''; input.focus();}
+    if(btn){btn.disabled=true; btn.textContent='Entrando…';}
+    const { error } = await sb.auth.signInWithPassword({ email: toEmail(username), password });
+    if(btn){btn.disabled=false; btn.textContent='Entrar';}
+    if(error){
+      if(err) err.textContent='Usuario o contraseña incorrectos';
+      if(pInput){pInput.value=''; pInput.focus();}
+      return false;
+    }
+    await loadOrgConfig();
+    hideLogin();
     return false;
   };
-  document.addEventListener('DOMContentLoaded',function(){
-    try{localStorage.removeItem('dgt_auth_v1');}catch(e){}
-    try{if(sessionStorage.getItem(KEY)===PWD) hideLogin();}catch(e){}
-    const btn=document.getElementById('login-submit') || document.querySelector('.login-btn');
-    const input=document.getElementById('login-pw');
+
+  window.doLogout=async function(){
+    await sb.auth.signOut();
+    window.ORG=null;
+    location.reload();
+  };
+
+  document.addEventListener('DOMContentLoaded',async function(){
+    const { data: { session } } = await sb.auth.getSession();
+    if(session){
+      await loadOrgConfig();
+      hideLogin();
+    } else {
+      showLogin();
+    }
+    const btn=document.getElementById('login-submit');
+    const pInput=document.getElementById('login-pw');
+    const uInput=document.getElementById('login-user');
     if(btn) btn.addEventListener('click',function(e){e.preventDefault(); window.doLogin();});
-    if(input) input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.doLogin();}});
+    [uInput,pInput].forEach(el=>{
+      if(el) el.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.doLogin();}});
+    });
   });
 })();
 </script>
@@ -529,7 +576,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Automotive Market Intelligence</div>
     </div>
     <div class="login-title">Acceso restringido</div>
-    <input id="login-pw" class="login-input" type="password" placeholder="Contraseña">
+    <input id="login-user" class="login-input" type="text" placeholder="Usuario" autocomplete="username" style="margin-bottom:8px">
+    <input id="login-pw" class="login-input" type="password" placeholder="Contraseña" autocomplete="current-password">
     <button class="login-btn" id="login-submit" type="button" onclick="return doLogin()">Entrar</button>
     <div class="login-err" id="login-err"></div>
   </div>
@@ -561,6 +609,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="tb-stat"><b id="hdr-total">—</b><span>registrations</span></div>
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
+    <div class="tb-sep"></div>
+    <button onclick="doLogout()" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0" title="Cerrar sesión">&#9099;</button>
   </div>
 </div>
 
@@ -985,30 +1035,6 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
 <script>
 
-// ── AUTH ──────────────────────────────────────────
-(function(){
-  const KEY='dgt_auth_v2', PWD='BMW2026';
-  try{localStorage.removeItem('dgt_auth_v1');}catch(e){}
-  try{
-    if(sessionStorage.getItem(KEY)===PWD){
-      document.getElementById('login-screen').classList.add('hidden');
-    }
-  }catch(e){}
-})();
-function doLogin(){
-  const val=document.getElementById('login-pw').value;
-  const err=document.getElementById('login-err');
-  if(val==='BMW2026'){
-    try{sessionStorage.setItem('dgt_auth_v2','BMW2026');}catch(e){}
-    document.getElementById('login-screen').classList.add('hidden');
-    err.textContent='';
-  } else {
-    err.textContent='Wrong password';
-    document.getElementById('login-pw').value='';
-    document.getElementById('login-pw').focus();
-  }
-}
-// ─────────────────────────────────────────────────
 Chart.register(ChartDataLabels);
 
 const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,RENTING:11,N:12};
