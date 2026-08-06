@@ -803,6 +803,12 @@ async function submitCreateOrg(){
       </div>
       <div class="sg-body" id="sb-months"></div>
     </div>
+    <div class="sg open" id="sg-vehtype">
+      <div class="sg-hdr" onclick="toggleSg('sg-vehtype')">
+        <span>Vehicle Type</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body"><div class="sg-pills" id="sb-vehtype"></div></div>
+    </div>
     <div class="sg open" id="sg-fuels">
       <div class="sg-hdr" onclick="toggleSg('sg-fuels')">
         <span>Fuel Type</span><span class="sg-arrow">▼</span>
@@ -1280,6 +1286,14 @@ function isRivalBrand(brand){
 // pre-calculada del dataset (mas fina, a nivel modelo) para no cambiar el
 // comportamiento actual de BMW ni un poco.
 const SUB_BUCKETS=['REST','FOCUS SEGMENT'];
+
+// Vehicle Type: agrupa el BODY del dataset (ya limitado por la DGT a
+// turismos + furgonetas ligeras N1) en 2 categorias generales para poder
+// mostrar solo turismos, solo comerciales/furgonetas, o ambos.
+const VEH_TYPE_BODIES={COMMERCIAL:new Set(['TRANSPORTER','PICKUP'])};
+function vehTypeOf(bodyName){
+  return VEH_TYPE_BODIES.COMMERCIAL.has(bodyName) ? 'COMMERCIAL' : 'PASSENGER';
+}
 function orgFocusBrands(){
   return window.ORG && window.ORG.config && window.ORG.config.focus_brands;
 }
@@ -1395,7 +1409,7 @@ let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
-  provs:new Set(),renting:new Set(),
+  provs:new Set(),renting:new Set(),vehType:new Set(['PASSENGER','COMMERCIAL']),
   marcas:new Set(),modelo:'',body:'',dealers:new Set()
 };
 const CHARTS={};
@@ -1860,6 +1874,20 @@ function buildSidebar(){
     }));
   }
 
+  // Vehicle Type — pills (Passenger Cars / Commercial & Vans)
+  const vehTypeLabel={PASSENGER:'Passenger Cars',COMMERCIAL:'Commercial & Vans'};
+  ['PASSENGER','COMMERCIAL'].forEach(vt=>{
+    const pill=document.createElement('div');
+    pill.className='sg-pill on';
+    pill.textContent=vehTypeLabel[vt];
+    pill.onclick=()=>{
+      if(F.vehType.has(vt)){if(F.vehType.size>1){F.vehType.delete(vt);pill.classList.remove('on');}}
+      else{F.vehType.add(vt);pill.classList.add('on');}
+      render();
+    };
+    g('sb-vehtype').appendChild(pill);
+  });
+
   // Fuel — pills
   const fuelClass={ICE:'ice',BEV:'bev',PHEV:'phev'};
   E.fuel.forEach((f,i)=>{
@@ -2234,6 +2262,7 @@ function applyFiltersBase(){
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.renting.has(r[COL.RENTING]))return false;
+    if(!F.vehType.has(vehTypeOf(E.body[r[COL.BODY]])))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(rowSubBucket(r)))return false;
     if(rowSubBucket(r)==='FOCUS SEGMENT'){
@@ -2286,6 +2315,7 @@ function render(){
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.renting.has(r[COL.RENTING]))return false;
+    if(!F.vehType.has(vehTypeOf(E.body[r[COL.BODY]])))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(rowSubBucket(r)))return false;
     if(rowSubBucket(r)==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
@@ -2875,6 +2905,7 @@ function renderProv(){
     const noApply=[];
     if(F.modelo)noApply.push('Model');
     if(F.body)noApply.push('Body');
+    if(F.vehType.size<2)noApply.push('Vehicle Type');
     if(F.dealers.size)noApply.push('Dealer');
     if(noApply.length){notice.textContent='Filters with no effect on Provinces: '+noApply.join(', ')+'.';notice.style.display='';}
     else notice.style.display='none';
@@ -3105,6 +3136,7 @@ function trendBaseRows(){
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.renting.has(r[COL.RENTING]))return false;
+    if(!F.vehType.has(vehTypeOf(E.body[r[COL.BODY]])))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!trendSubOk(r))return false;
     if(F.oem.size<2){
@@ -4302,6 +4334,7 @@ function resetFilters(){
   F.fuels=new Set(E.fuel.map((_,i)=>i));
   F.canales=new Set(E.canal.map((_,i)=>i));
   F.renting=new Set(E.renting.map((_,i)=>i));
+  F.vehType=new Set(['PASSENGER','COMMERCIAL']);
   F.segs=new Set(E.seg.map((_,i)=>i));
   F.subs=new Set(SUB_BUCKETS);
   F.oem=new Set(['CHINESE','REST']);
