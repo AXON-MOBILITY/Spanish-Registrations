@@ -1264,6 +1264,16 @@ function isHomeBrand(brand){
   return homeBrands().includes(brand);
 }
 
+// Marcas "vigiladas" (destacadas en Prognosis/Alerts, texto rojo de rival en
+// Overview/PDF): la marca propia + sus rivales directos nombrados. Default:
+// la marca propia sola si la org no definio un watch_brands explicito.
+function watchBrands(){
+  return (window.ORG && window.ORG.config && window.ORG.config.watch_brands) || homeBrands();
+}
+function isRivalBrand(brand){
+  return watchBrands().includes(brand) && !isHomeBrand(brand);
+}
+
 // Set competitivo (Focus vs Resto) por organizacion. Si la org define su
 // propia lista de marcas (ORG.config.focus_brands), se calcula en runtime
 // por marca. Si no la define (caso BMW, default), se usa la clasificacion
@@ -3999,10 +4009,10 @@ async function downloadInforme(){
               d.cell.styles.textColor=[128,142,158];
             }
             if(mode==='main'){
-              // Marca propia: fondo ambar suave · Audi/Mercedes: texto rojo · Chinese OEM: rank en rojo
+              // Marca propia: fondo ambar suave · rivales vigilados: texto rojo · Chinese OEM: rank en rojo
               if(isHomeBrand(brand))
                 d.cell.styles.fillColor=[255,248,224];
-              if((brand==='Audi'||brand==='Mercedes')&&d.column.index===1)
+              if(isRivalBrand(brand)&&d.column.index===1)
                 d.cell.styles.textColor=[198,42,42];
               if(d.column.index===0&&_CHINESE_BRANDS.has(brand))
                 d.cell.styles.textColor=[198,42,42];
@@ -4039,9 +4049,9 @@ async function downloadInforme(){
               doc.ellipse(bx+bs/2,d.cell.y+d.cell.height/2,1.4,1.4,'F');
             }
             if(mode==='main'){
-              // Linea acento izquierda: dorado marca propia, rojo Audi/Mercedes
+              // Linea acento izquierda: dorado marca propia, rojo rivales vigilados
               const isGold=isHomeBrand(brand);
-              const isBlue=brand==='Audi'||brand==='Mercedes';
+              const isBlue=isRivalBrand(brand);
               if(isGold||isBlue){
                 doc.setDrawColor(...(isGold?[205,162,25]:[198,42,42]));
                 doc.setLineWidth(1.4);
@@ -4413,7 +4423,7 @@ function renderAlertsBrief(days,canales,fuels){
   const daysElapsed=monthDays.length;
   const daysInMonth=new Date(curYear,curM,0).getDate();
   const pace=daysElapsed/daysInMonth; // only used for % label
-  const focusBig=['BMW','Mercedes','Audi'];
+  const focusBig=watchBrands();
   const monthLbl=MES3[curM-1]+' '+curYear;
   const lyMonthLbl=MES3[curM-1]+' '+lyYear;
   const rows=focusBig.map(brand=>{
@@ -4529,7 +4539,8 @@ function renderAlerts(){
       canalToday,canalAvg,canales,fuelToday,fuelAvg,fuels,
       racFlag,racPctToday,racPctAvg,streak});
   });
-  const _BRAND_PRIO={'BMW':0,'Mercedes':1,'Audi':2};
+  const _BRAND_PRIO={};
+  watchBrands().forEach((b,i)=>{_BRAND_PRIO[b]=i;});
   const sevOrder={red:0,amber:1,info:2};
   alerts.sort((a,b)=>{
     const pa=_BRAND_PRIO[a.brand]??99,pb=_BRAND_PRIO[b.brand]??99;
