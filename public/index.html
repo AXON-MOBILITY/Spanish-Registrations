@@ -1299,7 +1299,10 @@ function orgFocusBrands(){
 }
 function rowSubBucket(r){
   const cfg=orgFocusBrands();
-  if(cfg && cfg.length){
+  // cfg===undefined (la clave no existe, caso BMW): usar la clasificacion
+  // pre-calculada del dataset. cfg es un array (incluso [] vacio): la org
+  // definio su propio set, aunque sea vacio -> nada cuenta como Focus.
+  if(cfg){
     const marca=REC.enums.marca[r[COL.MARCA]];
     return cfg.includes(marca) ? 'FOCUS SEGMENT' : 'REST';
   }
@@ -1785,7 +1788,7 @@ function addQuickSel(containerId, allFn, noneFn){
 function buildSubsegmentSidebar(){
   const cont=g('sb-subs');
   cont.innerHTML='';
-  const usingCustomFocus=!!(orgFocusBrands() && orgFocusBrands().length);
+  const usingCustomFocus=!!orgFocusBrands();
   let focusCbEl=null;        // <input> ref for FOCUS SEGMENT checkbox
   const conceptCbEls={};     // concept → <input> ref
 
@@ -2876,7 +2879,7 @@ function renderProv(){
   // esta precalculada con la clasificacion Focus/Resto original (BMW); para
   // una org con set competitivo propio ese cruce no aplica, asi que el
   // filtro de Subsegment no restringe los datos de Provincias en ese caso.
-  const customFocus=!!(orgFocusBrands() && orgFocusBrands().length);
+  const customFocus=!!orgFocusBrands();
   const allSegsActive=F.segs.size>=E.seg.length;
   const allSubsActive=customFocus || F.subs.size>=SUB_BUCKETS.length;
   const allHpsActive=F.hps.size===0;
