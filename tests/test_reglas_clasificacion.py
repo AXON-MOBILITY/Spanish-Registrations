@@ -1,4 +1,4 @@
-"""Tests de las reglas de negocio de la ETL (metodología Simmix replicada).
+"""Tests de las reglas de negocio de la ETL (metodología Benchmark replicada).
 
 No requieren red ni datos DGT: prueban las funciones puras de scripts/process_month.py.
 """
@@ -48,7 +48,7 @@ def _scope_filter_line(
     return ''.join(line)
 
 
-def test_filtros_scope_dgt_aceptan_criterio_simmix():
+def test_filtros_scope_dgt_aceptan_criterio_benchmark():
     assert pm.passes_dgt_scope_filters(_scope_filter_line())
     assert pm.passes_dgt_scope_filters(_scope_filter_line(cod_tipo='25'))
 
@@ -119,6 +119,58 @@ def test_filtros_scope_dgt_excluyen_cod_tipo_fuera_de_scope():
     assert not pm.passes_dgt_scope_filters(_scope_filter_line(cod_tipo='30'))
 
 
+def test_filtros_scope_dgt_aceptan_n1_homologacion_cod_tipo_0g():
+    """Furgonetas N1 con COD_TIPO '0G' y homologación N1 entran en scope Benchmark."""
+    line = _scope_filter_line(cod_tipo='0G', homologacion='N1', plazas='2', mma=' 2100')
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_m1_homologacion_cod_tipo_0g():
+    """Furgones passenger (turismo) con COD_TIPO '0G' y homologación M1 entran en scope."""
+    line = _scope_filter_line(cod_tipo='0G', homologacion='M1', plazas='5')
+    assert pm.passes_dgt_scope_filters(line)
+
+
+def test_filtros_scope_dgt_aceptan_n1_homologacion_cod_tipo_20():
+    """COD_TIPO '20' + N1 entra en scope — verificado 2026-07-27 contra export
+    diario Benchmark: Kangoo/Master/Trafic/Transit*/Jumpy/Berlingo/Jumper/Partner/
+    Expert/Boxer/Caddy/Transporter/Crafter/Doblo/Ducato/Scudo/Ulysse/Combo/
+    Vivaro/Movano/Daily/Vito/Citan van todos con COD_TIPO=20 y N1 en DGT, y
+    Benchmark los cuenta como N1 sin excepción de marca."""
+    line = _scope_filter_line(cod_tipo='20', homologacion='N1', plazas='2', mma=' 2100')
+    assert pm.passes_dgt_scope_filters(line)
+
+
+# ── normalize_marca Mercedes-V ──────────────────────────────────────────────
+
+def test_normalize_marca_clase_v_sigue_mercedes():
+    """Verificado 2026-07-27 contra export diario Benchmark: su marca 'Mercedes-V'
+    solo contiene Vito; Clase V/Marco Polo/EQV/V220-300 van bajo 'Mercedes'."""
+    assert pm.normalize_marca('MERCEDES', 'CLASE V') == 'MERCEDES'
+
+def test_normalize_marca_v220_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'V 220 D') == 'MERCEDES'
+
+def test_normalize_marca_eqv_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'EQV 300') == 'MERCEDES'
+
+def test_normalize_marca_marco_polo_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'MARCO POLO ACTIVITY') == 'MERCEDES'
+
+def test_normalize_marca_vito_es_mercedes_v():
+    assert pm.normalize_marca('MERCEDES', 'VITO 116 TOURER') == 'MERCEDES-V'
+
+def test_normalize_marca_evito_sigue_mercedes():
+    """eVito sí lo cuenta Benchmark bajo 'Mercedes', no 'Mercedes-V'."""
+    assert pm.normalize_marca('MERCEDES', 'EVITO TOURER') == 'MERCEDES'
+
+def test_normalize_marca_citan_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'CITAN 110') == 'MERCEDES'
+
+def test_normalize_marca_clase_a_sigue_mercedes():
+    assert pm.normalize_marca('MERCEDES', 'CLASE A') == 'MERCEDES'
+
+
 # ── Canal (SERVICIO + persona física/jurídica) ──────────────────────────────
 
 def test_filtros_scope_dgt_aceptan_mercedes_rest_mpv_0g():
@@ -156,7 +208,11 @@ def test_filtros_scope_dgt_aceptan_toyota_proace_city_verso_m1_0g():
     assert pm.passes_dgt_scope_filters(line)
 
 
-def test_filtros_scope_dgt_no_abren_toyota_proace_city_furgon_20():
+def test_filtros_scope_dgt_aceptan_toyota_proace_city_furgon_20():
+    """Antes se excluía todo Proace City furgón con COD_TIPO=20 asumiendo que
+    Benchmark no lo contaba. Verificado 2026-07-27: Benchmark SÍ cuenta Proace City
+    como N1 (741/3.771 en el YTD) y DGT lo tenía por debajo, no por encima —
+    la exclusión previa era la causa del undercount, no una protección real."""
     line = _scope_filter_line(
         cod_tipo='20',
         marca='TOYOTA',
@@ -165,7 +221,7 @@ def test_filtros_scope_dgt_no_abren_toyota_proace_city_furgon_20():
         plazas='2',
         mma='2370',
     )
-    assert not pm.passes_dgt_scope_filters(line)
+    assert pm.passes_dgt_scope_filters(line)
 
 
 def test_filtros_scope_dgt_aceptan_peugeot_partner_n1_version_permitida():
@@ -182,7 +238,13 @@ def test_filtros_scope_dgt_aceptan_peugeot_partner_n1_version_permitida():
     assert pm.passes_dgt_scope_filters(line)
 
 
-def test_filtros_scope_dgt_no_abren_peugeot_partner_version_no_permitida():
+def test_filtros_scope_dgt_aceptan_peugeot_partner_otras_versiones_n1():
+    """Antes solo se admitían 2 códigos de versión de Partner furgón (lista
+    blanca de PEUGEOT_REST_SCOPE_PARTNER_VERSIONS); el resto se excluía.
+    Verificado 2026-07-27: con el criterio general de homologación N1,
+    Peugeot Partner queda muy cerca de Benchmark (±3% por canal, sin patrón de
+    sobreconteo) — la lista blanca estrecha ya no hace falta como filtro
+    excluyente, el criterio general basta."""
     line = _scope_filter_line(
         cod_tipo='20',
         marca='PEUGEOT',
@@ -193,7 +255,7 @@ def test_filtros_scope_dgt_no_abren_peugeot_partner_version_no_permitida():
         plazas='2',
         mma='2025',
     )
-    assert not pm.passes_dgt_scope_filters(line)
+    assert pm.passes_dgt_scope_filters(line)
 
 
 def test_b00_empresa_es_corporate():
@@ -238,9 +300,12 @@ def test_carrozado_transit_custom_va_a_ford():
     assert (marca, modelo) == ('FORD', 'TRANSIT CUSTOM')
     assert not unmapped
 
-def test_carrozado_master_va_a_renault_trucks():
+def test_carrozado_master_va_a_renault():
+    """Verificado 2026-07-27: Benchmark cuenta los Master/Trafic carrozados por
+    terceros bajo RENAULT normal, no RENAULT TRUCKS (esa marca en Benchmark solo
+    tiene las variantes N2 de fabrica, via n2_van_target)."""
     marca, modelo, _ = pm.reassign_carrocero('EUROCARROCERA', 'MASTER L3H2')
-    assert (marca, modelo) == ('RENAULT TRUCKS', 'MASTER')
+    assert (marca, modelo) == ('RENAULT', 'MASTER')
 
 def test_carrozado_tge_va_a_man():
     marca, modelo, _ = pm.reassign_carrocero('CAPRON', 'MAN TGE 3.140')

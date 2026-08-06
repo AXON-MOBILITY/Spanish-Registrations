@@ -2,7 +2,7 @@
 
 Fecha de auditoria: 2026-07-16  
 Base auditada: origin/main (6674a496)  
-Alcance: altas DGT, Simmix usado por el proyecto, indice VIN10 y maestro BMW.
+Alcance: altas DGT, Benchmark usado por el proyecto, indice VIN10 y maestro BMW.
 
 ## Respuesta ejecutiva
 
@@ -14,7 +14,7 @@ Tampoco resuelven el problema por si solos:
 - CODIGO_ITV: es un codigo tecnico ITV, no una estacion ni un concesionario.
 - COD_PROVINCIA_MAT: indica la provincia donde se matriculo/tramito, no el punto de venta.
 - El prefijo de bastidor publico o el actual dgt_vin10_index.txt: no es un identificador unico y no contiene una relacion VIN-concesionario.
-- Los exports Simmix usados por el repositorio: aportan producto, canal y validacion agregada, no una dimension dealer/POS enlazable por unidad.
+- Los exports Benchmark usados por el repositorio: aportan producto, canal y validacion agregada, no una dimension dealer/POS enlazable por unidad.
 
 La unica salida defendible con los activos actuales es una **atribucion geografica proxy**, etiquetada como tal. Para BMW Private puede pilotarse la asignacion territorio/POS de masters/master_concesin_bmw.csv usando el municipio de domicilio. Esa salida no debe mostrarse ni venderse como concesionario de venta real.
 
@@ -131,17 +131,17 @@ La [Instruccion DGT VEH 2025/02](https://www.dgt.es/export/sites/web-DGT/.galler
 
 Coste: tasa DGT y coste operativo/juridico; debe confirmarse con DGT. No hay base para estimar importe ni aprobacion.
 
-### 2. Simmix/MSI disponible en el proyecto
+### 2. Benchmark/MSI disponible en el proyecto
 
 El codigo consume BBDD_*_PRODUCTO.csv con marca, modelo, combustible, segmento, body y canal. Los artefactos versionados derivados contienen:
 
-- simmix_model_lookup.json: 651 combinaciones marca-modelo.
-- simmix_2026_targets.json: 268 agregados marca-canal-subsegmento.
+- benchmark_model_lookup.json: 651 combinaciones marca-modelo.
+- benchmark_2026_targets.json: 268 agregados marca-canal-subsegmento.
 - Ningun campo dealer, POS, NIF vendedor, VIN17 o municipio utilizable para join unitario.
 
-La validacion publicada actual tampoco soporta una imputacion fina: ETL DGT 665.956 frente a Simmix 749.707, diferencia -83.751 (-11,17%); solo 74 de 141 grupos marca-canal estan dentro de +/-2%. Esto mide alineacion de mercado, no precision dealer.
+La validacion publicada actual tampoco soporta una imputacion fina: ETL DGT 665.956 frente a Benchmark 749.707, diferencia -83.751 (-11,17%); solo 74 de 141 grupos marca-canal estan dentro de +/-2%. Esto mide alineacion de mercado, no precision dealer.
 
-Simmix es comercial. MSI/GANVAM describe [SIMMIX-KPI Automocion](https://ganvam.es/ganvam-y-msi-impulsan-el-primer-espacio-de-datos-europeo-para-el-sector-la-distribucion-de-vehiculos/) como espacio de distribucion/posventa, pero eso no demuestra que el export contratado incluya atribucion unitaria. Hay que solicitar:
+Benchmark es comercial. MSI/GANVAM describe [BENCHMARK-KPI Automocion](https://ganvam.es/ganvam-y-msi-impulsan-el-primer-espacio-de-datos-europeo-para-el-sector-la-distribucion-de-vehiculos/) como espacio de distribucion/posventa, pero eso no demuestra que el export contratado incluya atribucion unitaria. Hay que solicitar:
 
 1. Diccionario y muestra de 1.000 filas.
 2. Clave estable (VIN17 o ID seudonimizado comun) y dealer/POS.
@@ -301,7 +301,7 @@ Controles minimos:
 3. Separar zona restringida y salida agregada; acceso y auditoria.
 4. Gestionar reasignaciones/cancelaciones y definir verdad: facturacion, entrega o reporting.
 5. Catalogos versionados de dealer/POS y aperturas/cierres.
-6. Reconciliacion mensual contra DGT/Simmix y muestreo de falsos joins.
+6. Reconciliacion mensual contra DGT/Benchmark y muestreo de falsos joins.
 7. Umbrales de publicacion para celdas pequenas.
 
 ## RGPD, licencia y seguridad

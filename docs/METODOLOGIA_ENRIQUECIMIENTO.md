@@ -1,7 +1,7 @@
 # Metodología de Enriquecimiento de Datos DGT
-## Ingeniería inversa del pipeline Simmix
+## Ingeniería inversa del pipeline Benchmark
 
-> **Objetivo**: Replicar los 29 campos del formato Simmix (BBDD_AAAA_PRODUCTO) a partir de los datos brutos DGT + maestros propios. Para cada campo se documenta la fuente, la lógica exacta y cómo manejar casos nuevos.
+> **Objetivo**: Replicar los 29 campos del formato Benchmark (BBDD_AAAA_PRODUCTO) a partir de los datos brutos DGT + maestros propios. Para cada campo se documenta la fuente, la lógica exacta y cómo manejar casos nuevos.
 
 ---
 
@@ -14,7 +14,7 @@ DGT raw (714 chars/línea)
     ↓ [Filtro turismos]
 Solo M1 / M1G / M1*
     ↓ [5 capas de enriquecimiento]
-29 campos formato Simmix
+29 campos formato Benchmark
 ```
 
 ---
@@ -23,7 +23,7 @@ Solo M1 / M1G / M1*
 
 Estos campos salen directamente del fichero DGT con transformación mínima.
 
-| Campo Simmix | Campo DGT | Transformación |
+| Campo Benchmark | Campo DGT | Transformación |
 |---|---|---|
 | `Brand` | `MARCA_ITV` | Title Case + limpieza de abreviaturas |
 | `Model` | `MODELO_ITV` | Title Case |
@@ -37,7 +37,7 @@ Estos campos salen directamente del fichero DGT con transformación mínima.
 | `Month` | `FEC_MATRICULA` | Extraer mes → nombre en inglés |
 | `Sort_Month` | `FEC_MATRICULA` | Convertir a fecha DD/MM/YYYY → 01/MM/YYYY |
 | `HP` | `KW_ITV` | KW × 1.341 (conversión a CV fiscal) o usar `POTENCIA_ITV` directamente |
-| `Registrations` | — | Siempre 1 por registro DGT (Simmix agrega después) |
+| `Registrations` | — | Siempre 1 por registro DGT (Benchmark agrega después) |
 
 **Filtro turismos**: `CATEGORÍA_HOMOLOGACIÓN_EUROPEA_ITV` IN ('M1', 'M1G', 'M1*')
 
@@ -45,7 +45,7 @@ Estos campos salen directamente del fichero DGT con transformación mínima.
 
 ## Capa 2 — Combustible (regla sobre campos DGT)
 
-Simmix tiene dos niveles: `Fuel` (detallado, 12 valores) y `Fuel_Type` (simplificado: ICE / BEV / PHEV).
+Benchmark tiene dos niveles: `Fuel` (detallado, 12 valores) y `Fuel_Type` (simplificado: ICE / BEV / PHEV).
 
 ### Lógica de derivación
 
@@ -53,7 +53,7 @@ Simmix tiene dos niveles: `Fuel` (detallado, 12 valores) y `Fuel_Type` (simplifi
 DGT COD_PROPULSION_ITV + CATEGORIA_VEHICULO_ELECTRICO → Fuel / Fuel_Type
 ```
 
-| COD_PROPULSION | CATEGORIA_VEH_ELECTRICO | Fuel Simmix | Fuel_Type |
+| COD_PROPULSION | CATEGORIA_VEH_ELECTRICO | Fuel Benchmark | Fuel_Type |
 |---|---|---|---|
 | 0 (Gasolina) | BEV | — (raro) | BEV |
 | 0 (Gasolina) | HEV | Gasolina/Electrico | ICE ⚠️ |
@@ -66,11 +66,11 @@ DGT COD_PROPULSION_ITV + CATEGORIA_VEHICULO_ELECTRICO → Fuel / Fuel_Type
 | 6 (GLP) | — | Gas Licuado con petroleo (GLP) | ICE |
 | 7 (GNC) | — | Gas natural comprimido (GNC) | ICE |
 
-> ⚠️ **Nota Simmix**: Los HEV (no-enchufables como Toyota Hybrid) se clasifican como ICE en `Fuel_Type`. Solo BEV y PHEV son "electrificados" a efectos de canal.
+> ⚠️ **Nota Benchmark**: Los HEV (no-enchufables como Toyota Hybrid) se clasifican como ICE en `Fuel_Type`. Solo BEV y PHEV son "electrificados" a efectos de canal.
 
 ### Detección MHEV (clave — el DGT no lo marca explícitamente)
 
-**Confirmado por análisis**: Simmix detecta MHEV parseando el campo de versión. En DGT, el campo `TIPO_ITV` o `VERSION_ITV` contiene la denominación de tipo homologada, que para los MHEV incluye "MHEV", "48V", "MILD" o "MICROHYBRID".
+**Confirmado por análisis**: Benchmark detecta MHEV parseando el campo de versión. En DGT, el campo `TIPO_ITV` o `VERSION_ITV` contiene la denominación de tipo homologada, que para los MHEV incluye "MHEV", "48V", "MILD" o "MICROHYBRID".
 
 ```python
 def detectar_mhev(tipo_itv, variante_itv, version_itv):
@@ -109,7 +109,7 @@ El campo DGT `SERVICIO` (3 chars, posición ~190-192) contiene el uso del vehíc
 
 ### Subcategorías más complejas (requieren lógica adicional)
 
-| SubCanal Simmix | Cómo detectarlo |
+| SubCanal Benchmark | Cómo detectarlo |
 |---|---|
 | E \| Renting | SERVICIO=A01 + titular JURÍDICO (`PERSONA_FISICA_JURIDICA`=X) + empresa conocida de renting |
 | R \| Buy Back | Registro de vehículo que fue de RAC (RAC + segunda matriculación) |
@@ -147,7 +147,7 @@ Se construye una tabla de alias DGT → IHS brand name (~50 casos especiales).
 
 ### Campos obtenidos del maestro
 
-| Campo Simmix | Campo Maestro BMW | Lógica |
+| Campo Benchmark | Campo Maestro BMW | Lógica |
 |---|---|---|
 | `Segment` | `BMW_SEGMENT` | Directo (UKL0, MKL, SKL, KKL, UKL1, UKL2, GKL...) |
 | `Segment_Origin` | `BMW_SEGMENT` con prefijo | Añadir número orden: "1.UKL0", "2.MKL"... |
@@ -157,7 +157,7 @@ Se construye una tabla de alias DGT → IHS brand name (~50 casos especiales).
 
 ### Tabla de equivalencias Body Type
 
-| IHS_BODY_GROUP (DGT CARROCERIA) | BMW_CONCEPT | Simmix Body Type |
+| IHS_BODY_GROUP (DGT CARROCERIA) | BMW_CONCEPT | Benchmark Body Type |
 |---|---|---|
 | SUV | SAV | SAV |
 | HATCHBACK (5p) | HATCH | HACH 5P |
@@ -305,7 +305,7 @@ Un modelo merece revisión prioritaria si:
 | Provincia | ✅ Sí | Exacta | COD_PROVINCIA_MAT → nombre |
 | Municipio | ✅ Sí | Exacta | Campo DGT directo |
 | Year / Month / Sort_Month | ✅ Sí | Exacta | FEC_MATRICULA |
-| Registrations | ✅ Sí | Exacta | 1 por registro (Simmix agrega igual) |
+| Registrations | ✅ Sí | Exacta | 1 por registro (Benchmark agrega igual) |
 | **Concesión / Puntos de Venta** | ⚠️ Con tu master | Alta | Necesitas la tabla territorio → concesión |
 | Id Concesin / Id Punto de Venta | ⚠️ Con tu master | Alta | IDs propios de tu organización |
 

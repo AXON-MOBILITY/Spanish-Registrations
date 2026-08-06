@@ -49,6 +49,10 @@ body{display:flex;flex-direction:column;overflow:hidden}
   border-right:1px solid var(--border);height:100%;
 }
 .app-brand-img{height:38px;width:auto;display:block;object-fit:contain}
+.app-brand-copy{display:flex;flex-direction:column;gap:2px}
+.app-brand-name{font-size:1.05rem;font-weight:800;letter-spacing:0;color:#1e293b;line-height:1}
+.app-brand-name span{font-weight:300;color:#475569}
+.app-brand-tag{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#3b82f6;line-height:1}
 .axon-lockup{display:flex;align-items:center;gap:9px}
 .axon-mark{width:34px;height:34px;flex-shrink:0;display:block}
 .axon-word{display:flex;flex-direction:column;gap:1px;line-height:1}
@@ -594,17 +598,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo" style="flex-direction:column;gap:12px;margin-bottom:4px">
-      <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:60px;height:60px;flex-shrink:0">
-        <rect x="8" y="8" width="240" height="240" rx="56" fill="#12121a" stroke="#2a2a3a" stroke-width="2"/>
-        <line x1="128" y1="48" x2="72" y2="200" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round"/>
-        <line x1="128" y1="48" x2="184" y2="200" stroke="#3b82f6" stroke-width="14" stroke-linecap="round"/>
-        <line x1="95" y1="138" x2="161" y2="138" stroke="#64748b" stroke-width="11" stroke-linecap="round"/>
-        <circle cx="128" cy="44" r="16" fill="#3b82f6"/>
-      </svg>
-      <div style="text-align:center">
-        <div style="font-size:1.3rem;font-weight:800;letter-spacing:-0.04em;background:linear-gradient(135deg,#e8e8f0 40%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">AXON <span style="font-weight:300">Mobility</span></div>
-        <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280;margin-top:3px">Automotive Market Intelligence</div>
-      </div>
+      <img class="login-brand-img" src="/brand/axon-mobility-logo-light.png" alt="Axon Mobility">
+      <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Automotive Market Intelligence</div>
     </div>
     <div class="login-title">Acceso restringido</div>
     <input id="login-user" class="login-input" type="text" placeholder="Usuario" autocomplete="username" style="margin-bottom:8px">
@@ -618,16 +613,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="tb-logo" style="display:flex;align-items:center;gap:10px">
-    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:34px;height:34px;flex-shrink:0">
-    <rect x="8" y="8" width="240" height="240" rx="56" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
-    <line x1="128" y1="48" x2="72" y2="200" stroke="#1e293b" stroke-width="14" stroke-linecap="round"/>
-    <line x1="128" y1="48" x2="184" y2="200" stroke="#3b82f6" stroke-width="14" stroke-linecap="round"/>
-    <line x1="95" y1="138" x2="161" y2="138" stroke="#94a3b8" stroke-width="11" stroke-linecap="round"/>
-    <circle cx="128" cy="44" r="16" fill="#3b82f6"/>
-  </svg>
-    <div style="display:flex;flex-direction:column;gap:1px">
-      <div style="font-size:.9rem;font-weight:800;letter-spacing:-0.03em;color:#1e293b;line-height:1">AXON <span style="font-weight:300;color:#475569">Mobility</span></div>
-      <div style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#3b82f6">Market Intelligence</div>
+    <img class="app-brand-img" src="/brand/axon-mobility-mark-light.png" alt="">
+    <div class="app-brand-copy">
+      <div class="app-brand-name">AXON <span>Mobility</span></div>
+      <div class="app-brand-tag">Market Intelligence</div>
     </div>
   </div>
   <div class="tb-tabs">
@@ -766,6 +755,12 @@ async function submitCreateOrg(){
         <span>Channel</span><span class="sg-arrow">▼</span>
       </div>
       <div class="sg-body"><div class="sg-pills" id="sb-canales"></div></div>
+    </div>
+    <div class="sg open" id="sg-renting">
+      <div class="sg-hdr" onclick="toggleSg('sg-renting')">
+        <span>Renting</span><span class="sg-arrow">▼</span>
+      </div>
+      <div class="sg-body"><div class="sg-pills" id="sb-renting"></div></div>
     </div>
     <div class="sg" id="sg-subs">
       <div class="sg-hdr" onclick="toggleSg('sg-subs')">
@@ -1112,7 +1107,7 @@ async function submitCreateOrg(){
 
 Chart.register(ChartDataLabels);
 
-const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,N:11};
+const COL={Y:0,M:1,MARCA:2,MODELO:3,CANAL:4,FUEL:5,FUEL_DET:6,SEG:7,SUB:8,HP:9,BODY:10,RENTING:11,N:12};
 let _OVD=null; // snapshot for PDF export
 
 function _brandColor(name){
@@ -1305,7 +1300,7 @@ let _RC={}; // render cache for expand rows
 const F={
   years:new Set(),months:new Set(),fuels:new Set(),canales:new Set(),
   segs:new Set(),subs:new Set(),hps:new Set(),concepts:new Set(),oem:new Set(),
-  provs:new Set(),
+  provs:new Set(),renting:new Set(),
   marcas:new Set(),modelo:'',body:'',dealers:new Set()
 };
 const CHARTS={};
@@ -1382,12 +1377,16 @@ function tryBuildProvProjection(){
   const mHp    =remap(P.hp    ,E.hp    ,false);
   const mBody  =remap(P.body  ,E.body  ,false);
   let fdIdx=E.fuel_det.indexOf(''); if(fdIdx<0){ fdIdx=E.fuel_det.length; E.fuel_det.push(''); }
+  // records_prov.json no lleva dimension renting (binaria, ortogonal a provincia):
+  // se proyecta con un indice "sin dato" para no desalinear COL.RENTING/COL.N.
+  let rentIdx=E.renting.indexOf(''); if(rentIdx<0){ rentIdx=E.renting.length; E.renting.push(''); }
+  F.renting.add(rentIdx); // sin pill propia: siempre visible, provincia no lleva grano renting
   const provNames=P.prov;
   RECP_PROJ=RECP.rows.map(r=>({
     prov: provNames[r[C.PROV]],
     row: [ r[C.Y], r[C.M], mMarca[r[C.MARCA]], mModelo[r[C.MODELO]],
            r[C.CANAL], r[C.FUEL], fdIdx,
-           mSeg[r[C.SEG]], mSub[r[C.SUB]], mHp[r[C.HP]], mBody[r[C.BODY]], r[C.N] ]
+           mSeg[r[C.SEG]], mSub[r[C.SUB]], mHp[r[C.HP]], mBody[r[C.BODY]], rentIdx, r[C.N] ]
   }));
 }
 
@@ -1436,13 +1435,17 @@ function tryBuildDealerProjection(){
   const mHp=remap(D.hp,E.hp,false);
   const mBody=remap(D.body,E.body,false);
   const provs=D.prov||[],dealers=D.dealer||[];
+  // records_dealer.json tampoco lleva dimension renting: mismo indice "sin dato"
+  // que la proyeccion de provincia, siempre incluido en F.renting.
+  let rentIdx=E.renting.indexOf(''); if(rentIdx<0){ rentIdx=E.renting.length; E.renting.push(''); }
+  F.renting.add(rentIdx);
   RECD_PROJ=RECD.rows.map(r=>({
     prov:provs[r[C.PROV]]||'',
     dealer:dealers[r[C.DEALER]]||'',
     row:[
       r[C.Y],r[C.M],mMarca[r[C.MARCA]],mModelo[r[C.MODELO]],
       r[C.CANAL],r[C.FUEL],mFuelDet[r[C.FUEL_DET]],
-      mSeg[r[C.SEG]],mSub[r[C.SUB]],mHp[r[C.HP]],mBody[r[C.BODY]],r[C.N]
+      mSeg[r[C.SEG]],mSub[r[C.SUB]],mHp[r[C.HP]],mBody[r[C.BODY]],rentIdx,r[C.N]
     ]
   }));
 }
@@ -1718,6 +1721,26 @@ function buildSidebar(){
       render();
     };
     g('sb-canales').appendChild(pill);
+  });
+
+  // Renting — pills
+  const rentingOrder=['No Renting','Renting'];
+  const rentingIdx=[...E.renting.keys()].sort((a,b)=>{
+    const ia=rentingOrder.indexOf(E.renting[a]), ib=rentingOrder.indexOf(E.renting[b]);
+    return (ia<0?99:ia)-(ib<0?99:ib);
+  });
+  rentingIdx.forEach(i=>{
+    const label=E.renting[i]||'Sin dato';
+    F.renting.add(i);
+    const pill=document.createElement('div');
+    pill.className='sg-pill on';
+    pill.textContent=label;
+    pill.onclick=()=>{
+      if(F.renting.has(i)){if(F.renting.size>1){F.renting.delete(i);pill.classList.remove('on');}}
+      else{F.renting.add(i);pill.classList.add('on');}
+      render();
+    };
+    g('sb-renting').appendChild(pill);
   });
 
   // Subsegment — with parent-child logic for FOCUS SEGMENT concepts
@@ -2099,6 +2122,7 @@ function applyFiltersBase(){
     if(!F.months.has(r[COL.M]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(r[COL.SUB]))return false;
     if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){
@@ -2150,6 +2174,7 @@ function render(){
     if(r[COL.Y]!==refYear)return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!F.subs.has(r[COL.SUB]))return false;
     if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
@@ -2410,7 +2435,7 @@ function render(){
     else byBM[brand][m].prev+=r[COL.N];
   });
 
-  // Only include brands that pass the current filter (SIMMIX_BRANDS + other filters)
+  // Only include brands that pass the current filter (BENCHMARK_BRANDS + other filters)
   const monthBrands=sortedVis.map(([b])=>b);
   const allBrandsForTotals=sorted.map(([b])=>b);
   const otherBrandNames=others.map(([b])=>b);
@@ -2965,6 +2990,7 @@ function trendBaseRows(){
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return false;
     if(!F.fuels.has(r[COL.FUEL]))return false;
     if(!F.canales.has(r[COL.CANAL]))return false;
+    if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
     if(!trendSubOk(r))return false;
     if(F.oem.size<2){
@@ -3231,6 +3257,7 @@ function renderTrend(){
     if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return;
     if(!F.fuels.has(r[COL.FUEL]))return;
     if(!F.canales.has(r[COL.CANAL]))return;
+    if(!F.renting.has(r[COL.RENTING]))return;
     if(!trendSubOk(r))return;
     const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
     const n=r[COL.N];
@@ -3305,6 +3332,7 @@ function renderTrendPct(totM,cnM,allTotM,allCnM){
       if(!INCLUDED_MARCA_IDX.has(r[COL.MARCA]))return;
       if(!F.fuels.has(r[COL.FUEL]))return;
       if(!F.canales.has(r[COL.CANAL]))return;
+      if(!F.renting.has(r[COL.RENTING]))return;
       if(!trendSubOk(r))return;
       if(!F.months.has(r[COL.M]))return;
       const k=r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0');
@@ -3646,7 +3674,7 @@ async function downloadInforme(){
     if(!_OVD){alert('Sin datos - aplica filtros primero.');return;}
 
     const doc=new JPDF({orientation:'p',unit:'mm',format:'a4'});
-    const W=210, M=18, CW=W-2*M; // A4 portrait, 18mm margins
+    const W=210, H=297, M=10, CW=W-2*M; // A4 portrait, 10mm margins (matches reference)
 
     // ── Pre-carga logos como base64 ───────────────────────────────────────
     const _logoCache={};
@@ -3706,179 +3734,193 @@ async function downloadInforme(){
     const _pdfBrands=[...new Set(REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA])).map(r=>REC.enums.marca[r[COL.MARCA]]).filter(Boolean))];
     await Promise.all(_pdfBrands.map(_fetchLogo));
 
+    // Logo Axon Mobility (version clara, para fondo navy de portada)
+    let _axonLogoData=null;
+    try{
+      const r=await fetch('brand/axon-mobility-logo-dark.png');
+      if(r.ok){const blob=await r.blob();_axonLogoData=await _blobToDataUrl(blob);}
+    }catch(e){}
+
+    // ── Colores de marca Axon Mobility ────────────────────────────────────
+    const AX_NAVY=[6,13,41];      // fondo portada / barras de titulo oscuras
+    const AX_NAVY2=[15,27,58];    // tarjetas KPI / tarjeta "Total Market"
+    const AX_BLUE=[0,104,251];    // azul de marca (cabecera tabla, acentos)
+    const AX_GREEN=[5,150,105];   // BEV (coherente con el resto del dashboard)
+    const AX_RED=[220,38,38];     // PHEV
+    const AX_ICEBLUE=[37,99,235]; // ICE
+    const AX_CYAN=[8,145,178];    // Focus Segment
+    const AX_ORANGE=[234,88,12];  // Chinese OEMs
+
     // ── Datos base (independiente de filtros UI) ─────────────────────────
     const _E=REC.enums;
     const refYear=_OVD.refYear;
     // curM: mes mas reciente con datos en refYear — se actualiza solo al cargar agosto, etc.
     const _baseRows=REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA]));
     const curM=Math.max(..._baseRows.filter(r=>r[COL.Y]===refYear).map(r=>r[COL.M]));
-    const mLabelPer=MES[curM-1]+' '+refYear;   // e.g. "Julio 2026"
-    const now=new Date();
-    const nowStr=now.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'})
-               +' '+now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-
-    // Periodo = curM | YTD = Ene-curM — sin dependencia de F.months/fuels/canales/etc.
+    const mLabelShort=MES3[curM-1].toUpperCase()+'. '+refYear+'.'; // e.g. "JUL. 2026."
     const _ytdM=new Set(Array.from({length:curM},(_,i)=>i+1));
-    const perR=_baseRows.filter(r=>r[COL.Y]===refYear&&r[COL.M]===curM);
-    const perP=_baseRows.filter(r=>r[COL.Y]===refYear-1&&r[COL.M]===curM);
-    const ytdR=_baseRows.filter(r=>r[COL.Y]===refYear&&_ytdM.has(r[COL.M]));
-    const ytdP=_baseRows.filter(r=>r[COL.Y]===refYear-1&&_ytdM.has(r[COL.M]));
 
-    // Agregados periodo por marca + fuel breakdown
-    const perB={},perBP={},perBFuel={};
-    perR.forEach(r=>{
-      const b=_E.marca[r[COL.MARCA]];
-      perB[b]=(perB[b]||0)+r[COL.N];
-      if(!perBFuel[b])perBFuel[b]={BEV:0,PHEV:0,ICE:0};
-      const f=_E.fuel[r[COL.FUEL]];if(f in perBFuel[b])perBFuel[b][f]+=r[COL.N];
-    });
-    perP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];perBP[b]=(perBP[b]||0)+r[COL.N];});
-    const perTot=Object.values(perB).reduce((s,v)=>s+v,0);
-    const perTotPrev=Object.values(perBP).reduce((s,v)=>s+v,0);
-    const perTotYoY=perTotPrev?(perTot-perTotPrev)/perTotPrev*100:null;
-    const perSv=Object.entries(perB).map(([b,n])=>[b,{total:n,...(perBFuel[b]||{BEV:0,PHEV:0,ICE:0})}])
-      .sort((a,b)=>b[1].total-a[1].total);
-
-    // Fuel totals del periodo y YoY
-    const fT={BEV:0,PHEV:0,ICE:0},fTP={BEV:0,PHEV:0,ICE:0};
-    perR.forEach(r=>{const f=_E.fuel[r[COL.FUEL]];if(f in fT)fT[f]+=r[COL.N];});
-    perP.forEach(r=>{const f=_E.fuel[r[COL.FUEL]];if(f in fTP)fTP[f]+=r[COL.N];});
-    const fYY={
-      BEV:fTP.BEV?(fT.BEV-fTP.BEV)/fTP.BEV*100:null,
-      PHEV:fTP.PHEV?(fT.PHEV-fTP.PHEV)/fTP.PHEV*100:null,
-      ICE:fTP.ICE?(fT.ICE-fTP.ICE)/fTP.ICE*100:null,
-    };
-
-    // Agregados YTD por marca
-    const ytdB={},ytdBP={};
-    ytdR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdB[b]=(ytdB[b]||0)+r[COL.N];});
-    ytdP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];ytdBP[b]=(ytdBP[b]||0)+r[COL.N];});
-    const ytdTot=Object.values(ytdB).reduce((s,v)=>s+v,0);
-    const ytdTotPrev=Object.values(ytdBP).reduce((s,v)=>s+v,0);
-    const ytdTotYoY=ytdTotPrev?(ytdTot-ytdTotPrev)/ytdTotPrev*100:null;
-
-    // YoY map builder generico
-    function buildYoYMap(rR,pR){
-      const m={};
-      rR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!m[b])m[b]={ref:0,prev:0};m[b].ref+=r[COL.N];});
-      pR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];if(!m[b])m[b]={ref:0,prev:0};m[b].prev+=r[COL.N];});
-      return m;
+    // ── Agregador generico: dado un subconjunto de filas, calcula MTD/YTD por marca ──
+    function aggregate(rowsScope){
+      const pR=rowsScope.filter(r=>r[COL.Y]===refYear&&r[COL.M]===curM);
+      const pP=rowsScope.filter(r=>r[COL.Y]===refYear-1&&r[COL.M]===curM);
+      const yR=rowsScope.filter(r=>r[COL.Y]===refYear&&_ytdM.has(r[COL.M]));
+      const yP=rowsScope.filter(r=>r[COL.Y]===refYear-1&&_ytdM.has(r[COL.M]));
+      const pB={},pBP={},yB={},yBP={};
+      pR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];pB[b]=(pB[b]||0)+r[COL.N];});
+      pP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];pBP[b]=(pBP[b]||0)+r[COL.N];});
+      yR.forEach(r=>{const b=_E.marca[r[COL.MARCA]];yB[b]=(yB[b]||0)+r[COL.N];});
+      yP.forEach(r=>{const b=_E.marca[r[COL.MARCA]];yBP[b]=(yBP[b]||0)+r[COL.N];});
+      const pTot=Object.values(pB).reduce((s,v)=>s+v,0);
+      const pTotP=Object.values(pBP).reduce((s,v)=>s+v,0);
+      const yTot=Object.values(yB).reduce((s,v)=>s+v,0);
+      const yTotP=Object.values(yBP).reduce((s,v)=>s+v,0);
+      const sv=Object.entries(pB).map(([b,n])=>[b,{total:n}]).sort((a,b)=>b[1].total-a[1].total);
+      return{sv,pB,pBP,pTot,pTotP,pTotYoY:pTotP?(pTot-pTotP)/pTotP*100:null,
+        yB,yBP,yTot,yTotP,yTotYoY:yTotP?(yTot-yTotP)/yTotP*100:null};
     }
-    const perYoYMap=buildYoYMap(perR,perP);
 
-    // YTD por combustible
-    function fuelYtd(fuel){
-      const bC={},bP={};
-      ytdR.filter(r=>_E.fuel[r[COL.FUEL]]===fuel).forEach(r=>{const b=_E.marca[r[COL.MARCA]];bC[b]=(bC[b]||0)+r[COL.N];});
-      ytdP.filter(r=>_E.fuel[r[COL.FUEL]]===fuel).forEach(r=>{const b=_E.marca[r[COL.MARCA]];bP[b]=(bP[b]||0)+r[COL.N];});
-      const t=Object.values(bC).reduce((s,v)=>s+v,0);
-      const tp=Object.values(bP).reduce((s,v)=>s+v,0);
-      return{bC,bP,t,yoy:tp?(t-tp)/tp*100:null};
-    }
-    // YoY periodo por combustible (usa datos del periodo curM)
-    function fuelYoYMap(fuel){
-      return buildYoYMap(
-        perR.filter(r=>_E.fuel[r[COL.FUEL]]===fuel),
-        perP.filter(r=>_E.fuel[r[COL.FUEL]]===fuel)
-      );
-    }
+    const aggTotal=aggregate(_baseRows);
+    const aggBEV=aggregate(_baseRows.filter(r=>_E.fuel[r[COL.FUEL]]==='BEV'));
+    const aggPHEV=aggregate(_baseRows.filter(r=>_E.fuel[r[COL.FUEL]]==='PHEV'));
+    const aggICE=aggregate(_baseRows.filter(r=>_E.fuel[r[COL.FUEL]]==='ICE'));
+    const aggFocus=aggregate(_baseRows.filter(r=>_E.sub[r[COL.SUB]]==='FOCUS SEGMENT'));
+    const aggChinese=aggregate(_baseRows.filter(r=>_CHINESE_BRANDS.has(_E.marca[r[COL.MARCA]])));
 
     // ── Helpers ───────────────────────────────────────────────────────────
     function hRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
-    function pctStr(v){return v==null?'0,0%':(v>=0?'+':'')+v.toFixed(1)+'%';}
+    function pctStr(v){return v==null?'—':(v>=0?'+':'')+v.toFixed(1)+'%';}
 
-    // Construye filas de la tabla
-    function mkRows(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN){
-      return sv.map(([brand,d],i)=>{
-        const sh=totN?d.total/totN*100:0;
-        const yD=yoyMap[brand];
-        const yP=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
-        const yn=ytdBrand[brand]||0, yp=ytdBrandPrev[brand]||0;
-        const yPy=yp?(yn-yp)/yp*100:null;
-        const ySh=ytdTotN?yn/ytdTotN*100:0;
-        return[i+1,brand,fN(d.total),pctStr(yP),fP2(sh),fN(yn),pctStr(yPy),fP2(ySh)];
-      });
+    // Construye filas de la tabla (MTD y YTD, ano actual + anterior)
+    // Cap de filas: top 28 marcas individuales + fila "Other (N brands)" agregada,
+    // igual que el informe de referencia — sin esto una tabla con ~80 marcas activas
+    // desborda a varias paginas.
+    const TABLE_CAP=28;
+    function mkRows(agg){
+      function rowFrom(rank,brand,mtdCur,mtdPrev,ytdCur,ytdPrev){
+        const mtdDiff=mtdPrev?(mtdCur-mtdPrev)/mtdPrev*100:null;
+        const shareCur=agg.pTot?mtdCur/agg.pTot*100:0;
+        const sharePrev=agg.pTotP?mtdPrev/agg.pTotP*100:0;
+        const ytdDiff=ytdPrev?(ytdCur-ytdPrev)/ytdPrev*100:null;
+        const yShareCur=agg.yTot?ytdCur/agg.yTot*100:0;
+        const yaSharePrev=agg.yTotP?ytdPrev/agg.yTotP*100:0;
+        return[rank,brand,fN(mtdCur),fN(mtdPrev),pctStr(mtdDiff),fP1(shareCur),fP1(sharePrev),
+               fN(ytdCur),fN(ytdPrev),pctStr(ytdDiff),fP1(yShareCur),fP1(yaSharePrev)];
+      }
+      const top=agg.sv.slice(0,TABLE_CAP);
+      const rest=agg.sv.slice(TABLE_CAP);
+      const rows=top.map(([brand,d],i)=>rowFrom(i+1,brand,d.total,agg.pBP[brand]||0,agg.yB[brand]||0,agg.yBP[brand]||0));
+      if(rest.length){
+        let mtdCur=0,mtdPrev=0,ytdCur=0,ytdPrev=0;
+        rest.forEach(([brand,d])=>{
+          mtdCur+=d.total;
+          mtdPrev+=agg.pBP[brand]||0;
+          ytdCur+=agg.yB[brand]||0;
+          ytdPrev+=agg.yBP[brand]||0;
+        });
+        const lbl='Other ('+rest.length+')';
+        rows.push(rowFrom(top.length+1,lbl,mtdCur,mtdPrev,ytdCur,ytdPrev));
+      }
+      return rows;
     }
 
     // Footer en cada pagina
     function pgFooter(){
       const pg=doc.internal.getCurrentPageInfo().pageNumber;
-      doc.setFontSize(6);doc.setFont('helvetica','normal');
-      doc.setTextColor(180,190,205);
+      doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+      doc.setTextColor(150,160,175);
       doc.setDrawColor(210,218,228);doc.setLineWidth(0.15);
-      doc.line(M,289,W-M,289);
-      doc.text('DGT Matriculaciones \xB7 '+mLabelPer,M,293);
-      doc.text('P\xE1g. '+pg,W-M,293,{align:'right'});
+      doc.line(M,H-9,W-M,H-9);
+      doc.text('AXON MOBILITY \xB7 '+mLabelShort,M,H-5);
+      doc.text('P\xE1g. '+pg,W-M,H-5,{align:'right'});
     }
 
-    // Dibuja la tabla autoTable
-    function drawTable(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN,startY){
-      const rows=mkRows(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN);
+    // Ancho de columnas de la tabla (suma = CW = 190; medido pixel a pixel del informe de referencia)
+    const COLW=[13,34,15,15,16,12,13,15,16,16,12,13];
+
+    // Dibuja la tabla autoTable. mode: 'main' (Total/BEV/PHEV/ICE), 'focus' (Focus Segment), 'chinese' (Chinese OEMs)
+    function drawTable(agg,startY,mode){
+      const rows=mkRows(agg);
+      const y2=String(refYear), y1=String(refYear-1);
       doc.autoTable({
         head:[
-          ['','',mLabelPer,'','','Acumulado YTD '+_OVD.refYear,'',''],
-          ['Pos','Marca','Unidades','Var. %','Cuota','Unidades','Var. %','Cuota'],
+          ['','',
+            {content:'REGISTRATIONS - MTD',colSpan:3,styles:{halign:'center'}},
+            {content:'MARKET SHARE - MTD',colSpan:2,styles:{halign:'center'}},
+            {content:'REGISTRATIONS - YTD',colSpan:3,styles:{halign:'center'}},
+            {content:'MARKET SHARE - YTD',colSpan:2,styles:{halign:'center'}},
+          ],
+          ['Rank','Brand',y2,y1,'% Diff.',y2,y1,y2,y1,'% Diff.',y2,y1],
         ],
         body:rows,startY,
         margin:{left:M,right:M},
         tableLineColor:[220,228,238],tableLineWidth:0,
         styles:{
-          fontSize:7.5,
-          cellPadding:{top:2,right:2.5,bottom:2,left:2.5},
+          fontSize:8.5,
+          cellPadding:{top:2,right:1.8,bottom:2,left:1.8},
           textColor:[28,42,62],
-          lineColor:[228,234,242],lineWidth:0.12,
+          lineColor:[228,234,242],lineWidth:0.1,
           font:'helvetica',overflow:'linebreak',valign:'middle',
+          minCellHeight:7.2,
         },
         headStyles:{
-          fillColor:[26,96,196],textColor:[255,255,255],
-          fontStyle:'bold',fontSize:6.8,
-          cellPadding:{top:2.5,right:2.5,bottom:2.5,left:2.5},
+          fillColor:AX_BLUE,textColor:[255,255,255],
+          fontStyle:'bold',fontSize:9,
+          cellPadding:{top:1.4,right:1.8,bottom:1.4,left:1.8},
         },
         alternateRowStyles:{fillColor:[245,249,254]},
         columnStyles:{
-          0:{cellWidth:13, halign:'right', textColor:[158,170,185],fontStyle:'normal',fontSize:7},
-          1:{cellWidth:44, fontStyle:'bold',
-             cellPadding:{top:2,right:2.5,bottom:2,left:10}},
-          2:{cellWidth:20, halign:'right'},
-          3:{cellWidth:16, halign:'right'},
-          4:{cellWidth:14, halign:'right',textColor:[128,142,158]},
-          5:{cellWidth:20, halign:'right'},
-          6:{cellWidth:16, halign:'right'},
-          7:{cellWidth:14, halign:'right',textColor:[128,142,158]},
+          0:{cellWidth:COLW[0], halign:'right', textColor:[158,170,185],overflow:'visible',
+             cellPadding:{top:2,right:0.9,bottom:2,left:0.9}},
+          1:{cellWidth:COLW[1], fontStyle:'bold',
+             cellPadding:{top:2,right:1.8,bottom:2,left:8.5}},
+          2:{cellWidth:COLW[2], halign:'right',overflow:'visible'},
+          3:{cellWidth:COLW[3], halign:'right',textColor:[128,142,158],overflow:'visible'},
+          4:{cellWidth:COLW[4], halign:'right',overflow:'visible'},
+          5:{cellWidth:COLW[5], halign:'right',overflow:'visible'},
+          6:{cellWidth:COLW[6], halign:'right',textColor:[128,142,158],overflow:'visible'},
+          7:{cellWidth:COLW[7], halign:'right',overflow:'visible'},
+          8:{cellWidth:COLW[8], halign:'right',textColor:[128,142,158],overflow:'visible'},
+          9:{cellWidth:COLW[9], halign:'right',overflow:'visible'},
+          10:{cellWidth:COLW[10],halign:'right',overflow:'visible'},
+          11:{cellWidth:COLW[11],halign:'right',textColor:[128,142,158],overflow:'visible'},
         },
         didParseCell(d){
           if(d.section==='body'){
             const brand=d.row.raw[1];
             const v=String(d.cell.raw);
-            // BMW/MINI: fondo ambar suave
-            if(brand==='BMW'||brand==='MINI')
-              d.cell.styles.fillColor=[255,248,224];
-            // Var.% columnas 3 y 6: coloreado + negrita
-            if(d.column.index===3||d.column.index===6){
+            if(brand.startsWith('Other (')&&d.column.index===1){
+              d.cell.styles.fontStyle='italic';
+              d.cell.styles.textColor=[128,142,158];
+            }
+            if(mode==='main'){
+              // BMW/MINI: fondo ambar suave · Audi/Mercedes: texto rojo · Chinese OEM: rank en rojo
+              if(brand==='BMW'||brand==='MINI')
+                d.cell.styles.fillColor=[255,248,224];
+              if((brand==='Audi'||brand==='Mercedes')&&d.column.index===1)
+                d.cell.styles.textColor=[198,42,42];
+              if(d.column.index===0&&_CHINESE_BRANDS.has(brand))
+                d.cell.styles.textColor=[198,42,42];
+            }
+            if(mode==='focus'){
+              // Tra competencia tradicional / new players & tesla
+              const bc=_BRAND_CONCEPT[brand];
+              if(bc==='TRAD. COMP.')d.cell.styles.fillColor=[235,242,250];
+              else if(bc==='NEW PLAYERS & TESLA')d.cell.styles.fillColor=[255,246,228];
+            }
+            // Var.% columnas 4 y 9: coloreado + negrita
+            if(d.column.index===4||d.column.index===9){
               d.cell.styles.fontStyle='bold';
               if(v.startsWith('+'))     d.cell.styles.textColor=[14,128,78];
               else if(v.startsWith('-'))d.cell.styles.textColor=[198,42,42];
               else                       d.cell.styles.textColor=[118,130,145];
             }
-            // Audi/Mercedes col marca: texto rojo
-            if((brand==='Audi'||brand==='Mercedes')&&d.column.index===1)
-              d.cell.styles.textColor=[198,42,42];
-          }
-          // Cabecera fila 1 col 0: reducir padding para que 'Pos' no se parta
-          if(d.section==='head'&&d.row.index===1&&d.column.index===0)
-            d.cell.styles.cellPadding={top:2.5,right:1,bottom:2.5,left:1};
-          // Cabecera fila 0: ocultar celdas vacias (mismo color que bg)
-          if(d.section==='head'&&d.row.index===0){
-            if([3,4,6,7].includes(d.column.index))
-              d.cell.styles.textColor=[26,96,196];
-            if(d.column.index===2||d.column.index===5)
-              d.cell.styles.halign='center';
           }
         },
         didDrawCell(d){
-          if(d.section==='body'&&d.column.index===1){
+          if(d.section==='body'&&d.column.index===1&&!d.row.raw[1].startsWith('Other (')){
             const brand=d.row.raw[1];
-            const bs=6, bx=d.cell.x+1.5, by=d.cell.y+(d.cell.height-bs)/2;
+            const bs=6, bx=d.cell.x+1.3, by=d.cell.y+(d.cell.height-bs)/2;
             if(_logoCache[brand]){
               // Fondo claro para logos color, oscuro para logos blancos.
               doc.setFillColor(...(_logoCache[brand].isColor?[241,245,249]:[22,35,58]));
@@ -3891,129 +3933,141 @@ async function downloadInforme(){
               doc.setFillColor(r,g,b);
               doc.ellipse(bx+bs/2,d.cell.y+d.cell.height/2,1.4,1.4,'F');
             }
-            // Linea acento izquierda: dorado BMW/MINI, rojo Audi/Mercedes
-            const isGold=brand==='BMW'||brand==='MINI';
-            const isBlue=brand==='Audi'||brand==='Mercedes';
-            if(isGold||isBlue){
-              doc.setDrawColor(...(isGold?[205,162,25]:[198,42,42]));
-              doc.setLineWidth(1.4);
-              doc.line(d.cell.x+0.5,d.cell.y+0.3,d.cell.x+0.5,d.cell.y+d.cell.height-0.3);
+            if(mode==='main'){
+              // Linea acento izquierda: dorado BMW/MINI, rojo Audi/Mercedes
+              const isGold=brand==='BMW'||brand==='MINI';
+              const isBlue=brand==='Audi'||brand==='Mercedes';
+              if(isGold||isBlue){
+                doc.setDrawColor(...(isGold?[205,162,25]:[198,42,42]));
+                doc.setLineWidth(1.4);
+                doc.line(d.cell.x+0.5,d.cell.y+0.3,d.cell.x+0.5,d.cell.y+d.cell.height-0.3);
+              }
             }
           }
         },
         didDrawPage(){pgFooter();},
       });
-    }
-
-    // Dibuja una seccion completa (pagina nueva + stats + titulo + tabla)
-    function drawSection(title,sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN,yoyPer,ytdYoY){
-      doc.addPage();
-
-      // ── 3 stats centrados en la zona superior ─────────────────────────
-      // Centros en 47, 105, 163 mm (distribucion uniforme sobre CW=174)
-      const sCX=[M+CW/6, M+CW/2, M+5*CW/6];
-      const sY=16;
-      const sCols=[
-        {v:fN(totN),   lbl:'Matric. del mes',yoy:yoyPer},
-        {v:fN(ytdTotN),lbl:'Acumulado YTD',  yoy:ytdYoY},
-        {v:String(sv.length),lbl:'Marcas activas',yoy:null},
-      ];
-      sCols.forEach((s,i)=>{
-        const cx=sCX[i];
-        doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(18,28,44);
-        doc.text(s.v,cx,sY,{align:'center'});
-        doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(108,122,138);
-        doc.text(s.lbl,cx,sY+5.5,{align:'center'});
-        if(s.yoy!=null){
-          const pos=s.yoy>=0;
-          doc.setFont('helvetica','bold');doc.setFontSize(7.5);
-          doc.setTextColor(pos?14:198,pos?128:42,pos?78:42);
-          doc.text((pos?'+':'')+s.yoy.toFixed(1)+'%',cx,sY+12,{align:'center'});
-        }
-      });
-
-      // ── Titulo seccion + linea azul ───────────────────────────────────
-      const tY=sY+22;
-      doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(18,28,44);
-      doc.text(title,M,tY);
-      doc.setDrawColor(26,96,196);doc.setLineWidth(0.7);
-      doc.line(M,tY+2.5,W-M,tY+2.5);
-
-      // ── "Marcas destacadas" con cuadrados de color ────────────────────
-      const mdY=tY+10;
-      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
-      doc.text('Marcas destacadas',M,mdY);
-      // Cuadrado dorado + "BMW · MINI"
-      let mx=M+37;
-      doc.setFillColor(205,162,25);doc.rect(mx,mdY-2.5,2.5,2.5,'F');
-      doc.text('BMW \xB7 MINI',mx+3.5,mdY);
-      // Cuadrado rojo + "Audi · Mercedes"
-      mx+=21;
-      doc.setFillColor(198,42,42);doc.rect(mx,mdY-2.5,2.5,2.5,'F');
-      doc.text('Audi \xB7 Mercedes',mx+3.5,mdY);
-
-      // ── Tabla ─────────────────────────────────────────────────────────
-      drawTable(sv,totN,yoyMap,ytdBrand,ytdBrandPrev,ytdTotN,mdY+5);
-    }
-
-    // ══ PORTADA (pagina 1, fondo blanco) ══════════════════════════════════
-    // Eyebrow
-    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(118,130,148);
-    doc.text('INFORME INTERNO',M,95);
-    // Titulo principal
-    doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(18,28,44);
-    doc.text('Ranking de marcas',M,109);
-    // Subtitulo azul
-    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(26,96,196);
-    doc.text('Matriculaciones \xB7 '+mLabelPer,M,122);
-    // Descripcion
-    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(88,102,120);
-    doc.text('Mercado total, veh\xEDculos el\xE9ctricos (BEV), h\xEDbridos enchufables (PHEV) y combusti\xF3n (ICE) — comparativa mensual e interanual acumulada',M,133,{maxWidth:CW});
-    // Separador
-    doc.setDrawColor(215,222,232);doc.setLineWidth(0.25);doc.line(M,140,W-M,140);
-    // 4 cajas KPI con borde
-    const bw=(CW-9)/4;
-    [
-      {n:fN(perTot),  lbl:'Mercado Total',              yoy:perTotYoY},
-      {n:fN(fT.BEV),  lbl:'BEV \xB7 El\xE9ctricos',        yoy:fYY.BEV},
-      {n:fN(fT.PHEV), lbl:'PHEV \xB7 H\xEDbridos enchufables',yoy:fYY.PHEV},
-      {n:fN(fT.ICE),  lbl:'ICE \xB7 Combusti\xF3n',         yoy:fYY.ICE},
-    ].forEach((k,i)=>{
-      const bx=M+i*(bw+3), by=148;
-      doc.setFillColor(255,255,255);doc.setDrawColor(208,216,228);doc.setLineWidth(0.25);
-      doc.roundedRect(bx,by,bw,30,1.2,1.2,'FD');
-      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(18,28,44);
-      doc.text(k.n,bx+5,by+10);
-      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(108,122,138);
-      doc.text(k.lbl,bx+5,by+16.5);
-      if(k.yoy!=null){
-        const pos=k.yoy>=0;
-        doc.setFont('helvetica','bold');doc.setFontSize(8);
-        doc.setTextColor(pos?14:198,pos?128:42,pos?78:42);
-        doc.text((pos?'+':'')+k.yoy.toFixed(1)+'% interanual',bx+5,by+24.5);
+      if(mode==='main'){
+        const finalY=doc.lastAutoTable.finalY;
+        doc.setFont('helvetica','normal');doc.setFontSize(6.3);doc.setTextColor(140,152,168);
+        doc.text('Rank number in red = Chinese OEM brand.',M,finalY+4);
       }
+    }
+
+    // Tarjeta KPI (oscura, navy) usada en cada pagina de seccion
+    function drawKPI(x,y,w,h,val,lbl,yoy,extra){
+      doc.setFillColor(...AX_NAVY2);
+      doc.roundedRect(x,y,w,h,1.4,1.4,'F');
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(150,175,220);
+      doc.text(lbl,x+w/2,y+5.2,{align:'center'});
+      doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(255,255,255);
+      doc.text(val,x+w/2,y+11.3,{align:'center'});
+      if(yoy!=null){
+        const pos=yoy>=0;
+        doc.setFont('helvetica','bold');doc.setFontSize(7.5);
+        doc.setTextColor(...(pos?[110,231,183]:[248,150,150]));
+        doc.text((pos?'+':'')+yoy.toFixed(1)+'% vs. last year',x+w/2,y+14.9,{align:'center'});
+      } else if(extra){
+        doc.setFont('helvetica','normal');doc.setFontSize(7.3);doc.setTextColor(170,185,215);
+        doc.text(extra,x+w/2,y+14.9,{align:'center'});
+      }
+    }
+
+    // Cabecera de pagina de seccion: eyebrow + boton HOME (enlazado a portada) + barra de titulo
+    function sectionHeader(title){
+      doc.addPage();
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(20,30,50);
+      doc.text('AXON MOBILITY  |  PERIOD: '+mLabelShort,M,11);
+      doc.setFillColor(...AX_NAVY);
+      doc.roundedRect(W-M-20,5,20,7,1.4,1.4,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(6.8);doc.setTextColor(255,255,255);
+      doc.text('HOME',W-M-10,9.5,{align:'center'});
+      doc.link(W-M-20,5,20,7,{pageNumber:1});
+      doc.setFillColor(...AX_BLUE);
+      doc.rect(M,13,CW,11,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(255,255,255);
+      doc.text(title,M+5,20.8);
+    }
+
+    // Dibuja una seccion completa (pagina nueva + KPIs + tabla)
+    function drawSection(title,agg,mode,activePrevN){
+      sectionHeader(title);
+      const cw3=(CW-12)/3, y0=26, kpiH=15.5;
+      drawKPI(M,y0,cw3,kpiH,fN(agg.pTot),'MONTHLY TOTAL (MTD)',agg.pTotYoY);
+      drawKPI(M+cw3+6,y0,cw3,kpiH,fN(agg.yTot),'YTD ACCUMULATED',agg.yTotYoY);
+      const brandDelta=agg.sv.length-activePrevN;
+      drawKPI(M+2*(cw3+6),y0,cw3,kpiH,String(agg.sv.length),'ACTIVE BRANDS',null,
+        (brandDelta>=0?'+':'')+brandDelta+' vs. last year');
+
+      let tblY=y0+kpiH+3.5;
+      if(mode==='focus'){
+        doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(90,102,120);
+        doc.setFillColor(200,220,245);doc.rect(M,tblY-3.2,3,3,'F');
+        doc.text('TRADITIONAL COMPETITION',M+4.5,tblY-0.8);
+        doc.setFillColor(255,224,150);doc.rect(M+58,tblY-3.2,3,3,'F');
+        doc.text('NEW PLAYERS & TESLA',M+62.5,tblY-0.8);
+        tblY+=4;
+      }
+      drawTable(agg,tblY,mode);
+    }
+
+    // ══ PORTADA (pagina 1, fondo navy Axon Mobility) ═══════════════════════
+    doc.setFillColor(...AX_NAVY);
+    doc.rect(0,0,W,H,'F');
+    if(_axonLogoData){
+      doc.addImage(_axonLogoData,'PNG',M,9,52,14.6);
+    } else {
+      doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(255,255,255);
+      doc.text('AXON MOBILITY',M,20);
+    }
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(120,150,210);
+    doc.text('EXECUTIVE DASHBOARD',M,42);
+    doc.setFont('helvetica','bold');doc.setFontSize(30);doc.setTextColor(255,255,255);
+    doc.text('ES REGISTRATION RANKINGS.',M,58);
+    doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...AX_BLUE);
+    doc.text(mLabelShort,M,69);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(170,182,205);
+    doc.text('Market overview by fuel type and competitive landscape.',M,78,{maxWidth:CW*0.6});
+    doc.setDrawColor(40,55,85);doc.setLineWidth(0.3);doc.line(M,86,W-M,86);
+
+    // 6 tarjetas de navegacion (enlazadas a su pagina)
+    const cards=[
+      {t:'TOTAL MARKET',   bg:AX_NAVY2,   pg:2, ic:'TM'},
+      {t:'BEV',            bg:AX_GREEN,   pg:3, ic:'BEV'},
+      {t:'PHEV',           bg:AX_RED,     pg:4, ic:'PHV'},
+      {t:'ICE',            bg:AX_ICEBLUE, pg:5, ic:'ICE'},
+      {t:'FOCUS SEGMENT',  bg:AX_CYAN,    pg:6, ic:'FS'},
+      {t:'CHINESE OEMS',   bg:AX_ORANGE,  pg:7, ic:'CN'},
+    ];
+    const ccw=(CW-8)/2, cch=24, gapY=6;
+    cards.forEach((c,i)=>{
+      const col=i%2, row=Math.floor(i/2);
+      const cx=M+col*(ccw+8), cy=96+row*(cch+gapY);
+      doc.setFillColor(...c.bg);
+      doc.roundedRect(cx,cy,ccw,cch,2,2,'F');
+      doc.setFillColor(255,255,255);
+      doc.circle(cx+14,cy+cch/2,6,'F');
+      doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(...c.bg);
+      doc.text(c.ic,cx+14,cy+cch/2+1.1,{align:'center'});
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
+      doc.text(c.t,cx+26,cy+cch/2-1.5);
+      doc.setFont('helvetica','normal');doc.setFontSize(6.8);doc.setTextColor(230,235,245);
+      doc.text('Go to section ->',cx+26,cy+cch/2+5);
+      doc.link(cx,cy,ccw,cch,{pageNumber:c.pg});
     });
-    // Pie de portada
-    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(142,155,170);
-    doc.text('Elaborado a partir de datos de matriculaciones totales de turismos y todoterrenos (Passenger Cars + 4x4). Los simbolos de marca son marcadores de color propios de este informe, no logotipos oficiales.',M,265,{maxWidth:CW});
-    doc.text('Generado automaticamente el '+nowStr+'.',M,271);
 
-    // ══ MERCADO TOTAL ═════════════════════════════════════════════════════
-    drawSection('Mercado Total',perSv,perTot,perYoYMap,ytdB,ytdBP,ytdTot,perTotYoY,ytdTotYoY);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(140,155,180);
+    doc.text('AXON MOBILITY  |  PERIOD: '+mLabelShort,W/2,H-10,{align:'center'});
 
-    // ══ BEV ═══════════════════════════════════════════════════════════════
-    const bevSv=perSv.map(([b,d])=>[b,{total:d.BEV||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
-    if(bevSv.length){const fd=fuelYtd('BEV');drawSection('BEV \xB7 El\xE9ctricos',bevSv,fT.BEV,fuelYoYMap('BEV'),fd.bC,fd.bP,fd.t,fYY.BEV,fd.yoy);}
+    // ══ SECCIONES (orden fijo = orden de enlaces de la portada) ════════════
+    drawSection('TOTAL MARKET REGISTRATIONS - ES',aggTotal,'main',Object.keys(aggTotal.pBP).length);
+    drawSection('BEV TOTAL MARKET REGISTRATIONS - ES',aggBEV,'main',Object.keys(aggBEV.pBP).length);
+    drawSection('PHEV TOTAL MARKET REGISTRATIONS - ES',aggPHEV,'main',Object.keys(aggPHEV.pBP).length);
+    drawSection('ICE TOTAL MARKET REGISTRATIONS - ES',aggICE,'main',Object.keys(aggICE.pBP).length);
+    drawSection('FOCUS SEGMENT RANKING (Total Market) - ES',aggFocus,'focus',Object.keys(aggFocus.pBP).length);
+    drawSection('CHINESE OEMS - TOTAL MARKET REGISTRATIONS - ES',aggChinese,'chinese',Object.keys(aggChinese.pBP).length);
 
-    // ══ PHEV ══════════════════════════════════════════════════════════════
-    const phevSv=perSv.map(([b,d])=>[b,{total:d.PHEV||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
-    if(phevSv.length){const fd=fuelYtd('PHEV');drawSection('PHEV \xB7 H\xEDbridos enchufables',phevSv,fT.PHEV,fuelYoYMap('PHEV'),fd.bC,fd.bP,fd.t,fYY.PHEV,fd.yoy);}
-
-    // ══ ICE ═══════════════════════════════════════════════════════════════
-    const iceSv=perSv.map(([b,d])=>[b,{total:d.ICE||0}]).filter(([,d])=>d.total>0).sort((a,b)=>b[1].total-a[1].total);
-    if(iceSv.length){const fd=fuelYtd('ICE');drawSection('ICE \xB7 Combusti\xF3n',iceSv,fT.ICE,fuelYoYMap('ICE'),fd.bC,fd.bP,fd.t,fYY.ICE,fd.yoy);}
-
-    const fname='Informe_Matriculaciones_'+MES3[curM-1]+'_'+_OVD.refYear+'.pdf';
+    const fname='AxonMobility_Registrations_'+MES3[curM-1]+'_'+refYear+'_ES.pdf';
     doc.save(fname);
   }catch(err){
     console.error('PDF error:',err);
@@ -4132,6 +4186,7 @@ function resetFilters(){
   F.months=new Set([1,2,3,4,5,6,7,8,9,10,11,12]);
   F.fuels=new Set(E.fuel.map((_,i)=>i));
   F.canales=new Set(E.canal.map((_,i)=>i));
+  F.renting=new Set(E.renting.map((_,i)=>i));
   F.segs=new Set(E.seg.map((_,i)=>i));
   F.subs=new Set(E.sub.map((_,i)=>i));
   F.oem=new Set(['CHINESE','REST']);
@@ -4465,6 +4520,123 @@ function renderAlerts(){
   }).join('');
 }
 
+</script>
+
+<style>
+#ax-chat-bubble{
+  position:fixed;bottom:22px;right:22px;z-index:900;
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--acc);color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.22);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+#ax-chat-bubble:hover{transform:scale(1.06);box-shadow:0 8px 24px rgba(0,0,0,.28)}
+#ax-chat-bubble svg{width:22px;height:22px}
+#ax-chat-panel{
+  position:fixed;bottom:84px;right:22px;z-index:900;
+  width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 120px);
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  box-shadow:0 12px 40px rgba(0,0,0,.2);
+  display:none;flex-direction:column;overflow:hidden;
+  font-family:'Segoe UI',system-ui,sans-serif;
+}
+#ax-chat-panel.open{display:flex}
+#ax-chat-hdr{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;border-bottom:1px solid var(--border);background:var(--card2);
+}
+#ax-chat-hdr span{font-size:.8rem;font-weight:700;color:var(--text)}
+#ax-chat-close{background:none;border:none;cursor:pointer;color:var(--text2);font-size:1rem;line-height:1;padding:2px}
+#ax-chat-close:hover{color:var(--text)}
+#ax-chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ax-chat-msg{max-width:85%;padding:9px 12px;border-radius:14px;font-size:.75rem;line-height:1.45;white-space:pre-wrap}
+.ax-chat-msg.bot{align-self:flex-start;background:var(--card2);color:var(--text);border-bottom-left-radius:4px}
+.ax-chat-msg.user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.ax-chat-msg.loading{align-self:flex-start;background:var(--card2);color:var(--text2);font-style:italic}
+#ax-chat-form{flex-shrink:0;display:flex;gap:8px;padding:10px;border-top:1px solid var(--border)}
+#ax-chat-input{
+  flex:1;border:1px solid var(--border);border-radius:10px;padding:9px 11px;font-size:.75rem;
+  background:var(--sb);color:var(--text);outline:none;
+}
+#ax-chat-input:focus{border-color:var(--acc)}
+#ax-chat-send{
+  border:none;border-radius:10px;background:var(--acc);color:#fff;width:38px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+#ax-chat-send:disabled{background:var(--border);cursor:default}
+</style>
+
+<button id="ax-chat-bubble" aria-label="Abrir chat" onclick="axChatToggle()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<div id="ax-chat-panel">
+  <div id="ax-chat-hdr">
+    <span>Asistente de Matriculaciones</span>
+    <button id="ax-chat-close" onclick="axChatToggle()">✕</button>
+  </div>
+  <div id="ax-chat-msgs"></div>
+  <form id="ax-chat-form" onsubmit="axChatSend(event)">
+    <input id="ax-chat-input" type="text" placeholder="Pregúntame lo que quieras..." autocomplete="off">
+    <button id="ax-chat-send" type="submit" aria-label="Enviar">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </form>
+</div>
+
+<script>
+(function(){
+  var AX_CHAT_OPENED = false;
+  window.axChatToggle = function(){
+    var panel = document.getElementById('ax-chat-panel');
+    var open = !panel.classList.contains('open');
+    panel.classList.toggle('open', open);
+    if(open && !AX_CHAT_OPENED){
+      AX_CHAT_OPENED = true;
+      axChatAppend('bot', '¡Hola! Soy tu asistente de **Axon Mobility — Spanish Registrations** 🚗\n\nTengo acceso a las matriculaciones y cuota de mercado por marca (real y previsión), por provincia y por canal/combustible. Pregúntame lo que quieras, en el idioma que quieras.');
+    }
+    if(open) document.getElementById('ax-chat-input').focus();
+  };
+
+  function axChatAppend(role, text){
+    var msgs = document.getElementById('ax-chat-msgs');
+    var el = document.createElement('div');
+    el.className = 'ax-chat-msg ' + (role === 'user' ? 'user' : 'bot');
+    // Minimal **bold** support, matching the plain-text style Gemini replies in.
+    el.innerHTML = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+    return el;
+  }
+
+  window.axChatSend = async function(ev){
+    ev.preventDefault();
+    var input = document.getElementById('ax-chat-input');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    axChatAppend('user', text);
+    var sendBtn = document.getElementById('ax-chat-send');
+    sendBtn.disabled = true;
+    var loadingEl = axChatAppend('bot', 'Pensando…');
+    loadingEl.classList.add('loading');
+    try{
+      var res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: text})
+      });
+      var data = await res.json();
+      loadingEl.remove();
+      axChatAppend('bot', data.reply || 'Sin respuesta.');
+    }catch(e){
+      loadingEl.remove();
+      axChatAppend('bot', 'Lo siento, ha habido un error. Inténtalo de nuevo.');
+    }finally{
+      sendBtn.disabled = false;
+    }
+  };
+})();
 </script>
 </body>
 </html>

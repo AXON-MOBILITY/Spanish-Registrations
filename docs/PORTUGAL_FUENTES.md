@@ -1,6 +1,6 @@
 # Matriculaciones de Portugal — fuentes y plan
 
-Portugal NO tiene equivalente público a los microdatos DGT. El homólogo de ANFAC es **ACAP** (acap.pt), y su filial de datos de pago es **Autoinforma / MotorData** (el "Simmix portugués": mensual por marca/modelo/canal bajo suscripción).
+Portugal NO tiene equivalente público a los microdatos DGT. El homólogo de ANFAC es **ACAP** (acap.pt), y su filial de datos de pago es **Autoinforma / MotorData** (el "Benchmark portugués": mensual por marca/modelo/canal bajo suscripción).
 
 ## Qué hay gratis y qué cubre
 

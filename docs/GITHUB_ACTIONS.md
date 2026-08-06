@@ -14,15 +14,15 @@ GitHub Actions esta programado entre semana en varias ventanas UTC para cubrir C
 
 ## Interruptor de independencia
 
-La variable `SIMMIX_ALIGN` (definida en `dgt-auto.yml`, seccion `env`):
+La variable `BENCHMARK_ALIGN` (definida en `dgt-auto.yml`, seccion `env`):
 
-- `"1"` (legado): el dashboard alinea 2026 al ultimo export Simmix. En paralelo se publica siempre `public/data/simmix_drift.json` con el delta real de la ETL propia.
-- `"0"` (actual, independiente): el dashboard publica la ETL propia; Simmix solo alimenta el drift.
+- `"1"` (legado): el dashboard alinea 2026 al ultimo export Benchmark. En paralelo se publica siempre `public/data/benchmark_drift.json` con el delta real de la ETL propia.
+- `"0"` (actual, independiente): el dashboard publica la ETL propia; Benchmark solo alimenta el drift.
 
-El workflow ya usa `"0"`; para comparar contra Simmix se revisa `public/data/simmix_drift.json`.
+El workflow ya usa `"0"`; para comparar contra Benchmark se revisa `public/data/benchmark_drift.json`.
 
 ## Ficheros versionados
 
 - `scripts/`, `tests/`, `masters/`, `.github/workflows/`
 - `data/processed/dgt_canal_*.csv`, `dgt_prov_*.csv`, `dgt_alerts_*.csv` (se commitean solos)
-- Los CSV fuente Simmix `BBDD_*` viven en `validation/` y quedan ignorados (grandes y de pago); no hacen falta para la ejecucion diaria.
+- Los CSV fuente Benchmark `BBDD_*` viven en `validation/` y quedan ignorados (grandes y de pago); no hacen falta para la ejecucion diaria.

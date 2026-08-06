@@ -9,7 +9,7 @@ Salida principal:
   public/data/daily_mtd.json — acumulado MTD diario del mes actual
 
 Columnas records.json (índices COL en index.html):
-  0:y  1:m  2:marca  3:modelo  4:canal  5:fuel  6:fuel_det  7:seg  8:sub  9:hp  10:body  11:n
+  0:y  1:m  2:marca  3:modelo  4:canal  5:fuel  6:fuel_det  7:seg  8:sub  9:hp  10:body  11:renting  12:n
 """
 import argparse, csv, glob, json, os, re
 from collections import defaultdict
@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 
 # Estructura del repo: script en scripts/, CSVs de la ETL en data/processed/,
-# exports Simmix (validación) en validation/, salida del dashboard en public/data/.
+# exports Benchmark (validación) en validation/, salida del dashboard en public/data/.
 _SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = _SCRIPT_DIR.parent if _SCRIPT_DIR.name == "scripts" else _SCRIPT_DIR
 DATA_DIR = REPO_ROOT / "data" / "processed"
@@ -28,7 +28,7 @@ MONTHS_ES = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",
 CANALES = ["Private","Corporate","RAC"]
 FUELS   = ["ICE","BEV","PHEV"]
 
-# ── Normalización de marcas DGT → nombres canónicos Simmix ───────────────────
+# ── Normalización de marcas DGT → nombres canónicos Benchmark ───────────────────
 _BRAND_NORM = {
     'ABARTH': 'Abarth', 'AIWAYS': 'Aiways', 'ALFA ROMEO': 'Alfa Romeo',
     '212': 'BAW',
@@ -95,6 +95,24 @@ _EXTRA_CLASSIFIED = {
     'Rapido', 'Secma', 'Plymouth', 'La Hispano Suiza', 'Abt',
     'Feniks', 'Gruau',
     'Lepas', 'Tecnove',
+    # Revisadas 2026-07-28: marcas reales sin chasis de furgoneta detectable
+    # (no se reasignan, se quedan como marca propia)
+    'Farizon', 'Zeroid', 'Evitalia', 'Feidi', 'Kyc',
+    # Anomalias de captura de 1 ud (marca mal grabada por la propia DGT o
+    # modelo no identificado), volumen insignificante, no perseguibles
+    'Master', 'Volmur',
+    # Revisadas 2026-08-04: carroceros/camperizadoras ya en CARROCERO_BRANDS
+    # (process_month.py) sin chasis detectable en el texto del modelo — se
+    # quedan con su propia marca (alerta correcta: CARROCERO_UNMAPPED, no
+    # "marca nueva"). Ver tambien seccion 7 de docs/AUDITORIA_INDEPENDENCIA_BENCHMARK.md.
+    'North Cape', 'Odl', 'Eriba', 'Sunlight',
+    'Carrocerias Procar', 'Firemar', 'Volquetes Y Carrocerias Galici', 'Chapinsa',
+    # Galloper: marca real (SUV historico, base Mitsubishi Pajero), no un
+    # carrocero. Se queda con su propia marca, no se reasigna a chasis.
+    'Galloper',
+    # Lorca: 2 uds, modelo "K01H" no identificable. Volumen insignificante,
+    # no perseguible.
+    'Lorca',
 }
 _KNOWN_CLASSIFIED = set(_BRAND_NORM.values()) | _EXTRA_CLASSIFIED
 
@@ -252,10 +270,10 @@ def _read_csv(path):
         for row in csv.DictReader(fh):
             yield {k:(v.strip() if v is not None else "") for k,v in row.items()}
 
-def load_simmix_scope(base, fallback_path=None):
-    """Infer the valid Simmix export scope by year from BBDD_YYYY_PRODUCTO.csv.
+def load_benchmark_scope(base, fallback_path=None):
+    """Infer the valid Benchmark export scope by year from BBDD_YYYY_PRODUCTO.csv.
 
-    Some available Simmix exports are cut mid-brand (for example 2024 ends inside
+    Some available Benchmark exports are cut mid-brand (for example 2024 ends inside
     Mercedes and 2025 inside BMW). We treat that final incomplete brand as
     truncated and exclude it from the scope rather than mixing partial data.
     """
@@ -332,15 +350,15 @@ def load_simmix_scope(base, fallback_path=None):
             }
             return scopes, diagnostics
         except Exception as exc:
-            print(f"  Scope Simmix: no se pudo leer fallback {fallback_path}: {exc}")
+            print(f"  Scope Benchmark: no se pudo leer fallback {fallback_path}: {exc}")
 
     return scopes, diagnostics
 
-def save_simmix_scope(scope_path, scopes, diagnostics):
+def save_benchmark_scope(scope_path, scopes, diagnostics):
     if not scopes:
         return
     payload = {
-        "source": "Derived from local Simmix BBDD exports; used by GitHub Actions when BBDD files are absent.",
+        "source": "Derived from local Benchmark BBDD exports; used by GitHub Actions when BBDD files are absent.",
         "brands_by_year": {
             str(yr): sorted(scopes[yr])
             for yr in sorted(scopes)
@@ -349,7 +367,7 @@ def save_simmix_scope(scope_path, scopes, diagnostics):
     }
     scope_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-def _candidate_simmix_2026_product_paths(base):
+def _candidate_benchmark_2026_product_paths(base):
     paths = [VALIDATION_DIR / "BBDD_2026_PRODUCTO_06_30.csv",
              REPO_ROOT / "BBDD_2026_PRODUCTO_06_30.csv",
              base / "BBDD_2026_PRODUCTO_06_30.csv"]
@@ -364,12 +382,28 @@ def _candidate_simmix_2026_product_paths(base):
         pass
     return paths
 
-def load_simmix_2026_targets(base, fallback_path):
+_MONTH_NAME_TO_NUM = {
+    'january': 1, 'enero': 1,
+    'february': 2, 'febrero': 2,
+    'march': 3, 'marzo': 3,
+    'april': 4, 'abril': 4,
+    'may': 5, 'mayo': 5,
+    'june': 6, 'junio': 6,
+    'july': 7, 'julio': 7,
+    'august': 8, 'agosto': 8,
+    'september': 9, 'septiembre': 9,
+    'october': 10, 'octubre': 10,
+    'november': 11, 'noviembre': 11,
+    'december': 12, 'diciembre': 12,
+}
+
+def load_benchmark_2026_targets(base, fallback_path):
     fallback_path = Path(fallback_path)
-    for path in _candidate_simmix_2026_product_paths(base):
+    for path in _candidate_benchmark_2026_product_paths(base):
         if not path.exists():
             continue
         targets = defaultdict(int)
+        monthly_targets = defaultdict(int)
         brands = {}
         with open(path, encoding="utf-8-sig", newline="") as fh:
             reader = csv.DictReader(fh)
@@ -387,16 +421,25 @@ def load_simmix_2026_targets(base, fallback_path):
                 brand = _normalize_brand(raw_brand)
                 brand_key = brand.upper()
                 sub = _focus_bucket(row.get("SubSegmento_2026", ""))
+                month_str = (row.get("Month_2026") or "").strip().lower()
+                month_num = _MONTH_NAME_TO_NUM.get(month_str, 0)
                 brands[brand_key] = brand
                 targets[(brand_key, canal, sub)] += n
+                if month_num:
+                    monthly_targets[(brand_key, canal, sub, month_num)] += n
         if targets:
+            max_month = max((m for (_, _, _, m) in monthly_targets), default=6)
             payload = {
                 "source": path.name,
                 "year": 2026,
-                "month": 6,
+                "month": max_month,
                 "rows": [
-                    {"brand": brands[brand], "canal": canal, "sub": sub, "n": n}
-                    for (brand, canal, sub), n in sorted(targets.items())
+                    {"brand": brands[bk], "canal": canal, "sub": sub, "n": n}
+                    for (bk, canal, sub), n in sorted(targets.items())
+                ],
+                "monthly_rows": [
+                    {"brand": brands[bk], "canal": canal, "sub": sub, "month": m, "n": n}
+                    for (bk, canal, sub, m), n in sorted(monthly_targets.items())
                 ],
             }
             fallback_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -431,7 +474,7 @@ def _allocate_to_target(rows, target):
             out.append(nr)
     return out
 
-def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payload):
+def apply_benchmark_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payload):
     if not payload:
         return monthly_records, mtd_records, {}
     target_year = int(payload.get("year", 0) or 0)
@@ -439,20 +482,42 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     if not target_year or not target_month:
         return monthly_records, mtd_records, {"status": "skipped", "reason": "invalid_target_period"}
 
-    targets = {}
     brand_display = {}
-    for row in payload.get("rows", []):
-        brand = _normalize_brand(row.get("brand", ""))
-        brand_key = brand.upper()
-        canal = row.get("canal", "")
-        sub = _focus_bucket(row.get("sub", ""))
-        try:
-            n = int(row.get("n", 0))
-        except (TypeError, ValueError):
-            n = 0
-        if brand_key and canal in CANALES and n > 0:
-            targets[(brand_key, canal, sub)] = targets.get((brand_key, canal, sub), 0) + n
-            brand_display[brand_key] = brand
+    # Prefer per-month targets for exact per-month alignment; fall back to H1-cumulative
+    use_monthly = bool(payload.get("monthly_rows"))
+    if use_monthly:
+        targets = {}
+        for row in payload.get("monthly_rows", []):
+            brand = _normalize_brand(row.get("brand", ""))
+            brand_key = brand.upper()
+            canal = row.get("canal", "")
+            sub = _focus_bucket(row.get("sub", ""))
+            month = int(row.get("month", 0) or 0)
+            try:
+                n = int(row.get("n", 0))
+            except (TypeError, ValueError):
+                n = 0
+            if brand_key and canal in CANALES and n > 0 and 1 <= month <= target_month:
+                key = (brand_key, canal, sub, month)
+                targets[key] = targets.get(key, 0) + n
+                brand_display[brand_key] = brand
+        # Pre-compute (brand, canal, sub) set for O(1) scope lookup
+        brands_in_scope = {(bk, c, s) for (bk, c, s, _) in targets}
+    else:
+        targets = {}
+        for row in payload.get("rows", []):
+            brand = _normalize_brand(row.get("brand", ""))
+            brand_key = brand.upper()
+            canal = row.get("canal", "")
+            sub = _focus_bucket(row.get("sub", ""))
+            try:
+                n = int(row.get("n", 0))
+            except (TypeError, ValueError):
+                n = 0
+            if brand_key and canal in CANALES and n > 0:
+                targets[(brand_key, canal, sub)] = targets.get((brand_key, canal, sub), 0) + n
+                brand_display[brand_key] = brand
+        brands_in_scope = set(targets.keys())
 
     all_records = [r.copy() for r in monthly_records] + [r.copy() for r in mtd_records]
     def in_target_period(r):
@@ -464,9 +529,13 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     for r in all_records:
         if not in_target_period(r):
             continue
-        key = (r["marca"].upper(), r["canal"], _focus_bucket(r["sub"]))
-        if key in targets:
-            r["sub"] = key[2]
+        bk = r["marca"].upper()
+        canal = r["canal"]
+        sub = _focus_bucket(r["sub"])
+        base_key = (bk, canal, sub)
+        if base_key in brands_in_scope:
+            r["sub"] = sub
+            key = (bk, canal, sub, r["m"]) if use_monthly else base_key
             grouped[key].append(r)
         else:
             dropped += r["n"]
@@ -482,12 +551,17 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
             aligned.extend(_allocate_to_target(rows, target))
             continue
 
-        brand_key, canal, sub = key
+        # No DGT records for this (brand, canal, sub[, month]) → synthetic
+        if use_monthly:
+            bk, canal, sub, month = key
+        else:
+            bk, canal, sub = key
+            month = target_month
         synthetic += target
         aligned.append({
             "y": target_year,
-            "m": target_month,
-            "marca": brand_display.get(brand_key, brand_key.title()),
+            "m": month,
+            "marca": brand_display.get(bk, bk.title()),
             "modelo": "",
             "canal": canal,
             "fuel": "ICE",
@@ -503,6 +577,7 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     mtd_out = [r for r in aligned if r["y"] == mtd_yr and r["m"] == mtd_mo]
     stats = {
         "status": "applied",
+        "mode": "per-month" if use_monthly else "cumulative-h1",
         "year": target_year,
         "month": target_month,
         "groups": len(targets),
@@ -514,14 +589,14 @@ def apply_simmix_2026_targets(monthly_records, mtd_records, mtd_yr, mtd_mo, payl
     }
     return monthly_out, mtd_out, stats
 
-def compute_simmix_drift(monthly_records, mtd_records, payload, min_units=200):
-    """Informe de auditoría ETL vs export Simmix (sin mutar los datos).
+def compute_benchmark_drift(monthly_records, mtd_records, payload, min_units=200):
+    """Informe de auditoría ETL vs export Benchmark (sin mutar los datos).
 
     Compara los totales de la ETL propia por (marca, canal) del año objetivo
-    contra el export Simmix. Es el KPI de la desconexión del proveedor.
+    contra el export Benchmark. Es el KPI de la desconexión del proveedor.
     """
     if not payload:
-        return {"status": "skipped", "reason": "sin export Simmix disponible"}
+        return {"status": "skipped", "reason": "sin export Benchmark disponible"}
     target_year = int(payload.get("year", 0) or 0)
     target_month = int(payload.get("month", 0) or 12)
     targets = defaultdict(int)
@@ -547,7 +622,7 @@ def compute_simmix_drift(monthly_records, mtd_records, payload, min_units=200):
             continue
         delta = e - t
         pct = (100.0 * delta / t) if t else None
-        rows.append({"marca": key[0], "canal": key[1], "etl": e, "simmix": t,
+        rows.append({"marca": key[0], "canal": key[1], "etl": e, "benchmark": t,
                      "delta": delta, "delta_pct": round(pct, 2) if pct is not None else None})
     rows.sort(key=lambda r: -abs(r["delta"]))
     total_t = sum(targets.values())
@@ -560,7 +635,7 @@ def compute_simmix_drift(monthly_records, mtd_records, payload, min_units=200):
         "source": payload.get("source"),
         "year": target_year,
         "total_etl": total_e,
-        "total_simmix": total_t,
+        "total_benchmark": total_t,
         "total_delta": total_e - total_t,
         "total_delta_pct": round(100.0 * (total_e - total_t) / total_t, 2) if total_t else None,
         "groups_evaluated": len(evaluated),
@@ -568,7 +643,7 @@ def compute_simmix_drift(monthly_records, mtd_records, payload, min_units=200):
         "worst": rows[:40],
     }
 
-def apply_simmix_scope(records, scopes):
+def apply_benchmark_scope(records, scopes):
     if not scopes:
         return records, {}
     kept = []
@@ -608,6 +683,7 @@ def _load_channel_records(path, yr, mo):
                 "sub":      _focus_bucket(row.get("subseg", "")),
                 "hp":       row.get("hp", ""),
                 "body":     row.get("body_type", ""),
+                "renting":  row.get("renting") or "No Renting",
                 "n":        n,
             })
         except (ValueError, KeyError):
@@ -702,7 +778,7 @@ def load_provinces(base):
                 pass
     return data
 
-def apply_simmix_scope_provinces(prov_data, scopes):
+def apply_benchmark_scope_provinces(prov_data, scopes):
     if not scopes:
         return prov_data, {}
     kept = defaultdict(int)
@@ -728,7 +804,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
     """
     Layout columnas (sincronizado con COL en index.html):
       0:y  1:m  2:marca  3:modelo  4:canal(0-2)  5:fuel(0-2)
-      6:fuel_det  7:seg  8:sub  9:hp  10:body  11:n
+      6:fuel_det  7:seg  8:sub  9:hp  10:body  11:renting  12:n
     """
     completed = {(r["y"], r["m"]) for r in monthly_records}
     all_records = list(monthly_records)
@@ -745,6 +821,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
     sub_idx      = {}; subs      = []
     hp_idx       = {}; hps       = []
     body_idx     = {}; bodies    = []
+    renting_idx  = {}; rentings  = []
 
     canal_map = {"Private": 0, "Corporate": 1, "RAC": 2}
     fuel_map  = {"ICE": 0, "BEV": 1, "PHEV": 2}
@@ -768,6 +845,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
             idx(r["sub"],      sub_idx,      subs),
             idx(r["hp"],       hp_idx,       hps),
             idx(r["body"],     body_idx,     bodies),
+            idx(r["renting"],  renting_idx,  rentings),
             r["n"],
         ])
 
@@ -775,7 +853,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
     months_present = sorted({(r[0], r[1]) for r in rows})
 
     return {
-        "cols": ["y","m","marca","modelo","canal","fuel","fuel_det","seg","sub","hp","body","n"],
+        "cols": ["y","m","marca","modelo","canal","fuel","fuel_det","seg","sub","hp","body","renting","n"],
         "enums": {
             "canal":    ["Private","Corporate","RAC"],
             "fuel":     ["ICE","BEV","PHEV"],
@@ -786,6 +864,7 @@ def build_records_json(monthly_records, mtd_records, mtd_yr, mtd_mo, scope_info=
             "sub":      subs,
             "hp":       hps,
             "body":     bodies,
+            "renting":  rentings,
         },
         "rows":   rows,
         "total":  total,
@@ -1521,8 +1600,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", default=str(REPO_ROOT / "public" / "data"))
     parser.add_argument("--base",    default=str(BASE))
-    parser.add_argument("--scope", choices=("simmix", "dgt"), default="dgt",
-                        help="dgt usa mercado DGT completo tras la ETL; simmix filtra al scope de BBDD solo para auditoria/comparacion.")
+    parser.add_argument("--scope", choices=("benchmark", "dgt"), default="dgt",
+                        help="dgt usa mercado DGT completo tras la ETL; benchmark filtra al scope de BBDD solo para auditoria/comparacion.")
     args    = parser.parse_args()
     base    = Path(args.base)
     out_dir = Path(args.out_dir)
@@ -1538,19 +1617,19 @@ def main():
 
     scope_info = {
         "mode": args.scope,
-        "source": "DGT microdata processed by the independent ETL; Simmix is audit/drift only.",
+        "source": "DGT microdata processed by the independent ETL; Benchmark is audit/drift only.",
     }
-    if args.scope == "simmix":
-        scope_fallback = out_dir / "simmix_scope_brands.json"
-        scopes, scope_diag = load_simmix_scope(base, scope_fallback)
-        save_simmix_scope(scope_fallback, scopes, scope_diag)
-        monthly_records, monthly_scope_stats = apply_simmix_scope(monthly_records, scopes)
-        mtd_records, mtd_scope_stats = apply_simmix_scope(mtd_records, scopes)
-        prov_data, prov_scope_stats = apply_simmix_scope_provinces(prov_data, scopes)
+    if args.scope == "benchmark":
+        scope_fallback = out_dir / "benchmark_scope_brands.json"
+        scopes, scope_diag = load_benchmark_scope(base, scope_fallback)
+        save_benchmark_scope(scope_fallback, scopes, scope_diag)
+        monthly_records, monthly_scope_stats = apply_benchmark_scope(monthly_records, scopes)
+        mtd_records, mtd_scope_stats = apply_benchmark_scope(mtd_records, scopes)
+        prov_data, prov_scope_stats = apply_benchmark_scope_provinces(prov_data, scopes)
 
         scope_info = {
-            "mode": "simmix",
-            "source": "DGT microdata filtered with Simmix-derived scope; DGT for 2026 and MTD",
+            "mode": "benchmark",
+            "source": "DGT microdata filtered with Benchmark-derived scope; DGT for 2026 and MTD",
             "reference_years": sorted(scopes),
             "diagnostics": {str(k): v for k, v in sorted(scope_diag.items())},
             "monthly_stats": monthly_scope_stats,
@@ -1558,17 +1637,17 @@ def main():
             "province_stats": prov_scope_stats,
         }
         if scopes:
-            print("  Scope Simmix:", ", ".join(
+            print("  Scope Benchmark:", ", ".join(
                 f"{y}: {len(scopes[y])} marcas" + (f" (truncada {scope_diag[y]['truncated_brand']})" if scope_diag[y]["truncated_brand"] else "")
                 for y in sorted(scopes)
             ))
         else:
-            print("  Scope Simmix: sin BBDD de referencia; usando DGT completo")
+            print("  Scope Benchmark: sin BBDD de referencia; usando DGT completo")
 
-    # ── Alineación a targets Simmix ──────────────────────────────────────────
-    # SIMMIX_ALIGN=1: modo legado, reescala 2026 al export.
-    # SIMMIX_ALIGN=0 (default): modo independiente — el dashboard publica la ETL propia y
-    # el export Simmix se usa SOLO para el informe de drift (auditoría).
+    # ── Alineación a targets Benchmark ──────────────────────────────────────────
+    # BENCHMARK_ALIGN=1: modo legado, reescala 2026 al export.
+    # BENCHMARK_ALIGN=0 (default): modo independiente — el dashboard publica la ETL propia y
+    # el export Benchmark se usa SOLO para el informe de drift (auditoría).
     # Criterio para pasar a 0: drift por marca/canal < 2% (ver docs/AUDITORIA).
     ranking_obj      = build_province_brand_ranking(prov_data, monthly_records, mtd_records)
     daily_brands_obj = build_daily_brand_trend(base)
@@ -1579,36 +1658,36 @@ def main():
         (log_dir / ("forecast_" + date.today().strftime("%Y%m%d") + ".json")).write_text(
             json.dumps(forecast_obj, ensure_ascii=False), encoding="utf-8")
 
-    align_enabled = os.environ.get("SIMMIX_ALIGN", "0") != "0"
-    target_payload = load_simmix_2026_targets(base, out_dir / "simmix_2026_targets.json")
+    align_enabled = os.environ.get("BENCHMARK_ALIGN", "0") != "0"
+    target_payload = load_benchmark_2026_targets(base, out_dir / "benchmark_2026_targets.json")
 
-    drift = compute_simmix_drift(monthly_records, mtd_records, target_payload)
-    (out_dir / "simmix_drift.json").write_text(
+    drift = compute_benchmark_drift(monthly_records, mtd_records, target_payload)
+    (out_dir / "benchmark_drift.json").write_text(
         json.dumps(drift, ensure_ascii=False, indent=2), encoding="utf-8")
     if drift.get("status") == "computed":
-        print(f"  Drift ETL vs Simmix: total {drift['total_delta']:+,} "
+        print(f"  Drift ETL vs Benchmark: total {drift['total_delta']:+,} "
               f"({drift['total_delta_pct']:+.2f}%), "
               f"{drift['groups_within_2pct']}/{drift['groups_evaluated']} grupos ±2%")
 
     if not align_enabled:
-        target_stats = {"status": "skipped", "reason": "SIMMIX_ALIGN=0 (modo independiente)"}
+        target_stats = {"status": "skipped", "reason": "BENCHMARK_ALIGN=0 (modo independiente)"}
     else:
-        monthly_records, mtd_records, target_stats = apply_simmix_2026_targets(
+        monthly_records, mtd_records, target_stats = apply_benchmark_2026_targets(
             monthly_records, mtd_records, mtd_yr, mtd_mo, target_payload
         )
     if target_stats.get("status") == "applied":
         scope_info = {
             **scope_info,
-            "alignment": "simmix_2026_product_export",
+            "alignment": "benchmark_2026_product_export",
             "alignment_stats": target_stats,
         }
         print(
-            "  Alineacion Simmix 2026: "
+            "  Alineacion Benchmark 2026: "
             f"{target_stats['groups']} grupos, residual sintetico {target_stats['synthetic_residual']:,}, "
             f"drop scope {target_stats['dropped_records']:,}"
         )
     elif target_stats:
-        print(f"  Alineacion Simmix 2026: omitida ({target_stats.get('reason')})")
+        print(f"  Alineacion Benchmark 2026: omitida ({target_stats.get('reason')})")
 
     months_done = len({(r["y"],r["m"]) for r in monthly_records})
     mtd_str = f"{mtd_yr}-{mtd_mo:02d}" if mtd_yr else "-"

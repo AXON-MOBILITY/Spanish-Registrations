@@ -34,9 +34,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # 1 = modo legado: alinea 2026 al ultimo export Simmix.
-  # 0 = modo independiente: publica la ETL propia; Simmix solo auditoría/drift.
-  SIMMIX_ALIGN: "0"
+  # 1 = modo legado: alinea 2026 al ultimo export Benchmark.
+  # 0 = modo independiente: publica la ETL propia; Benchmark solo auditoría/drift.
+  BENCHMARK_ALIGN: "0"
 
 jobs:
   sync:
