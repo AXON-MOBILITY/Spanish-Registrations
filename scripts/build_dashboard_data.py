@@ -754,7 +754,8 @@ def load_provinces(base):
                 seg = row.get("segmento", "") or ""
                 sub = row.get("subseg", "") or ""
                 hp  = row.get("hp", "") or ""
-                data[(yr, mo, marca, row["cod_prov"], row["provincia"], row["canal"], fuel, seg, sub, hp)] += int(row.get("count", 0) or 0)
+                body = row.get("body_type", "") or ""
+                data[(yr, mo, marca, row["cod_prov"], row["provincia"], row["canal"], fuel, seg, sub, hp, body)] += int(row.get("count", 0) or 0)
             except (ValueError, KeyError):
                 pass
     for f in sorted(glob.glob(str(base/"dgt_prov_daily_[0-9]*.csv"))):
@@ -773,7 +774,8 @@ def load_provinces(base):
                 seg = row.get("segmento", "") or ""
                 sub = row.get("subseg", "") or ""
                 hp  = row.get("hp", "") or ""
-                data[(yr, mo, marca, row["cod_prov"], row["provincia"], canal, fuel, seg, sub, hp)] += int(row.get("count", 0) or 0)
+                body = row.get("body_type", "") or ""
+                data[(yr, mo, marca, row["cod_prov"], row["provincia"], canal, fuel, seg, sub, hp, body)] += int(row.get("count", 0) or 0)
             except (ValueError, KeyError):
                 pass
     return data
@@ -1220,15 +1222,19 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
     years = set()
     months = set()
     for key, cnt in prov_data.items():
-        # Soporte backward-compat: clave antigua (7), sub/hp (9) y seg/sub/hp (10)
-        if len(key) == 10:
+        # Soporte backward-compat: clave antigua (7), sub/hp (9), seg/sub/hp (10)
+        # y seg/sub/hp/body (11, formato actual).
+        if len(key) == 11:
+            yr, mo, marca, cod, nombre, canal, fuel, seg, sub, hp, body = key
+        elif len(key) == 10:
             yr, mo, marca, cod, nombre, canal, fuel, seg, sub, hp = key
+            body = ""
         elif len(key) == 9:
             yr, mo, marca, cod, nombre, canal, fuel, sub, hp = key
-            seg = ""
+            seg = body = ""
         elif len(key) == 7:
             yr, mo, marca, cod, nombre, canal, fuel = key
-            seg = sub = hp = ""
+            seg = sub = hp = body = ""
         else:
             continue
         if canal not in CANALES:
@@ -1239,11 +1245,11 @@ def build_province_brand_ranking(prov_data, monthly_records, mtd_records):
         d = out.setdefault(cod, {"name": nombre, "years": {}, "months": {},
                                   "years_filt": {}, "months_filt": {}})
         d["name"] = nombre
-        # Estructura principal (agrega todos los sub/hp — comportamiento original)
+        # Estructura principal (agrega todos los sub/hp/body — comportamiento original)
         cell  = d["years"].setdefault(yr, {}).setdefault(marca, [0] * 12)
         mcell = d["months"].setdefault(ym, {}).setdefault(marca, [0] * 12)
-        # Estructura filt: clave "marca|seg|sub|hp" → [total, BEV, PHEV, canal*fuel...]
-        fk = f"{marca}|{seg}|{sub}|{hp}"
+        # Estructura filt: clave "marca|seg|sub|hp|body" → [total, BEV, PHEV, canal*fuel...]
+        fk = f"{marca}|{seg}|{sub}|{hp}|{body}"
         fcell  = d["years_filt"].setdefault(yr, {}).setdefault(fk, [0] * 12)
         mfcell = d["months_filt"].setdefault(ym, {}).setdefault(fk, [0] * 12)
         ci = 3 + CANALES.index(canal) * len(FUELS) + FUELS.index(fuel)

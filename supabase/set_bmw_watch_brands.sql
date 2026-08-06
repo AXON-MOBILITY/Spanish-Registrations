@@ -1,11 +1,12 @@
--- Preserva el comportamiento actual de BMW: Audi y Mercedes marcados como
--- rivales vigilados (texto rojo en Overview/PDF, tarjetas destacadas en
--- Prognosis, prioridad de orden en Alerts). Sin esto, watch_brands cae al
--- default (solo la marca propia) y esos resaltados de rival desaparecen.
--- Correr una sola vez en el SQL Editor de Supabase, DESPUES de que el
--- deploy con "watch_brands" este en produccion.
+-- Marcas vigiladas de BMW = el set completo "TRADITIONAL COMPETITION" que ya
+-- usa la clasificacion Focus Segment del dataset (ver _BRAND_CONCEPT en
+-- index.html), no solo Mercedes/Audi. Se usa para: quien gana cada
+-- provincia en el mapa, texto rojo de rival en Overview/PDF, tarjetas de
+-- Prognosis, y prioridad de orden en Alerts.
+-- Correr en el SQL Editor de Supabase (reemplaza el valor anterior si ya
+-- se habia corrido la version de 3 marcas).
 update organizations
-set config = config || '{"watch_brands": ["BMW", "Mercedes", "Audi"]}'::jsonb
+set config = config || '{"watch_brands": ["BMW", "Audi", "Mercedes", "MINI", "Porsche", "Volvo", "Lexus", "Jaguar", "Land Rover", "Maserati", "Ferrari", "Lamborghini", "Bentley", "Rolls-Royce", "McLaren", "Aston Martin", "Cadillac"]}'::jsonb
 where slug = 'bmw';
 
 -- Verificacion

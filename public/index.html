@@ -521,6 +521,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     const settingsBtn=document.getElementById('btn-org-settings');
     if(settingsBtn) settingsBtn.style.display='';
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
+    if(typeof renderOrgBadge==='function') renderOrgBadge();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data}));
   }
 
@@ -653,6 +654,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
     <div class="tb-sep"></div>
+    <span id="org-badge" style="display:none;font-size:.7rem;font-weight:700;letter-spacing:.03em;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:3px 9px;margin-right:8px" title="Signed in as"></span>
     <button id="btn-org-settings" onclick="openOrgSettingsModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="My organization settings">⚙ Settings</button>
     <button id="btn-create-org" onclick="openCreateOrgModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Create organization">+ Organization</button>
     <button onclick="doLogout()" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0" title="Sign out">&#9099;</button>
@@ -1349,6 +1351,20 @@ function applyHighPerfVisibility(){
   if(grp) grp.style.display=(window.ORG && window.ORG.slug==='bmw') ? '' : 'none';
 }
 
+// Muestra que organizacion/perfil esta activo (topbar), para que sea obvio
+// cuando se esta viendo la vista de BMW vs la de otra organizacion.
+function renderOrgBadge(){
+  const badge=g('org-badge');
+  if(!badge)return;
+  if(window.ORG && window.ORG.display_name){
+    badge.textContent=window.ORG.display_name;
+    badge.title='Signed in as '+window.ORG.display_name;
+    badge.style.display='';
+  } else {
+    badge.style.display='none';
+  }
+}
+
 // "Quien gana" una provincia: si la org tiene marcas vigiladas (watchBrands),
 // gana la de mayor volumen entre esas; si ninguna vigilada tiene presencia
 // ahi, o la org no definio ninguna, gana la de mayor volumen general.
@@ -1529,6 +1545,8 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
 // ya cargaron y se hizo el primer render (que no espera al login). Cuando
 // la organizacion llega tarde, se refresca lo que depende de ella.
 document.addEventListener('org-ready',function(){
+  if(typeof applyHighPerfVisibility==='function')applyHighPerfVisibility();
+  if(typeof renderOrgBadge==='function')renderOrgBadge();
   if(typeof REC==='undefined'||!REC)return;
   buildSubsegmentSidebar();
   render();
@@ -2985,12 +3003,13 @@ function renderProv(){
   const allSegsActive=F.segs.size>=E.seg.length;
   const allSubsActive=customFocus || F.subs.size>=SUB_BUCKETS.length;
   const allHpsActive=F.hps.size===0;
-  const useFiltered=!allSegsActive||!allSubsActive||!allHpsActive;
+  const allVehTypeActive=F.vehType.size>=2;
+  const useFiltered=!allSegsActive||!allSubsActive||!allHpsActive||!allVehTypeActive;
   const hasFiltStructure=PROV.provinces.length>0&&!!(PROV.provinces[0].years_filt);
   const hasFiltData=hasFiltStructure&&PROV.provinces.some(p=>
     Object.keys(((p.years_filt||{})[String(selectedYear)]||{})).some(fk=>{
       const ps=fk.split('|');
-      return ps.length>=4&&!!(ps[1]||ps[2]||ps[3]);
+      return ps.length>=5&&!!(ps[1]||ps[2]||ps[3]||ps[4]);
     })
   );
   // Sets de nombres permitidos para datos provinciales exactos.
@@ -3004,13 +3023,13 @@ function renderProv(){
     if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segment: '+(ns.length?ns.join(', '):'none'));}
     if(!allSubsActive){const ns=[...F.subs].filter(Boolean);parts.push('Subsegment: '+(ns.length?ns.join(', '):'none'));}
     if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'none'));}
-    notice.textContent='Active filters: '+parts.join(' · ')+'. '+(hasFiltData?'Exact provincial data.':'Provincial data pending reprocessing with segment/subsegment/HP.');
+    if(!allVehTypeActive){parts.push('Vehicle Type: '+[...F.vehType].join(', '));}
+    notice.textContent='Active filters: '+parts.join(' · ')+'. '+(hasFiltData?'Exact provincial data.':'Provincial data pending reprocessing with segment/subsegment/HP/body.');
     notice.style.display='';
   } else {
     const noApply=[];
     if(F.modelo)noApply.push('Model');
     if(F.body)noApply.push('Body');
-    if(F.vehType.size<2)noApply.push('Vehicle Type');
     if(F.dealers.size)noApply.push('Dealer');
     if(noApply.length){notice.textContent='Filters with no effect on Provinces: '+noApply.join(', ')+'.';notice.style.display='';}
     else notice.style.display='none';
@@ -3024,9 +3043,14 @@ function renderProv(){
       const seg=hasSegKey?(ps[1]||''):'';
       const sub=hasSegKey?(ps[2]||''):(ps[1]||'');
       const hp=hasSegKey?(ps[3]||'Standard'):(ps[2]||'Standard');
+      const body=ps.length>=5?(ps[4]||''):null;
       if(allowedSegNames&&(!hasSegKey||!allowedSegNames.has(seg)))return false;
       if(allowedSubNames&&!allowedSubNames.has(sub))return false;
       if(allowedHpNames&&!allowedHpNames.has(hp||'Standard')&&!allowedHpNames.has(hp))return false;
+      if(!allVehTypeActive){
+        if(body===null)return false; // datos viejos sin body: no se puede evaluar, excluir
+        if(!F.vehType.has(vehTypeOf(body)))return false;
+      }
       return true;
     };
     const addMap=(fkMap)=>{
