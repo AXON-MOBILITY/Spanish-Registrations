@@ -1048,7 +1048,7 @@ async function submitCreateOrg(){
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
             <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
             <span class="rk-month-filter">
-              <button type="button" class="rk-month-btn" id="rk-month-btn" onclick="toggleProvMonthMenu()">Meses: Todos</button>
+              <button type="button" class="rk-month-btn" id="rk-month-btn" onclick="toggleProvMonthMenu()">Months: All</button>
               <span class="rk-month-menu" id="rk-month-menu"></span>
             </span>
           </span>
@@ -1062,6 +1062,13 @@ async function submitCreateOrg(){
             </tr></thead>
             <tbody id="tbody-prov"></tbody>
           </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span>Winning Brand by Province</span></div>
+        <div id="spain-map-wrap" style="display:flex;gap:20px;padding:14px;align-items:flex-start;flex-wrap:wrap">
+          <svg id="spain-map" style="width:min(560px,100%);height:auto;flex-shrink:0"></svg>
+          <div id="spain-map-legend" style="display:flex;flex-direction:column;gap:6px;min-width:160px;font-size:.78rem"></div>
         </div>
       </div>
     </div><!-- /pane-prov -->
@@ -1340,6 +1347,30 @@ function isRivalBrand(brand){
 function applyHighPerfVisibility(){
   const grp=g('grp-hp');
   if(grp) grp.style.display=(window.ORG && window.ORG.slug==='bmw') ? '' : 'none';
+}
+
+// "Quien gana" una provincia: si la org tiene marcas vigiladas (watchBrands),
+// gana la de mayor volumen entre esas; si ninguna vigilada tiene presencia
+// ahi, o la org no definio ninguna, gana la de mayor volumen general.
+// entries: [[marca,valor], ...] ya ordenado desc por valor.
+function provinceWinner(entries){
+  if(!entries.length)return null;
+  const watched=watchBrands();
+  if(watched.length){
+    const among=entries.find(([m])=>watched.includes(m));
+    if(among)return among[0];
+  }
+  return entries[0][0];
+}
+
+const WINNER_PALETTE=['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#0ea5e9','#d946ef'];
+let _winnerColorCache={};
+function winnerColor(brand){
+  if(!_winnerColorCache[brand]){
+    const n=Object.keys(_winnerColorCache).length;
+    _winnerColorCache[brand]=WINNER_PALETTE[n%WINNER_PALETTE.length];
+  }
+  return _winnerColorCache[brand];
 }
 
 // Set competitivo (Focus vs Resto) por organizacion. Si la org define su
@@ -1825,10 +1856,12 @@ fetch('data/meta.json?v='+Date.now()).then(r=>r.json()).then(m=>{
       +(m.current_mtd?' · MTD: '+m.current_mtd.label:'');
   }
 }).catch(()=>{});
-let PROV=null, TREND=null;
+let PROV=null, TREND=null, SPAIN_PATHS=null;
 let BRAND_CHOICES=[];
 fetch('data/province_brands.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{PROV=d;initProv();}).catch(()=>{});
+fetch('data/spain_province_paths.json?v='+Date.now()).then(r=>r.json())
+  .then(d=>{SPAIN_PATHS=d;if(PROV)renderProv();}).catch(()=>{});
 fetch('data/daily_brands.json?v='+Date.now()).then(r=>r.json())
   .then(d=>{TREND=d;initTrend();}).catch(()=>{});
 fetch('data/pending_classification.json?v='+Date.now()).then(r=>r.json()).then(d=>{window.PEND=d;}).catch(()=>{window.PEND=null;});
@@ -3033,13 +3066,19 @@ function renderProv(){
       if(cells.length===5)break;
       cells.push([[m,v]]);
     }
-    rows.push({name:p.name,total:entries.reduce((s,[,v])=>s+v,0),cells});
+    rows.push({name:p.name,total:entries.reduce((s,[,v])=>s+v,0),cells,winner:provinceWinner(entries)});
   });
   rows.sort((a,b)=>b.total-a.total);
+  _winnerColorCache={};
+  // Colores asignados por frecuencia (la marca que mas provincias gana, primer color)
+  const winnerFreq={};
+  rows.forEach(r=>{if(r.winner)winnerFreq[r.winner]=(winnerFreq[r.winner]||0)+1;});
+  Object.keys(winnerFreq).sort((a,b)=>winnerFreq[b]-winnerFreq[a]).forEach(b=>winnerColor(b));
   const tb=g('tbody-prov');tb.innerHTML='';
   rows.forEach(r=>{
     const tr=document.createElement('tr');
-    let html=`<td>${r.name}</td><td>${fN(r.total)}</td>`;
+    const dot=r.winner?`<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${winnerColor(r.winner)};margin-right:6px" title="Winner: ${r.winner}"></span>`:'';
+    let html=`<td>${dot}${r.name}</td><td>${fN(r.total)}</td>`;
     for(let i=0;i<5;i++){
       const cell=r.cells[i];
       if(!cell){html+='<td class="rk-cell">&mdash;</td>';continue;}
@@ -3049,6 +3088,38 @@ function renderProv(){
     }
     tr.innerHTML=html;tb.appendChild(tr);
   });
+  renderSpainMap(rows);
+}
+
+// Mapa de Espana coloreado por marca ganadora de cada provincia (ver
+// provinceWinner: vigilada de mas volumen, o la de mas volumen general si
+// la org no tiene marcas vigiladas). rows: mismo array que arma la tabla.
+function renderSpainMap(rows){
+  const svg=g('spain-map'), legend=g('spain-map-legend');
+  if(!svg||!legend)return;
+  if(!SPAIN_PATHS){svg.innerHTML='';legend.textContent='Loading map…';return;}
+  const byName={};
+  rows.forEach(r=>{byName[r.name]=r;});
+  svg.setAttribute('viewBox',SPAIN_PATHS.viewBox);
+  const ir=SPAIN_PATHS.insetRect;
+  let html=`<rect x="${ir.x}" y="${ir.y}" width="${ir.w}" height="${ir.h}" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>`;
+  Object.entries(SPAIN_PATHS.paths).forEach(([name,d])=>{
+    const r=byName[name];
+    const fill=r&&r.winner?winnerColor(r.winner):'#e2e8f0';
+    const title=r&&r.winner?`${name}: ${r.winner} (${fN(r.total)})`:`${name}: no data`;
+    html+=`<path d="${d}" fill="${fill}" fill-opacity="0.85" stroke="#1e293b" stroke-width="0.6"><title>${title}</title></path>`;
+  });
+  svg.innerHTML=html;
+  const winnerFreq={};
+  rows.forEach(r=>{if(r.winner)winnerFreq[r.winner]=(winnerFreq[r.winner]||0)+1;});
+  const ordered=Object.keys(winnerFreq).sort((a,b)=>winnerFreq[b]-winnerFreq[a]);
+  legend.innerHTML=ordered.map(b=>
+    `<div style="display:flex;align-items:center;gap:8px">
+       <span style="width:12px;height:12px;border-radius:3px;background:${winnerColor(b)};flex-shrink:0"></span>
+       <span style="flex:1">${b}</span>
+       <span style="color:var(--text2)">${winnerFreq[b]}</span>
+     </div>`
+  ).join('') || '<div style="color:var(--text2)">No data for current filters.</div>';
 }
 
 // ── TAB 4: TREND POR MARCA (grafica mensual + grafica diaria) ──
