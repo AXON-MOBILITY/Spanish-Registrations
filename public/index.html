@@ -511,18 +511,25 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   }
 
   async function loadOrgConfig(){
-    const { data, error } = await sb.from('organizations').select('*').single();
-    if(error || !data){
+    // No usar organizations.select('*').single(): desde que un platform_admin
+    // puede ver TODAS las organizaciones (RLS "select own or admin"), esa
+    // consulta deja de devolver una sola fila para esas cuentas y .single()
+    // falla. Se pasa por org_members, filtrado por el usuario actual, que
+    // siempre da exactamente la organizacion propia.
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session){ window.ORG=null; return; }
+    const { data, error } = await sb.from('org_members').select('organizations(*)').eq('user_id', session.user.id).single();
+    if(error || !data || !data.organizations){
       console.warn('Could not load organization:', error && error.message);
       window.ORG=null;
       return;
     }
-    window.ORG=data;
+    window.ORG=data.organizations;
     const settingsBtn=document.getElementById('btn-org-settings');
     if(settingsBtn) settingsBtn.style.display='';
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
     if(typeof renderOrgBadge==='function') renderOrgBadge();
-    document.dispatchEvent(new CustomEvent('org-ready',{detail:data}));
+    document.dispatchEvent(new CustomEvent('org-ready',{detail:data.organizations}));
   }
 
   async function checkPlatformAdmin(){
