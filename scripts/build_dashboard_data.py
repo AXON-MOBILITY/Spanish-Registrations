@@ -1327,7 +1327,9 @@ def build_provinces_json(prov_data):
     pt  = defaultdict(lambda:{"name":"",**_zero()})
     pbm = defaultdict(lambda:defaultdict(_zero))
     for key,cnt in prov_data.items():
-        if len(key) == 10:
+        if len(key) == 11:
+            yr, mo, _marca, cod, nombre, canal, fuel, _seg, _sub, _hp, _body = key
+        elif len(key) == 10:
             yr, mo, _marca, cod, nombre, canal, fuel, _seg, _sub, _hp = key
         elif len(key) == 9:
             yr, mo, _marca, cod, nombre, canal, fuel, _sub, _hp = key
