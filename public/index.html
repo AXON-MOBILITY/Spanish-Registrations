@@ -351,6 +351,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 #login-screen.hidden{display:none}
 #create-org-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}
 #create-org-modal.hidden{display:none}
+#org-settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}
+#org-settings-modal.hidden{display:none}
 .login-box{
   background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:40px 48px;display:flex;flex-direction:column;align-items:center;gap:20px;
@@ -516,6 +518,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       return;
     }
     window.ORG=data;
+    const settingsBtn=document.getElementById('btn-org-settings');
+    if(settingsBtn) settingsBtn.style.display='';
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data}));
   }
 
@@ -636,10 +640,65 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
     <div class="tb-sep"></div>
+    <button id="btn-org-settings" onclick="openOrgSettingsModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Configuración de mi organización">⚙ Configuración</button>
     <button id="btn-create-org" onclick="openCreateOrgModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Crear organización">+ Organización</button>
     <button onclick="doLogout()" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0" title="Cerrar sesión">&#9099;</button>
   </div>
 </div>
+
+<!-- MODAL: configuracion de la organizacion propia (marca destacada + set competitivo) -->
+<div id="org-settings-modal" class="hidden">
+  <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:360px;max-height:80vh;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3)">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:4px">Configuración de mi vista</div>
+    <div style="font-size:.72rem;color:var(--text2);margin-bottom:14px">Elegí tu marca y qué otras marcas considerás tu competencia directa (Focus Segment).</div>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Mi marca (resaltada)</label>
+    <select id="os-home" multiple style="width:100%;height:110px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Mi set competitivo (Focus Segment)</label>
+    <select id="os-focus" multiple style="width:100%;height:140px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
+    <div style="font-size:.68rem;color:var(--text2);margin-bottom:12px">Ctrl/Cmd+click para elegir varias. Si dejás el set competitivo vacío, se usa la clasificación estándar del dataset.</div>
+    <div style="display:flex;gap:8px">
+      <button class="login-btn" id="os-submit" type="button" onclick="submitOrgSettings()" style="flex:1">Guardar</button>
+      <button type="button" onclick="closeOrgSettingsModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancelar</button>
+    </div>
+    <div class="login-err" id="os-err" style="margin-top:10px"></div>
+  </div>
+</div>
+<script>
+function openOrgSettingsModal(){
+  const homeSel=document.getElementById('os-home');
+  const focusSel=document.getElementById('os-focus');
+  homeSel.innerHTML='';
+  focusSel.innerHTML='';
+  const brands=(typeof BRAND_CHOICES!=='undefined'?BRAND_CHOICES:[]).slice().sort();
+  const curHome=new Set((window.ORG&&window.ORG.config&&window.ORG.config.home_brands)||[]);
+  const curFocus=new Set((window.ORG&&window.ORG.config&&window.ORG.config.focus_brands)||[]);
+  brands.forEach(b=>{
+    const o1=new Option(b,b,false,curHome.has(b)); homeSel.appendChild(o1);
+    const o2=new Option(b,b,false,curFocus.has(b)); focusSel.appendChild(o2);
+  });
+  document.getElementById('os-err').textContent='';
+  document.getElementById('org-settings-modal').classList.remove('hidden');
+}
+function closeOrgSettingsModal(){
+  document.getElementById('org-settings-modal').classList.add('hidden');
+}
+async function submitOrgSettings(){
+  const home=[...document.getElementById('os-home').selectedOptions].map(o=>o.value);
+  const focus=[...document.getElementById('os-focus').selectedOptions].map(o=>o.value);
+  const err=document.getElementById('os-err');
+  const btn=document.getElementById('os-submit');
+  err.textContent='';
+  if(!window.ORG){err.textContent='No hay organización activa';return;}
+  btn.disabled=true; btn.textContent='Guardando…';
+  const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus};
+  const { error } = await window.sbClient.from('organizations').update({config:newConfig}).eq('id', window.ORG.id);
+  btn.disabled=false; btn.textContent='Guardar';
+  if(error){ err.textContent='No se pudo guardar: '+error.message; return; }
+  err.style.color='#10b981';
+  err.textContent='Guardado. Recargando…';
+  setTimeout(()=>location.reload(), 900);
+}
+</script>
 
 <!-- MODAL: crear organizacion (solo platform admins) -->
 <div id="create-org-modal" class="hidden">
@@ -1205,6 +1264,24 @@ function isHomeBrand(brand){
   return homeBrands().includes(brand);
 }
 
+// Set competitivo (Focus vs Resto) por organizacion. Si la org define su
+// propia lista de marcas (ORG.config.focus_brands), se calcula en runtime
+// por marca. Si no la define (caso BMW, default), se usa la clasificacion
+// pre-calculada del dataset (mas fina, a nivel modelo) para no cambiar el
+// comportamiento actual de BMW ni un poco.
+const SUB_BUCKETS=['REST','FOCUS SEGMENT'];
+function orgFocusBrands(){
+  return window.ORG && window.ORG.config && window.ORG.config.focus_brands;
+}
+function rowSubBucket(r){
+  const cfg=orgFocusBrands();
+  if(cfg && cfg.length){
+    const marca=REC.enums.marca[r[COL.MARCA]];
+    return cfg.includes(marca) ? 'FOCUS SEGMENT' : 'REST';
+  }
+  return REC.enums.sub[r[COL.SUB]];
+}
+
 // Sub-concept mapping for FOCUS SEGMENT brands
 const _BRAND_CONCEPT={
   'BMW':'TRAD. COMP.','Bmw Ag':'TRAD. COMP.','Alpina':'TRAD. COMP.',
@@ -1326,6 +1403,16 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
   buildSidebar();
   buildTopFilters();
   render();
+});
+
+// El login via Supabase es async y puede resolver despues de que los datos
+// ya cargaron y se hizo el primer render (que no espera al login). Cuando
+// la organizacion llega tarde, se refresca lo que depende de ella.
+document.addEventListener('org-ready',function(){
+  if(typeof REC==='undefined'||!REC)return;
+  buildSubsegmentSidebar();
+  render();
+  if(g('pane-prov')&&g('pane-prov').classList.contains('on')&&typeof PROV!=='undefined'&&PROV)renderProv();
 });
 
 // ── FILTRO DE PROVINCIA sobre Overview/Ranking/Channel&Monthly ──────────────
@@ -1667,6 +1754,68 @@ function addQuickSel(containerId, allFn, noneFn){
   g(containerId).appendChild(row);
 }
 
+// Subsegment (Focus vs Resto) — separada de buildSidebar() para poder
+// reconstruirla sola cuando la config de la organizacion llega despues del
+// primer render (login por Supabase es async y puede resolver mas tarde
+// que la carga de datos, que arranca en paralelo sin esperarlo).
+function buildSubsegmentSidebar(){
+  const cont=g('sb-subs');
+  cont.innerHTML='';
+  const usingCustomFocus=!!(orgFocusBrands() && orgFocusBrands().length);
+  let focusCbEl=null;        // <input> ref for FOCUS SEGMENT checkbox
+  const conceptCbEls={};     // concept → <input> ref
+
+  F.concepts=new Set(CONCEPTS);
+  addQuickSel('sb-subs',
+    ()=>{ SUB_BUCKETS.forEach(s=>F.subs.add(s)); CONCEPTS.forEach(c=>F.concepts.add(c));
+          cont.querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
+    ()=>{ F.subs.clear(); F.concepts.clear();
+          cont.querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
+  );
+  F.subs=new Set(SUB_BUCKETS);
+  SUB_BUCKETS.forEach(s=>{
+    const el=mkCb(s||'(Todas)',true,on=>{
+      if(on){
+        F.subs.add(s);
+        if(s==='FOCUS SEGMENT'){
+          CONCEPTS.forEach(c=>{ F.concepts.add(c); if(conceptCbEls[c])conceptCbEls[c].checked=true; });
+        }
+      } else {
+        F.subs.delete(s);
+        if(s==='FOCUS SEGMENT'){
+          F.concepts.clear();
+          CONCEPTS.forEach(c=>{ if(conceptCbEls[c])conceptCbEls[c].checked=false; });
+        }
+      }
+      render();
+    });
+    if(s==='FOCUS SEGMENT') focusCbEl=el.querySelector('input');
+    cont.appendChild(el);
+  });
+  // Sub-concepts within FOCUS SEGMENT (indented). Solo tienen sentido con
+  // la clasificacion propia de BMW; una org con set competitivo propio no
+  // los ve (no hay TRAD. COMP. / NEW PLAYERS & TESLA definido para ella).
+  if(!usingCustomFocus) CONCEPTS.forEach(c=>{
+    const el=mkCb('    '+c,true,on=>{
+      if(on){
+        F.concepts.add(c);
+        F.subs.add('FOCUS SEGMENT'); if(focusCbEl)focusCbEl.checked=true;
+      } else {
+        F.concepts.delete(c);
+        if(F.concepts.size===0){ F.subs.delete('FOCUS SEGMENT'); if(focusCbEl)focusCbEl.checked=false; }
+      }
+      render();
+    });
+    conceptCbEls[c]=el.querySelector('input');
+    el.style.paddingLeft='18px';
+    el.style.borderLeft='2px solid var(--border)';
+    el.style.marginLeft='8px';
+    el.style.fontSize='11px';
+    el.style.opacity='0.85';
+    cont.appendChild(el);
+  });
+}
+
 function buildSidebar(){
   const E=REC.enums;
   const allYears=[...new Set(REC.rows.map(r=>r[COL.Y]))].sort();
@@ -1751,63 +1900,7 @@ function buildSidebar(){
     g('sb-renting').appendChild(pill);
   });
 
-  // Subsegment — with parent-child logic for FOCUS SEGMENT concepts
-  const allSubs=[...E.sub.keys()];
-  const focusIdx=E.sub.indexOf('FOCUS SEGMENT');
-  let focusCbEl=null;        // <input> ref for FOCUS SEGMENT checkbox
-  const conceptCbEls={};     // concept → <input> ref
-
-  CONCEPTS.forEach(c=>F.concepts.add(c));
-  addQuickSel('sb-subs',
-    ()=>{ allSubs.forEach(i=>F.subs.add(i)); CONCEPTS.forEach(c=>F.concepts.add(c));
-          g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
-    ()=>{ F.subs.clear(); F.concepts.clear();
-          g('sb-subs').querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
-  );
-  E.sub.forEach((s,i)=>{
-    F.subs.add(i);
-    const el=mkCb(s||'(Todas)',true,on=>{
-      if(on){
-        F.subs.add(i);
-        if(s==='FOCUS SEGMENT'){
-          // Re-enable concept children
-          CONCEPTS.forEach(c=>{ F.concepts.add(c); if(conceptCbEls[c])conceptCbEls[c].checked=true; });
-        }
-      } else {
-        F.subs.delete(i);
-        if(s==='FOCUS SEGMENT'){
-          // Disable concept children
-          F.concepts.clear();
-          CONCEPTS.forEach(c=>{ if(conceptCbEls[c])conceptCbEls[c].checked=false; });
-        }
-      }
-      render();
-    });
-    if(s==='FOCUS SEGMENT') focusCbEl=el.querySelector('input');
-    g('sb-subs').appendChild(el);
-  });
-  // Sub-concepts within FOCUS SEGMENT (indented)
-  CONCEPTS.forEach(c=>{
-    const el=mkCb('\u00a0\u00a0\u00a0\u00a0'+c,true,on=>{
-      if(on){
-        F.concepts.add(c);
-        // Auto-activate parent FOCUS SEGMENT if needed
-        if(focusIdx>=0){ F.subs.add(focusIdx); if(focusCbEl)focusCbEl.checked=true; }
-      } else {
-        F.concepts.delete(c);
-        // If no concepts remain, deactivate FOCUS SEGMENT parent
-        if(F.concepts.size===0&&focusIdx>=0){ F.subs.delete(focusIdx); if(focusCbEl)focusCbEl.checked=false; }
-      }
-      render();
-    });
-    conceptCbEls[c]=el.querySelector('input');
-    el.style.paddingLeft='18px';
-    el.style.borderLeft='2px solid var(--border)';
-    el.style.marginLeft='8px';
-    el.style.fontSize='11px';
-    el.style.opacity='0.85';
-    g('sb-subs').appendChild(el);
-  });
+  buildSubsegmentSidebar();
 
   // OEM filter
   const OEM_OPTS=[['CHINESE','Chinese Brands'],['REST','Rest']];
@@ -2132,8 +2225,8 @@ function applyFiltersBase(){
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
-    if(!F.subs.has(r[COL.SUB]))return false;
-    if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){
+    if(!F.subs.has(rowSubBucket(r)))return false;
+    if(rowSubBucket(r)==='FOCUS SEGMENT'){
       const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];
       if(bc&&!F.concepts.has(bc))return false;
     }
@@ -2184,8 +2277,8 @@ function render(){
     if(!F.canales.has(r[COL.CANAL]))return false;
     if(!F.renting.has(r[COL.RENTING]))return false;
     if(!F.segs.has(r[COL.SEG]))return false;
-    if(!F.subs.has(r[COL.SUB]))return false;
-    if(E.sub[r[COL.SUB]]==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
+    if(!F.subs.has(rowSubBucket(r)))return false;
+    if(rowSubBucket(r)==='FOCUS SEGMENT'){const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];if(bc&&!F.concepts.has(bc))return false;}
     if(F.oem.size<2){const _isCN=_CHINESE_BRANDS.has(E.marca[r[COL.MARCA]]);if(_isCN&&!F.oem.has('CHINESE'))return false;if(!_isCN&&!F.oem.has('REST'))return false;}
     if(F.hps.size&&!F.hps.has(r[COL.HP]))return false;
     if(_mIdxSet&&!_mIdxSet.has(r[COL.MARCA]))return false;
@@ -2739,9 +2832,13 @@ function renderProv(){
     }
     return true;
   };
-  // Seg/Sub/HP filter detection
+  // Seg/Sub/HP filter detection. La estructura "exacta" de province_brands.json
+  // esta precalculada con la clasificacion Focus/Resto original (BMW); para
+  // una org con set competitivo propio ese cruce no aplica, asi que el
+  // filtro de Subsegment no restringe los datos de Provincias en ese caso.
+  const customFocus=!!(orgFocusBrands() && orgFocusBrands().length);
   const allSegsActive=F.segs.size>=E.seg.length;
-  const allSubsActive=F.subs.size>=E.sub.length;
+  const allSubsActive=customFocus || F.subs.size>=SUB_BUCKETS.length;
   const allHpsActive=F.hps.size===0;
   const useFiltered=!allSegsActive||!allSubsActive||!allHpsActive;
   const hasFiltStructure=PROV.provinces.length>0&&!!(PROV.provinces[0].years_filt);
@@ -2753,14 +2850,14 @@ function renderProv(){
   );
   // Sets de nombres permitidos para datos provinciales exactos.
   const allowedSegNames=allSegsActive?null:new Set([...F.segs].map(i=>E.seg[i]));
-  const allowedSubNames=allSubsActive?null:new Set([...F.subs].map(i=>E.sub[i]));
+  const allowedSubNames=allSubsActive?null:new Set([...F.subs]);
   const allowedHpNames=allHpsActive?null:new Set([...F.hps].map(i=>E.hp[i]));
   // Notice
   const notice=g('prov-filter-notice');
   if(useFiltered){
     const parts=[];
     if(!allSegsActive){const ns=[...new Set([...F.segs].map(i=>E.seg[i]).filter(Boolean))];parts.push('Segment: '+(ns.length?ns.join(', '):'none'));}
-    if(!allSubsActive){const ns=[...F.subs].map(i=>E.sub[i]).filter(Boolean);parts.push('Subsegment: '+(ns.length?ns.join(', '):'none'));}
+    if(!allSubsActive){const ns=[...F.subs].filter(Boolean);parts.push('Subsegment: '+(ns.length?ns.join(', '):'none'));}
     if(!allHpsActive){const ns=[...F.hps].map(i=>E.hp[i]).filter(Boolean);parts.push('HP: '+(ns.length?ns.join(', '):'none'));}
     notice.textContent='Active filters: '+parts.join(' · ')+'. '+(hasFiltData?'Exact provincial data.':'Provincial data pending reprocessing with segment/subsegment/HP.');
     notice.style.display='';
@@ -2975,8 +3072,7 @@ function initTrendSubFilters(){
 
 function trendSubOk(r){
   const E=REC.enums;
-  const sub=E.sub[r[COL.SUB]]||'';
-  const key=sub==='FOCUS SEGMENT'?'FOCUS':'REST';
+  const key=rowSubBucket(r)==='FOCUS SEGMENT'?'FOCUS':'REST';
   if(!TR.subs.has(key))return false;
   if(key==='FOCUS'){
     const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];
@@ -3793,7 +3889,7 @@ async function downloadInforme(){
     const aggBEV=aggregate(_baseRows.filter(r=>_E.fuel[r[COL.FUEL]]==='BEV'));
     const aggPHEV=aggregate(_baseRows.filter(r=>_E.fuel[r[COL.FUEL]]==='PHEV'));
     const aggICE=aggregate(_baseRows.filter(r=>_E.fuel[r[COL.FUEL]]==='ICE'));
-    const aggFocus=aggregate(_baseRows.filter(r=>_E.sub[r[COL.SUB]]==='FOCUS SEGMENT'));
+    const aggFocus=aggregate(_baseRows.filter(r=>rowSubBucket(r)==='FOCUS SEGMENT'));
     const aggChinese=aggregate(_baseRows.filter(r=>_CHINESE_BRANDS.has(_E.marca[r[COL.MARCA]])));
 
     // ── Helpers ───────────────────────────────────────────────────────────
@@ -4197,7 +4293,7 @@ function resetFilters(){
   F.canales=new Set(E.canal.map((_,i)=>i));
   F.renting=new Set(E.renting.map((_,i)=>i));
   F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(E.sub.map((_,i)=>i));
+  F.subs=new Set(SUB_BUCKETS);
   F.oem=new Set(['CHINESE','REST']);
   CONCEPTS.forEach(c=>F.concepts.add(c));
   F.hps.clear();

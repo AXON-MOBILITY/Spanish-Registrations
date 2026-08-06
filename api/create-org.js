@@ -89,7 +89,7 @@ module.exports = async (req, res) => {
     body: JSON.stringify({
       slug,
       display_name,
-      config: config || { home_brands: [], focus_brands_source: 'custom', use_calibration: false, default_filters: { years: 'latest' } },
+      config: config || { home_brands: [], focus_brands: [], use_calibration: false, default_filters: { years: 'latest' } },
     }),
   });
   if (!orgResp.ok) {
