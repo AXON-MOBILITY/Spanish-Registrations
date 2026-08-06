@@ -925,7 +925,7 @@ async function submitCreateOrg(){
     <div class="pane" id="pane-prov">
       <div class="card">
         <div class="card-hdr">
-          <span>Focus + BYD Brand Ranking by Province &middot; Top 5</span>
+          <span>Brand Ranking by Province &middot; Top 5</span>
           <span class="rk-ctrls">
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
             <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
@@ -1196,6 +1196,14 @@ function _brandLogo(brand){
 const MES=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MES3=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const SEG_ORDER=['UKL0','UKL1','UKL2','KKL','MKL','SKL','GKL','GKL+'];
+
+// Marca(s) propia(s) de la organizacion logueada (default BMW+MINI si no hay org/config).
+function homeBrands(){
+  return (window.ORG && window.ORG.config && window.ORG.config.home_brands) || ['BMW','MINI'];
+}
+function isHomeBrand(brand){
+  return homeBrands().includes(brand);
+}
 
 // Sub-concept mapping for FOCUS SEGMENT brands
 const _BRAND_CONCEPT={
@@ -2295,7 +2303,7 @@ function render(){
     const yDelta=yD?yD.ref-yD.prev:null;
     const share=total?d.total/total*100:0;
     const tr=document.createElement('tr');
-    if(['BMW','MINI'].includes(brand)) tr.style.background='rgba(217,119,6,.12)';
+    if(isHomeBrand(brand)) tr.style.background='rgba(217,119,6,.12)';
     tr.innerHTML=`
       <td><button class="btn-xpd" onclick="toggleModelRows(this,'${brand.replace(/'/g,"\\'")}')">▶</button><span class="${(()=>{const _f=BRAND_LOGO[brand];return BRAND_COLOR_LOGO[_f]?'ov-brand-badge color-logo':_f?'ov-brand-badge white-logo':'ov-brand-badge no-logo'})()}"${!BRAND_LOGO[brand]?` style="background:${_brandColor(brand)}"`:''}>${_brandLogo(brand)}</span>${brand}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
@@ -2825,7 +2833,7 @@ function renderProv(){
     for(let i=0;i<5;i++){
       const cell=r.cells[i];
       if(!cell){html+='<td class="rk-cell">&mdash;</td>';continue;}
-      const isBmw=cell.some(([m])=>m==='BMW');
+      const isBmw=cell.some(([m])=>isHomeBrand(m));
       const txt=cell.map(([m,v])=>`<b>${m}</b> ${fN(v)}`).join('<br>');
       html+=`<td class="rk-cell${isBmw?' rk-bmw':''}">${txt}</td>`;
     }
@@ -2839,7 +2847,7 @@ const TR_COLORS=['#f97316','#10b981','#8b5cf6','#ef4444','#eab308',
   '#ec4899','#84cc16','#6366f1','#14b8a6','#f43f5e','#f59e0b','#a78bfa','#22d3ee','#fb7185'];
 
 function trColor(m){
-  if(m==='BMW')return '#0ea5e9';
+  if(isHomeBrand(m))return '#0ea5e9';
   if(!TR.colors[m])TR.colors[m]=TR_COLORS[Object.keys(TR.colors).length%TR_COLORS.length];
   return TR.colors[m];
 }
@@ -3026,7 +3034,8 @@ function initTrend(){
   REC.rows.forEach(r=>{mm[r[COL.Y]+'-'+String(r[COL.M]).padStart(2,'0')]=1;});
   TR.months=Object.keys(mm).sort();
   TR.days=TREND.days.map(d=>d.day);
-  TR.sel=['BMW'].filter(b=>BRAND_CHOICES.includes(b));
+  TR.sel=homeBrands().filter(b=>BRAND_CHOICES.includes(b));
+  if(!TR.sel.length&&BRAND_CHOICES.length)TR.sel=[BRAND_CHOICES[0]];
   BRAND_CHOICES.forEach(b=>g('tr-brand-list').appendChild(new Option(b,b)));
   // Model choices: "Marca / Modelo" for models with ≥50 units
   TR.modSel=TR.modSel||[];
@@ -3108,7 +3117,7 @@ function trSeries(brands,per,getter){
     });
     const c=trColor(m);
     return {label:m,data,borderColor:c,backgroundColor:c,
-      borderWidth:m==='BMW'?3:1.8,pointRadius:per.length>60?0:2,pointHoverRadius:4,tension:.25};
+      borderWidth:isHomeBrand(m)?3:1.8,pointRadius:per.length>60?0:2,pointHoverRadius:4,tension:.25};
   });
 }
 
@@ -3648,7 +3657,7 @@ function renderRanking(sv,tot,yoy,mth,ytd,maxM){
     const ytdVal=(ytd&&ytd[brand])||0;
     const barYtdW=Math.round(ytdVal/maxYtdVal*100);
     const col=_brandColor(brand);
-    const isBMW=['BMW','MINI'].includes(brand);
+    const isBMW=isHomeBrand(brand);
     const varStr=yPct===null?'—':(yPct>=0?'▲ +':'▼ ')+Math.abs(yPct).toFixed(1)+'%';
     const varCls=yPct===null?'':(yPct>=0?'pos':'neg');
     return `<div class="rank-row${isBMW?' rank-bmw':''}">
@@ -3894,8 +3903,8 @@ async function downloadInforme(){
               d.cell.styles.textColor=[128,142,158];
             }
             if(mode==='main'){
-              // BMW/MINI: fondo ambar suave · Audi/Mercedes: texto rojo · Chinese OEM: rank en rojo
-              if(brand==='BMW'||brand==='MINI')
+              // Marca propia: fondo ambar suave · Audi/Mercedes: texto rojo · Chinese OEM: rank en rojo
+              if(isHomeBrand(brand))
                 d.cell.styles.fillColor=[255,248,224];
               if((brand==='Audi'||brand==='Mercedes')&&d.column.index===1)
                 d.cell.styles.textColor=[198,42,42];
@@ -3934,8 +3943,8 @@ async function downloadInforme(){
               doc.ellipse(bx+bs/2,d.cell.y+d.cell.height/2,1.4,1.4,'F');
             }
             if(mode==='main'){
-              // Linea acento izquierda: dorado BMW/MINI, rojo Audi/Mercedes
-              const isGold=brand==='BMW'||brand==='MINI';
+              // Linea acento izquierda: dorado marca propia, rojo Audi/Mercedes
+              const isGold=isHomeBrand(brand);
               const isBlue=brand==='Audi'||brand==='Mercedes';
               if(isGold||isBlue){
                 doc.setDrawColor(...(isGold?[205,162,25]:[198,42,42]));
