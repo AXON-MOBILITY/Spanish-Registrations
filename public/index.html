@@ -513,7 +513,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   async function loadOrgConfig(){
     const { data, error } = await sb.from('organizations').select('*').single();
     if(error || !data){
-      console.warn('No se pudo cargar la organizacion:', error && error.message);
+      console.warn('Could not load organization:', error && error.message);
       window.ORG=null;
       return;
     }
@@ -535,14 +535,14 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 
   window.createOrg=async function(slug, display_name, username, password){
     const { data: { session } } = await sb.auth.getSession();
-    if(!session) return { error: 'No hay sesion activa' };
+    if(!session) return { error: 'No active session' };
     const resp = await fetch('/api/create-org', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
       body: JSON.stringify({ slug, display_name, username, password }),
     });
-    const body = await resp.json().catch(()=>({ error: 'Respuesta invalida del servidor' }));
-    return resp.ok ? body : { error: body.error || 'Error desconocido' };
+    const body = await resp.json().catch(()=>({ error: 'Invalid server response' }));
+    return resp.ok ? body : { error: body.error || 'Unknown error' };
   };
 
   window.doLogin=async function(){
@@ -554,14 +554,14 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     const username=uInput && uInput.value;
     const password=pInput && pInput.value;
     if(!username || !password){
-      if(err) err.textContent='Completa usuario y contraseña';
+      if(err) err.textContent='Enter username and password';
       return false;
     }
     if(btn){btn.disabled=true; btn.textContent='Entrando…';}
     const { error } = await sb.auth.signInWithPassword({ email: toEmail(username), password });
     if(btn){btn.disabled=false; btn.textContent='Entrar';}
     if(error){
-      if(err) err.textContent='Usuario o contraseña incorrectos';
+      if(err) err.textContent='Incorrect username or password';
       if(pInput){pInput.value=''; pInput.focus();}
       return false;
     }
@@ -605,10 +605,10 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <img class="login-brand-img" src="/brand/axon-mobility-logo-light.png" alt="Axon Mobility">
       <div style="font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Automotive Market Intelligence</div>
     </div>
-    <div class="login-title">Acceso restringido</div>
-    <input id="login-user" class="login-input" type="text" placeholder="Usuario" autocomplete="username" style="margin-bottom:8px">
-    <input id="login-pw" class="login-input" type="password" placeholder="Contraseña" autocomplete="current-password">
-    <button class="login-btn" id="login-submit" type="button" onclick="return doLogin()">Entrar</button>
+    <div class="login-title">Restricted access</div>
+    <input id="login-user" class="login-input" type="text" placeholder="Username" autocomplete="username" style="margin-bottom:8px">
+    <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="login-btn" id="login-submit" type="button" onclick="return doLogin()">Sign in</button>
     <div class="login-err" id="login-err"></div>
   </div>
 </div>
@@ -633,32 +633,32 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
   </div>
   <div class="tb-right">
-    <button class="dl-btn" id="btn-dl-informe" onclick="downloadInforme()" style="margin-right:6px">&#11015; Descargar informe</button>
+    <button class="dl-btn" id="btn-dl-informe" onclick="downloadInforme()" style="margin-right:6px">&#11015; Download report</button>
     <div class="tb-stat"><b id="hdr-updated">—</b><span>last update</span></div>
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-total">—</b><span>registrations</span></div>
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
     <div class="tb-sep"></div>
-    <button id="btn-org-settings" onclick="openOrgSettingsModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Configuración de mi organización">⚙ Configuración</button>
-    <button id="btn-create-org" onclick="openCreateOrgModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Crear organización">+ Organización</button>
-    <button onclick="doLogout()" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0" title="Cerrar sesión">&#9099;</button>
+    <button id="btn-org-settings" onclick="openOrgSettingsModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="My organization settings">⚙ Settings</button>
+    <button id="btn-create-org" onclick="openCreateOrgModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Create organization">+ Organization</button>
+    <button onclick="doLogout()" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0" title="Sign out">&#9099;</button>
   </div>
 </div>
 
 <!-- MODAL: configuracion de la organizacion propia (marca destacada + set competitivo) -->
 <div id="org-settings-modal" class="hidden">
   <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:360px;max-height:80vh;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3)">
-    <div style="font-weight:700;font-size:1rem;margin-bottom:4px">Configuración de mi vista</div>
-    <div style="font-size:.72rem;color:var(--text2);margin-bottom:14px">Elegí tu marca y qué otras marcas considerás tu competencia directa (Focus Segment).</div>
-    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Mi marca (resaltada)</label>
+    <div style="font-weight:700;font-size:1rem;margin-bottom:4px">My view settings</div>
+    <div style="font-size:.72rem;color:var(--text2);margin-bottom:14px">Choose your brand and which other brands you consider your direct competitors (Focus Segment).</div>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My brand (highlighted)</label>
     <select id="os-home" multiple style="width:100%;height:110px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
-    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Mi set competitivo (Focus Segment)</label>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My competitive set (Focus Segment)</label>
     <select id="os-focus" multiple style="width:100%;height:140px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
-    <div style="font-size:.68rem;color:var(--text2);margin-bottom:12px">Ctrl/Cmd+click para elegir varias. Si dejás el set competitivo vacío, se usa la clasificación estándar del dataset.</div>
+    <div style="font-size:.68rem;color:var(--text2);margin-bottom:12px">Ctrl/Cmd+click to select multiple. If you leave the competitive set empty, the dataset’s standard classification is used.</div>
     <div style="display:flex;gap:8px">
-      <button class="login-btn" id="os-submit" type="button" onclick="submitOrgSettings()" style="flex:1">Guardar</button>
-      <button type="button" onclick="closeOrgSettingsModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancelar</button>
+      <button class="login-btn" id="os-submit" type="button" onclick="submitOrgSettings()" style="flex:1">Save</button>
+      <button type="button" onclick="closeOrgSettingsModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancel</button>
     </div>
     <div class="login-err" id="os-err" style="margin-top:10px"></div>
   </div>
@@ -688,14 +688,14 @@ async function submitOrgSettings(){
   const err=document.getElementById('os-err');
   const btn=document.getElementById('os-submit');
   err.textContent='';
-  if(!window.ORG){err.textContent='No hay organización activa';return;}
-  btn.disabled=true; btn.textContent='Guardando…';
+  if(!window.ORG){err.textContent='No active organization';return;}
+  btn.disabled=true; btn.textContent='Saving…';
   const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus};
   const { error } = await window.sbClient.from('organizations').update({config:newConfig}).eq('id', window.ORG.id);
-  btn.disabled=false; btn.textContent='Guardar';
-  if(error){ err.textContent='No se pudo guardar: '+error.message; return; }
+  btn.disabled=false; btn.textContent='Save';
+  if(error){ err.textContent='Could not save: '+error.message; return; }
   err.style.color='#10b981';
-  err.textContent='Guardado. Recargando…';
+  err.textContent='Saved. Reloading…';
   setTimeout(()=>location.reload(), 900);
 }
 </script>
@@ -703,14 +703,14 @@ async function submitOrgSettings(){
 <!-- MODAL: crear organizacion (solo platform admins) -->
 <div id="create-org-modal" class="hidden">
   <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:320px;box-shadow:0 8px 30px rgba(0,0,0,.3)">
-    <div style="font-weight:700;font-size:1rem;margin-bottom:14px">Nueva organización</div>
-    <input id="co-slug" class="login-input" type="text" placeholder="Slug (ej: audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
-    <input id="co-name" class="login-input" type="text" placeholder="Nombre (ej: Audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
-    <input id="co-user" class="login-input" type="text" placeholder="Usuario de acceso" style="margin-bottom:8px;width:100%;box-sizing:border-box">
-    <input id="co-pass" class="login-input" type="password" placeholder="Contraseña (min. 8 caracteres)" style="margin-bottom:12px;width:100%;box-sizing:border-box">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:14px">New organization</div>
+    <input id="co-slug" class="login-input" type="text" placeholder="Slug (e.g. audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <input id="co-name" class="login-input" type="text" placeholder="Name (e.g. Audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <input id="co-user" class="login-input" type="text" placeholder="Login username" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <input id="co-pass" class="login-input" type="password" placeholder="Password (min. 8 characters)" style="margin-bottom:12px;width:100%;box-sizing:border-box">
     <div style="display:flex;gap:8px">
-      <button class="login-btn" id="co-submit" type="button" onclick="submitCreateOrg()" style="flex:1">Crear</button>
-      <button type="button" onclick="closeCreateOrgModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancelar</button>
+      <button class="login-btn" id="co-submit" type="button" onclick="submitCreateOrg()" style="flex:1">Create</button>
+      <button type="button" onclick="closeCreateOrgModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancel</button>
     </div>
     <div class="login-err" id="co-err" style="margin-top:10px"></div>
   </div>
@@ -732,13 +732,13 @@ async function submitCreateOrg(){
   const err=document.getElementById('co-err');
   const btn=document.getElementById('co-submit');
   err.textContent='';
-  if(!slug||!name||!user||!pass){ err.textContent='Completa todos los campos'; return; }
-  btn.disabled=true; btn.textContent='Creando…';
+  if(!slug||!name||!user||!pass){ err.textContent='Fill in all fields'; return; }
+  btn.disabled=true; btn.textContent='Creating…';
   const result=await window.createOrg(slug,name,user,pass);
-  btn.disabled=false; btn.textContent='Crear';
+  btn.disabled=false; btn.textContent='Create';
   if(result && result.error){ err.textContent=result.error; return; }
   err.style.color='#10b981';
-  err.textContent='Creada: '+name+' (usuario "'+user+'")';
+  err.textContent='Created: '+name+' (username "'+user+'")';
   setTimeout(closeCreateOrgModal, 1800);
 }
 </script>
@@ -748,16 +748,16 @@ async function submitCreateOrg(){
     <div class="tf-grp dealer-search-wrap">
       <span class="tf-lbl">Brand</span>
       <input id="f-marca" class="tf-modelo-input" type="text" autocomplete="off"
-             placeholder="Añadir marca…"
+             placeholder="Add brand…"
              onfocus="showMarcaDropdown()" oninput="showMarcaDropdown()"
              onkeydown="onMarcaKeydown(event)" onblur="scheduleHideMarcaDropdown()">
       <div id="f-marca-dropdown" class="dealer-dropdown"></div>
     </div>
     <div class="tf-grp dealer-search-wrap">
-      <span class="tf-lbl" title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta.">Dealer (est.)</span>
+      <span class="tf-lbl" title="Approximate territorial attribution (postal-code proxy, Private channel only). Does not identify the dealer that made the sale.">Dealer (est.)</span>
       <input id="f-dealer" class="tf-dealer-input" type="text" autocomplete="off"
-             placeholder="Añadir dealer..."
-             title="Atribución territorial aproximada (proxy por código postal, solo canal Private). No identifica al concesionario que realizó la venta."
+             placeholder="Add dealer..."
+             title="Approximate territorial attribution (postal-code proxy, Private channel only). Does not identify the dealer that made the sale."
              onfocus="ensureRECD().then(showDealerDropdown)" oninput="ensureRECD().then(showDealerDropdown)"
              onkeydown="onDealerKeydown(event)" onblur="scheduleHideDealerDropdown()">
       <div id="f-dealer-dropdown" class="dealer-dropdown"></div>
@@ -765,7 +765,7 @@ async function submitCreateOrg(){
     <div class="tf-grp dealer-search-wrap">
       <span class="tf-lbl">Model</span>
       <input id="f-modelo" class="tf-modelo-input" type="text" autocomplete="off"
-             placeholder="Buscar modelo…"
+             placeholder="Search model…"
              onfocus="showModelDropdown()" oninput="showModelDropdown()"
              onkeydown="onModelKeydown(event)" onblur="scheduleHideModelDropdown()">
       <div id="f-modelo-dropdown" class="dealer-dropdown"></div>
@@ -1019,7 +1019,7 @@ async function submitCreateOrg(){
             <div class="tr-controls">
               <span class="tf-lbl">Brand</span>
               <input id="tr-brand-input" class="tf-modelo-input" list="tr-brand-list"
-                     placeholder="A&ntilde;adir marca&hellip;" autocomplete="off"
+                     placeholder="Add brand&hellip;" autocomplete="off"
                      onchange="trAddBrand()">
               <datalist id="tr-brand-list"></datalist>
               <span id="tr-brands" class="tr-brands" style="margin:0"></span>
@@ -1027,7 +1027,7 @@ async function submitCreateOrg(){
             <div class="tr-controls" style="margin-top:6px">
               <span class="tf-lbl">Model</span>
               <input id="tr-model-input" class="tf-modelo-input" list="tr-model-list"
-                     placeholder="A&ntilde;adir modelo&hellip;" autocomplete="off"
+                     placeholder="Add model&hellip;" autocomplete="off"
                      onchange="trAddModel()">
               <datalist id="tr-model-list"></datalist>
               <span id="tr-models" class="tr-brands" style="margin:0"></span>
@@ -1114,7 +1114,7 @@ async function submitCreateOrg(){
       <div class="card">
         <div class="card-hdr">
           <span>Monthly by Brand: Actuals + Forecast</span>
-          <span class="note">RAC mes actual y Ajuste a&ntilde;o total son editables por marca</span>
+          <span class="note">Current-month RAC and total year adjustment are editable per brand</span>
         </div>
         <div class="tbl-wrap2" style="max-height:calc(100vh - 300px);overflow:auto">
           <table id="tbl-fc">
@@ -1597,7 +1597,7 @@ function showDealerDropdown(){
   if(!matches.length){
     const empty=document.createElement('div');
     empty.className='dealer-opt-empty';
-    empty.textContent='Sin resultados';
+    empty.textContent='No results';
     box.appendChild(empty);
   } else {
     matches.forEach(({value,label})=>{
@@ -1742,7 +1742,7 @@ fetch('data/meta.json?v='+Date.now()).then(r=>r.json()).then(m=>{
   if(m.updated){
     const [y,mo,d]=m.updated.split('-');
     g('hdr-updated').textContent=d+'/'+mo+'/'+y;
-    g('hdr-updated').title='Datos DGT procesados el '+d+'/'+mo+'/'+y
+    g('hdr-updated').title='DGT data processed on '+d+'/'+mo+'/'+y
       +(m.current_mtd?' · MTD: '+m.current_mtd.label:'');
   }
 }).catch(()=>{});
@@ -1757,9 +1757,9 @@ fetch('data/pending_classification.json?v='+Date.now()).then(r=>r.json()).then(d
 // ── SIDEBAR BUILD ────────────────────────────────────────
 function addQuickSel(containerId, allFn, noneFn){
   const row=document.createElement('div');row.className='sg-quicksel';
-  const bAll=document.createElement('button');bAll.className='sg-qs-btn';bAll.textContent='Todos';bAll.onclick=allFn;
+  const bAll=document.createElement('button');bAll.className='sg-qs-btn';bAll.textContent='All';bAll.onclick=allFn;
   const sep=document.createTextNode(' · ');
-  const bNone=document.createElement('button');bNone.className='sg-qs-btn';bNone.textContent='Ninguno';bNone.onclick=noneFn;
+  const bNone=document.createElement('button');bNone.className='sg-qs-btn';bNone.textContent='None';bNone.onclick=noneFn;
   row.appendChild(bAll);row.appendChild(sep);row.appendChild(bNone);
   g(containerId).appendChild(row);
 }
@@ -1784,7 +1784,7 @@ function buildSubsegmentSidebar(){
   );
   F.subs=new Set(SUB_BUCKETS);
   SUB_BUCKETS.forEach(s=>{
-    const el=mkCb(s||'(Todas)',true,on=>{
+    const el=mkCb(s||'(All)',true,on=>{
       if(on){
         F.subs.add(s);
         if(s==='FOCUS SEGMENT'){
@@ -1897,7 +1897,7 @@ function buildSidebar(){
     return (ia<0?99:ia)-(ib<0?99:ib);
   });
   rentingIdx.forEach(i=>{
-    const label=E.renting[i]||'Sin dato';
+    const label=E.renting[i]||'No data';
     F.renting.add(i);
     const pill=document.createElement('div');
     pill.className='sg-pill on';
@@ -1943,7 +1943,7 @@ function buildSidebar(){
     ()=>{ F.segs.clear(); g('sb-segs').querySelectorAll('input').forEach(c=>c.checked=false); updateCount('cnt-segs',0,segTotal); render(); }
   );
   canonLabels.forEach(c=>{
-    g('sb-segs').appendChild(mkCb(c||'Sin seg.',true,on=>{
+    g('sb-segs').appendChild(mkCb(c||'No segment',true,on=>{
       segGroups[c].forEach(i=>{if(on)F.segs.add(i);else F.segs.delete(i);});
       const selCanon=canonLabels.filter(cc=>segGroups[cc].some(i=>F.segs.has(i))).length;
       updateCount('cnt-segs',selCanon,segTotal);
@@ -2076,7 +2076,7 @@ function showModelDropdown(){
   if(!matches.length){
     const empty=document.createElement('div');
     empty.className='dealer-opt-empty';
-    empty.textContent='Sin resultados';
+    empty.textContent='No results';
     box.appendChild(empty);
   } else {
     matches.forEach(({value,label})=>{
@@ -2167,7 +2167,7 @@ function showMarcaDropdown(){
   if(!matches.length){
     const empty=document.createElement('div');
     empty.className='dealer-opt-empty';
-    empty.textContent='Sin resultados';
+    empty.textContent='No results';
     box.appendChild(empty);
   } else {
     matches.forEach(value=>{
@@ -2364,7 +2364,7 @@ function render(){
       const y=byBrandYoY[b];if(y){oy.ref+=y.ref;oy.prev+=y.prev;}
       const yc=byCanalYoY[b];if(yc)for(const c in oc){oc[c].ref+=yc[c].ref;oc[c].prev+=yc[c].prev;}
     });
-    otherRow={label:'Otras ('+others.length+' marcas)',d:agg,yoy:oy,canalYoY:oc};
+    otherRow={label:'Other ('+others.length+' brands)',d:agg,yoy:oy,canalYoY:oc};
   }
 
   // Header stats
@@ -2384,21 +2384,21 @@ function render(){
     <div class="stat-card" style="border-top-color:var(--bev)">
       <div class="stat-val" style="color:var(--bev)">${fP1(bevShare)}</div>
       <div class="stat-sub">BEV Share</div>
-      <div class="stat-yoy" style="color:var(--text2)">${fN(fuelTots.BEV)} unidades</div>
+      <div class="stat-yoy" style="color:var(--text2)">${fN(fuelTots.BEV)} units</div>
     </div>
     <div class="stat-card" style="border-top-color:var(--phev)">
       <div class="stat-val" style="color:var(--phev)">${fP1(phevShare)}</div>
       <div class="stat-sub">PHEV Share</div>
-      <div class="stat-yoy" style="color:var(--text2)">${fN(fuelTots.PHEV)} unidades</div>
+      <div class="stat-yoy" style="color:var(--text2)">${fN(fuelTots.PHEV)} units</div>
     </div>
     <div class="stat-card" style="border-top-color:var(--acc)">
       <div class="stat-val" style="color:var(--acc2)">${sortedVis.length}</div>
-      <div class="stat-sub">Marcas activas</div>
+      <div class="stat-sub">Active brands</div>
       <div class="stat-yoy" style="color:var(--text2)">${refYear||'—'} vs ${prevYear&&hasPrev?prevYear:'—'}</div>
     </div>`;
 
   // ── REGISTRATIONS TABLE ──
-  g('regs-note').textContent=sortedVis.length+' marcas'+(others.length?' · resto agrupado en Otras':'');
+  g('regs-note').textContent=sortedVis.length+' brands'+(others.length?' · rest grouped into Other':'');
   const tbody=g('tbody-regs');tbody.innerHTML='';
   sortedVis.forEach(([brand,d])=>{
     const yD=byBrandYoY[brand];
@@ -2734,8 +2734,8 @@ function fillProvMonths(){
   const months=provMonthsForYear(RK.year);
   RK.months=new Set(months.filter(mm=>prev.size?prev.has(mm):true));
   menu.innerHTML='<div class="rk-month-actions">'
-    +'<button type="button" onclick="setProvMonths(true)">Todos</button>'
-    +'<button type="button" onclick="setProvMonths(false)">Ninguno</button>'
+    +'<button type="button" onclick="setProvMonths(true)">All</button>'
+    +'<button type="button" onclick="setProvMonths(false)">None</button>'
     +'</div>';
   months.forEach(mm=>{
     const lbl=document.createElement('label');
@@ -2772,10 +2772,10 @@ function setProvMonths(all){
 function updateProvMonthButton(){
   const months=provMonthsForYear(RK.year);
   const count=RK.months.size;
-  let label='Meses: Ninguno';
-  if(count===months.length&&months.length)label='Meses: Todos';
-  else if(count>3)label='Meses: '+count+' meses';
-  else if(count>0)label='Meses: '+months.filter(mm=>RK.months.has(mm)).map(provMonthLabel).join(', ');
+  let label='Months: None';
+  if(count===months.length&&months.length)label='Months: All';
+  else if(count>3)label='Months: '+count+' months';
+  else if(count>0)label='Months: '+months.filter(mm=>RK.months.has(mm)).map(provMonthLabel).join(', ');
   g('rk-month-btn').textContent=label;
 }
 
@@ -3143,7 +3143,7 @@ function initTrend(){
   TR.sel=homeBrands().filter(b=>BRAND_CHOICES.includes(b));
   if(!TR.sel.length&&BRAND_CHOICES.length)TR.sel=[BRAND_CHOICES[0]];
   BRAND_CHOICES.forEach(b=>g('tr-brand-list').appendChild(new Option(b,b)));
-  // Model choices: "Marca / Modelo" for models with ≥50 units
+  // Model choices: "Brand / Model" for models with ≥50 units
   TR.modSel=TR.modSel||[];
   if(!g('tr-model-list').options.length){
     const mc={};
@@ -3154,7 +3154,7 @@ function initTrend(){
     Object.entries(mc).filter(([,v])=>v>=50).sort((a,b)=>b[1]-a[1])
       .forEach(([k])=>g('tr-model-list').appendChild(new Option(k,k)));
   }
-  [['units','Unidades'],['cumul','Acumulado']].forEach(([k,lbl],i)=>{
+  [['units','Units'],['cumul','Cumulative']].forEach(([k,lbl],i)=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===TR.mode?' on':'');
     pill.textContent=lbl;
@@ -3586,7 +3586,7 @@ function initForecast(){
       renderForecast();};
     g('fc-esc').appendChild(pill);
   });
-  [['ex','Sin RAC'],['inc','Con RAC']].forEach(([k,lbl])=>{
+  [['ex','Without RAC'],['inc','With RAC']].forEach(([k,lbl])=>{
     const pill=document.createElement('div');
     pill.className='sg-pill'+(k===FCS.rac?' on':'');
     pill.textContent=lbl;
@@ -3597,7 +3597,7 @@ function initForecast(){
       renderForecast();};
     g('fc-esc').appendChild(pill);
   });
-  g('fc-note').textContent='generado '+FC.generated+' · mes en curso '+FC.target_month;
+  g('fc-note').textContent='generated '+FC.generated+' · current month '+FC.target_month;
   renderForecast();
 }
 
@@ -3731,9 +3731,9 @@ function renderForecast(){
     <div class="stat-card"><div class="stat-val">${fmt(colTot[curM-1])}</div>
       <div class="stat-sub">Prognosis ${MESES[curM-1]} 2026</div></div>
     <div class="stat-card" style="border-top-color:var(--bev)"><div class="stat-val">${fmt(totEx+totRac)}</div>
-      <div class="stat-sub">Prognosis a&ntilde;o 2026</div></div>
+      <div class="stat-sub">Prognosis year 2026</div></div>
     <div class="stat-card" style="border-top-color:var(--phev)"><div class="stat-val">${escLbl}</div>
-      <div class="stat-sub">Escenario</div></div>`;
+      <div class="stat-sub">Scenario</div></div>`;
 }
 
 // ── RANKING VISUAL ──────────────────────────────────────────────────────────
@@ -3741,7 +3741,7 @@ function renderRanking(sv,tot,yoy,mth,ytd,maxM){
   const body=g('ranking-body');if(!body)return;
   if(!sv||!sv.length){body.innerHTML='';return;}
   const note=g('ranking-note');
-  if(note)note.textContent=sv.length+' marcas';
+  if(note)note.textContent=sv.length+' brands';
   // Scale each bar independently to its own max
   const maxMthVal=Math.max(...sv.map(([b])=>(mth&&mth[b])||0),1);
   const maxYtdVal=Math.max(...sv.map(([b])=>(ytd&&ytd[b])||0),1);
@@ -3785,8 +3785,8 @@ async function downloadInforme(){
     let JPDF=null;
     if(window.jspdf&&window.jspdf.jsPDF)JPDF=window.jspdf.jsPDF;
     else if(window.jsPDF)JPDF=window.jsPDF;
-    if(!JPDF){alert('Libreria PDF no cargada. Recarga la pagina e intentalo de nuevo.');return;}
-    if(!_OVD){alert('Sin datos - aplica filtros primero.');return;}
+    if(!JPDF){alert('PDF library not loaded. Reload the page and try again.');return;}
+    if(!_OVD){alert('No data - apply filters first.');return;}
 
     const doc=new JPDF({orientation:'p',unit:'mm',format:'a4'});
     const W=210, H=297, M=10, CW=W-2*M; // A4 portrait, 10mm margins (matches reference)
@@ -3822,7 +3822,7 @@ async function downloadInforme(){
         };
         img.onerror=()=>{
           URL.revokeObjectURL(url);
-          rej(new Error('No se pudo renderizar SVG'));
+          rej(new Error('Could not render SVG'));
         };
         img.src=url;
       });
@@ -3947,7 +3947,7 @@ async function downloadInforme(){
       doc.setDrawColor(210,218,228);doc.setLineWidth(0.15);
       doc.line(M,H-9,W-M,H-9);
       doc.text('AXON MOBILITY \xB7 '+mLabelShort,M,H-5);
-      doc.text('P\xE1g. '+pg,W-M,H-5,{align:'right'});
+      doc.text('Page '+pg,W-M,H-5,{align:'right'});
     }
 
     // Ancho de columnas de la tabla (suma = CW = 190; medido pixel a pixel del informe de referencia)
@@ -4186,7 +4186,7 @@ async function downloadInforme(){
     doc.save(fname);
   }catch(err){
     console.error('PDF error:',err);
-    alert('Error generando PDF: '+err.message);
+    alert('Error generating PDF: '+err.message);
   }
 }
 
@@ -4226,7 +4226,7 @@ function toggleModelRows(btn,brand){
   const brandTotal=brandRows.reduce((s,r)=>s+r[COL.N],0);
   // Aggregate ref counts per model. Empty DGT model codes are not real models;
   // keep them separate and always at the bottom of the expanded list.
-  const UNKNOWN_MODEL='Otros / no clasificado';
+  const UNKNOWN_MODEL='Other / unclassified';
   const modelKey=r=>{
     const mo=(E.modelo[r[COL.MODELO]]||'').trim();
     return mo||UNKNOWN_MODEL;
@@ -4360,7 +4360,7 @@ function renderNewBrandsPanel(){
   const rows=brands.map((b,i)=>{
     const since=b.desde||'';
     const units=(b.uds_12m||0).toLocaleString('es-ES');
-    const models=((b.models&&b.models.length)?b.models:(modelByBrand[b.marca]||[])).filter(m=>m.modelo&&m.modelo!=='(sin modelo)');
+    const models=((b.models&&b.models.length)?b.models:(modelByBrand[b.marca]||[])).filter(m=>m.modelo&&m.modelo!=='(no model)');
     const hasModels=models.length;
     const modelRows=hasModels?models.map(m=>
       `<div style="display:grid;grid-template-columns:1fr 60px;padding:3px 0 3px 16px;gap:8px">
@@ -4682,19 +4682,19 @@ function renderAlerts(){
 #ax-chat-send:disabled{background:var(--border);cursor:default}
 </style>
 
-<button id="ax-chat-bubble" aria-label="Abrir chat" onclick="axChatToggle()">
+<button id="ax-chat-bubble" aria-label="Open chat" onclick="axChatToggle()">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
 </button>
 
 <div id="ax-chat-panel">
   <div id="ax-chat-hdr">
-    <span>Asistente de Matriculaciones</span>
+    <span>Registrations Assistant</span>
     <button id="ax-chat-close" onclick="axChatToggle()">✕</button>
   </div>
   <div id="ax-chat-msgs"></div>
   <form id="ax-chat-form" onsubmit="axChatSend(event)">
-    <input id="ax-chat-input" type="text" placeholder="Pregúntame lo que quieras..." autocomplete="off">
-    <button id="ax-chat-send" type="submit" aria-label="Enviar">
+    <input id="ax-chat-input" type="text" placeholder="Ask me anything..." autocomplete="off">
+    <button id="ax-chat-send" type="submit" aria-label="Send">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
   </form>
@@ -4709,7 +4709,7 @@ function renderAlerts(){
     panel.classList.toggle('open', open);
     if(open && !AX_CHAT_OPENED){
       AX_CHAT_OPENED = true;
-      axChatAppend('bot', '¡Hola! Soy tu asistente de **Axon Mobility — Spanish Registrations** 🚗\n\nTengo acceso a las matriculaciones y cuota de mercado por marca (real y previsión), por provincia y por canal/combustible. Pregúntame lo que quieras, en el idioma que quieras.');
+      axChatAppend('bot', 'Hi! I\'m your assistant for **Axon Mobility — Spanish Registrations** 🚗\n\nI have access to registrations and market share by brand (actuals and forecast), by province, and by channel/fuel type. Ask me anything, in whatever language you like.');
     }
     if(open) document.getElementById('ax-chat-input').focus();
   };
@@ -4744,10 +4744,10 @@ function renderAlerts(){
       });
       var data = await res.json();
       loadingEl.remove();
-      axChatAppend('bot', data.reply || 'Sin respuesta.');
+      axChatAppend('bot', data.reply || 'No response.');
     }catch(e){
       loadingEl.remove();
-      axChatAppend('bot', 'Lo siento, ha habido un error. Inténtalo de nuevo.');
+      axChatAppend('bot', 'Sorry, there was an error. Please try again.');
     }finally{
       sendBtn.disabled = false;
     }

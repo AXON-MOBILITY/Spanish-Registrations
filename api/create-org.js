@@ -34,44 +34,44 @@ module.exports = async (req, res) => {
     return;
   }
   if (!SERVICE_ROLE_KEY) {
-    res.status(500).json({ error: 'Falta SUPABASE_SERVICE_ROLE_KEY en las variables de entorno de Vercel' });
+    res.status(500).json({ error: 'Missing SUPABASE_SERVICE_ROLE_KEY in Vercel environment variables' });
     return;
   }
 
   const authHeader = req.headers.authorization || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
   if (!token) {
-    res.status(401).json({ error: 'Falta sesion' });
+    res.status(401).json({ error: 'Missing session' });
     return;
   }
 
   const caller = await getCallerUser(token);
   if (!caller || !caller.id) {
-    res.status(401).json({ error: 'Sesion invalida' });
+    res.status(401).json({ error: 'Invalid session' });
     return;
   }
   const admin = await isPlatformAdmin(caller.id);
   if (!admin) {
-    res.status(403).json({ error: 'No tenes permisos para crear organizaciones' });
+    res.status(403).json({ error: 'You do not have permission to create organizations' });
     return;
   }
 
   const { slug, display_name, username, password, config } = req.body || {};
   if (!slug || !SLUG_RE.test(slug)) {
-    res.status(400).json({ error: 'Slug invalido (usar minusculas, numeros, guiones, 2-32 caracteres)' });
+    res.status(400).json({ error: 'Invalid slug (use lowercase letters, numbers, dashes, 2-32 characters)' });
     return;
   }
   if (!display_name || !String(display_name).trim()) {
-    res.status(400).json({ error: 'Falta el nombre de la organizacion' });
+    res.status(400).json({ error: 'Missing organization name' });
     return;
   }
   const uname = String(username || '').trim().toLowerCase();
   if (!uname || !SLUG_RE.test(uname)) {
-    res.status(400).json({ error: 'Usuario invalido (usar minusculas, numeros, guiones, 2-32 caracteres)' });
+    res.status(400).json({ error: 'Invalid username (use lowercase letters, numbers, dashes, 2-32 characters)' });
     return;
   }
   if (!password || String(password).length < 8) {
-    res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
+    res.status(400).json({ error: 'Password must be at least 8 characters long' });
     return;
   }
 
@@ -94,7 +94,7 @@ module.exports = async (req, res) => {
   });
   if (!orgResp.ok) {
     const detail = await orgResp.text();
-    res.status(409).json({ error: 'No se pudo crear la organizacion (¿el slug ya existe?)', detail });
+    res.status(409).json({ error: 'Could not create the organization (does the slug already exist?)', detail });
     return;
   }
   const [org] = await orgResp.json();
@@ -107,7 +107,7 @@ module.exports = async (req, res) => {
   });
   if (!userResp.ok) {
     const detail = await userResp.text();
-    res.status(409).json({ error: 'Organizacion creada, pero no se pudo crear el usuario (¿ya existe?)', org, detail });
+    res.status(409).json({ error: 'Organization created, but the user could not be created (already exists?)', org, detail });
     return;
   }
   const newUser = await userResp.json();
@@ -120,7 +120,7 @@ module.exports = async (req, res) => {
   });
   if (!linkResp.ok) {
     const detail = await linkResp.text();
-    res.status(500).json({ error: 'Usuario y organizacion creados, pero fallo el vinculo. Vincular a mano.', org, user: newUser.id, detail });
+    res.status(500).json({ error: 'User and organization created, but linking failed. Link them manually.', org, user: newUser.id, detail });
     return;
   }
 
