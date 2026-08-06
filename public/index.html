@@ -345,6 +345,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
 }
 #login-screen.hidden{display:none}
+#create-org-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}
+#create-org-modal.hidden{display:none}
 .login-box{
   background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:40px 48px;display:flex;flex-direction:column;align-items:center;gap:20px;
@@ -513,6 +515,28 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data}));
   }
 
+  async function checkPlatformAdmin(){
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session){ window.IS_PLATFORM_ADMIN=false; return; }
+    const { data } = await sb.from('platform_admins').select('user_id').eq('user_id', session.user.id);
+    window.IS_PLATFORM_ADMIN = !!(data && data.length);
+    const btn=document.getElementById('btn-create-org');
+    if(btn) btn.style.display = window.IS_PLATFORM_ADMIN ? '' : 'none';
+  }
+  window.checkPlatformAdmin=checkPlatformAdmin;
+
+  window.createOrg=async function(slug, display_name, username, password){
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session) return { error: 'No hay sesion activa' };
+    const resp = await fetch('/api/create-org', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({ slug, display_name, username, password }),
+    });
+    const body = await resp.json().catch(()=>({ error: 'Respuesta invalida del servidor' }));
+    return resp.ok ? body : { error: body.error || 'Error desconocido' };
+  };
+
   window.doLogin=async function(){
     const uInput=document.getElementById('login-user');
     const pInput=document.getElementById('login-pw');
@@ -534,6 +558,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       return false;
     }
     await loadOrgConfig();
+    await checkPlatformAdmin();
     hideLogin();
     return false;
   };
@@ -548,6 +573,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     const { data: { session } } = await sb.auth.getSession();
     if(session){
       await loadOrgConfig();
+      await checkPlatformAdmin();
       hideLogin();
     } else {
       showLogin();
@@ -621,9 +647,53 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-yoy">—</b><span>YoY%</span></div>
     <div class="tb-sep"></div>
+    <button id="btn-create-org" onclick="openCreateOrgModal()" style="display:none;background:none;border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:.7rem;cursor:pointer;padding:4px 8px;margin-right:6px" title="Crear organización">+ Organización</button>
     <button onclick="doLogout()" style="background:none;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;padding:0" title="Cerrar sesión">&#9099;</button>
   </div>
 </div>
+
+<!-- MODAL: crear organizacion (solo platform admins) -->
+<div id="create-org-modal" class="hidden">
+  <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:320px;box-shadow:0 8px 30px rgba(0,0,0,.3)">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:14px">Nueva organización</div>
+    <input id="co-slug" class="login-input" type="text" placeholder="Slug (ej: audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <input id="co-name" class="login-input" type="text" placeholder="Nombre (ej: Audi)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <input id="co-user" class="login-input" type="text" placeholder="Usuario de acceso" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <input id="co-pass" class="login-input" type="password" placeholder="Contraseña (min. 8 caracteres)" style="margin-bottom:12px;width:100%;box-sizing:border-box">
+    <div style="display:flex;gap:8px">
+      <button class="login-btn" id="co-submit" type="button" onclick="submitCreateOrg()" style="flex:1">Crear</button>
+      <button type="button" onclick="closeCreateOrgModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancelar</button>
+    </div>
+    <div class="login-err" id="co-err" style="margin-top:10px"></div>
+  </div>
+</div>
+<script>
+function openCreateOrgModal(){
+  ['co-slug','co-name','co-user','co-pass'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  const err=document.getElementById('co-err'); if(err) err.textContent='';
+  document.getElementById('create-org-modal').classList.remove('hidden');
+}
+function closeCreateOrgModal(){
+  document.getElementById('create-org-modal').classList.add('hidden');
+}
+async function submitCreateOrg(){
+  const slug=document.getElementById('co-slug').value.trim().toLowerCase();
+  const name=document.getElementById('co-name').value.trim();
+  const user=document.getElementById('co-user').value.trim().toLowerCase();
+  const pass=document.getElementById('co-pass').value;
+  const err=document.getElementById('co-err');
+  const btn=document.getElementById('co-submit');
+  err.textContent='';
+  if(!slug||!name||!user||!pass){ err.textContent='Completa todos los campos'; return; }
+  btn.disabled=true; btn.textContent='Creando…';
+  const result=await window.createOrg(slug,name,user,pass);
+  btn.disabled=false; btn.textContent='Crear';
+  if(result && result.error){ err.textContent=result.error; return; }
+  err.style.color='#10b981';
+  err.textContent='Creada: '+name+' (usuario "'+user+'")';
+  setTimeout(closeCreateOrgModal, 1800);
+}
+</script>
 
 <!-- BARRA DE FILTROS (fila propia, nunca se solapa) -->
   <div class="tb-filters">
