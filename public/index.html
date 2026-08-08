@@ -353,6 +353,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 #create-org-modal.hidden{display:none}
 #org-settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}
 #org-settings-modal.hidden{display:none}
+#seggroup-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:210;display:flex;align-items:center;justify-content:center}
+#seggroup-modal.hidden{display:none}
 .login-box{
   background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:40px 48px;display:flex;flex-direction:column;align-items:center;gap:20px;
@@ -529,6 +531,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     if(settingsBtn) settingsBtn.style.display='';
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
     if(typeof renderOrgBadge==='function') renderOrgBadge();
+    if(typeof populateSegSelectors==='function') populateSegSelectors();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data.organizations}));
   }
 
@@ -685,11 +688,28 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       <select id="os-color-brand" style="flex:1;border:1px solid var(--border);border-radius:6px;padding:4px;background:var(--card2,#fff);color:var(--text);font-size:.75rem"></select>
       <button type="button" onclick="addColorRow()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:0 10px;cursor:pointer;color:var(--text2);font-size:.75rem">+ Add</button>
     </div>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My segmentation groups</label>
+    <div style="font-size:.68rem;color:var(--text2);margin-bottom:8px">Extra named brand-sets you can switch to per tab (Overview, Trend, Provinces/Map) without changing the general filters on the left. Your general view above is never affected by these.</div>
+    <div id="os-seggroups" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+    <button type="button" onclick="openSegGroupEditor(null)" style="width:100%;background:none;border:1px solid var(--border);border-radius:6px;padding:6px;cursor:pointer;color:var(--text2);font-size:.75rem;margin-bottom:12px">+ New segmentation group</button>
     <div style="display:flex;gap:8px">
       <button class="login-btn" id="os-submit" type="button" onclick="submitOrgSettings()" style="flex:1">Save</button>
       <button type="button" onclick="closeOrgSettingsModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancel</button>
     </div>
     <div class="login-err" id="os-err" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- MODAL: crear/editar un grupo de segmentacion -->
+<div id="seggroup-modal" class="hidden">
+  <div style="background:var(--card,#fff);border-radius:10px;padding:24px;width:320px;box-shadow:0 8px 30px rgba(0,0,0,.3)">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:14px" id="seggroup-title">New segmentation group</div>
+    <input id="sg-name" class="login-input" type="text" placeholder="Group name (e.g. Chinese Brands)" style="margin-bottom:8px;width:100%;box-sizing:border-box">
+    <select id="sg-brands" multiple style="width:100%;height:160px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
+    <div style="display:flex;gap:8px">
+      <button class="login-btn" type="button" onclick="saveSegGroup()" style="flex:1">Save group</button>
+      <button type="button" onclick="closeSegGroupEditor()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancel</button>
+    </div>
   </div>
 </div>
 <script>
@@ -728,6 +748,67 @@ function addColorRow(){
   _osColors[brand]=brandColor(brand)||'#3b82f6';
   renderColorRows();
 }
+
+// ── Grupos de segmentacion (config.segmentation_groups): sets de marcas
+// con nombre, adicionales, que se pueden elegir por pestaña (Overview,
+// Trend, Provinces/Map) sin tocar el filtro general de la izquierda ni la
+// definicion de Total Market. _osSegGroups es la copia de trabajo mientras
+// el modal esta abierto; se guarda recien al tocar "Save" del modal padre.
+let _osSegGroups=[];
+let _sgEditingIdx=null;
+function renderSegGroupsList(){
+  const cont=document.getElementById('os-seggroups');
+  cont.innerHTML='';
+  if(!_osSegGroups.length){
+    cont.innerHTML='<div style="font-size:.72rem;color:var(--text2)">No segmentation groups yet.</div>';
+    return;
+  }
+  _osSegGroups.forEach((grp,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;font-size:.78rem;border:1px solid var(--border);border-radius:6px;padding:5px 8px';
+    const label=document.createElement('span');
+    label.textContent=grp.name+' ('+grp.brands.length+')';
+    label.style.flex='1';
+    const editBtn=document.createElement('button');
+    editBtn.type='button';editBtn.textContent='Edit';
+    editBtn.style.cssText='background:none;border:1px solid var(--border);border-radius:5px;padding:2px 8px;cursor:pointer;color:var(--text2);font-size:.7rem';
+    editBtn.onclick=()=>openSegGroupEditor(i);
+    const delBtn=document.createElement('button');
+    delBtn.type='button';delBtn.textContent='×';
+    delBtn.title='Delete group';
+    delBtn.style.cssText='background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;line-height:1;padding:0 4px';
+    delBtn.onclick=()=>{_osSegGroups.splice(i,1);renderSegGroupsList();};
+    row.appendChild(label);row.appendChild(editBtn);row.appendChild(delBtn);
+    cont.appendChild(row);
+  });
+}
+function openSegGroupEditor(idx){
+  _sgEditingIdx=idx;
+  const nameInput=document.getElementById('sg-name');
+  const brandsSel=document.getElementById('sg-brands');
+  const grp=idx!==null?_osSegGroups[idx]:{name:'',brands:[]};
+  document.getElementById('seggroup-title').textContent=idx!==null?'Edit segmentation group':'New segmentation group';
+  nameInput.value=grp.name;
+  brandsSel.innerHTML='';
+  const curBrands=new Set(grp.brands);
+  const brands=(typeof BRAND_CHOICES!=='undefined'?BRAND_CHOICES:[]).slice().sort();
+  brands.forEach(b=>brandsSel.appendChild(new Option(b,b,false,curBrands.has(b))));
+  document.getElementById('seggroup-modal').classList.remove('hidden');
+}
+function closeSegGroupEditor(){
+  document.getElementById('seggroup-modal').classList.add('hidden');
+}
+function saveSegGroup(){
+  const name=document.getElementById('sg-name').value.trim();
+  const brands=[...document.getElementById('sg-brands').selectedOptions].map(o=>o.value);
+  if(!name){alert('Enter a name for the group');return;}
+  const grp={id:(_sgEditingIdx!==null?_osSegGroups[_sgEditingIdx].id:'sg_'+Date.now()),name,brands};
+  if(_sgEditingIdx!==null)_osSegGroups[_sgEditingIdx]=grp;
+  else _osSegGroups.push(grp);
+  renderSegGroupsList();
+  closeSegGroupEditor();
+}
+
 function openOrgSettingsModal(){
   const homeSel=document.getElementById('os-home');
   const focusSel=document.getElementById('os-focus');
@@ -745,6 +826,8 @@ function openOrgSettingsModal(){
   });
   _osColors={...((window.ORG&&window.ORG.config&&window.ORG.config.brand_colors)||{})};
   renderColorRows();
+  _osSegGroups=((window.ORG&&window.ORG.config&&window.ORG.config.segmentation_groups)||[]).map(g=>({...g,brands:[...g.brands]}));
+  renderSegGroupsList();
   document.getElementById('os-err').textContent='';
   document.getElementById('org-settings-modal').classList.remove('hidden');
 }
@@ -759,7 +842,7 @@ async function submitOrgSettings(){
   err.textContent='';
   if(!window.ORG){err.textContent='No active organization';return;}
   btn.disabled=true; btn.textContent='Saving…';
-  const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus, brand_colors:_osColors};
+  const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus, brand_colors:_osColors, segmentation_groups:_osSegGroups};
   const { error } = await window.sbClient.from('organizations').update({config:newConfig}).eq('id', window.ORG.id);
   btn.disabled=false; btn.textContent='Save';
   if(error){ err.textContent='Could not save: '+error.message; return; }
@@ -886,6 +969,10 @@ async function submitCreateOrg(){
     <div class="tf-grp" id="grp-hp" style="display:none">
       <span class="tf-lbl">High Perf.</span>
       <div class="hp-row" id="f-hp"></div>
+    </div>
+    <div class="tf-grp" id="grp-seg-main" style="display:none">
+      <span class="tf-lbl">View</span>
+      <select id="seg-select-main" class="tf-sel" onchange="onSegGroupChange('main', this.value)"></select>
     </div>
     <button class="btn-clear" onclick="resetFilters()">Clear Filters</button>
   </div>
@@ -1101,6 +1188,8 @@ async function submitCreateOrg(){
         <div class="card-hdr">
           <span>Brand Ranking by Province &middot; Top 5</span>
           <span class="rk-ctrls">
+            <span class="tf-lbl">View</span>
+            <select id="seg-select-prov" class="tf-sel" onchange="onSegGroupChange('prov', this.value)"></select>
             <span class="sg-pills" id="rk-gama" style="padding:0"></span>
             <select id="rk-year" class="tf-sel" onchange="onProvYearChange()"></select>
             <span class="rk-month-filter">
@@ -1125,7 +1214,13 @@ async function submitCreateOrg(){
     <!-- TAB: MAPA DE PROVINCIAS -->
     <div class="pane" id="pane-map">
       <div class="card">
-        <div class="card-hdr"><span>Winning Brand by Province</span></div>
+        <div class="card-hdr">
+          <span>Winning Brand by Province</span>
+          <span class="rk-ctrls">
+            <span class="tf-lbl">View</span>
+            <select id="seg-select-map" class="tf-sel" onchange="onSegGroupChange('prov', this.value)"></select>
+          </span>
+        </div>
         <div id="spain-map-wrap" style="display:flex;gap:20px;padding:14px;align-items:flex-start;flex-wrap:wrap">
           <svg id="spain-map" style="width:min(680px,100%);height:auto;flex-shrink:0"></svg>
           <div id="spain-map-legend" style="display:flex;flex-direction:column;gap:6px;min-width:160px;font-size:.78rem"></div>
@@ -1138,7 +1233,11 @@ async function submitCreateOrg(){
       <div class="card">
         <div class="card-hdr">
           <span>Brand Trend</span>
-          <span class="rk-ctrls"><span class="sg-pills" id="tr-mode" style="padding:0"></span></span>
+          <span class="rk-ctrls">
+            <span class="tf-lbl">View</span>
+            <select id="seg-select-trend" class="tf-sel" onchange="onSegGroupChange('trend', this.value)"></select>
+            <span class="sg-pills" id="tr-mode" style="padding:0"></span>
+          </span>
         </div>
         <div class="ch-body" style="display:flex;gap:16px;align-items:flex-start">
           <div style="flex:1;min-width:0">
@@ -1400,6 +1499,72 @@ function isRivalBrand(brand){
   return watchBrands().includes(brand) && !isHomeBrand(brand);
 }
 
+// ── Grupos de segmentacion: filtro adicional, opcional, por area de la
+// app (main = Overview+Channel&Monthly, trend = Trend, prov = Provinces+
+// Map), separado del filtro general del sidebar y de la definicion de
+// Total Market (Sub). Nunca se activa solo: el usuario lo elige por
+// pestaña con el selector "View", y por defecto es "General" (sin
+// restriccion, TAB_SEGGROUP[area]=null).
+const TAB_SEGGROUP={main:null,trend:null,prov:null};
+function segGroups(){
+  return (window.ORG && window.ORG.config && window.ORG.config.segmentation_groups) || [];
+}
+function activeSegGroupBrands(area){
+  const gid=TAB_SEGGROUP[area];
+  if(!gid)return null;
+  const grp=segGroups().find(g=>g.id===gid);
+  return grp ? new Set(grp.brands) : null;
+}
+function populateSegSelectors(){
+  const groups=segGroups();
+  const specs=[
+    {selIds:['seg-select-main'],wrapIds:['grp-seg-main'],area:'main'},
+    {selIds:['seg-select-trend'],wrapIds:[],area:'trend'},
+    {selIds:['seg-select-prov','seg-select-map'],wrapIds:[],area:'prov'},
+  ];
+  specs.forEach(({selIds,area})=>{
+    selIds.forEach(id=>{
+      const sel=g(id);
+      if(!sel)return;
+      sel.innerHTML='';
+      sel.appendChild(new Option('General',''));
+      groups.forEach(grp=>sel.appendChild(new Option(grp.name,grp.id)));
+      sel.value=TAB_SEGGROUP[area]||'';
+      sel.parentElement.style.display=groups.length?'':'none';
+    });
+  });
+  const mainWrap=g('grp-seg-main');
+  if(mainWrap) mainWrap.style.display=(groups.length && ['overview','analisis'].includes(_currentTab))?'':'none';
+}
+let _trSelBeforeSegGroup=null;
+function onSegGroupChange(area,value){
+  TAB_SEGGROUP[area]=value||null;
+  const selId={main:'seg-select-main',trend:'seg-select-trend'}[area];
+  if(selId && g(selId)) g(selId).value=value||'';
+  if(area==='prov'){
+    const v=value||'';
+    if(g('seg-select-prov'))g('seg-select-prov').value=v;
+    if(g('seg-select-map'))g('seg-select-map').value=v;
+    if(PROV)renderProv();
+  } else if(area==='main'){
+    if(REC)render();
+  } else if(area==='trend'){
+    // Un grupo de segmentacion en Trend no solo filtra los chips existentes
+    // (podrian no solaparse con el grupo y dejar el grafico vacio) - carga
+    // directamente las marcas del grupo. Al volver a "General" restaura lo
+    // que el usuario tenia elegido antes.
+    if(value){
+      if(_trSelBeforeSegGroup===null)_trSelBeforeSegGroup=[...TR.sel];
+      const grp=segGroups().find(g=>g.id===value);
+      if(grp)TR.sel=grp.brands.filter(b=>BRAND_CHOICES.includes(b));
+    } else if(_trSelBeforeSegGroup!==null){
+      TR.sel=_trSelBeforeSegGroup;
+      _trSelBeforeSegGroup=null;
+    }
+    if(TREND){trChips();renderTrend();}
+  }
+}
+
 // Color por marca: primero lo que la org configuro a mano
 // (ORG.config.brand_colors), despues un default razonable (colores
 // corporativos reales / convencion habitual), y si no hay ninguno el
@@ -1629,6 +1794,7 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
 document.addEventListener('org-ready',function(){
   if(typeof applyHighPerfVisibility==='function')applyHighPerfVisibility();
   if(typeof renderOrgBadge==='function')renderOrgBadge();
+  if(typeof populateSegSelectors==='function')populateSegSelectors();
   if(typeof REC==='undefined'||!REC)return;
   buildSubsegmentSidebar();
   render();
@@ -2579,8 +2745,12 @@ function render(){
 
   const sorted=Object.entries(byBrand).sort((a,b)=>b[1].total-a[1].total);
   // Tablas: solo marcas reales (mismas que el desplegable); el ruido residual
-  // (carroceros historicos, etc.) se agrupa en 'Otras' para que el total cuadre
-  const VIS=new Set(BRAND_CHOICES);
+  // (carroceros historicos, etc.) se agrupa en 'Otras' para que el total cuadre.
+  // Si hay un grupo de segmentacion activo para esta vista (selector "View"),
+  // restringe que marcas se listan sueltas (el resto cae en "Other") - el
+  // total general de las tarjetas de arriba NO se toca, sigue siendo real.
+  const _mainSegBrands=activeSegGroupBrands('main');
+  const VIS=new Set(_mainSegBrands?[...BRAND_CHOICES].filter(b=>_mainSegBrands.has(b)):BRAND_CHOICES);
   const sortedVis=sorted.filter(([b])=>VIS.has(b));
   const others=sorted.filter(([b])=>!VIS.has(b));
   let otherRow=null;
@@ -3069,7 +3239,9 @@ function renderProv(){
     const k=GAMAS[gi];
     return allFuelNames.has(k)?parts[k]:0;
   };
+  const _provSegBrands=activeSegGroupBrands('prov');
   const provBrandAllowed=(brand)=>{
+    if(_provSegBrands&&!_provSegBrands.has(brand))return false;
     if(F.marcas.size&&!F.marcas.has(brand))return false;
     if(F.oem.size<2){
       const isChinese=_CHINESE_BRANDS.has(brand);
@@ -3404,7 +3576,9 @@ function trendBaseRows(){
 }
 
 function trendSelectedBrands(){
+  const segBrands=activeSegGroupBrands('trend');
   const brandOk=(b)=>{
+    if(segBrands&&!segBrands.has(b))return false;
     if(F.marcas.size&&!F.marcas.has(b))return false;
     if(F.oem.size<2){
       const isCN=_CHINESE_BRANDS.has(b);
@@ -4549,7 +4723,9 @@ function toggleModelRows(btn,brand){
   });
 }
 
+let _currentTab='overview';
 function showTab(name){
+  _currentTab=name;
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
   g('pane-'+name).classList.add('on');
@@ -4559,6 +4735,7 @@ function showTab(name){
     const provTabs=['overview','ranking','analisis','prov','map'];
     sgProvs.style.display=provTabs.includes(name)?'':'none';
   }
+  if(typeof populateSegSelectors==='function')populateSegSelectors();
   // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
   // pintar y bloqueaba la interaccion ~280ms (INP). Asi el tab cambia al
   // instante y el recalculo llega un frame despues.
