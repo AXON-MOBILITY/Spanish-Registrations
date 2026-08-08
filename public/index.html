@@ -678,6 +678,12 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My competitive set (Focus Segment)</label>
     <select id="os-focus" multiple style="width:100%;height:140px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
     <div style="font-size:.68rem;color:var(--text2);margin-bottom:12px">Ctrl/Cmd+click to select multiple. If you leave the competitive set empty, the dataset’s standard classification is used.</div>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Brand colors (Trend chart, province map)</label>
+    <div id="os-colors" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <select id="os-color-brand" style="flex:1;border:1px solid var(--border);border-radius:6px;padding:4px;background:var(--card2,#fff);color:var(--text);font-size:.75rem"></select>
+      <button type="button" onclick="addColorRow()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:0 10px;cursor:pointer;color:var(--text2);font-size:.75rem">+ Add</button>
+    </div>
     <div style="display:flex;gap:8px">
       <button class="login-btn" id="os-submit" type="button" onclick="submitOrgSettings()" style="flex:1">Save</button>
       <button type="button" onclick="closeOrgSettingsModal()" style="flex:0 0 auto;background:none;border:1px solid var(--border);border-radius:8px;padding:0 14px;cursor:pointer;color:var(--text2)">Cancel</button>
@@ -686,18 +692,58 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   </div>
 </div>
 <script>
+let _osColors={};
+function renderColorRows(){
+  const cont=document.getElementById('os-colors');
+  cont.innerHTML='';
+  Object.keys(_osColors).sort().forEach(brand=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;font-size:.78rem';
+    const swatch=document.createElement('input');
+    swatch.type='color';
+    swatch.value=_osColors[brand];
+    swatch.style.cssText='width:28px;height:22px;padding:0;border:1px solid var(--border);border-radius:4px;cursor:pointer';
+    swatch.oninput=()=>{_osColors[brand]=swatch.value;};
+    const label=document.createElement('span');
+    label.textContent=brand;
+    label.style.flex='1';
+    const del=document.createElement('button');
+    del.type='button';
+    del.textContent='×';
+    del.title='Remove color for '+brand;
+    del.style.cssText='background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;line-height:1;padding:0 4px';
+    del.onclick=()=>{delete _osColors[brand];renderColorRows();};
+    row.appendChild(swatch);row.appendChild(label);row.appendChild(del);
+    cont.appendChild(row);
+  });
+  if(!Object.keys(_osColors).length){
+    cont.innerHTML='<div style="font-size:.72rem;color:var(--text2)">No custom colors yet — defaults apply.</div>';
+  }
+}
+function addColorRow(){
+  const sel=document.getElementById('os-color-brand');
+  const brand=sel.value;
+  if(!brand || _osColors[brand])return;
+  _osColors[brand]=brandColor(brand)||'#3b82f6';
+  renderColorRows();
+}
 function openOrgSettingsModal(){
   const homeSel=document.getElementById('os-home');
   const focusSel=document.getElementById('os-focus');
+  const colorBrandSel=document.getElementById('os-color-brand');
   homeSel.innerHTML='';
   focusSel.innerHTML='';
+  colorBrandSel.innerHTML='';
   const brands=(typeof BRAND_CHOICES!=='undefined'?BRAND_CHOICES:[]).slice().sort();
   const curHome=new Set((window.ORG&&window.ORG.config&&window.ORG.config.home_brands)||[]);
   const curFocus=new Set((window.ORG&&window.ORG.config&&window.ORG.config.focus_brands)||[]);
   brands.forEach(b=>{
     const o1=new Option(b,b,false,curHome.has(b)); homeSel.appendChild(o1);
     const o2=new Option(b,b,false,curFocus.has(b)); focusSel.appendChild(o2);
+    colorBrandSel.appendChild(new Option(b,b));
   });
+  _osColors={...((window.ORG&&window.ORG.config&&window.ORG.config.brand_colors)||{})};
+  renderColorRows();
   document.getElementById('os-err').textContent='';
   document.getElementById('org-settings-modal').classList.remove('hidden');
 }
@@ -712,7 +758,7 @@ async function submitOrgSettings(){
   err.textContent='';
   if(!window.ORG){err.textContent='No active organization';return;}
   btn.disabled=true; btn.textContent='Saving…';
-  const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus};
+  const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus, brand_colors:_osColors};
   const { error } = await window.sbClient.from('organizations').update({config:newConfig}).eq('id', window.ORG.id);
   btn.disabled=false; btn.textContent='Save';
   if(error){ err.textContent='Could not save: '+error.message; return; }
@@ -1349,6 +1395,28 @@ function isRivalBrand(brand){
   return watchBrands().includes(brand) && !isHomeBrand(brand);
 }
 
+// Color por marca: primero lo que la org configuro a mano
+// (ORG.config.brand_colors), despues un default razonable (colores
+// corporativos reales / convencion habitual), y si no hay ninguno el
+// caller decide (paleta rotativa). Usado en Trend y en el mapa de
+// provincias para que cada marca tenga SIEMPRE el mismo color en todos
+// lados, y para que dos marcas propias (ej. BMW y MINI) no compartan color.
+const BRAND_COLOR_DEFAULTS={
+  'BMW':'#0066B1','MINI':'#4C7C2E','Mercedes':'#E4002B','Mercedes-V':'#E4002B',
+  'Audi':'#BB0A30','Volkswagen':'#001E50','Toyota':'#EB0A1E','SEAT':'#33302E',
+  'Cupra':'#B24C1E','Renault':'#FFCC00','Peugeot':'#0C0F76','Citroen':'#C9111A',
+  'Ford':'#00274E','Kia':'#05141F','Hyundai':'#002C5F','Volvo':'#003057',
+  'Porsche':'#000000','Land Rover':'#005A2B','Jaguar':'#1B3239','Lexus':'#1A1A1A',
+  'Tesla':'#CC0000','BYD':'#000000','Skoda':'#4BA82E','Opel':'#F7A800',
+  'Dacia':'#5C8001','Mazda':'#910A2D','Nissan':'#C3002F','Fiat':'#8B0000',
+};
+function brandColor(brand){
+  const custom=window.ORG && window.ORG.config && window.ORG.config.brand_colors;
+  if(custom && custom[brand])return custom[brand];
+  if(BRAND_COLOR_DEFAULTS[brand])return BRAND_COLOR_DEFAULTS[brand];
+  return null;
+}
+
 // Filtro "High Perf." (M / M Performance / JCW / Standard): terminologia
 // propia de BMW Group (M = division deportiva BMW, JCW = John Cooper Works
 // de MINI), no tiene sentido para otras organizaciones. Solo visible para
@@ -1389,6 +1457,8 @@ function provinceWinner(entries){
 const WINNER_PALETTE=['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#0ea5e9','#d946ef'];
 let _winnerColorCache={};
 function winnerColor(brand){
+  const custom=brandColor(brand);
+  if(custom){_winnerColorCache[brand]=custom;return custom;}
   if(!_winnerColorCache[brand]){
     const n=Object.keys(_winnerColorCache).length;
     _winnerColorCache[brand]=WINNER_PALETTE[n%WINNER_PALETTE.length];
@@ -3159,7 +3229,8 @@ const TR_COLORS=['#f97316','#10b981','#8b5cf6','#ef4444','#eab308',
   '#ec4899','#84cc16','#6366f1','#14b8a6','#f43f5e','#f59e0b','#a78bfa','#22d3ee','#fb7185'];
 
 function trColor(m){
-  if(isHomeBrand(m))return '#0ea5e9';
+  const c=brandColor(m);
+  if(c)return c;
   if(!TR.colors[m])TR.colors[m]=TR_COLORS[Object.keys(TR.colors).length%TR_COLORS.length];
   return TR.colors[m];
 }
