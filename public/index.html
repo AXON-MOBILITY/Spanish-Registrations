@@ -649,6 +649,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <button class="tab-btn" id="tbtn-ranking" onclick="showTab('ranking')">Ranking</button>
     <button class="tab-btn" id="tbtn-analisis" onclick="showTab('analisis')">Channel &amp; Monthly</button>
     <button class="tab-btn" id="tbtn-prov" onclick="showTab('prov')">Provinces</button>
+    <button class="tab-btn" id="tbtn-map" onclick="showTab('map')">Map</button>
     <button class="tab-btn" id="tbtn-trend" onclick="showTab('trend')">Trend</button>
     <button class="tab-btn" id="tbtn-alerts" onclick="showTab('alerts')">Alerts</button>
     <button class="tab-btn" id="tbtn-forecast" onclick="showTab('forecast')">Prognosis</button>
@@ -1119,14 +1120,18 @@ async function submitCreateOrg(){
           </table>
         </div>
       </div>
+    </div><!-- /pane-prov -->
+
+    <!-- TAB: MAPA DE PROVINCIAS -->
+    <div class="pane" id="pane-map">
       <div class="card">
         <div class="card-hdr"><span>Winning Brand by Province</span></div>
         <div id="spain-map-wrap" style="display:flex;gap:20px;padding:14px;align-items:flex-start;flex-wrap:wrap">
-          <svg id="spain-map" style="width:min(560px,100%);height:auto;flex-shrink:0"></svg>
+          <svg id="spain-map" style="width:min(680px,100%);height:auto;flex-shrink:0"></svg>
           <div id="spain-map-legend" style="display:flex;flex-direction:column;gap:6px;min-width:160px;font-size:.78rem"></div>
         </div>
       </div>
-    </div><!-- /pane-prov -->
+    </div><!-- /pane-map -->
 
     <!-- TAB 4: TREND -->
     <div class="pane" id="pane-trend">
@@ -1627,7 +1632,8 @@ document.addEventListener('org-ready',function(){
   if(typeof REC==='undefined'||!REC)return;
   buildSubsegmentSidebar();
   render();
-  if(g('pane-prov')&&g('pane-prov').classList.contains('on')&&typeof PROV!=='undefined'&&PROV)renderProv();
+  const _onProvOrMap=(g('pane-prov')&&g('pane-prov').classList.contains('on'))||(g('pane-map')&&g('pane-map').classList.contains('on'));
+  if(_onProvOrMap&&typeof PROV!=='undefined'&&PROV)renderProv();
 });
 
 // ── FILTRO DE PROVINCIA sobre Overview/Ranking/Channel&Monthly ──────────────
@@ -2827,7 +2833,7 @@ function render(){
   totMRow.innerHTML=totCells;monthBody.appendChild(totMRow);
 
   // Si estos tabs estan visibles, sus vistas siguen los filtros laterales
-  if(PROV&&g('pane-prov').classList.contains('on'))renderProv();
+  if(PROV&&(g('pane-prov').classList.contains('on')||g('pane-map').classList.contains('on')))renderProv();
   if(TREND&&TR.months&&g('pane-trend').classList.contains('on'))renderTrend();
 
   // ── TAB 2: FUEL MIX VERTICAL CHART ──
@@ -4550,7 +4556,7 @@ function showTab(name){
   g('tbtn-'+name).classList.add('on');
   const sgProvs=g('sg-provs');
   if(sgProvs){
-    const provTabs=['overview','ranking','analisis','prov'];
+    const provTabs=['overview','ranking','analisis','prov','map'];
     sgProvs.style.display=provTabs.includes(name)?'':'none';
   }
   // Re-render DESPUES del pintado (setTimeout, no rAF): rAF corre antes de
@@ -4558,7 +4564,7 @@ function showTab(name){
   // instante y el recalculo llega un frame despues.
   setTimeout(()=>{
     if(REC&&(name==='overview'||name==='analisis'))render();
-    if(name==='prov'&&PROV)renderProv();
+    if((name==='prov'||name==='map')&&PROV)renderProv();
     if(name==='trend'&&TREND)renderTrend();
     if(name==='forecast'&&FC)renderForecast();
     if(name==='alerts'&&TREND)renderAlerts();
