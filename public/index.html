@@ -679,9 +679,16 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div style="font-size:.72rem;color:var(--text2);margin-bottom:14px">Choose your brand and which other brands you consider your direct competitors (Focus Segment).</div>
     <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My brand (highlighted)</label>
     <select id="os-home" multiple style="width:100%;height:110px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
-    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My competitive set (Focus Segment)</label>
-    <select id="os-focus" multiple style="width:100%;height:140px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
-    <div style="font-size:.68rem;color:var(--text2);margin-bottom:12px">Ctrl/Cmd+click to select multiple. If you leave the competitive set empty, the dataset’s standard classification is used.</div>
+    <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Focus Segment (REST vs. FOCUS SEGMENT)</label>
+    <label style="display:flex;align-items:center;gap:6px;font-size:.75rem;margin-bottom:8px;cursor:pointer">
+      <input type="checkbox" id="os-use-dataset-focus" onchange="toggleFocusMode()">
+      Use the dataset's standard classification (model-level, recommended default)
+    </label>
+    <div id="os-focus-wrap">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">My competitive set (brand-level)</label>
+      <select id="os-focus" multiple style="width:100%;height:140px;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;padding:6px;background:var(--card2,#fff);color:var(--text)"></select>
+      <div style="font-size:.68rem;color:var(--text2);margin-bottom:12px">Ctrl/Cmd+click to select multiple. This is a simpler brand-level Focus/Rest, separate from the dataset's precise per-model classification above.</div>
+    </div>
     <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">Brand colors (Trend chart, province map)</label>
     <div id="os-colors" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
     <div style="display:flex;gap:6px;margin-bottom:12px">
@@ -809,6 +816,10 @@ function saveSegGroup(){
   closeSegGroupEditor();
 }
 
+function toggleFocusMode(){
+  const useDataset=document.getElementById('os-use-dataset-focus').checked;
+  document.getElementById('os-focus-wrap').style.display=useDataset?'none':'';
+}
 function openOrgSettingsModal(){
   const homeSel=document.getElementById('os-home');
   const focusSel=document.getElementById('os-focus');
@@ -818,12 +829,18 @@ function openOrgSettingsModal(){
   colorBrandSel.innerHTML='';
   const brands=(typeof BRAND_CHOICES!=='undefined'?BRAND_CHOICES:[]).slice().sort();
   const curHome=new Set((window.ORG&&window.ORG.config&&window.ORG.config.home_brands)||[]);
-  const curFocus=new Set((window.ORG&&window.ORG.config&&window.ORG.config.focus_brands)||[]);
+  const curFocusArr=window.ORG&&window.ORG.config&&window.ORG.config.focus_brands;
+  const curFocus=new Set(curFocusArr||[]);
   brands.forEach(b=>{
     const o1=new Option(b,b,false,curHome.has(b)); homeSel.appendChild(o1);
     const o2=new Option(b,b,false,curFocus.has(b)); focusSel.appendChild(o2);
     colorBrandSel.appendChild(new Option(b,b));
   });
+  // Checked (use dataset) unicamente cuando focus_brands ni siquiera existe
+  // en la config - esa es la unica condicion que hace que rowSubBucket()
+  // use el fallback preciso del dataset en vez del set propio a nivel marca.
+  document.getElementById('os-use-dataset-focus').checked=(curFocusArr===undefined || curFocusArr===null);
+  toggleFocusMode();
   _osColors={...((window.ORG&&window.ORG.config&&window.ORG.config.brand_colors)||{})};
   renderColorRows();
   _osSegGroups=((window.ORG&&window.ORG.config&&window.ORG.config.segmentation_groups)||[]).map(g=>({...g,brands:[...g.brands]}));
@@ -836,13 +853,16 @@ function closeOrgSettingsModal(){
 }
 async function submitOrgSettings(){
   const home=[...document.getElementById('os-home').selectedOptions].map(o=>o.value);
+  const useDatasetFocus=document.getElementById('os-use-dataset-focus').checked;
   const focus=[...document.getElementById('os-focus').selectedOptions].map(o=>o.value);
   const err=document.getElementById('os-err');
   const btn=document.getElementById('os-submit');
   err.textContent='';
   if(!window.ORG){err.textContent='No active organization';return;}
   btn.disabled=true; btn.textContent='Saving…';
-  const newConfig={...window.ORG.config, home_brands:home, focus_brands:focus, brand_colors:_osColors, segmentation_groups:_osSegGroups};
+  const newConfig={...window.ORG.config, home_brands:home, brand_colors:_osColors, segmentation_groups:_osSegGroups};
+  if(useDatasetFocus) delete newConfig.focus_brands;
+  else newConfig.focus_brands=focus;
   const { error } = await window.sbClient.from('organizations').update({config:newConfig}).eq('id', window.ORG.id);
   btn.disabled=false; btn.textContent='Save';
   if(error){ err.textContent='Could not save: '+error.message; return; }
