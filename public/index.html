@@ -1673,6 +1673,14 @@ function vehTypeOf(bodyName){
 function orgFocusBrands(){
   return window.ORG && window.ORG.config && window.ORG.config.focus_brands;
 }
+// Desglose TRAD. COMP. / NEW PLAYERS & TESLA dentro de FOCUS SEGMENT: es la
+// forma en que BMW encuadra su competencia (estrategia propia), no una
+// clasificacion generica del mercado. Solo visible para orgs con esta
+// bandera activa en config (hoy solo BMW, via SQL). Otra marca podria
+// pedir lo mismo en el futuro sin tocar codigo, solo activandole la bandera.
+function orgShowsSubConcepts(){
+  return !!(window.ORG && window.ORG.config && window.ORG.config.show_subconcepts);
+}
 function rowSubBucket(r){
   const cfg=orgFocusBrands();
   // cfg===undefined (la clave no existe, caso BMW): usar la clasificacion
@@ -2201,10 +2209,11 @@ function buildSubsegmentSidebar(){
     if(s==='FOCUS SEGMENT') focusCbEl=el.querySelector('input');
     cont.appendChild(el);
   });
-  // Sub-concepts within FOCUS SEGMENT (indented). Solo tienen sentido con
-  // la clasificacion propia de BMW; una org con set competitivo propio no
-  // los ve (no hay TRAD. COMP. / NEW PLAYERS & TESLA definido para ella).
-  if(!usingCustomFocus) CONCEPTS.forEach(c=>{
+  // Sub-concepts within FOCUS SEGMENT (indented). Es la estrategia propia de
+  // BMW (quien es "competencia tradicional" vs "new player"): solo se
+  // muestra si la org tiene la bandera show_subconcepts activa, no a
+  // cualquier org que use la clasificacion del dataset por defecto.
+  if(!usingCustomFocus && orgShowsSubConcepts()) CONCEPTS.forEach(c=>{
     const el=mkCb('    '+c,true,on=>{
       if(on){
         F.concepts.add(c);
@@ -3505,7 +3514,7 @@ function trRefreshSubPills(){
     if(pill)pill.classList.toggle('on',TR.concepts.has(c));
   });
   const wrap=g('tr-focus-wrap');
-  if(wrap)wrap.style.display=TR.subs.has('FOCUS')?'flex':'none';
+  if(wrap)wrap.style.display=(TR.subs.has('FOCUS')&&orgShowsSubConcepts())?'flex':'none';
 }
 
 function initTrendSubFilters(){
@@ -4494,7 +4503,7 @@ async function downloadInforme(){
               if(d.column.index===0&&_CHINESE_BRANDS.has(brand))
                 d.cell.styles.textColor=[198,42,42];
             }
-            if(mode==='focus'){
+            if(mode==='focus'&&orgShowsSubConcepts()){
               // Tra competencia tradicional / new players & tesla
               const bc=_BRAND_CONCEPT[brand];
               if(bc==='TRAD. COMP.')d.cell.styles.fillColor=[235,242,250];
@@ -4592,7 +4601,7 @@ async function downloadInforme(){
         (brandDelta>=0?'+':'')+brandDelta+' vs. last year');
 
       let tblY=y0+kpiH+3.5;
-      if(mode==='focus'){
+      if(mode==='focus'&&orgShowsSubConcepts()){
         doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(90,102,120);
         doc.setFillColor(200,220,245);doc.rect(M,tblY-3.2,3,3,'F');
         doc.text('TRADITIONAL COMPETITION',M+4.5,tblY-0.8);
@@ -5048,7 +5057,7 @@ function renderAlerts(){
     const badgeCls=a.type==='spike'?'spike':'drop';
     const badgeTxt=a.type==='spike'?'↑ SPIKE':'↓ DROP';
     const concept=_BRAND_CONCEPT[a.brand]||'';
-    const conceptShort=concept==='TRAD. COMP.'?'Traditional':'New Players';
+    const conceptShort=(orgShowsSubConcepts()&&concept)?(concept==='TRAD. COMP.'?'Traditional':'New Players'):'';
     const streakHtml=a.streak>=3?`<span class="alrt-streak drop">📉 ${a.streak}d low</span>`:
       a.streak<=-3?`<span class="alrt-streak spike">📈 ${Math.abs(a.streak)}d high</span>`:'';
     const racFlagHtml=a.racFlag
