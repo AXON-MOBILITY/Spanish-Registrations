@@ -1645,8 +1645,11 @@ function provinceWinner(entries){
 }
 
 const WINNER_PALETTE=['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#0ea5e9','#d946ef'];
+const MAP_BRAND_COLOR_OVERRIDES={'Audi':'#10B981'};
 let _winnerColorCache={};
 function winnerColor(brand){
+  const mapOverride=MAP_BRAND_COLOR_OVERRIDES[brand];
+  if(mapOverride){_winnerColorCache[brand]=mapOverride;return mapOverride;}
   const custom=brandColor(brand);
   if(custom){_winnerColorCache[brand]=custom;return custom;}
   if(!_winnerColorCache[brand]){
