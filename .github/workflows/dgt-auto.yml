@@ -20,13 +20,10 @@ on:
           - "true"
           - "false"
   schedule:
-    # GitHub Actions usa UTC. La DGT publica con horario variable; reducido a
-    # 2 ventanas/dia (antes 8) para no agotar el limite de minutos de Actions.
-    # En schedule no usamos --force, asi que si no hay fichero nuevo termina
-    # sin commit tras saltar los ya procesados -- con solo 2 pasadas, un
-    # publish de DGT fuera de estas horas se recoge en la ventana siguiente,
-    # no el mismo dia.
-    - cron: "15 9,16 * * *"
+    # GitHub Actions usa UTC. 9:30 hora de Espana (CEST, UTC+2) = 7:30 UTC.
+    # Nota: en horario de invierno (CET, UTC+1) esto se ejecutara a las 8:30
+    # hora local salvo que se ajuste el cron.
+    - cron: "30 7 * * *"
 
 permissions:
   contents: write
