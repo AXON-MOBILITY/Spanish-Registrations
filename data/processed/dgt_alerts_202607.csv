@@ -1,0 +1,28 @@
+yyyymm,severity,kind,marca,canal,metric,value,threshold,detail
+202607,INFO,CARROCERO_UNMAPPED,EUROCARROCERA,,registros_carrocero_sin_chasis_detectado,35,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202607,INFO,CARROCERO_UNMAPPED,ULTRAND,,registros_carrocero_sin_chasis_detectado,27,25,ampliar _CHASSIS_RULES o CARROCERO_BRANDS
+202607,INFO,INVALID_ITV_SCOPE_EXCLUDED,VOLKSWAGEN,Private,registros_excluidos_ficha_itv_invalida,1,1,vin10=WV3ZZZSZ1T; ficha ITV sin codigos tipo/variante/version utiles (plazas=0)
+202607,INFO,KM0_FALLBACK,RENAULT,Corporate,b00d_private_moved_to_corporate,192,100,pool_b00d_private=3347; rate=0.0573
+202607,INFO,KM0_FALLBACK,CITROEN,Corporate,b00d_private_moved_to_corporate,146,100,pool_b00d_private=1822; rate=0.0802
+202607,INFO,KM0_FALLBACK,PEUGEOT,Corporate,b00d_private_moved_to_corporate,110,100,pool_b00d_private=1987; rate=0.0553
+202607,INFO,KM0_FALLBACK,FORD,Corporate,b00d_private_moved_to_corporate,115,100,pool_b00d_private=1222; rate=0.0939
+202607,INFO,KM0_FALLBACK,OPEL,Corporate,b00d_private_moved_to_corporate,104,100,pool_b00d_private=702; rate=0.1484
+202607,INFO,KM0_FALLBACK,FIAT,Corporate,b00d_private_moved_to_corporate,132,100,pool_b00d_private=508; rate=0.2598
+202607,WARN,NEW_BRAND,CHANGAN,,monthly_count,584,250,Marca con volumen relevante no vista en outputs historicos previos
+202607,WARN,NEW_BRAND,GEELY,,monthly_count,992,250,Marca con volumen relevante no vista en outputs historicos previos
+202607,CRITICAL,CHANNEL_DRIFT,BMW,RAC,count_vs_same_month_history,941,+/-250 and +/-25%,"actual=1154; media_mismo_mes=213.3; historico=124,404,112; rel=+440.9%"
+202607,CRITICAL,CHANNEL_DRIFT,BYD,Corporate,count_vs_same_month_history,889,+/-250 and +/-25%,"actual=1034; media_mismo_mes=145.0; historico=4,368,63; rel=+613.1%"
+202607,CRITICAL,CHANNEL_DRIFT,BYD,Private,count_vs_same_month_history,2100,+/-250 and +/-25%,"actual=2774; media_mismo_mes=673.7; historico=13,1789,219; rel=+311.8%"
+202607,WARN,CHANNEL_DRIFT,CITROEN,Private,count_vs_same_month_history,511,+/-250 and +/-25%,"actual=1711; media_mismo_mes=1199.7; historico=1160,1434,1005; rel=+42.6%"
+202607,CRITICAL,CHANNEL_DRIFT,CUPRA,Private,count_vs_same_month_history,311,+/-250 and +/-25%,"actual=926; media_mismo_mes=615.0; historico=509,866,470; rel=+50.6%"
+202607,CRITICAL,CHANNEL_DRIFT,CUPRA,RAC,count_vs_same_month_history,-290,+/-250 and +/-25%,"actual=110; media_mismo_mes=400.3; historico=92,510,599; rel=-72.5%"
+202607,WARN,CHANNEL_DRIFT,HYUNDAI,Private,count_vs_same_month_history,-1018,+/-250 and +/-25%,"actual=2343; media_mismo_mes=3361.3; historico=3000,3632,3452; rel=-30.3%"
+202607,WARN,CHANNEL_DRIFT,HYUNDAI,RAC,count_vs_same_month_history,-527,+/-250 and +/-25%,"actual=664; media_mismo_mes=1191.3; historico=617,1315,1642; rel=-44.3%"
+202607,CRITICAL,CHANNEL_DRIFT,KIA,RAC,count_vs_same_month_history,1157,+/-250 and +/-25%,"actual=1730; media_mismo_mes=573.0; historico=702,456,561; rel=+201.9%"
+202607,CRITICAL,CHANNEL_DRIFT,MG,Corporate,count_vs_same_month_history,730,+/-250 and +/-25%,"actual=909; media_mismo_mes=179.0; historico=129,228,180; rel=+407.8%"
+202607,CRITICAL,CHANNEL_DRIFT,MG,RAC,count_vs_same_month_history,-435,+/-250 and +/-25%,"actual=318; media_mismo_mes=753.0; historico=368,334,1557; rel=-57.8%"
+202607,WARN,CHANNEL_DRIFT,NISSAN,Corporate,count_vs_same_month_history,369,+/-250 and +/-25%,"actual=1734; media_mismo_mes=1365.3; historico=1179,1782,1135; rel=+27.0%"
+202607,CRITICAL,CHANNEL_DRIFT,OMODA,Corporate,count_vs_same_month_history,271,+/-250 and +/-25%,"actual=390; media_mismo_mes=119.0; historico=1,205,151; rel=+227.7%"
+202607,CRITICAL,CHANNEL_DRIFT,OMODA,Private,count_vs_same_month_history,577,+/-250 and +/-25%,"actual=1211; media_mismo_mes=633.7; historico=2,1075,824; rel=+91.1%"
+202607,CRITICAL,CHANNEL_DRIFT,TESLA,Private,count_vs_same_month_history,-386,+/-250 and +/-25%,"actual=79; media_mismo_mes=465.0; historico=444,533,418; rel=-83.0%"
+202607,WARN,CHANNEL_DRIFT,VOLKSWAGEN,Private,count_vs_same_month_history,802,+/-250 and +/-25%,"actual=3720; media_mismo_mes=2917.7; historico=2020,3797,2936; rel=+27.5%"
