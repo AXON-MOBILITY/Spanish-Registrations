@@ -1,0 +1,536 @@
+anyo,mes,dia,marca,modelo,canal,fuel_type,fuel,segmento,subseg,hp,body_type,cod_prov,provincia,dealer_estimated,dealer_id,confidence,source_confidence,count
+2026,08,18,AUDI,A1,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,HACH 5P,43,Tarragona,vilamòbil,VILAMOBIL,medium,official,1
+2026,08,18,AUDI,A1,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,HACH 5P,46,Valencia,motor pacífico levante,MOTOR PACIFICO LEVANTE,medium,official,1
+2026,08,18,AUDI,A3,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,HACH 5P,15,A Coruña,arrojo,ARROJO,high,official,1
+2026,08,18,AUDI,A3,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,HACH 5P,15,A Coruña,bonaval premium,BONAVAL PREMIUM,high,official,1
+2026,08,18,AUDI,A5,Private,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SEDAN,42,Soria,soria motor,SORIA MOTOR,high,official,1
+2026,08,18,AUDI,A5,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SEDAN,03,Alicante,serramóvil,SERRAMOVIL,medium,official,1
+2026,08,18,AUDI,Q2,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SAV,06,Badajoz,centrowagen,CENTROWAGEN,high,official,1
+2026,08,18,AUDI,Q2,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SAV,50,Zaragoza,center zaragoza,AUDI CENTER ZARAGOZA,high,official,1
+2026,08,18,AUDI,Q3 SPORTBACK,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,29,Málaga,safamotor,SAFAMOTOR,high,official,1
+2026,08,18,AUDI,Q3 SPORTBACK,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,33,Asturias,asturpersa,ASTURPERSA,high,official,1
+2026,08,18,AUDI,Q3 SPORTBACK,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,39,Cantabria,hercos parayas,HERCOS PARAYAS,high,official,1
+2026,08,18,AUDI,Q3 SPORTBACK,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,12,Castellón,quadis marzá,QUADIS MARZA,medium,official,1
+2026,08,18,AUDI,Q3 SPORTBACK,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,13,Ciudad Real,talleres manchegos,TALLERES MANCHEGOS,medium,official,1
+2026,08,18,AUDI,Q4 E-TRON,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,15,A Coruña,arrojo,ARROJO,high,official,1
+2026,08,18,AUDI,Q4 E-TRON,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,29,Málaga,safamotor,SAFAMOTOR,medium,official,1
+2026,08,18,AUDI,Q4 E-TRON,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,46,Valencia,center valencia,AUDI CENTER VALENCIA,high,official,1
+2026,08,18,AUDI,Q4 SPORTBACK E-TRON,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,09,Burgos,center burgos,AUDI CENTER BURGOS,high,official,1
+2026,08,18,AUDI,Q5,Private,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,08,Barcelona,autopodium,AUTOPODIUM,medium,official,1
+2026,08,18,AUDI,Q5 SPORTBACK,Private,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,28,Madrid,center madrid las rozas,AUDI CENTER MADRID LAS ROZAS,high,official,1
+2026,08,18,AUDI,Q5 SPORTBACK,Private,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,51,Ceuta,solera motor,SOLERA MOTOR,medium,official,1
+2026,08,18,AUDI,Q6 E-TRON SPORTBACK,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAV,43,Tarragona,merkamotor,MERKAMOTOR,high,official,1
+2026,08,18,BMW,SERIE 1,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,HACH 5P,05,Ávila,avilcar,100307,high,internal,1
+2026,08,18,BMW,SERIE 1,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,HACH 5P,28,Madrid,bymycar madrid,100873,high,internal,1
+2026,08,18,BMW,SERIE 2,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,M Performance,MPV,08,Barcelona,quadis munich,100909,high,internal,1
+2026,08,18,BMW,SERIE 3,Private,ICE,Gasolina,KKL,FOCUS SEGMENT,Standard,ESTATE,08,Barcelona,ibericar bcn,100572,high,internal,1
+2026,08,18,BMW,X1,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,08,Barcelona,ibericar bcn,100572,high,internal,1
+2026,08,18,BMW,X1,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,21,Huelva,movitransa,100881,high,internal,1
+2026,08,18,BMW,X1,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,28,Madrid,bymycar madrid,100873,high,internal,1
+2026,08,18,BMW,X1,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,32,Ourense,autogal,100120,high,internal,1
+2026,08,18,BMW,X1,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,46,Valencia,bertolín,100002,high,internal,1
+2026,08,18,BMW,X1,Private,ICE,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,50,Zaragoza,augusta aragón,100348,high,internal,1
+2026,08,18,BMW,X2,Private,ICE,Diesel Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,13,Ciudad Real,albamoción,100764,high,internal,1
+2026,08,18,BMW,X2,Private,ICE,Diesel Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,28,Madrid,movilnorte,100213,high,internal,1
+2026,08,18,BMW,X2,Private,ICE,Diesel Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,33,Asturias,triocar,100379,high,internal,1
+2026,08,18,BMW,X2,Private,ICE,Diesel Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,46,Valencia,fersán,100062,high,internal,1
+2026,08,18,BMW,X3,Private,ICE,Gasolina Mild Hybrid,KKL,FOCUS SEGMENT,Standard,SAV,08,Barcelona,ibericar bcn,100572,high,internal,1
+2026,08,18,BMW,X3,Private,ICE,Gasolina Mild Hybrid,KKL,FOCUS SEGMENT,Standard,SAV,14,Córdoba,san rafael motor,100422,high,internal,1
+2026,08,18,BMW,X3,Private,ICE,Gasolina Mild Hybrid,KKL,FOCUS SEGMENT,Standard,SAV,18,Granada,ilbira motor,100589,high,internal,1
+2026,08,18,BMW,X3,Private,ICE,Gasolina Mild Hybrid,KKL,FOCUS SEGMENT,Standard,SAV,28,Madrid,movilnorte,100213,high,internal,1
+2026,08,18,BMW,X3,Private,ICE,Gasolina Mild Hybrid,KKL,FOCUS SEGMENT,Standard,SAV,39,Cantabria,grünblau motor,100015,high,internal,1
+2026,08,18,BMW,X5,Private,PHEV,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,28,Madrid,bymycar madrid,100873,high,internal,1
+2026,08,18,BMW,i4,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SEDAN,28,Madrid,bymycar madrid,100873,high,internal,1
+2026,08,18,BMW,iX1,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,33,Asturias,triocar,100379,high,internal,1
+2026,08,18,BMW,iX2,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,25,Lleida,unicars ponent,100727,high,internal,1
+2026,08,18,BMW,iX2,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,41,Sevilla,san pablo motor,100344,high,internal,1
+2026,08,18,BYD,ATTO 2,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,03,Alicante,alicante,BYD ALICANTE,high,official,1
+2026,08,18,BYD,ATTO 2,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,07,Baleares,mallorca,BYD MALLORCA,high,official,1
+2026,08,18,BYD,ATTO 2,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,12,Castellón,villarreal,BYD VILLARREAL,high,official,2
+2026,08,18,BYD,ATTO 2,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,17,Girona,vic,BYD VIC,high,official,1
+2026,08,18,BYD,ATTO 2,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,43,Tarragona,tarragona,BYD TARRAGONA,high,official,1
+2026,08,18,BYD,ATTO 2,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,49,Zamora,león,BYD LEON,medium,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,08,Barcelona,granollers,BYD GRANOLLERS,high,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,10,Cáceres,talavera,BYD TALAVERA,medium,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,11,Cádiz,jerez de la frontera,BYD JEREZ DE LA FRONTERA,high,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,24,León,león,BYD LEON,medium,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,33,Asturias,gijón,BYD GIJON,high,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,43,Tarragona,vilanova,BYD VILANOVA,medium,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,46,Valencia,alginet,BYD ALGINET,medium,official,1
+2026,08,18,BYD,ATTO 2,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,46,Valencia,sagunto,BYD SAGUNTO,high,official,1
+2026,08,18,BYD,ATTO 3 EVO,Private,BEV,Electrico,UKL2,REST,Standard,SAV,03,Alicante,orihuela,BYD ORIHUELA,high,official,1
+2026,08,18,BYD,ATTO 3 EVO,Private,BEV,Electrico,UKL2,REST,Standard,SAV,03,Alicante,torrevieja,BYD TORREVIEJA,high,official,1
+2026,08,18,BYD,ATTO 3 EVO,Private,BEV,Electrico,UKL2,REST,Standard,SAV,18,Granada,granada,BYD GRANADA,high,official,1
+2026,08,18,BYD,ATTO 3 EVO,Private,BEV,Electrico,UKL2,REST,Standard,SAV,28,Madrid,alcalá de henares,BYD ALCALA DE HENARES,medium,official,1
+2026,08,18,BYD,ATTO 3 EVO,Private,BEV,Electrico,UKL2,REST,Standard,SAV,38,S.C. Tenerife,tenerife sur,BYD TENERIFE SUR,high,official,1
+2026,08,18,BYD,DOLPHIN,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,15,A Coruña,la coruña,BYD LA CORUNA,high,official,1
+2026,08,18,BYD,DOLPHIN G,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,HACH 5P,06,Badajoz,badajoz,BYD BADAJOZ,high,official,1
+2026,08,18,BYD,DOLPHIN G,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,HACH 5P,08,Barcelona,vilanova,BYD VILANOVA,high,official,1
+2026,08,18,BYD,DOLPHIN G,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,HACH 5P,24,León,león,BYD LEON,high,official,1
+2026,08,18,BYD,DOLPHIN G,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,HACH 5P,28,Madrid,alcalá de henares,BYD ALCALA DE HENARES,high,official,1
+2026,08,18,BYD,DOLPHIN G,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,HACH 5P,36,Pontevedra,vigo,BYD VIGO,high,official,1
+2026,08,18,BYD,DOLPHIN G,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,HACH 5P,38,S.C. Tenerife,tenerife,BYD TENERIFE,high,official,1
+2026,08,18,BYD,DOLPHIN SURF,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,01,Álava,vitoria,BYD VITORIA,high,official,1
+2026,08,18,BYD,DOLPHIN SURF,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,18,Granada,granada,BYD GRANADA,high,official,1
+2026,08,18,BYD,SEAL,Private,BEV,Electrico,KKL,REST,Standard,SEDAN,15,A Coruña,lalín,BYD LALIN,medium,official,1
+2026,08,18,BYD,SEAL,Private,BEV,Electrico,KKL,REST,Standard,SEDAN,35,Las Palmas,gran canaria,BYD GRAN CANARIA,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,02,Albacete,albacete,BYD ALBACETE,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,03,Alicante,dénia pop-up,BYD DENIA POP UP,medium,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,03,Alicante,elche,BYD ELCHE,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,04,Almería,almería,BYD ALMERIA,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,06,Badajoz,badajoz,BYD BADAJOZ,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,06,Badajoz,badajoz,BYD BADAJOZ,medium,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,32,Ourense,orense,BYD ORENSE,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,35,Las Palmas,gran canaria,BYD GRAN CANARIA,high,official,1
+2026,08,18,BYD,SEAL U,Private,PHEV,Gasolina/Electrico Enchufable,KKL,REST,Standard,SAV,35,Las Palmas,lanzarote,BYD LANZAROTE,high,official,1
+2026,08,18,BYD,SEALION 7,Private,BEV,Electrico,KKL,REST,Standard,SAV,35,Las Palmas,gran canaria,BYD GRAN CANARIA,high,official,1
+2026,08,18,BYD,SEALION 7,Private,BEV,Electrico,KKL,REST,Standard,SAV,38,S.C. Tenerife,tenerife sur,BYD TENERIFE SUR,medium,official,1
+2026,08,18,CUPRA,CUPRA LEON,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,33,Asturias,varocar,03A10D,high,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,06,Badajoz,gedauto car,03465D,high,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,15,A Coruña,compostela motor,03729D,medium,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,18,Granada,vigilsa,03913D,high,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,20,Gipuzkoa,lugaritz,03588D,medium,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,26,La Rioja,auto moriz,03544D,medium,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,28,Madrid,gil automocion,00376R,high,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,38,S.C. Tenerife,motor 7 islas,80119D,high,official,1
+2026,08,18,CUPRA,FORMENTOR,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,48,Bizkaia,galdakauto,03532D,high,official,1
+2026,08,18,CUPRA,RAVAL,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,38,S.C. Tenerife,motor 7 islas,00547R,high,official,1
+2026,08,18,CUPRA,TAVASCAN,Private,BEV,Electrico,UKL2,REST,Standard,SAV,15,A Coruña,marineda motor,00581R,medium,official,1
+2026,08,18,CUPRA,TERRAMAR,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,22,Huesca,automoviles serrablo,03808D,high,official,1
+2026,08,18,CUPRA,TERRAMAR,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,10,Cáceres,gedauto car,00587R,high,official,1
+2026,08,18,CUPRA,TERRAMAR,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAT,17,Girona,proauto,03246D,high,official,1
+2026,08,18,DACIA,BIGSTER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,10,Cáceres,"auto salamanca cars, s.l.",72405465,high,official,1
+2026,08,18,DACIA,BIGSTER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,11,Cádiz,"caetano formula cadiz, s.l.u",72405265,high,official,1
+2026,08,18,DACIA,BIGSTER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,24,León,"leomovil, s.l.",72423617,high,official,1
+2026,08,18,DACIA,BIGSTER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,33,Asturias,"leomotor asturias, s.l.",72405168,high,official,1
+2026,08,18,DACIA,BIGSTER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,35,Las Palmas,"caetano formula canarias, s.l.",72405493,medium,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,03,Alicante,"japemasa solar, s.l",72405423,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,03,Alicante,movil amoros s.l.,72405091,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,03,Alicante,"talleres blas serna, s.a.",72405303,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,05,Ávila,"auto salamanca cars, s.l.",72405463,medium,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,09,Burgos,"autovican, s.l.",72405246,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,10,Cáceres,"marcesa servicios, s.a.",72457700,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,15,A Coruña,"caetano formula galicia, s.l.u",72405437,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,17,Girona,"automocio i serveis del nord-est, s.l.",72405346,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,17,Girona,"intercargirona.s,l",72434434,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,18,Granada,"japemasa solar, s.l",72405353,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,24,León,"leomovil, s.l.",72405468,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,25,Lleida,"autansa 3000,s.l.u.",72405180,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,29,Málaga,"rombo sol 2002, s.l.u",72405439,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,31,Navarra,"unsain, s.l.u.",72405035,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,38,S.C. Tenerife,"taller cutillas, s.l.",72405509,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,45,Toledo,"aries toledo-talavera, s.l.",72419600,high,official,1
+2026,08,18,DACIA,DUSTER,Private,ICE,Gasolina/Electrico,SKL,REST,Standard,PICKUP,49,Zamora,"leomovil, s.l.",72405467,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,03,Alicante,"japemasa solar, s.l",72405423,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,03,Alicante,"talleres blas serna, s.a.",72405286,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,07,Baleares,"dibauto plus, s.a",72405427,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,11,Cádiz,"caetano formula cadiz, s.l.u",72405264,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,32,Ourense,"talleres rodosa, s.l.",72405389,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,35,Las Palmas,"juan toledo, s.l.",72405138,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,38,S.C. Tenerife,"motor ari, s.a.",72405304,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,38,S.C. Tenerife,"taller cutillas, s.l.",72481701,high,official,1
+2026,08,18,DACIA,JOGGER,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,MPV,52,Melilla,"gorge motor, s.l.",72457009,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,03,Alicante,movil amoros s.l.,72405091,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,07,Baleares,"dibauto plus, s.a",72405090,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,08,Barcelona,"garatge sant jaume,s.a.",72431200,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,08,Barcelona,"remm guitart, s.l.",72430900,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,11,Cádiz,"caetano formula cadiz, s.l.u",72405264,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,11,Cádiz,"caetano formula cadiz, s.l.u",72405265,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,12,Castellón,"talleres boix, s.l.",72438810,medium,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,14,Córdoba,"mezquita motor, s.l. unipersonal",72405434,medium,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,17,Girona,"intercargirona.s,l",72434434,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,28,Madrid,"talleres escorial, s.l.",72417900,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,29,Málaga,"rombo sol 2002, s.l.u",72405039,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,29,Málaga,"rombosol auto, s.l.",72405364,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,30,Murcia,"automociones ureña, s.l.",72459013,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,35,Las Palmas,"motor ari, s.a.",72405109,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,38,S.C. Tenerife,arautava motor s.l.,72405380,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,38,S.C. Tenerife,"motor ari, s.a.",72405269,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,41,Sevilla,"guadaira movil 2001, s.l",72405338,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,43,Tarragona,"auto-sport albert, s.l.",72437001,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,43,Tarragona,"oliva motor rd tarragona, s.l.u.",72405523,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,45,Toledo,"aries toledo-talavera, s.l.",72419600,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,45,Toledo,"vegue industrial, s.l.",72405172,high,official,1
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,46,Valencia,"talleres ginestar, s.l.u.",72405169,high,official,2
+2026,08,18,DACIA,SANDERO,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,49,Zamora,"leomovil, s.l.",72405467,high,official,1
+2026,08,18,HYUNDAI,BAYON,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,07,Baleares,proa automoción,687,high,official,1
+2026,08,18,HYUNDAI,I10,Private,ICE,Gasolina,UKL0,REST,Standard,HACH 5P,07,Baleares,proa automoción,687,high,official,1
+2026,08,18,HYUNDAI,I20,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,03,Alicante,auto fima,5,high,official,1
+2026,08,18,HYUNDAI,I20,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,08,Barcelona,senco motor,183,high,official,1
+2026,08,18,HYUNDAI,I20,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,17,Girona,fornells motor,1224,high,official,1
+2026,08,18,HYUNDAI,I20,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,17,Girona,fornells motor,1224,medium,official,1
+2026,08,18,HYUNDAI,I20,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,30,Murcia,gasmovil,105,high,official,1
+2026,08,18,HYUNDAI,I20,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,HACH 5P,39,Cantabria,hercos motor,738,high,official,1
+2026,08,18,HYUNDAI,INSTER,Private,BEV,Electrico,UKL2,REST,Standard,SAV,09,Burgos,tecnimóvil julián,40,high,official,1
+2026,08,18,HYUNDAI,KONA,Private,BEV,Gasolina/Electrico,UKL1,REST,Standard,SAV,07,Baleares,proa automoción,687,high,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,03,Alicante,auto fima,5,medium,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,04,Almería,almerialva,1129,medium,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,06,Badajoz,maven motor,706,high,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,08,Barcelona,linkmotor,678,high,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,17,Girona,fornells motor,1224,high,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,29,Málaga,syrluz málaga,1243,high,official,1
+2026,08,18,HYUNDAI,KONA,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,30,Murcia,huertas móvil,1198,high,official,1
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,02,Albacete,martiaga automoción,763,high,official,1
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,24,León,lemauto,1136,high,official,1
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,30,Murcia,gasmovil,105,high,official,1
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,33,Asturias,asturdai,115,high,official,2
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,37,Salamanca,gestorauto,126,high,official,1
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,41,Sevilla,automoción aljarafe,138,medium,official,1
+2026,08,18,HYUNDAI,TUCSON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,46,Valencia,autoalmenar,1166,high,official,1
+2026,08,18,KIA,EV2,Private,BEV,Electrico,UKL1,REST,Standard,SAV,07,Baleares,"auto vidal y talleres, s.l.","AUTO VIDAL Y TALLERES, S.L.",high,official,1
+2026,08,18,KIA,EV2,Private,BEV,Electrico,UKL1,REST,Standard,SAV,20,Gipuzkoa,"novocar motor, s.l.","NOVOCAR MOTOR, S.L.",high,official,1
+2026,08,18,KIA,EV2,Private,BEV,Electrico,UKL1,REST,Standard,SAV,28,Madrid,"aki madrid automoción, s.l.","AKI MADRID AUTOMOCIÓN, S.L.",high,official,1
+2026,08,18,KIA,EV2,Private,BEV,Electrico,UKL1,REST,Standard,SAV,50,Zaragoza,"autosalduba, s.a.","AUTOSALDUBA, S.A.",medium,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,08,Barcelona,"autocam sport, s.l.","AUTOCAM SPORT, S.L.",high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,11,Cádiz,"gadir automoción, s.a.u.","GADIR AUTOMOCIÓN, S.A.U.",medium,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,13,Ciudad Real,"ferma movil, s.l.","FERMA MOVIL, S.L.",high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,19,Guadalajara,"eleckai motor 3.0, s.l.","ELECKAI MOTOR 3.0, S.L.",medium,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,25,Lleida,"centro de automoción lleida, s.a.","CENTRO DE AUTOMOCIÓN LLEIDA, S.A.",high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,30,Murcia,"grupo m. gallego, s.l.","GRUPO M. GALLEGO, S.L.",high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,30,Murcia,"grupo m. gallego, s.l.","GRUPO M. GALLEGO, S.L.",medium,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,31,Navarra,"estella motor, s.a.",C17VC00411,high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,34,Palencia,"autoconsa, s.l.","AUTOCONSA, S.L.",high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,45,Toledo,"ferma movil, s.l.","FERMA MOVIL, S.L.",high,official,1
+2026,08,18,KIA,EV3,Private,BEV,Electrico,UKL1,REST,Standard,SAV,46,Valencia,"autopista sur, s.l.","AUTOPISTA SUR, S.L.",high,official,1
+2026,08,18,KIA,EV4,Private,BEV,Electrico,KKL,REST,Standard,SEDAN,15,A Coruña,"breogan drive, s.l.","BREOGAN DRIVE, S.L.",high,official,1
+2026,08,18,KIA,EV4,Private,BEV,Electrico,KKL,REST,Standard,SEDAN,43,Tarragona,"garancar, s.a. (quadis armotors","GARANCAR, S.A. (QUADIS ARmotors)",high,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,13,Ciudad Real,"mobility cars andalucía, s.l.","MOBILITY CARS ANDALUCÍA, S.L.",medium,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,16,Cuenca,"autozeta la mancha, s.l.","AUTOZETA LA MANCHA, S.L.",high,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,30,Murcia,"grupo m. gallego, s.l.","GRUPO M. GALLEGO, S.L.",medium,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,31,Navarra,"sakimóvil, s.l.u","SAKIMÓVIL, S.L.U",high,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,32,Ourense,"blendio santauto, s.l.u. (san ciprian de viñas. orense",C17VC00749,high,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,39,Cantabria,"numar motor, s.l.","NUMAR MOTOR, S.L.",high,official,2
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,39,Cantabria,"numar motor, s.l.","NUMAR MOTOR, S.L.",medium,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,42,Soria,"automateo, s.l.u. (soria",C17VC00530,high,official,1
+2026,08,18,KIA,NIRO,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,42,Soria,"automateo, s.l.u. (soria",C17VC00530,medium,official,1
+2026,08,18,KIA,PICANTO,Private,ICE,Gasolina,UKL0,REST,Standard,HACH 5P,10,Cáceres,"rojas motor, s.l.","ROJAS MOTOR, S.L.",high,official,1
+2026,08,18,KIA,PV5,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,15,A Coruña,corgal automóviles s.l.,CORGAL AUTOMÓVILES S.L.,high,official,1
+2026,08,18,KIA,PV5,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,36,Pontevedra,"rias motor 2018, s.l.","RIAS MOTOR 2018, S.L.",high,official,1
+2026,08,18,KIA,SELTOS,Private,ICE,Gasolina,UKL2,REST,Standard,SAV,11,Cádiz,"gadir automoción, s.a.u.","GADIR AUTOMOCIÓN, S.A.U.",high,official,1
+2026,08,18,KIA,SELTOS,Private,ICE,Gasolina,UKL2,REST,Standard,SAV,39,Cantabria,"numar motor, s.l.","NUMAR MOTOR, S.L.",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,04,Almería,marcos automoción,KIA MARCOS AUTOMOCIÓN,high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,08,Barcelona,"eix motor catalunya, s.l.","EIX MOTOR CATALUNYA, S.L.",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,08,Barcelona,"eix motor catalunya, s.l.","EIX MOTOR CATALUNYA, S.L.",medium,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,21,Huelva,"veyser automoción, s.l. (huelva",C17VC00694,high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,24,León,"busanauto, s.l.","BUSANAUTO, S.L.",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,28,Madrid,"aki madrid automoción, s.l.","AKI MADRID AUTOMOCIÓN, S.L.",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,28,Madrid,"repuestos auto motor ram, s.a. (collado villalba",C17VC00736,high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,29,Málaga,"caetano móvil sur, s.l.","CAETANO MÓVIL SUR, S.L.",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,31,Navarra,"sakimóvil, s.l.u","SAKIMÓVIL, S.L.U",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,39,Cantabria,"numar motor, s.l.","NUMAR MOTOR, S.L.",high,official,1
+2026,08,18,KIA,SPORTAGE,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,52,Melilla,"parres- , s.l.","PARRES-KIA, S.L.",medium,official,1
+2026,08,18,KIA,STONIC,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,06,Badajoz,"gedauto servicios, s.l.","GEDAUTO SERVICIOS, S.L.",high,official,1
+2026,08,18,KIA,STONIC,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,11,Cádiz,"gadir automoción, s.a.u.","GADIR AUTOMOCIÓN, S.A.U.",high,official,1
+2026,08,18,KIA,STONIC,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,28,Madrid,"repuestos auto motor ram, s.a. (collado villalba",C17VC00736,high,official,1
+2026,08,18,KIA,STONIC,Private,ICE,Gasolina Mild Hybrid,UKL1,REST,Standard,SAV,43,Tarragona,"garancar, s.a. (quadis armotors","GARANCAR, S.A. (QUADIS ARmotors)",high,official,2
+2026,08,18,KIA,XCEED,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,06,Badajoz,"gedauto servicios, s.l.","GEDAUTO SERVICIOS, S.L.",high,official,1
+2026,08,18,KIA,XCEED,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,10,Cáceres,"rojas motor, s.l.","ROJAS MOTOR, S.L.",medium,official,1
+2026,08,18,KIA,XCEED,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,11,Cádiz,"gadir automoción, s.a.u.","GADIR AUTOMOCIÓN, S.A.U.",medium,official,1
+2026,08,18,KIA,XCEED,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,17,Girona,"empor speed, s.l.u","EMPOR SPEED, S.L.U",medium,official,1
+2026,08,18,KIA,XCEED,Private,ICE,Gasolina Mild Hybrid,UKL2,REST,Standard,HACH 5P,39,Cantabria,"numar motor, s.l.","NUMAR MOTOR, S.L.",high,official,1
+2026,08,18,LAND ROVER,RANGE ROVER SPORT,Private,ICE,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,41,Sevilla,classic cars,U1184,high,official,1
+2026,08,18,LEXUS,LBX,Private,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,03,Alicante,medimotors premium s.l.,MEDIMOTORS PREMIUM S L,high,official,1
+2026,08,18,LEXUS,LBX,Private,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,12,Castellón,turismos castellón s.l.,TURISMOS CASTELLON S L,medium,official,1
+2026,08,18,LEXUS,LBX,Private,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,28,Madrid,automoviles axel s.a.,AUTOMOVILES AXEL S A,medium,official,1
+2026,08,18,LEXUS,LBX,Private,ICE,Gasolina/Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,39,Cantabria,"milenium car, s.l",MILENIUM CAR S L,medium,official,1
+2026,08,18,LEXUS,NX,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,43,Tarragona,"autoforum premium, s.l.",AUTOFORUM PREMIUM S L,high,official,1
+2026,08,18,LEXUS,NX,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,48,Bizkaia,"milenium car, s.l",MILENIUM CAR S L,high,official,1
+2026,08,18,LEXUS,RZ,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,17,Girona,maresvall motor s.l.,MARESVALL MOTOR S L,medium,official,1
+2026,08,18,LEXUS,RZ,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,28,Madrid,automoviles axel s.a.,AUTOMOVILES AXEL S A,medium,official,1
+2026,08,18,LEXUS,UX,Private,ICE,Gasolina/Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,17,Girona,maresvall motor s.l.,MARESVALL MOTOR S L,medium,official,2
+2026,08,18,LEXUS,UX,Private,ICE,Gasolina/Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,19,Guadalajara,comauto premium,COMAUTO PREMIUM,high,official,1
+2026,08,18,LEXUS,UX,Private,ICE,Gasolina/Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,36,Pontevedra,"breogan autolux, s.l.u",BREOGAN AUTOLUX S L U,high,official,1
+2026,08,18,MERCEDES,CLASE A,Private,ICE,Diesel,UKL2,FOCUS SEGMENT,Standard,SEDAN,33,Asturias,adarsa,GC0008566,high,official,1
+2026,08,18,MERCEDES,CLASE A,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,HACH 5P,17,Girona,garatge plana,GC0008498,high,official,1
+2026,08,18,MERCEDES,CLASE A,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SEDAN,13,Ciudad Real,autotrak comercial,GC0068936,high,official,1
+2026,08,18,MERCEDES,CLASE A,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SEDAN,20,Gipuzkoa,goiko auto,GC0039350,high,official,1
+2026,08,18,MERCEDES,CLASE A,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SEDAN,29,Málaga,caetano benet,GC0008614,medium,official,1
+2026,08,18,MERCEDES,CLASE A,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SEDAN,50,Zaragoza,agreda automovil,GC0008409,high,official,1
+2026,08,18,MERCEDES,CLASE C,Private,PHEV,Diesel/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,ESTATE,23,Jaén,jadisa,GC0008494,high,official,1
+2026,08,18,MERCEDES,CLASE CLA,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,ESTATE,07,Baleares,autovidal,GC0010464,high,official,1
+2026,08,18,MERCEDES,CLASE CLA,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,ESTATE,18,Granada,granada premium,GC0062700,high,official,1
+2026,08,18,MERCEDES,CLASE E,Private,ICE,Diesel,MKL,FOCUS SEGMENT,Standard,SEDAN,50,Zaragoza,agreda automovil,GC0008409,high,official,1
+2026,08,18,MERCEDES,CLASE E,Private,ICE,Gasolina,MKL,FOCUS SEGMENT,Standard,ESTATE,51,Ceuta,aubensa,GC0008501,high,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SAV,03,Alicante,hijos de manuel crespo,GC0008627,high,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SAV,07,Baleares,autovidal,GC0010464,high,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,ICE,Gasolina,UKL2,FOCUS SEGMENT,Standard,SAV,31,Navarra,comercial gazpi,GC0008615,high,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,12,Castellón,quadis autolica,GC0008432,medium,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,30,Murcia,dimovil,GC0008402,high,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,35,Las Palmas,louzao vigo,GC0008434,high,official,1
+2026,08,18,MERCEDES,CLASE GLA,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,FOCUS SEGMENT,Standard,SAV,38,S.C. Tenerife,louzao vigo,GC0008434,medium,official,1
+2026,08,18,MERCEDES,CLASE GLB,Private,BEV,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,33,Asturias,adarsa,GC0008566,high,official,1
+2026,08,18,MERCEDES,CLASE GLB,Private,BEV,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,38,S.C. Tenerife,louzao vigo,GC0008434,medium,official,1
+2026,08,18,MERCEDES,CLASE GLB,Private,BEV,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,46,Valencia,valdisa,GC00110108,medium,official,1
+2026,08,18,MERCEDES,CLASE GLB,Private,BEV,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,46,Valencia,visauto,GC0008399,medium,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,ICE,Diesel,KKL,FOCUS SEGMENT,Standard,SAV,32,Ourense,louzao vigo,GC0008434,high,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,ICE,Gasolina,KKL,FOCUS SEGMENT,Standard,SAV,15,A Coruña,louzao vigo,GC0008434,high,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,PHEV,Diesel/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,10,Cáceres,automocion del oeste,GC0008413,medium,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,PHEV,Diesel/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,23,Jaén,jadisa,GC0008494,high,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,PHEV,Diesel/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,39,Cantabria,adarsa,GC0008617,high,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,PHEV,Diesel/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,41,Sevilla,fervial,GC0008425,medium,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,04,Almería,saveres,GC0008628,high,official,1
+2026,08,18,MERCEDES,CLASE GLC,Private,PHEV,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,46,Valencia,valdisa,GC00110108,medium,official,1
+2026,08,18,MERCEDES,EQA,Private,BEV,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,08,Barcelona,quadis autolica,GC0008420,high,official,1
+2026,08,18,MERCEDES,EQE,Private,BEV,Electrico,MKL,FOCUS SEGMENT,Standard,SAV,45,Toledo,autokrator,GC0010465,high,official,1
+2026,08,18,MINI,ACEMAN,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,15,A Coruña,novomóvil,100304,high,internal,1
+2026,08,18,MINI,ACEMAN,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,35,Las Palmas,marmotor,100738,high,internal,1
+2026,08,18,MINI,CABRIO,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,CABRIO,27,Lugo,lugauto,100146,high,internal,1
+2026,08,18,MINI,CABRIO,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,CABRIO,28,Madrid,bymycar madrid,100873,high,internal,1
+2026,08,18,MINI,CABRIO,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,CABRIO,38,S.C. Tenerife,canaauto,100389,high,internal,1
+2026,08,18,MINI,CABRIO,Private,ICE,Gasolina,UKL1,FOCUS SEGMENT,Standard,CABRIO,46,Valencia,bertolín,100002,high,internal,1
+2026,08,18,MINI,COUNTRYMAN,Private,ICE,Electrico,UKL2,FOCUS SEGMENT,Standard,SAV,08,Barcelona,ibericar bcn,100572,high,internal,1
+2026,08,18,MINI,HATCHBACK,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,HACH 3P,03,Alicante,movibegar,100468,high,internal,1
+2026,08,18,MINI,HATCHBACK,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,HACH 3P,07,Baleares,proa premium,100734,high,internal,1
+2026,08,18,MINI,HATCHBACK,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,HACH 3P,17,Girona,oliva motor girona,100817,high,internal,1
+2026,08,18,MINI,HATCHBACK,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,HACH 3P,39,Cantabria,grünblau motor,100015,high,internal,1
+2026,08,18,MINI,HATCHBACK,Private,ICE,Electrico,UKL1,FOCUS SEGMENT,Standard,HACH 3P,08,Barcelona,quadis munich,100909,high,internal,1
+2026,08,18,MINI,HATCHBACK,Private,ICE,Electrico,UKL1,FOCUS SEGMENT,Standard,HACH 3P,28,Madrid,movilnorte,100213,high,internal,1
+2026,08,18,NISSAN,INTERSTAR,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,17,Girona,camps motor,campsmotor,medium,official,1
+2026,08,18,NISSAN,JUKE,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,12,Castellón,germans gelida,gelida,high,official,1
+2026,08,18,NISSAN,JUKE,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,25,Lleida,ilerdauto,ilerdauto,high,official,1
+2026,08,18,NISSAN,JUKE,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,29,Málaga,safamotor autos,safamotor,medium,official,1
+2026,08,18,NISSAN,JUKE,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,36,Pontevedra,roipesa,rofervigo,high,official,1
+2026,08,18,NISSAN,JUKE,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,44,Teruel,rimauto,rimauto,high,official,1
+2026,08,18,NISSAN,LEAF,Private,BEV,Electrico,UKL2,REST,Standard,HACH 5P,03,Alicante,marcos automoción,marcosautomocion,high,official,1
+2026,08,18,NISSAN,MICRA,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,36,Pontevedra,roipesa,rofervigo,high,official,1
+2026,08,18,NISSAN,MICRA,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,46,Valencia,marcos automoción,marcosautomocion,high,official,1
+2026,08,18,NISSAN,PRIMASTAR,Private,ICE,Diesel,SKL,REST,Standard,TRANSPORTER,35,Las Palmas,brisa motor,brisamotor,medium,official,1
+2026,08,18,NISSAN,QASHQAI,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,08,Barcelona,santi enrique,santienrique,high,official,1
+2026,08,18,NISSAN,QASHQAI,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,10,Cáceres,ns maven,nsmaven,high,official,1
+2026,08,18,NISSAN,QASHQAI,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,26,La Rioja,blendio pérez repuestos,blendioperezrepuestos,high,official,1
+2026,08,18,NISSAN,QASHQAI,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,37,Salamanca,anferpa cars,anferpacars,high,official,1
+2026,08,18,NISSAN,QASHQAI,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAT,39,Cantabria,blendio parayas,blendioparayas,high,official,1
+2026,08,18,NISSAN,TOWNSTAR,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,07,Baleares,autovidal,autovidal,medium,official,1
+2026,08,18,NISSAN,TOWNSTAR,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,38,S.C. Tenerife,farray motor,arimotortenerife,high,official,2
+2026,08,18,NISSAN,TOWNSTAR,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,39,Cantabria,blendio parayas,blendioparayas,high,official,2
+2026,08,18,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,07,Baleares,autovidal,autovidal,medium,official,1
+2026,08,18,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,09,Burgos,gaursa,gaursa,high,official,1
+2026,08,18,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,11,Cádiz,concesol automoción,concesol,high,official,1
+2026,08,18,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,16,Cuenca,aurassan,aurassan,medium,official,1
+2026,08,18,NISSAN,X-TRAIL,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SUV,41,Sevilla,divesan,divesan,high,official,1
+2026,08,18,PORSCHE,911,Private,ICE,Gasolina/Electrico,GKL,FOCUS SEGMENT,M Performance,COUPE,07,Baleares,centro baleares,CENTRO PORSCHE BALEARES,high,official,1
+2026,08,18,PORSCHE,PANAMERA,Private,PHEV,Gasolina/Electrico Enchufable,GKL,FOCUS SEGMENT,Standard,SEDAN,35,Las Palmas,centro canarias (gran canaria,CENTRO PORSCHE CANARIAS GRAN CANARIA,high,official,1
+2026,08,18,RENAULT,5,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,08,Barcelona,"remm guitart, s.l.",72430900,high,official,1
+2026,08,18,RENAULT,5,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,38,S.C. Tenerife,"motor ari, s.a.",72405269,high,official,1
+2026,08,18,RENAULT,5,Private,BEV,Electrico,UKL1,REST,Standard,HACH 5P,46,Valencia,"talleres ginestar, s.l.u.",72405333,high,official,1
+2026,08,18,RENAULT,ARKANA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,11,Cádiz,"caetano formula cadiz, s.l.u",72405265,high,official,1
+2026,08,18,RENAULT,ARKANA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,18,Granada,"japemasa solar, s.l",72405353,high,official,1
+2026,08,18,RENAULT,AUSTRAL,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,SAV,07,Baleares,"dibauto plus, s.a",72405427,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,03,Alicante,"talleres perez juan, s.l.",72438101,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,10,Cáceres,"auto salamanca cars, s.l.",72405461,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,11,Cádiz,"caetano formula cadiz, s.l.u",72405264,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,15,A Coruña,"caetano formula galicia, s.l.u",72405438,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,17,Girona,"intercargirona.s,l",72434434,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,18,Granada,"japemasa solar, s.l",72405353,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,18,Granada,"japemasa solar, s.l",72405360,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,35,Las Palmas,"motor ari, s.a.",72405508,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,38,S.C. Tenerife,arautava motor s.l.,72405380,high,official,1
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,38,S.C. Tenerife,"motor ari, s.a.",72405269,high,official,2
+2026,08,18,RENAULT,CAPTUR,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,41,Sevilla,"hijos de j. cerrato, s.a.",72454500,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,03,Alicante,"japemasa solar, s.l",72405423,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,07,Baleares,"punicauto, s.l.",72459800,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,13,Ciudad Real,"automoviles roman sanchez, s.l.",72405417,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,16,Cuenca,"automaor, s.l",72405426,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,16,Cuenca,"automaor, s.l",72405426,medium,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,18,Granada,"japemasa solar, s.l",72405353,high,official,2
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,22,Huesca,"talleres gonzalez serrano, s.l.",72436217,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,30,Murcia,"herrero y lopez, s.a.",72405415,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,33,Asturias,"garaje covadonga cangas de onis, s.l.",72423408,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,35,Las Palmas,"motor ari, s.a.",72405109,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,41,Sevilla,"fornault, s.l.",72405203,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,41,Sevilla,"hijos de j. cerrato, s.a.",72454500,high,official,1
+2026,08,18,RENAULT,CLIO,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,46,Valencia,"talleres ginestar, s.l.u.",72405169,high,official,1
+2026,08,18,RENAULT,ESPACE,Private,ICE,Gasolina/Electrico,KKL,REST,Standard,SAV,11,Cádiz,"caetano formula cadiz, s.l.u",72405264,high,official,1
+2026,08,18,RENAULT,KANGOO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,18,Granada,"japemasa solar, s.l",72405360,high,official,1
+2026,08,18,RENAULT,KANGOO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,25,Lleida,"autansa 3000,s.l.u.",72405180,high,official,1
+2026,08,18,RENAULT,RAFALE,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,11,Cádiz,"caetano formula cadiz, s.l.u",72405264,high,official,1
+2026,08,18,RENAULT,RAFALE,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,33,Asturias,"leomotor asturias, s.l.",72405168,high,official,1
+2026,08,18,RENAULT,SYMBIOZ,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,14,Córdoba,"castillejo diaz, s.l.",72405124,high,official,1
+2026,08,18,RENAULT,SYMBIOZ,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,17,Girona,"intercargirona.s,l",72434434,high,official,1
+2026,08,18,RENAULT,TRAFIC,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,38,S.C. Tenerife,"motor ari, s.a.",72405304,high,official,1
+2026,08,18,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,03,Alicante,"japemasa solar, s.l",72405424,high,official,1
+2026,08,18,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,07,Baleares,"punicauto, s.l.",72459800,high,official,1
+2026,08,18,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,15,A Coruña,"caetano formula galicia, s.l.u",72405438,high,official,1
+2026,08,18,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,17,Girona,"intercargirona.s,l",72434434,high,official,1
+2026,08,18,RENAULT,TWINGO,Private,BEV,Electrico,UKL0,REST,Standard,HACH 5P,38,S.C. Tenerife,arautava motor s.l.,72405380,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,07,Baleares,motor inca,00377R,medium,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,15,A Coruña,compostela motor,03729D,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,19,Guadalajara,amarco car,03176D,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,35,Las Palmas,orvecame,80120D,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,37,Salamanca,seauto,03665D,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,38,S.C. Tenerife,motor 7 islas,00547R,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,38,S.C. Tenerife,motor 7 islas,00599R,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,38,S.C. Tenerife,motor 7 islas,00628R,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,38,S.C. Tenerife,motor 7 islas,80119D,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,39,Cantabria,miguel arroyo,13560D,high,official,1
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,41,Sevilla,automocion terry,03415D,high,official,2
+2026,08,18,SEAT,ARONA,Private,ICE,Gasolina,UKL1,REST,Standard,SAV,41,Sevilla,automocion terry,03415D,medium,official,1
+2026,08,18,SEAT,ATECA,Private,ICE,Gasolina,UKL2,REST,Standard,SAT,05,Ávila,miferauto,03137D,medium,official,1
+2026,08,18,SEAT,ATECA,Private,ICE,Gasolina,UKL2,REST,Standard,SAT,35,Las Palmas,orvecame,80120D,high,official,1
+2026,08,18,SEAT,ATECA,Private,ICE,Gasolina,UKL2,REST,Standard,SAT,39,Cantabria,talleres hercos colindres,03562D,high,official,2
+2026,08,18,SEAT,ATECA,Private,ICE,Gasolina,UKL2,REST,Standard,SAT,43,Tarragona,baycar,00541R,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,14,Córdoba,avisa motor,03462D,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,17,Girona,proauto,03246D,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,19,Guadalajara,amarco car,03176D,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,30,Murcia,gines huertas cervantes,00595R,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,35,Las Palmas,orvecame,00590R,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,36,Pontevedra,copervi,03764D,high,official,1
+2026,08,18,SEAT,IBIZA,Private,ICE,Gasolina,UKL1,REST,Standard,HACH 5P,38,S.C. Tenerife,motor 7 islas,00547R,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,08,Barcelona,joumovil,03252D,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,08,Barcelona,martorell motor,00615R,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,11,Cádiz,automocion terry,0344KD,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,18,Granada,talleres bonachera,03909D,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,23,Jaén,savoy,00052R,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,30,Murcia,gines huertas cervantes,00595R,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,38,S.C. Tenerife,motor 7 islas,80119D,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,41,Sevilla,automocion terry,03415D,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,43,Tarragona,baycar,03283D,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,46,Valencia,miferauto,03395D,high,official,1
+2026,08,18,SEAT,LEON,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,HACH 5P,47,Valladolid,valladolid motor,0A611D,high,official,2
+2026,08,18,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,03,Alicante,murcia,TESLA MURCIA,high,official,1
+2026,08,18,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,18,Granada,granada,TESLA GRANADA,medium,official,1
+2026,08,18,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,28,Madrid,center madrid fuenlabrada,TESLA CENTER MADRID FUENLABRADA,high,official,1
+2026,08,18,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,31,Navarra,gipuzkoa oiartzun,TESLA GIPUZKOA OIARTZUN,medium,official,2
+2026,08,18,TESLA,MODEL Y,Private,BEV,Electrico,KKL,FOCUS SEGMENT,Standard,SAT,48,Bizkaia,center vizcaya iurreta,TESLA CENTER VIZCAYA IURRETA,high,official,3
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,04,Almería,"alborán motor, s.l.",00CD0-E9EAD-17A44-88800-01350-3,high,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,06,Badajoz,"trevauto comercio de automoviles, s.l.",00CD0-E9EAD-164C4-3A400-01260-3,high,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,08,Barcelona,"anoia automoció, s.l.",00CD0-E9EAD-17916-33400-01350-3,high,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,28,Madrid,"hersamotor, s.a.u",00CD0-E9EAD-15BD8-D4200-01260-3,medium,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,29,Málaga,"cumaca motor, s.l.",00CD0-E9EAD-14F87-B1600-01260-3,medium,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,40,Segovia,"mingorauto, s.l.",00CD0-E9EAD-15210-EC000-01260-3,medium,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,42,Soria,"futura motor sport, s.a.",00CD0-E9EAD-15A63-A4600-01260-3,high,official,1
+2026,08,18,TOYOTA,AYGO X,Private,ICE,Gasolina/Electrico,UKL0,REST,Standard,HACH 5P,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,1
+2026,08,18,TOYOTA,BZ4X,Private,BEV,Electrico,UKL2,REST,Standard,SAV,31,Navarra,"tauro motor car, s.l.",00CD0-E9EAD-1830A-FE000-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,19,Guadalajara,"motor arjona, s.l.",00CD0-E9EAD-18BB7-31800-01260-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,31,Navarra,"tauro motor car, s.l.",00CD0-E9EAD-1830A-FE000-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,39,Cantabria,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,39,Cantabria,"megamotor, s.l.",00CD0-E9EAD-159D4-3CC00-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,BEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,48,Bizkaia,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,2
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,08,Barcelona,"marescar motor, s.l.",00CD0-E9EAD-17894-15A00-01350-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,11,Cádiz,"automoción tomax, s.l.",00CD0-E9EAD-16B16-27800-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,12,Castellón,"cobelsa, s.a.u.",00CD0-E9EAD-156C4-98C00-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,15,A Coruña,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,medium,official,2
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,33,Asturias,"asturhibrido, s.l.",d4d885fe-4b49-4f91-919c-24338f20c7b0,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,39,Cantabria,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,43,Tarragona,"autoforum tarragona, s.a.",00CD0-E9EAD-18F94-9A600-01350-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,44,Teruel,"rimauto nipón, s.l.u.",00CD0-E9EAD-15B48-2CE00-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,ICE,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,15,A Coruña,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,medium,official,1
+2026,08,18,TOYOTA,C-HR,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,27,Lugo,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,high,official,1
+2026,08,18,TOYOTA,C-HR,Private,PHEV,Gasolina/Electrico Enchufable,UKL1,REST,Standard,SAV,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,01,Álava,"autocentro armentia, s.a.",00CD0-E9EAD-160D4-32E00-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,04,Almería,"alborán motor, s.l.",00CD0-E9EAD-17A44-88800-01350-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,04,Almería,"alborán motor, s.l.",00CD0-E9EAD-17A44-88800-01350-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,06,Badajoz,"trevauto comercio de automoviles, s.l.",00CD0-E9EAD-164C4-3A400-01260-3,high,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,06,Badajoz,"trevauto comercio de automoviles, s.l.",00CD0-E9EAD-164C4-3A400-01260-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,07,Baleares,"medimotors gestion, s.l.",00CD0-E9EAD-15E56-7AA00-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,08,Barcelona,"anoia automoció, s.l.",00CD0-E9EAD-17916-33400-01350-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,08,Barcelona,"kai motor vallés, s.l.",00CD0-E9EAD-17F64-B9600-01350-3,high,official,4
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,08,Barcelona,"marescar motor, s.l.",00CD0-E9EAD-17894-15A00-01350-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,08,Barcelona,"teams motor, s.a.",a3a3da07-e6ba-49b4-b4f6-79180c19630c,medium,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,09,Burgos,"autobafer, s.l.u.",00CD0-E9EAD-16AD3-BD600-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,11,Cádiz,"automoción tomax, s.l.",00CD0-E9EAD-16B16-27800-01260-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,11,Cádiz,"nimauto, s.l.",077e975a-e3f0-4020-8e48-a3870598ab6a,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,12,Castellón,"cobelsa, s.a.u.",00CD0-E9EAD-156C4-98C00-01260-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,14,Córdoba,"comluve, s.l.",00CD0-E9EAD-17299-BA800-01260-3,medium,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,15,A Coruña,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,medium,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,15,A Coruña,"compostela movil, s.a.u.",00CD0-E9EAD-16769-B9600-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,17,Girona,"japand 21, s.l.u.",00CD0-E9EAD-15456-BD200-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,18,Granada,"gracoluc, s.l.",143fa64a-1b7d-4aa1-8da6-c3f47091237d,high,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,18,Granada,"gracoluc, s.l.",143fa64a-1b7d-4aa1-8da6-c3f47091237d,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,20,Gipuzkoa,"euskoauto 2003, s.l.",00CD0-E9EAD-18DE6-78200-01350-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,28,Madrid,"motor arjona, s.l.",00CD0-E9EAD-18BB7-31800-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,29,Málaga,"automoción tomax, s.l.",00CD0-E9EAD-16B16-27800-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,29,Málaga,"cumaca motor, s.l.",00CD0-E9EAD-14F87-B1600-01260-3,medium,official,4
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,29,Málaga,"yokamotril, s.l.",00CD0-E9EAD-15F96-30200-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,medium,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,31,Navarra,"tauro motor car, s.l.",00CD0-E9EAD-1830A-FE000-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,33,Asturias,"asturhibrido, s.l.",d4d885fe-4b49-4f91-919c-24338f20c7b0,high,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,36,Pontevedra,"breogan gallega de automoción, s.l.u.",92a5b9ce-5ca2-4cab-8eab-8104ee5fe7e7,high,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,37,Salamanca,"hacha motor, s.l.",00CD0-E9EAD-15964-4DA00-01260-3,high,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,43,Tarragona,"autoforum tarragona, s.a.",00CD0-E9EAD-18F94-9A600-01350-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,8
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,47,Valladolid,"hybrid car, s.a.",00CD0-E9EAD-18153-C3C00-01350-3,high,official,2
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,48,Bizkaia,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
+2026,08,18,TOYOTA,COROLLA,Private,ICE,Gasolina/Electrico,UKL2,REST,Standard,HACH 5P,51,Ceuta,"parque ceutí del automóvil, s.l.",00CD0-E9EAD-18104-D1400-01350-3,high,official,1
+2026,08,18,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,24,León,"legio cars, s.l.u.",00CD0-E9EAD-1574E-AE000-01260-3,high,official,1
+2026,08,18,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,29,Málaga,"cumaca motor, s.l.",00CD0-E9EAD-14F87-B1600-01260-3,medium,official,1
+2026,08,18,TOYOTA,HI LUX,Private,ICE,Electrico,SKL,REST,Standard,PICKUP,37,Salamanca,"hacha motor, s.l.",00CD0-E9EAD-15964-4DA00-01260-3,medium,official,1
+2026,08,18,TOYOTA,LAND CRUISER,Private,ICE,Diesel Mild Hybrid,GKL,REST,Standard,SUV,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,high,official,1
+2026,08,18,TOYOTA,LAND CRUISER,Private,ICE,Diesel Mild Hybrid,GKL,REST,Standard,SUV,39,Cantabria,"megamotor, s.l.",00CD0-E9EAD-159D4-3CC00-01260-3,medium,official,1
+2026,08,18,TOYOTA,PROACE,Private,ICE,Electrico,SKL,REST,Standard,TRANSPORTER,25,Lleida,"naymotor, s.l.",00CD0-E9EAD-17B94-8AA00-01350-3,high,official,1
+2026,08,18,TOYOTA,PROACE CITY,Private,BEV,Electrico,SKL,REST,Standard,TRANSPORTER,08,Barcelona,"marescar motor, s.l.",00CD0-E9EAD-17894-15A00-01350-3,high,official,1
+2026,08,18,TOYOTA,PROACE VERSO,Private,BEV,Gasolina,SKL,REST,Standard,TRANSPORTER,15,A Coruña,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,high,official,1
+2026,08,18,TOYOTA,PROACE VERSO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,10,Cáceres,"novomotor cáceres, s.l.",f3c0b6dd-edfa-4827-a786-cb70a4dae216,medium,official,1
+2026,08,18,TOYOTA,PROACE VERSO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,medium,official,1
+2026,08,18,TOYOTA,PROACE VERSO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,31,Navarra,"tauro motor car, s.l.",00CD0-E9EAD-1830A-FE000-01260-3,high,official,1
+2026,08,18,TOYOTA,PROACE VERSO,Private,ICE,Gasolina,SKL,REST,Standard,TRANSPORTER,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,ICE,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,07,Baleares,"medimotors gestion, s.l.",00CD0-E9EAD-15E56-7AA00-01260-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,04,Almería,"alborán motor, s.l.",00CD0-E9EAD-17A44-88800-01350-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,08,Barcelona,"marescar motor, s.l.",00CD0-E9EAD-17894-15A00-01350-3,high,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,16,Cuenca,"automoviles albacete, s.l.",00CD0-E9EAD-18033-86800-01350-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,17,Girona,"aura motor, s.l.",00CD0-E9EAD-16556-0C000-01260-3,high,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,28,Madrid,"hersamotor, s.a.u",00CD0-E9EAD-15BD8-D4200-01260-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,medium,official,2
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,32,Ourense,"neumáticos navaliegos, s.a.",00CD0-E9EAD-15B0C-81600-01260-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,43,Tarragona,"autoforum tarragona, s.a.",00CD0-E9EAD-18F94-9A600-01350-3,high,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,1
+2026,08,18,TOYOTA,RAV 4,Private,PHEV,Gasolina/Electrico Enchufable,UKL2,REST,Standard,SAV,48,Bizkaia,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,01,Álava,"autocentro armentia, s.a.",00CD0-E9EAD-160D4-32E00-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,03,Alicante,"medimotors premium, s.l.",a878988b-42d6-4ed4-944e-3eb04a3c072c,high,official,4
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,05,Ávila,"automoviles ken, s.l.",00CD0-E9EAD-18994-B5800-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,07,Baleares,"medimotors gestion, s.l.",00CD0-E9EAD-15E56-7AA00-01260-3,high,official,4
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,08,Barcelona,"anoia automoció, s.l.",00CD0-E9EAD-17916-33400-01350-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,08,Barcelona,"automobils supra motor, s.l.",00CD0-E9EAD-16193-D3400-01260-3,medium,official,2
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,08,Barcelona,"marescar motor, s.l.",00CD0-E9EAD-17894-15A00-01350-3,high,official,2
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,08,Barcelona,"teams motor, s.a.",a3a3da07-e6ba-49b4-b4f6-79180c19630c,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,13,Ciudad Real,"tresa motor, s.l.u. ( ciudad real",00CD0-E9EAD-18546-B1400-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,15,A Coruña,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,15,A Coruña,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,17,Girona,"japand 21, s.l.u.",00CD0-E9EAD-15456-BD200-01260-3,high,official,2
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,28,Madrid,"kobe motor, s.l.",00CD0-E9EAD-150FB-9E000-01260-3,medium,official,2
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,29,Málaga,"automoción tomax, s.l.",00CD0-E9EAD-16B16-27800-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,29,Málaga,"cumaca motor, s.l.",00CD0-E9EAD-14F87-B1600-01260-3,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,33,Asturias,"asturhibrido, s.l.",d4d885fe-4b49-4f91-919c-24338f20c7b0,high,official,2
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,33,Asturias,"breogan motor, s.l.u.",00CD0-E9EAD-18BF8-08400-01260-3,medium,official,2
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,36,Pontevedra,"breogan gallega de automoción, s.l.u.",92a5b9ce-5ca2-4cab-8eab-8104ee5fe7e7,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,36,Pontevedra,"breogan gallega de automoción, s.l.u.",92a5b9ce-5ca2-4cab-8eab-8104ee5fe7e7,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,39,Cantabria,"megamotor, s.l.",00CD0-E9EAD-159D4-3CC00-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,43,Tarragona,"autoforum tarragona, s.a.",00CD0-E9EAD-18F94-9A600-01350-3,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,44,Teruel,"rimauto nipón, s.l.u.",00CD0-E9EAD-15B48-2CE00-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,46,Valencia,"sakurauto, s.a. ( valencia",00CD0-E9EAD-17E8C-24800-01350-3,medium,official,3
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,48,Bizkaia,"japan car, s.a.",00CD0-E9EAD-179F3-C6A00-01350-3,medium,official,1
+2026,08,18,TOYOTA,YARIS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,HACH 5P,49,Zamora,"legio cars zamora, s.l.u.",00CD0-E9EAD-17726-45000-01350-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,03,Alicante,"medimotors premium, s.l.",a878988b-42d6-4ed4-944e-3eb04a3c072c,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,03,Alicante,"medimotors premium, s.l.",a878988b-42d6-4ed4-944e-3eb04a3c072c,medium,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,06,Badajoz,"trevauto comercio de automoviles, s.l.",00CD0-E9EAD-164C4-3A400-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,08,Barcelona,"anoia automoció, s.l.",00CD0-E9EAD-17916-33400-01350-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,08,Barcelona,"kai motor vallés, s.l.",00CD0-E9EAD-17F64-B9600-01350-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,08,Barcelona,"marescar motor, s.l.",00CD0-E9EAD-17894-15A00-01350-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,11,Cádiz,"automoción tomax, s.l.",00CD0-E9EAD-16B16-27800-01260-3,medium,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,11,Cádiz,"nimauto, s.l.",077e975a-e3f0-4020-8e48-a3870598ab6a,medium,official,2
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,15,A Coruña,"breogan gallega de automoción, s.l.u.",92a5b9ce-5ca2-4cab-8eab-8104ee5fe7e7,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,17,Girona,"japand 21, s.l.u.",00CD0-E9EAD-15456-BD200-01260-3,medium,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,18,Granada,"gracoluc, s.l.",143fa64a-1b7d-4aa1-8da6-c3f47091237d,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,22,Huesca,"coches la oscense, s.l.",00CD0-E9EAD-17B07-3A400-01350-3,medium,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,24,León,"neumáticos navaliegos, s.a.",00CD0-E9EAD-15B0C-81600-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,30,Murcia,"labasa, s.l.",00CD0-E9EAD-16F93-A4200-01260-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,34,Palencia,"hybrid car, s.a.",00CD0-E9EAD-18153-C3C00-01350-3,high,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,34,Palencia,"hybrid car, s.a.",00CD0-E9EAD-18153-C3C00-01350-3,medium,official,1
+2026,08,18,TOYOTA,YARIS CROSS,Private,ICE,Gasolina/Electrico,UKL1,REST,Standard,SAV,52,Melilla,"nipon melilla, s.a.",00CD0-E9EAD-15C83-C2E00-01260-3,medium,official,1
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,07,Baleares,autovidal,AUTOVIDAL,medium,official,1
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,15,A Coruña,merenauto,MERENAUTO,high,official,1
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,17,Girona,turismes girona,TURISMES GIRONA,high,official,1
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,25,Lleida,llemosa,LLEMOSA,medium,official,1
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,29,Málaga,vypsa,VYPSA,medium,official,1
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,35,Las Palmas,orvecame,ORVECAME,high,official,2
+2026,08,18,VOLVO,EX30,Private,BEV,Electrico,UKL1,FOCUS SEGMENT,Standard,SAV,39,Cantabria,selective motor,SELECTIVE MOTOR,high,official,1
+2026,08,18,VOLVO,XC40,Private,ICE,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,05,Ávila,eurocatur,EUROCATUR,medium,official,1
+2026,08,18,VOLVO,XC40,Private,ICE,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,31,Navarra,navarsuecia automoviles,NAVARSUECIA AUTOMOVILES,high,official,1
+2026,08,18,VOLVO,XC40,Private,ICE,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,43,Tarragona,tarraco center,TARRACO CENTER,high,official,1
+2026,08,18,VOLVO,XC40,Private,ICE,Gasolina Mild Hybrid,UKL2,FOCUS SEGMENT,Standard,SAV,45,Toledo,viñarás premium,VINARAS PREMIUM,high,official,1
+2026,08,18,VOLVO,XC60,Private,ICE,Gasolina/Electrico Enchufable,KKL,FOCUS SEGMENT,Standard,SAV,15,A Coruña,merenauto,MERENAUTO,high,official,1
+2026,08,18,VOLVO,XC90,Private,PHEV,Gasolina/Electrico Enchufable,MKL,FOCUS SEGMENT,Standard,SAV,24,León,vendel cars,VENDEL CARS,medium,official,1
