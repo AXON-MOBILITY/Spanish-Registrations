@@ -37,5 +37,10 @@ jobs:
             echo "Sin cambios."
             exit 0
           fi
-          git commit -m "Portugal: snapshot mensual ACAP [skip ci]"
+          git commit -m "Portugal: snapshot mensual ACAP"
+          if ! git pull --rebase origin main; then
+            git rebase --abort || true
+            echo "::error::Rebase onto origin/main failed; not force-pushing."
+            exit 1
+          fi
           git push

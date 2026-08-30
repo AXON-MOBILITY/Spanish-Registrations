@@ -63,4 +63,14 @@ jobs:
           if git diff --cached --quiet; then
             echo "Sin cambios tras el reprocesado — los ficheros DGT no han variado."
             exit 0
-      
+          fi
+          git commit -m "DGT weekly refresh: reprocesado --force"
+          # El sync diario comparte esta lock-group, pero por si acaso el
+          # checkout quedó una décima por detrás de origin/main, rebasa
+          # antes de empujar en vez de fallar con non-fast-forward.
+          if ! git pull --rebase origin main; then
+            git rebase --abort || true
+            echo "::error::Rebase onto origin/main falló (conflicto real en ficheros generados); no se fuerza el push."
+            exit 1
+          fi
+          git push
