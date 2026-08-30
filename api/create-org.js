@@ -3,8 +3,8 @@
 // llega al navegador). Protegido: valida el token de quien llama y exige
 // que figure en platform_admins antes de hacer nada.
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://oazxgmzhwqbfyfanwiir.supabase.co';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_XI9OEZpCHlZ8ZCAbjGA7UQ_1lAxsZBG';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zuqlmglawucerayjrqam.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_9_fkC1J3JcWiwO9UDLGoFg_aqnTNtMK';
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const EMAIL_DOMAIN = 'accounts.axonmobility.internal';
 
