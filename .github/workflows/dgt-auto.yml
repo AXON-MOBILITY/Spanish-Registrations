@@ -23,7 +23,9 @@ on:
     # GitHub Actions usa UTC. 9:30 hora de Espana (CEST, UTC+2) = 7:30 UTC.
     # Nota: en horario de invierno (CET, UTC+1) esto se ejecutara a las 8:30
     # hora local salvo que se ajuste el cron.
-    - cron: "30 7 * * *"
+    # Solo de lunes a viernes: la DGT no publica matriculaciones en fin de
+    # semana, asi que ejecutar sabado/domingo no aporta datos nuevos.
+    - cron: "30 7 * * 1-5"
 
 permissions:
   contents: write
