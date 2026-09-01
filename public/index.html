@@ -596,9 +596,37 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   };
 
   window.doLogout=async function(){
-    await sb.auth.signOut();
+    if(!window.IS_GUEST){ try{ await sb.auth.signOut(); }catch(e){} }
     window.ORG=null;
+    window.IS_GUEST=false;
     location.reload();
+  };
+
+  // Guest view: no Supabase session, a synthetic neutral org so the whole
+  // ORG-driven UI renders generic -- no brand highlighted (home_brands: []),
+  // no BMW-only filters (slug !== 'bmw'), no org badge (display_name null).
+  // The guest password is a shared client-side gate, consistent with the
+  // app's existing model (the dashboard data in /data/*.json is static and
+  // already public); it is not an account.
+  const GUEST_PW='AXONMOBILITY2026';
+  window.enterAsGuest=function(){
+    const pwEl=document.getElementById('guest-pw');
+    const err=document.getElementById('login-err');
+    if(!pwEl || pwEl.value!==GUEST_PW){
+      if(err) err.textContent='Incorrect guest password';
+      if(pwEl){ pwEl.value=''; pwEl.focus(); }
+      return false;
+    }
+    window.IS_GUEST=true;
+    window.IS_PLATFORM_ADMIN=false;
+    window.ORG={ slug:'guest', display_name:null,
+      config:{ home_brands:[], focus_brands:[], watch_brands:[], use_calibration:false } };
+    hideLogin();
+    if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
+    if(typeof renderOrgBadge==='function') renderOrgBadge();
+    if(typeof populateSegSelectors==='function') populateSegSelectors();
+    document.dispatchEvent(new CustomEvent('org-ready',{detail:window.ORG}));
+    return false;
   };
 
   document.addEventListener('DOMContentLoaded',async function(){
@@ -617,6 +645,9 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     [uInput,pInput].forEach(el=>{
       if(el) el.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.doLogin();}});
     });
+    const gInput=document.getElementById('guest-pw');
+    if(gInput) gInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.enterAsGuest();}});
+    if(!session && (location.hash==='#guest' || location.search.indexOf('guest')>-1) && gInput) gInput.focus();
   });
 })();
 </script>
@@ -634,6 +665,12 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password">
     <button class="login-btn" id="login-submit" type="button" onclick="return doLogin()">Sign in</button>
     <div class="login-err" id="login-err"></div>
+    <div style="border-top:1px solid #e5e7eb;margin-top:16px;padding-top:14px">
+      <div style="font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Guest access</div>
+      <div style="font-size:.72rem;color:#6b7280;margin-bottom:8px">Generic market view — no brand highlighted, no brand-specific filters.</div>
+      <input id="guest-pw" class="login-input" type="password" placeholder="Guest password" autocomplete="off" style="margin-bottom:8px">
+      <button class="login-btn" id="guest-submit" type="button" onclick="return enterAsGuest()" style="background:#475569">Enter as guest</button>
+    </div>
   </div>
 </div>
 
