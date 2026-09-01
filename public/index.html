@@ -1123,7 +1123,7 @@ async function submitCreateOrg(){
           <div class="tbl-wrap">
             <table>
               <thead><tr>
-                <th>Brand</th><th>Regs</th><th>YoY%</th><th>YoY&thinsp;&Delta;</th><th>Market Share %</th>
+                <th>Brand</th><th>Regs</th><th>YoY%</th><th>YoY&thinsp;&Delta;</th><th title="Brand YoY% minus total-market YoY%, in percentage points">vs&thinsp;Market</th><th>Market Share %</th>
               </tr></thead>
               <tbody id="tbody-regs"></tbody>
             </table>
@@ -2834,6 +2834,7 @@ function render(){
   Object.values(byBrandYoY).forEach(d=>{totRef+=d.ref;totPrv+=d.prev;});
   const totYoYPct=hasPrev&&totPrv?(totRef-totPrv)/totPrv*100:null;
   const totYoYD=hasPrev?totRef-totPrv:null;
+  _RC.totYoYPct=totYoYPct; // for the per-model "vs Market" column in toggleModelRows
 
   const sorted=Object.entries(byBrand).sort((a,b)=>b[1].total-a[1].total);
   // Tablas: solo marcas reales (mismas que el desplegable); el ruido residual
@@ -2895,6 +2896,7 @@ function render(){
     const yD=byBrandYoY[brand];
     const yPct=yD&&yD.prev?(yD.ref-yD.prev)/yD.prev*100:null;
     const yDelta=yD?yD.ref-yD.prev:null;
+    const vsMkt=(yPct!==null&&totYoYPct!==null)?yPct-totYoYPct:null;
     const share=total?d.total/total*100:0;
     const tr=document.createElement('tr');
     if(isHomeBrand(brand)) tr.style.background='rgba(217,119,6,.12)';
@@ -2902,20 +2904,23 @@ function render(){
       <td><button class="btn-xpd" onclick="toggleModelRows(this,'${brand.replace(/'/g,"\\'")}')">▶</button><span class="${(()=>{const _f=BRAND_LOGO[brand];return BRAND_COLOR_LOGO[_f]?'ov-brand-badge color-logo':_f?'ov-brand-badge white-logo':'ov-brand-badge no-logo'})()}"${!BRAND_LOGO[brand]?` style="background:${_brandColor(brand)}"`:''}>${_brandLogo(brand)}</span>${brand}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
       <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
+      <td class="${cls(vsMkt)}">${ppStr(vsMkt)}</td>
       <td>${fP2(share)}</td>`;
     tbody.appendChild(tr);
   });
   if(otherRow){
     const oPct=hasPrev&&otherRow.yoy.prev?(otherRow.yoy.ref-otherRow.yoy.prev)/otherRow.yoy.prev*100:null;
+    const oVsMkt=(oPct!==null&&totYoYPct!==null)?oPct-totYoYPct:null;
     const tr=document.createElement('tr');
     tr.innerHTML=`<td style="color:var(--text2);font-style:italic">${otherRow.label}</td><td>${fN(otherRow.d.total)}</td>
-      <td class="${cls(oPct)}">${yPctStr(oPct)}</td><td>—</td><td>${fP2(total?otherRow.d.total/total*100:0)}</td>`;
+      <td class="${cls(oPct)}">${yPctStr(oPct)}</td><td>—</td><td class="${cls(oVsMkt)}">${ppStr(oVsMkt)}</td><td>${fP2(total?otherRow.d.total/total*100:0)}</td>`;
     tbody.appendChild(tr);
   }
   addTotalRow(tbody,[
     'Total',fN(total),
     `<span class="${cls(totYoYPct)}">${yPctStr(totYoYPct)}</span>`,
     `<span class="${cls(totYoYD)}">${totYoYD!==null?(totYoYD>=0?'+':'')+fN(totYoYD):'—'}</span>`,
+    '<span style="color:var(--text2)">—</span>',
     '100.00%'
   ]);
 
@@ -3109,6 +3114,9 @@ function render(){
 // ── HELPERS ──────────────────────────────────────────────
 function cls(v){return v===null?'':(v>=0?'yoy-p':'yoy-n')}
 function yPctStr(v){return v===null?'—':(v===0?'0.00%':((v>=0?'+':'')+v.toFixed(2)+'%'))}
+// Brand growth vs. the whole market, in percentage points: brand YoY% - market YoY%.
+// Positive = the brand is outpacing the market (gaining share); negative = lagging.
+function ppStr(v){return v===null?'—':(v>=0?'+':'')+v.toFixed(1)+' pp'}
 
 function addTotalRow(tbody,cells){
   const tr=document.createElement('tr');tr.className='total-row';
@@ -4854,12 +4862,14 @@ function toggleModelRows(btn,brand){
     const prev=byMoPrev[mo]||0;
     const yPct=(prev&&d.ref)?(d.ref-prev)/prev*100:null;
     const yDelta=prev?d.ref-prev:null;
+    const vsMkt=(yPct!==null&&_RC.totYoYPct!=null)?yPct-_RC.totYoYPct:null;
     const share=brandTotal?d.total/brandTotal*100:0;
     const sub=document.createElement('tr');
     sub.className='model-sub'+(d.unknown?' model-sub-unknown':'');
     sub.innerHTML=`<td>${moLabel}</td><td>${fN(d.total)}</td>
       <td class="${cls(yPct)}">${yPctStr(yPct)}</td>
       <td class="${cls(yDelta)}">${yDelta!==null?(yDelta>=0?'+':'')+fN(yDelta):'—'}</td>
+      <td class="${cls(vsMkt)}">${ppStr(vsMkt)}</td>
       <td>${fP2(share)}</td>`;
     ins.after(sub);ins=sub;
   });
