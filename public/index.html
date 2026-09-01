@@ -530,6 +530,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     const settingsBtn=document.getElementById('btn-org-settings');
     if(settingsBtn) settingsBtn.style.display='';
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
+    if(typeof applySegmentFilterVisibility==='function') applySegmentFilterVisibility();
     if(typeof renderOrgBadge==='function') renderOrgBadge();
     if(typeof populateSegSelectors==='function') populateSegSelectors();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data.organizations}));
@@ -623,6 +624,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       config:{ home_brands:[], focus_brands:[], watch_brands:[], use_calibration:false } };
     hideLogin();
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
+    if(typeof applySegmentFilterVisibility==='function') applySegmentFilterVisibility();
     if(typeof renderOrgBadge==='function') renderOrgBadge();
     if(typeof populateSegSelectors==='function') populateSegSelectors();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:window.ORG}));
@@ -1653,6 +1655,16 @@ function applyHighPerfVisibility(){
   if(grp) grp.style.display=(window.ORG && window.ORG.slug==='bmw') ? '' : 'none';
 }
 
+// The Segment sidebar filter (UKL0/UKL1/UKL2/KKL/MKL/SKL/GKL/GKL+) is BMW /
+// the data vendor's own internal size taxonomy, not a general-market
+// standard (SKL in particular mixes van-derived models with the Duster) --
+// hidden in the guest view rather than mislabel it. Vehicle size can still
+// be narrowed with Body and Vehicle Type, which are standard.
+function applySegmentFilterVisibility(){
+  const grp=g('sg-segs');
+  if(grp) grp.style.display=window.IS_GUEST ? 'none' : '';
+}
+
 // Muestra que organizacion/perfil esta activo (topbar), para que sea obvio
 // cuando se esta viendo la vista de BMW vs la de otra organizacion.
 function renderOrgBadge(){
@@ -1882,6 +1894,7 @@ fetch('data/records.json?v='+Date.now()).then(r=>r.json()).then(data=>{
 // la organizacion llega tarde, se refresca lo que depende de ella.
 document.addEventListener('org-ready',function(){
   if(typeof applyHighPerfVisibility==='function')applyHighPerfVisibility();
+  if(typeof applySegmentFilterVisibility==='function')applySegmentFilterVisibility();
   if(typeof renderOrgBadge==='function')renderOrgBadge();
   if(typeof populateSegSelectors==='function')populateSegSelectors();
   if(typeof REC==='undefined'||!REC)return;
