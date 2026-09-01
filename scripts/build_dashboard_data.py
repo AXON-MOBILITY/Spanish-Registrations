@@ -36,6 +36,8 @@ _BRAND_NORM = {
     'AUTOMOBILI LAMBORGHINI S.P.A.': 'Lamborghini',
     'ALPINE': 'Alpine', 'ALPINA': 'Alpina', 'ASTON MARTIN': 'Aston Martin',
     'AUDI': 'Audi', 'BENTLEY': 'Bentley', 'BMW': 'BMW',
+    'BAYER.MOT.WERKE-BMW': 'BMW', 'BAYERISCHE MOTOREN WERKE': 'BMW',
+    'BAYERISCHE MOTOREN WERKE AG': 'BMW',
     'CADILLAC': 'Cadillac', 'CENNTRO': 'Cenntro', 'CITROEN': 'Citroen',
     'CUPRA': 'Cupra', 'DACIA': 'Dacia', 'DEEPAL': 'Changan', 'DR': 'DR',
     'DS': 'DS', 'ESAGONO ENERGIA': 'Esagono Energia', 'ETESIA': 'Etesia',
@@ -1409,10 +1411,16 @@ def build_pending_classification(monthly_records, mtd_records):
          "uds_12m": vol12[b],
          "models": models}
 
+    # >=50 uds/12m, per the docstring and docs/PROTOCOLO_MARCAS_NUEVAS.md. Below
+    # that the queue fills with bodybuilder / camper-converter strings that DGT
+    # puts in the MARCA field for specially-bodied light vehicles (Iturri,
+    # Carado, "Carrocerias X", mangled "Bayer.Mot.Werke-Bmw", ...) -- one-off
+    # registrations, not new car brands. A real new marque clears 50/yr quickly.
+    NEW_BRAND_MIN_12M = 50
     new_brands = sorted((
         _brand_entry(b)
         for b in vol12
-        if first_seen[b] >= horizon and vol12[b] >= 1 and b not in _KNOWN_CLASSIFIED
+        if first_seen[b] >= horizon and vol12[b] >= NEW_BRAND_MIN_12M and b not in _KNOWN_CLASSIFIED
     ), key=lambda x: -x["uds_12m"])
 
     pend = defaultdict(int)
