@@ -667,7 +667,6 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     <div class="login-err" id="login-err"></div>
     <div style="border-top:1px solid #e5e7eb;margin-top:16px;padding-top:14px">
       <div style="font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;margin-bottom:8px">Guest access</div>
-      <div style="font-size:.72rem;color:#6b7280;margin-bottom:8px">Generic market view — no brand highlighted, no brand-specific filters.</div>
       <input id="guest-pw" class="login-input" type="password" placeholder="Guest password" autocomplete="off" style="margin-bottom:8px">
       <button class="login-btn" id="guest-submit" type="button" onclick="return enterAsGuest()" style="background:#475569">Enter as guest</button>
     </div>
@@ -1424,7 +1423,7 @@ async function submitCreateOrg(){
       <div id="alrt-brief"></div>
       <div class="card" style="padding:14px 16px">
         <div class="alrt-header">
-          <span style="font-weight:700;font-size:.95rem">Daily Anomaly Alerts · Focus Segment</span>
+          <span style="font-weight:700;font-size:.95rem" id="alrt-title-lbl">Daily Anomaly Alerts · Focus Segment</span>
           <span class="alrt-date" id="alrt-date-lbl"></span>
         </div>
         <div class="alrt-filters">
@@ -1704,6 +1703,25 @@ function winnerColor(brand){
 // comportamiento actual de BMW ni un poco.
 const SUB_BUCKETS=['REST','FOCUS SEGMENT'];
 
+// Guest view: no client, no competitive frame. The Focus/Rest split is
+// replaced by how the market is read generally -- brand price/position tiers:
+// PREMIUM, NEAR-PREMIUM, BASE (everything else). Brand strings match REC.enums.marca.
+const MARKET_TIER_PREMIUM=new Set([
+  'Audi','BMW','Mercedes','Mercedes-V','Lexus','Volvo','Porsche','Jaguar','Land Rover',
+  'Genesis','Tesla','Polestar','DS','Alfa Romeo','Cadillac','Maserati','Ferrari',
+  'Lamborghini','Bentley','Rolls-Royce','Aston Martin','McLaren','Lotus','Alpine',
+  'Alpina','Morgan','Ineos',
+]);
+const MARKET_TIER_NEAR=new Set(['MINI','Cupra','Mazda']);
+function brandTier(brand){
+  if(MARKET_TIER_PREMIUM.has(brand))return 'PREMIUM';
+  if(MARKET_TIER_NEAR.has(brand))return 'NEAR-PREMIUM';
+  return 'BASE';
+}
+const GUEST_SUB_BUCKETS=['PREMIUM','NEAR-PREMIUM','BASE'];
+// The subsegment bucket set for the current view.
+function subBuckets(){ return window.IS_GUEST ? GUEST_SUB_BUCKETS : SUB_BUCKETS; }
+
 // Vehicle Type: agrupa el BODY del dataset (ya limitado por la DGT a
 // turismos + furgonetas ligeras N1) en 2 categorias generales para poder
 // mostrar solo turismos, solo comerciales/furgonetas, o ambos.
@@ -1723,6 +1741,8 @@ function orgShowsSubConcepts(){
   return !!(window.ORG && window.ORG.config && window.ORG.config.show_subconcepts);
 }
 function rowSubBucket(r){
+  // Guest: market brand tier, not the client's Focus/Rest frame.
+  if(window.IS_GUEST) return brandTier(REC.enums.marca[r[COL.MARCA]]);
   const cfg=orgFocusBrands();
   // cfg===undefined (la clave no existe, caso BMW): usar la clasificacion
   // pre-calculada del dataset. cfg es un array (incluso [] vacio): la org
@@ -1866,6 +1886,8 @@ document.addEventListener('org-ready',function(){
   if(typeof populateSegSelectors==='function')populateSegSelectors();
   if(typeof REC==='undefined'||!REC)return;
   buildSubsegmentSidebar();
+  if(typeof reinitTrendForView==='function')reinitTrendForView();
+  if(typeof renderAlerts==='function'&&typeof TREND!=='undefined'&&TREND)renderAlerts();
   render();
   const _onProvOrMap=(g('pane-prov')&&g('pane-prov').classList.contains('on'))||(g('pane-map')&&g('pane-map').classList.contains('on'));
   if(_onProvOrMap&&typeof PROV!=='undefined'&&PROV)renderProv();
@@ -2225,13 +2247,13 @@ function buildSubsegmentSidebar(){
 
   F.concepts=new Set(CONCEPTS);
   addQuickSel('sb-subs',
-    ()=>{ SUB_BUCKETS.forEach(s=>F.subs.add(s)); CONCEPTS.forEach(c=>F.concepts.add(c));
+    ()=>{ subBuckets().forEach(s=>F.subs.add(s)); CONCEPTS.forEach(c=>F.concepts.add(c));
           cont.querySelectorAll('input').forEach(cb=>cb.checked=true); render(); },
     ()=>{ F.subs.clear(); F.concepts.clear();
           cont.querySelectorAll('input').forEach(cb=>cb.checked=false); render(); }
   );
-  F.subs=new Set(SUB_BUCKETS);
-  SUB_BUCKETS.forEach(s=>{
+  F.subs=new Set(subBuckets());
+  subBuckets().forEach(s=>{
     const el=mkCb(s||'(All)',true,on=>{
       if(on){
         F.subs.add(s);
@@ -3324,9 +3346,13 @@ function renderProv(){
   // esta precalculada con la clasificacion Focus/Resto original (BMW); para
   // una org con set competitivo propio ese cruce no aplica, asi que el
   // filtro de Subsegment no restringe los datos de Provincias en ese caso.
-  const customFocus=!!orgFocusBrands();
+  // province_brands.json's filtered structure is precalculated with the
+  // original Focus/Rest (BMW) split, so it can't honour a custom set nor the
+  // guest brand-tier split -- in both cases the Subsegment filter just doesn't
+  // restrict the Provinces data.
+  const customFocus=!!orgFocusBrands() || !!window.IS_GUEST;
   const allSegsActive=F.segs.size>=E.seg.length;
-  const allSubsActive=customFocus || F.subs.size>=SUB_BUCKETS.length;
+  const allSubsActive=customFocus || F.subs.size>=subBuckets().length;
   const allHpsActive=F.hps.size===0;
   const allVehTypeActive=F.vehType.size>=2;
   const useFiltered=!allSegsActive||!allSubsActive||!allHpsActive||!allVehTypeActive;
@@ -3545,9 +3571,14 @@ function trChips(){
 
 function trSafeId(s){return String(s).replace(/[^A-Za-z0-9_-]+/g,'-');}
 
+// Trend subsegment pills. Guest: one pill per market tier (key === label,
+// no concept sub-pills). Otherwise the client Focus/Rest split with concepts.
+function _trSubKeys(){ return window.IS_GUEST ? GUEST_SUB_BUCKETS.slice() : ['REST','FOCUS']; }
+function _trSubPairs(){ return window.IS_GUEST ? GUEST_SUB_BUCKETS.map(k=>[k,k]) : [['REST','REST'],['FOCUS','FOCUS SEGMENT']]; }
+
 function trRefreshSubPills(){
-  ['REST','FOCUS'].forEach(k=>{
-    const pill=g('tr-sub-'+k);
+  _trSubKeys().forEach(k=>{
+    const pill=g('tr-sub-'+trSafeId(k));
     if(pill)pill.classList.toggle('on',TR.subs.has(k));
   });
   CONCEPTS.forEach(c=>{
@@ -3555,32 +3586,32 @@ function trRefreshSubPills(){
     if(pill)pill.classList.toggle('on',TR.concepts.has(c));
   });
   const wrap=g('tr-focus-wrap');
-  if(wrap)wrap.style.display=(TR.subs.has('FOCUS')&&orgShowsSubConcepts())?'flex':'none';
+  if(wrap)wrap.style.display=(!window.IS_GUEST&&TR.subs.has('FOCUS')&&orgShowsSubConcepts())?'flex':'none';
 }
 
 function initTrendSubFilters(){
-  TR.subs=TR.subs||new Set(['REST','FOCUS']);
+  TR.subs=TR.subs||new Set(_trSubKeys());
   TR.concepts=TR.concepts||new Set(CONCEPTS);
-  if(g('tr-sub-REST')){trRefreshSubPills();return;}
-  [['REST','REST'],['FOCUS','FOCUS SEGMENT']].forEach(([key,label])=>{
+  if(g('tr-sub-'+trSafeId(_trSubKeys()[0]))){trRefreshSubPills();return;}
+  _trSubPairs().forEach(([key,label])=>{
     const pill=document.createElement('div');
-    pill.id='tr-sub-'+key;
+    pill.id='tr-sub-'+trSafeId(key);
     pill.className='sg-pill on';
     pill.textContent=label;
     pill.onclick=()=>{
       if(TR.subs.size===1&&TR.subs.has(key)){
-        TR.subs=new Set(['REST','FOCUS']);
+        TR.subs=new Set(_trSubKeys());
         TR.concepts=new Set(CONCEPTS);
       } else {
         TR.subs=new Set([key]);
-        TR.concepts=key==='FOCUS'?new Set(CONCEPTS):new Set();
+        TR.concepts=(!window.IS_GUEST&&key==='FOCUS')?new Set(CONCEPTS):new Set();
       }
       trRefreshSubPills();
       renderTrend();
     };
     g('tr-sub').appendChild(pill);
   });
-  CONCEPTS.forEach(c=>{
+  if(!window.IS_GUEST) CONCEPTS.forEach(c=>{
     const pill=document.createElement('div');
     pill.id='tr-focus-'+trSafeId(c);
     pill.className='sg-pill on';
@@ -3606,9 +3637,10 @@ function initTrendSubFilters(){
 
 function trendSubOk(r){
   const E=REC.enums;
-  const key=rowSubBucket(r)==='FOCUS SEGMENT'?'FOCUS':'REST';
+  const b=rowSubBucket(r);
+  const key=window.IS_GUEST ? b : (b==='FOCUS SEGMENT'?'FOCUS':'REST');
   if(!TR.subs.has(key))return false;
-  if(key==='FOCUS'){
+  if(!window.IS_GUEST && key==='FOCUS'){
     const bc=_BRAND_CONCEPT[E.marca[r[COL.MARCA]]];
     if(bc&&!TR.concepts.has(bc))return false;
   }
@@ -3668,7 +3700,17 @@ function initTrend(){
   TR.months=Object.keys(mm).sort();
   TR.days=TREND.days.map(d=>d.day);
   TR.sel=homeBrands().filter(b=>BRAND_CHOICES.includes(b));
-  if(!TR.sel.length&&BRAND_CHOICES.length)TR.sel=[BRAND_CHOICES[0]];
+  if(!TR.sel.length&&BRAND_CHOICES.length){
+    if(window.IS_GUEST){
+      // General view: no client brand to pin -- seed with the largest brands
+      // by total registrations so the chart opens on something meaningful.
+      const vol={};
+      REC.rows.forEach(r=>{const b=REC.enums.marca[r[COL.MARCA]];vol[b]=(vol[b]||0)+r[COL.N];});
+      TR.sel=Object.entries(vol).sort((a,b)=>b[1]-a[1]).map(([b])=>b)
+        .filter(b=>BRAND_CHOICES.includes(b)).slice(0,5);
+    }
+    if(!TR.sel.length)TR.sel=[BRAND_CHOICES[0]];
+  }
   BRAND_CHOICES.forEach(b=>g('tr-brand-list').appendChild(new Option(b,b)));
   // Model choices: "Brand / Model" for models with ≥50 units
   TR.modSel=TR.modSel||[];
@@ -3716,6 +3758,31 @@ function initTrend(){
     g('tr-mkt').appendChild(pill);
   });
   trChips();renderTrend();
+}
+
+// The Trend tab is built once, right after its data loads -- which is before a
+// late Supabase login (or guest entry) resolves. When the view identity lands
+// after that, rebuild only the parts that depend on it: the subsegment pills
+// (Focus/Rest vs. the guest brand tiers) and the pre-selected brands.
+function reinitTrendForView(){
+  if(typeof TREND==='undefined'||!TREND||typeof REC==='undefined'||!REC||typeof TR==='undefined')return;
+  TR.subs=null;TR.concepts=null;
+  const subC=g('tr-sub'),focC=g('tr-focus');
+  if(subC)subC.innerHTML='';
+  if(focC)focC.innerHTML='';
+  initTrendSubFilters();
+  TR.sel=homeBrands().filter(b=>BRAND_CHOICES.includes(b));
+  if(!TR.sel.length&&BRAND_CHOICES.length){
+    if(window.IS_GUEST){
+      const vol={};
+      REC.rows.forEach(r=>{const b=REC.enums.marca[r[COL.MARCA]];vol[b]=(vol[b]||0)+r[COL.N];});
+      TR.sel=Object.entries(vol).sort((a,b)=>b[1]-a[1]).map(([b])=>b)
+        .filter(b=>BRAND_CHOICES.includes(b)).slice(0,5);
+    }
+    if(!TR.sel.length)TR.sel=[BRAND_CHOICES[0]];
+  }
+  if(typeof trChips==='function')trChips();
+  if(typeof renderTrend==='function')renderTrend();
 }
 
 function trDrawLine(canvasId,labels,datasets,manyPoints){
@@ -4839,7 +4906,7 @@ function resetFilters(){
   F.renting=new Set(E.renting.map((_,i)=>i));
   F.vehType=new Set(['PASSENGER','COMMERCIAL']);
   F.segs=new Set(E.seg.map((_,i)=>i));
-  F.subs=new Set(SUB_BUCKETS);
+  F.subs=new Set(subBuckets());
   F.oem=new Set(['CHINESE','REST']);
   CONCEPTS.forEach(c=>F.concepts.add(c));
   F.hps.clear();
@@ -4959,7 +5026,10 @@ function renderAlertsBrief(days,canales,fuels){
   const daysElapsed=monthDays.length;
   const daysInMonth=new Date(curYear,curM,0).getDate();
   const pace=daysElapsed/daysInMonth; // only used for % label
-  const focusBig=watchBrands();
+  // Guest: no watch list -> snapshot the 12 biggest brands this month.
+  const focusBig=window.IS_GUEST
+    ? Object.entries(mtd).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([b])=>b)
+    : watchBrands();
   const monthLbl=MES3[curM-1]+' '+curYear;
   const lyMonthLbl=MES3[curM-1]+' '+lyYear;
   const rows=focusBig.map(brand=>{
@@ -4997,13 +5067,13 @@ function renderAlertsBrief(days,canales,fuels){
   el.innerHTML=`<div class="alrt-brief">
     <div class="alrt-brief-hdr">
       <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-weight:700;font-size:.92rem">Competitive Snapshot · ${monthLbl}</span>${eomHtml}
+        <span style="font-weight:700;font-size:.92rem">${window.IS_GUEST?'Market Snapshot':'Competitive Snapshot'} · ${monthLbl}</span>${eomHtml}
       </div>
       <span class="alrt-date">${daysElapsed} working days · ${Math.round(pace*100)}% of month</span>
     </div>
     <div class="alrt-brief-table">
       <div class="alrt-brief-row header">
-        <div>Brand</div><div>MTD units</div><div>vs ${lyMonthLbl} pace</div><div>FC Jul</div><div>RAC %</div>
+        <div>Brand</div><div>MTD units</div><div>vs ${lyMonthLbl} pace</div><div>FC ${MES3[curM-1]}</div><div>RAC %</div>
       </div>${rows}
     </div>
   </div>`;
@@ -5020,7 +5090,14 @@ function renderAlerts(){
   renderNewBrandsPanel();
   renderAlertsBrief(days,canales,fuels);
   const _ALRT_EXCLUDE=new Set(['Mercedes-V']);
-  const focusBrands=Object.keys(_BRAND_CONCEPT).filter(b=>!_ALRT_EXCLUDE.has(b));
+  const _titleEl=g('alrt-title-lbl');
+  if(_titleEl)_titleEl.textContent='Daily Anomaly Alerts · '+(window.IS_GUEST?'All brands':'Focus Segment');
+  // Guest: scan every brand present in the daily feed, not just the client's
+  // competitive set. The per-brand loop below already skips brands without
+  // enough history, so micro-brands don't produce noise.
+  const focusBrands=window.IS_GUEST
+    ? Array.from(new Set(days.flatMap(d=>Object.keys(d.brands||{})))).filter(b=>!_ALRT_EXCLUDE.has(b))
+    : Object.keys(_BRAND_CONCEPT).filter(b=>!_ALRT_EXCLUDE.has(b));
   const hist=days.slice(0,-1);
   if(hist.length<3){
     g('alrt-grid').innerHTML='';
