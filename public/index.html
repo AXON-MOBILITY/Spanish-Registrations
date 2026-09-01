@@ -4315,6 +4315,11 @@ async function downloadInforme(){
     if(!JPDF){alert('PDF library not loaded. Reload the page and try again.');return;}
     if(!_OVD){alert('No data - apply filters first.');return;}
 
+    // Guest view: no brand identity -> a plain market report. No home/rival
+    // brand highlighting (already neutral: homeBrands()/watchBrands() are []),
+    // and the whole FOCUS SEGMENT ("my competitors") section is dropped.
+    const _isGuest=!!window.IS_GUEST;
+
     const doc=new JPDF({orientation:'p',unit:'mm',format:'a4'});
     const W=210, H=297, M=10, CW=W-2*M; // A4 portrait, 10mm margins (matches reference)
 
@@ -4669,7 +4674,7 @@ async function downloadInforme(){
     doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...AX_BLUE);
     doc.text(mLabelShort,M,69);
     doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(170,182,205);
-    doc.text('Market overview by fuel type and competitive landscape.',M,78,{maxWidth:CW*0.6});
+    doc.text(_isGuest?'Market overview by fuel type.':'Market overview by fuel type and competitive landscape.',M,78,{maxWidth:CW*0.6});
     doc.setDrawColor(40,55,85);doc.setLineWidth(0.3);doc.line(M,86,W-M,86);
 
     // 6 tarjetas de navegacion (enlazadas a su pagina)
@@ -4678,8 +4683,8 @@ async function downloadInforme(){
       {t:'BEV',            bg:AX_GREEN,   pg:3, ic:'BEV'},
       {t:'PHEV',           bg:AX_RED,     pg:4, ic:'PHV'},
       {t:'ICE',            bg:AX_ICEBLUE, pg:5, ic:'ICE'},
-      {t:'FOCUS SEGMENT',  bg:AX_CYAN,    pg:6, ic:'FS'},
-      {t:'CHINESE OEMS',   bg:AX_ORANGE,  pg:7, ic:'CN'},
+      ...(_isGuest?[]:[{t:'FOCUS SEGMENT',  bg:AX_CYAN,    pg:6, ic:'FS'}]),
+      {t:'CHINESE OEMS',   bg:AX_ORANGE,  pg:_isGuest?6:7, ic:'CN'},
     ];
     const ccw=(CW-8)/2, cch=24, gapY=6;
     cards.forEach((c,i)=>{
@@ -4706,7 +4711,7 @@ async function downloadInforme(){
     drawSection('BEV TOTAL MARKET REGISTRATIONS - ES',aggBEV,'main',Object.keys(aggBEV.pBP).length);
     drawSection('PHEV TOTAL MARKET REGISTRATIONS - ES',aggPHEV,'main',Object.keys(aggPHEV.pBP).length);
     drawSection('ICE TOTAL MARKET REGISTRATIONS - ES',aggICE,'main',Object.keys(aggICE.pBP).length);
-    drawSection('FOCUS SEGMENT RANKING (Total Market) - ES',aggFocus,'focus',Object.keys(aggFocus.pBP).length);
+    if(!_isGuest) drawSection('FOCUS SEGMENT RANKING (Total Market) - ES',aggFocus,'focus',Object.keys(aggFocus.pBP).length);
     drawSection('CHINESE OEMS - TOTAL MARKET REGISTRATIONS - ES',aggChinese,'chinese',Object.keys(aggChinese.pBP).length);
 
     const fname='AxonMobility_Registrations_'+MES3[curM-1]+'_'+refYear+'_ES.pdf';
