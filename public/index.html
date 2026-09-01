@@ -1118,14 +1118,19 @@ async function submitCreateOrg(){
       <div class="main-grid">
         <!-- Registrations table spans 2 rows -->
         <div class="card span2">
-          <div class="card-hdr">
-            <span>Registrations by Brand</span>
-            <span class="note" id="regs-note"></span>
+          <div class="card-hdr" style="flex-direction:column;align-items:flex-start;gap:2px">
+            <div style="display:flex;width:100%;justify-content:space-between;align-items:baseline">
+              <span>Registrations by Brand</span>
+              <span class="note" id="regs-note"></span>
+            </div>
+            <span style="font-size:.72rem;font-weight:400;color:var(--text2)">
+              <b>Growth vs Market</b>: is this brand growing faster or slower than the market as a whole? Brand's YoY% minus the total market's YoY%. +5% = growing 5 points faster than the market (gaining share); -5% = 5 points slower (losing share).
+            </span>
           </div>
           <div class="tbl-wrap">
             <table>
               <thead><tr>
-                <th>Brand</th><th>Regs</th><th>YoY%</th><th>YoY&thinsp;&Delta;</th><th title="Brand YoY% minus total-market YoY%, in percentage points">vs&thinsp;Market</th><th>Market Share %</th>
+                <th>Brand</th><th>Regs</th><th>YoY%</th><th>YoY&thinsp;&Delta;</th><th title="Brand YoY% minus total-market YoY%. Positive = growing faster than the market (gaining share).">Growth&thinsp;vs&thinsp;Market</th><th>Market Share %</th>
               </tr></thead>
               <tbody id="tbody-regs"></tbody>
             </table>
@@ -3127,9 +3132,10 @@ function render(){
 // ── HELPERS ──────────────────────────────────────────────
 function cls(v){return v===null?'':(v>=0?'yoy-p':'yoy-n')}
 function yPctStr(v){return v===null?'—':(v===0?'0.00%':((v>=0?'+':'')+v.toFixed(2)+'%'))}
-// Brand growth vs. the whole market, in percentage points: brand YoY% - market YoY%.
+// Brand growth vs. the whole market: brand YoY% minus market YoY%, shown as a
+// plain % for readability (it's a difference of two percentages, not a ratio).
 // Positive = the brand is outpacing the market (gaining share); negative = lagging.
-function ppStr(v){return v===null?'—':(v>=0?'+':'')+v.toFixed(1)+' pp'}
+function ppStr(v){return v===null?'—':(v>=0?'+':'')+v.toFixed(1)+'%'}
 
 function addTotalRow(tbody,cells){
   const tr=document.createElement('tr');tr.className='total-row';
