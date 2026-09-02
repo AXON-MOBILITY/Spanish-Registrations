@@ -138,7 +138,7 @@ _MODEL_NORM = {
         "2 SERIES": "SERIE 2", "228": "SERIE 2", "228 IXDRIVE": "SERIE 2",
         "123 XDRIVE": "SERIE 1",
         "4SERIES": "SERIE 4",
-        "5 SERIES": "SERIE 5",
+        "5 SERIES": "SERIE 5", "520D": "SERIE 5", "5281": "SERIE 5",
         "6401 XDRIVE": "SERIE 6",
         "7 SERIES": "SERIE 7",
         "SERIES 8": "SERIE 8",
