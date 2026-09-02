@@ -1118,14 +1118,9 @@ async function submitCreateOrg(){
       <div class="main-grid">
         <!-- Registrations table spans 2 rows -->
         <div class="card span2">
-          <div class="card-hdr" style="flex-direction:column;align-items:flex-start;gap:2px">
-            <div style="display:flex;width:100%;justify-content:space-between;align-items:baseline">
-              <span>Registrations by Brand</span>
-              <span class="note" id="regs-note"></span>
-            </div>
-            <span style="font-size:.72rem;font-weight:400;color:var(--text2)">
-              <b>Growth vs Market</b>: the brand's YoY growth minus the total market's, in points. Positive = the brand is outpacing the market (gaining share); negative = lagging. E.g. brand +12% vs market +6% &rarr; +6.
-            </span>
+          <div class="card-hdr">
+            <span>Registrations by Brand</span>
+            <span class="note" id="regs-note"></span>
           </div>
           <div class="tbl-wrap">
             <table>
