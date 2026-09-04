@@ -4717,11 +4717,6 @@ async function downloadInforme(){
         doc.setFont('helvetica','normal');doc.setFontSize(6.3);doc.setTextColor(140,152,168);
         doc.text('Rank number in red = Chinese OEM brand.',M,finalY+4);
       }
-      if(mode==='chinese'){
-        const finalY=doc.lastAutoTable.finalY;
-        doc.setFont('helvetica','normal');doc.setFontSize(6.3);doc.setTextColor(140,152,168);
-        doc.text('Share columns = each brand’s weight within the Chinese-OEM segment in Spain, not the total ES market.',M,finalY+4);
-      }
     }
 
     // Tarjeta KPI (oscura, navy) usada en cada pagina de seccion
