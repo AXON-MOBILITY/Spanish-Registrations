@@ -582,6 +582,18 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       if(err) err.textContent='Enter username and password';
       return false;
     }
+    // MEXICO: dedicated view onto the Mexican RAIAVL dashboard (own data + tabs),
+    // served as a separate static page under /mx and gated by the same password.
+    if(username.trim().toUpperCase()==='MEXICO'){
+      if(password==='AXONMOBILITY2026'){
+        try{ sessionStorage.setItem('mx_gate_ok','1'); }catch(e){}
+        location.href='/mx/';
+      } else {
+        if(err) err.textContent='Incorrect username or password';
+        if(pInput){pInput.value=''; pInput.focus();}
+      }
+      return false;
+    }
     if(btn){btn.disabled=true; btn.textContent='Entrando…';}
     const { error } = await sb.auth.signInWithPassword({ email: toEmail(username), password });
     if(btn){btn.disabled=false; btn.textContent='Entrar';}

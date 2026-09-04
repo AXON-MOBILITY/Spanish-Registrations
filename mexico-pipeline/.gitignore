@@ -1,0 +1,6 @@
+# Reproducible INEGI downloads + intermediate build output -- the only
+# thing that ships is ../public/mx/data/*.json (via refresh.py).
+data/
+public/
+__pycache__/
+*.pyc
