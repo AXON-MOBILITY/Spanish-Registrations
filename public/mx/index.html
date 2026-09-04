@@ -178,34 +178,19 @@ tr.model-sub-unknown td{color:var(--text3);font-style:italic}
 </head>
 <body>
 
-<!-- Shared client-side gate (same model as the main app's guest access): the
-     RAIAVL data under /mx/data is static, this is an access convenience, not an
-     account. Unlocked either by typing the password here or by arriving from the
-     main app's MEXICO login, which sets the same sessionStorage flag. -->
-<div id="mx-gate" style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#0b1020">
-  <div style="width:min(340px,88vw);display:flex;flex-direction:column;gap:12px;background:#111827;border:1px solid #1f2937;border-radius:14px;padding:28px 26px;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
-    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#6b7280;text-align:center">AXON Mobility</div>
-    <div style="font-size:.8rem;color:#94a3b8;letter-spacing:.04em;text-transform:uppercase;text-align:center">Mexico registrations &mdash; restricted access</div>
-    <input id="mx-gate-pw" type="password" placeholder="Password" autocomplete="off" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #334155;border-radius:8px;background:#0b1020;color:#e5e7eb;font-size:.9rem">
-    <button id="mx-gate-btn" type="button" style="width:100%;padding:10px 12px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-size:.9rem;font-weight:600;cursor:pointer">Enter</button>
-    <div id="mx-gate-err" style="color:#f87171;font-size:.8rem;min-height:1em;text-align:center"></div>
-  </div>
-</div>
+<!-- The MEXICO view has no login screen of its own: an unauthenticated visit is
+     sent to the main app's login (the same one Spain uses). Signing in there as
+     user MEXICO sets sessionStorage 'mx_gate_ok' and returns here. -->
+<div id="mx-gate" style="position:fixed;inset:0;z-index:99999;background:#f4f6fb"></div>
 <script>
 (function(){
-  var PW='AXONMOBILITY2026', KEY='mx_gate_ok';
-  function unlock(){ var g=document.getElementById('mx-gate'); if(g) g.remove(); }
-  try{ if(sessionStorage.getItem(KEY)==='1'){ unlock(); return; } }catch(e){}
-  function tryPw(){
-    var el=document.getElementById('mx-gate-pw'), err=document.getElementById('mx-gate-err');
-    if(el && el.value===PW){ try{ sessionStorage.setItem(KEY,'1'); }catch(e){} unlock(); }
-    else { if(err) err.textContent='Incorrect password'; if(el){ el.value=''; el.focus(); } }
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    var b=document.getElementById('mx-gate-btn'), i=document.getElementById('mx-gate-pw');
-    if(b) b.addEventListener('click',tryPw);
-    if(i){ i.focus(); i.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); tryPw(); } }); }
-  });
+  try{
+    if(sessionStorage.getItem('mx_gate_ok')==='1'){
+      var g=document.getElementById('mx-gate'); if(g) g.remove();
+      return;
+    }
+  }catch(e){}
+  location.replace('/?view=mx');
 })();
 </script>
 

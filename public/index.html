@@ -662,6 +662,9 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     const gInput=document.getElementById('guest-pw');
     if(gInput) gInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault(); window.enterAsGuest();}});
     if(!session && (location.hash==='#guest' || location.search.indexOf('guest')>-1) && gInput) gInput.focus();
+    // Bounced here from /mx without a session: prefill the MEXICO username so the
+    // Mexican-registrations view is one form fill away.
+    if(!session && location.search.indexOf('view=mx')>-1 && uInput){ uInput.value='MEXICO'; if(pInput) pInput.focus(); }
   });
 })();
 </script>
