@@ -4505,11 +4505,21 @@ async function downloadInforme(){
     // ── Datos base (independiente de filtros UI) ─────────────────────────
     const _E=REC.enums;
     const refYear=_OVD.refYear;
-    // curM: mes mas reciente con datos en refYear — se actualiza solo al cargar agosto, etc.
     const _baseRows=REC.rows.filter(r=>INCLUDED_MARCA_IDX.has(r[COL.MARCA]));
-    const curM=Math.max(..._baseRows.filter(r=>r[COL.Y]===refYear).map(r=>r[COL.M]));
+    // The sidebar Month filter drives the report period. Narrowed to a real
+    // subset (not all 12), the report runs through the last selected month —
+    // header, MTD and YTD all follow it. Otherwise curM is the latest month with
+    // data in refYear.
+    const _selM=(_OVD.months&&_OVD.months.size&&_OVD.months.size<12)?_OVD.months:null;
+    const _dataMaxM=Math.max(..._baseRows.filter(r=>r[COL.Y]===refYear).map(r=>r[COL.M]));
+    // Default period: latest month with data, minus the in-progress calendar
+    // month (DGT sync loads a few days of it, so it isn't a real full month yet).
+    const _n=new Date();
+    let _defM=_dataMaxM;
+    if(refYear===_n.getUTCFullYear()&&_dataMaxM===_n.getUTCMonth()+1&&_dataMaxM>1)_defM=_dataMaxM-1;
+    const curM=_selM?Math.max(..._selM):_defM;
     const mLabelShort=MES3[curM-1].toUpperCase()+'. '+refYear+'.'; // e.g. "JUL. 2026."
-    const _ytdM=new Set(Array.from({length:curM},(_,i)=>i+1));
+    const _ytdM=new Set(Array.from({length:curM},(_,i)=>i+1).filter(m=>!_selM||_selM.has(m)));
 
     // ── Agregador generico: dado un subconjunto de filas, calcula MTD/YTD por marca ──
     function aggregate(rowsScope){
