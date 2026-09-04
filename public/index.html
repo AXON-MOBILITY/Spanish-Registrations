@@ -4593,13 +4593,17 @@ async function downloadInforme(){
     function drawTable(agg,startY,mode){
       const rows=mkRows(agg);
       const y2=String(refYear), y1=String(refYear-1);
+      // The share columns are always brand units / this table's own total. For the
+      // Chinese OEMs table that total is the Chinese-OEM segment, not the whole ES
+      // market, so label it as such (client request: "MG = X% of the Chinese market").
+      const shareLbl=mode==='chinese'?'SHARE OF CHINESE OEM MKT':'MARKET SHARE';
       doc.autoTable({
         head:[
           ['','',
             {content:'REGISTRATIONS - MTD',colSpan:3,styles:{halign:'center'}},
-            {content:'MARKET SHARE - MTD',colSpan:2,styles:{halign:'center'}},
+            {content:shareLbl+' - MTD',colSpan:2,styles:{halign:'center'}},
             {content:'REGISTRATIONS - YTD',colSpan:3,styles:{halign:'center'}},
-            {content:'MARKET SHARE - YTD',colSpan:2,styles:{halign:'center'}},
+            {content:shareLbl+' - YTD',colSpan:2,styles:{halign:'center'}},
           ],
           ['Rank','Brand',y2,y1,'% Diff.',y2,y1,y2,y1,'% Diff.',y2,y1],
         ],
@@ -4702,6 +4706,11 @@ async function downloadInforme(){
         const finalY=doc.lastAutoTable.finalY;
         doc.setFont('helvetica','normal');doc.setFontSize(6.3);doc.setTextColor(140,152,168);
         doc.text('Rank number in red = Chinese OEM brand.',M,finalY+4);
+      }
+      if(mode==='chinese'){
+        const finalY=doc.lastAutoTable.finalY;
+        doc.setFont('helvetica','normal');doc.setFontSize(6.3);doc.setTextColor(140,152,168);
+        doc.text('Share columns = each brand’s weight within the Chinese-OEM segment in Spain, not the total ES market.',M,finalY+4);
       }
     }
 
