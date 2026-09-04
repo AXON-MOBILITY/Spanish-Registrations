@@ -1329,13 +1329,20 @@ function renderProduction(){
 // supports: no channel/dealer/rival-brand concepts, so sections are
 // Total Market + each meaningful fuel_type + Exportacion instead of
 // Total/BEV/PHEV/ICE/Focus Segment/Chinese OEMs.
+// Latest month of `year` that has ACTUAL registrations, not just a row present.
+// INEGI publishes ~mid-to-late the following month, so at report time the newest
+// real month can be two back (e.g. Sept -> last data is July). A month only
+// counts once its summed units are > 0, so an all-zero placeholder month never
+// pulls the report header/period past where there is data.
 function _pdfLatestMonth(rows, E, C, year){
-  let latest=null;
+  const byMonth={};
   rows.forEach(r=>{
     if(E.anio[r[C.anio]]!==year)return;
     const m=E.mes[r[C.mes]];
-    if(latest===null||m>latest)latest=m;
+    byMonth[m]=(byMonth[m]||0)+(+r[C.unidades]||0);
   });
+  let latest=null;
+  Object.keys(byMonth).forEach(m=>{ if(byMonth[m]>0 && (latest===null||m>latest)) latest=m; });
   return latest;
 }
 function _pdfAggregate(rows, E, C, refYear, curM){
@@ -1431,9 +1438,16 @@ async function downloadInforme(){
     // ── Agregados por sección (cada uno con su propio refYear/curM: la
     // serie de ventas y la de exportación no siempre tienen el mismo
     // último mes disponible) ──
-    const refYearV=Math.max(...REC.enums.anio);
+    // Anchor each section to its own latest year that actually has data (a year
+    // may be in the enum before any of its months are published).
+    function _latestYearWithData(rows,E,C){
+      const yrs=[...E.anio].sort((a,b)=>b-a);
+      for(const y of yrs){ if(_pdfLatestMonth(rows,E,C,y)!==null) return y; }
+      return yrs[0];
+    }
+    const refYearV=_latestYearWithData(REC.rows,REC.enums,COL);
     const curMV=_pdfLatestMonth(REC.rows,REC.enums,COL,refYearV);
-    const refYearX=Math.max(...RECX.enums.anio);
+    const refYearX=_latestYearWithData(RECX.rows,RECX.enums,COLX);
     const curMX=_pdfLatestMonth(RECX.rows,RECX.enums,COLX,refYearX);
     const mLabelV=MES[parseInt(curMV,10)-1]+' '+refYearV;
     const mLabelX=MES[parseInt(curMX,10)-1]+' '+refYearX;
