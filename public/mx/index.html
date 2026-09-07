@@ -211,6 +211,8 @@ tr.model-sub-unknown td{color:var(--text3);font-style:italic}
   </div>
   <div class="tb-right">
     <button class="dl-btn" id="btn-dl-informe" onclick="downloadInforme()">&#11015; Descargar informe</button>
+    <div class="tb-stat"><b id="hdr-refreshed">&mdash;</b><span>&uacute;ltima actualizaci&oacute;n</span></div>
+    <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-updated">&mdash;</b><span>periodo</span></div>
     <div class="tb-sep"></div>
     <div class="tb-stat"><b id="hdr-total">&mdash;</b><span>unidades</span></div>
@@ -332,7 +334,7 @@ tr.model-sub-unknown td{color:var(--text3);font-style:italic}
 
     <div class="pane" id="pane-export">
       <div class="tf-grp" style="padding:0 0 4px">
-        <span class="note" style="font-size:10px;color:var(--text2)">Dataset independiente: RAIAVL &ldquo;Exportaci&oacute;n de veh&iacute;culos&rdquo; &mdash; solo 14 marcas fabrican en M&eacute;xico para exportar; sin fuel_type/origen (no aplica).</span>
+        <span class="note" style="font-size:10px;color:var(--text2)">Fuente: INEGI &mdash; RAIAVL &ldquo;Exportaci&oacute;n de veh&iacute;culos&rdquo;.</span>
       </div>
       <div class="stat-row" id="stat-row-export"></div>
       <div class="main-grid">
@@ -362,7 +364,7 @@ tr.model-sub-unknown td{color:var(--text3);font-style:italic}
 
     <div class="pane" id="pane-production">
       <div class="tf-grp" style="padding:0 0 4px">
-        <span class="note" style="font-size:10px;color:var(--text2)">Dataset independiente: RAIAVL &ldquo;Producci&oacute;n de veh&iacute;culos&rdquo; &mdash; unidades fabricadas en M&eacute;xico (para venta dom&eacute;stica + exportaci&oacute;n); sin fuel_type/origen/pa&iacute;s (no aplica).</span>
+        <span class="note" style="font-size:10px;color:var(--text2)">Fuente: INEGI &mdash; RAIAVL &ldquo;Producci&oacute;n de veh&iacute;culos&rdquo;.</span>
       </div>
       <div class="stat-row" id="stat-row-production"></div>
       <div class="main-grid">
@@ -462,6 +464,11 @@ Promise.all([
   RECX=dataX; COLX=dataX.col;
   RECP=dataP; COLP=dataP.col;
   g('hdr-updated').textContent=meta.years[0]+'–'+meta.years[meta.years.length-1];
+  if(meta.generated_at){
+    const d=new Date(meta.generated_at);
+    if(!isNaN(d)) g('hdr-refreshed').textContent=
+      String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+  }
   buildSidebar();
   buildTopFilters();
   render();
