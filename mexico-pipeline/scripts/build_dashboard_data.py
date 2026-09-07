@@ -81,9 +81,12 @@ def main() -> None:
     write_meta_production(production_rows)
     print(f"Wrote {len(production_payload['rows'])} rows to {OUT_DIR / 'records_production.json'}")
 
-    docs_out = ROOT / "public" / "docs"
-    docs_out.mkdir(parents=True, exist_ok=True)
-    shutil.copy(ROOT / "docs" / "METODOLOGIA.md", docs_out / "METODOLOGIA.md")
+    # METODOLOGIA.md lives at the pipeline root (was under docs/ before the port);
+    # mirror it next to the generated JSON and into the shipped /mx/docs/ folder.
+    src_doc = ROOT / "METODOLOGIA.md"
+    for docs_out in (ROOT / "public" / "docs", ROOT.parent / "public" / "mx" / "docs"):
+        docs_out.mkdir(parents=True, exist_ok=True)
+        shutil.copy(src_doc, docs_out / "METODOLOGIA.md")
 
 
 def _sorted_remap(values):
