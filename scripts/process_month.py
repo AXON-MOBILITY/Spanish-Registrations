@@ -48,8 +48,18 @@ def get_url(yyyymm):
     return "https://www.dgt.es/microdatos/salida/{}/{}/vehiculos/matriculaciones/export_mensual_mat_{}.zip".format(year, month, yyyymm)
 
 
-def fetch_text(url, timeout=120):
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+def fetch_text(url, timeout=120, bust_cache=False):
+    # The CDN in front of dgt.es serves a stale copy of the listing pages (confirmed
+    # 2026-09-07: the daily page still showed 03-sep as latest when 04-sep was already
+    # published) and ignores Cache-Control/Pragma request headers -- only a unique query
+    # string forces a fresh origin fetch. Callers that scrape the listing pages for the
+    # newest export pass bust_cache=True.
+    if bust_cache:
+        sep = '&' if '?' in url else '?'
+        url = '{}{}_={}'.format(url, sep, int(datetime.now().timestamp()))
+    req = urllib.request.Request(url, headers={
+        'User-Agent': 'Mozilla/5.0', 'Cache-Control': 'no-cache', 'Pragma': 'no-cache',
+    })
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         raw = resp.read()
         charset = resp.headers.get_content_charset() or 'utf-8'
@@ -57,7 +67,7 @@ def fetch_text(url, timeout=120):
 
 
 def discover_monthly_links(start='202601', end=None):
-    html = fetch_text(DGT_MONTHLY_PAGE)
+    html = fetch_text(DGT_MONTHLY_PAGE, bust_cache=True)
     pattern = re.compile(r'(https://www\.dgt\.es)?(/microdatos/salida/\d{4}/\d{1,2}/vehiculos/matriculaciones/export_mensual_mat_(\d{6})\.zip)')
     links = {}
     for match in pattern.finditer(html):
@@ -71,7 +81,7 @@ def discover_monthly_links(start='202601', end=None):
 
 
 def discover_daily_links(start=None, end=None):
-    html = fetch_text(DGT_DAILY_PAGE)
+    html = fetch_text(DGT_DAILY_PAGE, bust_cache=True)
     pattern = re.compile(r'(https://www\.dgt\.es)?(/microdatos/salida/\d{4}/\d{1,2}/vehiculos/matriculaciones/export_mat_(\d{8})\.zip)')
     links = {}
     for match in pattern.finditer(html):
