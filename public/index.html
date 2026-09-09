@@ -503,6 +503,39 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   window.sbClient=sb;
   const toEmail=u=>String(u||'').trim().toLowerCase().replace(/\s+/g,'')+'@'+EMAIL_DOMAIN;
 
+  // Mirror the Supabase access token into a cookie so the Edge middleware can
+  // verify the session server-side and let /data, /mx/data and /api through.
+  // Non-HttpOnly by necessity (the SDK keeps the session in localStorage); it's
+  // the short-lived access token, re-written on every refresh and cleared on
+  // sign-out.
+  function setSessionCookie(session){
+    if(session && session.access_token){
+      document.cookie='sb-access-token='+session.access_token+'; Path=/; Secure; SameSite=Lax; Max-Age=3600';
+    }
+  }
+  function clearSessionCookie(){
+    document.cookie='sb-access-token=; Path=/; Secure; SameSite=Lax; Max-Age=0';
+  }
+  // Synchronous priming: the top-level `fetch('data/*.json')` calls further down
+  // run at parse time, before onAuthStateChange fires. Read the SDK's persisted
+  // session straight from localStorage now so a returning user's very first data
+  // request already carries the cookie.
+  (function primeSessionCookie(){
+    try{
+      const ref=SUPABASE_URL.split('//')[1].split('.')[0];
+      const raw=localStorage.getItem('sb-'+ref+'-auth-token');
+      if(!raw) return;
+      const s=JSON.parse(raw);
+      const sess=(s && s.access_token) ? s : (s && s.currentSession) || null;
+      if(!sess || !sess.access_token) return;
+      if(sess.expires_at && sess.expires_at*1000<=Date.now()) return; // stale; refresh will re-set it
+      setSessionCookie(sess);
+    }catch(e){}
+  })();
+  sb.auth.onAuthStateChange((_event, session)=>{
+    if(session) setSessionCookie(session); else clearSessionCookie();
+  });
+
   function hideLogin(){
     const screen=document.getElementById('login-screen');
     if(screen) screen.classList.add('hidden');
@@ -585,7 +618,14 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     // MEXICO: dedicated view onto the Mexican RAIAVL dashboard (own data + tabs),
     // served as a separate static page under /mx and gated by the same password.
     if(username.trim().toUpperCase()==='MEXICO'){
-      if(password==='AXONMOBILITY2026'){
+      // Mint the guest cookie server-side (same shared password) so the Edge
+      // middleware lets /mx/data/* through, then hand off to the MX view.
+      let okMx=false;
+      try{
+        const r=await fetch('/api/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});
+        okMx=r.ok;
+      }catch(e){ if(err) err.textContent='Network error'; return false; }
+      if(okMx){
         try{ sessionStorage.setItem('mx_gate_ok','1'); }catch(e){}
         location.href='/mx/';
       } else {
@@ -602,14 +642,21 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
       if(pInput){pInput.value=''; pInput.focus();}
       return false;
     }
-    await loadOrgConfig();
-    await checkPlatformAdmin();
-    hideLogin();
+    // The SDK has now persisted the session; reload so the parse-time
+    // fetch('data/*.json') calls re-run with the freshly primed cookie.
+    setSessionCookie((await sb.auth.getSession()).data.session);
+    location.reload();
     return false;
   };
 
   window.doLogout=async function(){
-    if(!window.IS_GUEST){ try{ await sb.auth.signOut(); }catch(e){} }
+    if(window.IS_GUEST){
+      try{ await fetch('/api/guest',{method:'DELETE'}); }catch(e){}
+      try{ sessionStorage.removeItem('guest_ok'); }catch(e){}
+    } else {
+      try{ await sb.auth.signOut(); }catch(e){}
+      clearSessionCookie();
+    }
     window.ORG=null;
     window.IS_GUEST=false;
     location.reload();
@@ -621,15 +668,39 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   // The guest password is a shared client-side gate, consistent with the
   // app's existing model (the dashboard data in /data/*.json is static and
   // already public); it is not an account.
-  const GUEST_PW='AXONMOBILITY2026';
-  window.enterAsGuest=function(){
+  window.enterAsGuest=async function(){
     const pwEl=document.getElementById('guest-pw');
     const err=document.getElementById('login-err');
-    if(!pwEl || pwEl.value!==GUEST_PW){
+    const btn=document.getElementById('guest-submit');
+    const pw=pwEl && pwEl.value;
+    if(!pw){
       if(err) err.textContent='Incorrect guest password';
       if(pwEl){ pwEl.value=''; pwEl.focus(); }
       return false;
     }
+    // Server checks the shared password and sets the signed `reg-guest` cookie
+    // the Edge middleware requires for /data and /mx/data.
+    if(btn){ btn.disabled=true; }
+    let okGuest=false;
+    try{
+      const r=await fetch('/api/guest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+      okGuest=r.ok;
+    }catch(e){ if(err) err.textContent='Network error'; }
+    if(btn){ btn.disabled=false; }
+    if(!okGuest){
+      if(err) err.textContent='Incorrect guest password';
+      if(pwEl){ pwEl.value=''; pwEl.focus(); }
+      return false;
+    }
+    // Cookie is set; reload so the parse-time fetch('data/*.json') calls re-run
+    // carrying `reg-guest`. guest_ok tells the reloaded page to go straight in.
+    try{ sessionStorage.setItem('guest_ok','1'); }catch(e){}
+    location.reload();
+    return false;
+  };
+
+  // Paint the UI as a guest (no Supabase session, synthetic neutral org).
+  window.applyGuestUi=function(){
     window.IS_GUEST=true;
     window.IS_PLATFORM_ADMIN=false;
     window.ORG={ slug:'guest', display_name:null,
@@ -640,15 +711,21 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     if(typeof renderOrgBadge==='function') renderOrgBadge();
     if(typeof populateSegSelectors==='function') populateSegSelectors();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:window.ORG}));
-    return false;
   };
 
   document.addEventListener('DOMContentLoaded',async function(){
     const { data: { session } } = await sb.auth.getSession();
+    let guestOk=false;
+    try{ guestOk=sessionStorage.getItem('guest_ok')==='1'; }catch(e){}
     if(session){
+      try{ sessionStorage.removeItem('guest_ok'); }catch(e){}
+      setSessionCookie(session);
       await loadOrgConfig();
       await checkPlatformAdmin();
       hideLogin();
+    } else if(guestOk){
+      // returning from the guest-entry reload: the `reg-guest` cookie is live
+      window.applyGuestUi();
     } else {
       showLogin();
     }
