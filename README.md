@@ -27,8 +27,9 @@ GitHub Actions (`.github/workflows/dgt-auto.yml`) ejecuta la cadena entre semana
 | `masters/` | Maestros propios (enriquecimiento modelo→segmento, concesiones, municipios, NIF) |
 | `validation/` | Exports Benchmark `BBDD_*` (gitignored) y deltas de validación |
 | `tests/` | Tests unitarios de las reglas de negocio (pytest) |
-| `docs/` | Metodología, plan técnico, auditoría de independencia, **seguridad y panel de administración** (`SECURITY.md`, `ADMIN_PANEL.md`) |
-| `lib/`, `api/` | Middleware de acceso (Edge) y funciones serverless: gate de sesión, `api/guest`, `api/admin/*` (gestión de usuarios y accesos temporales) |
+| `docs/` | Metodología, plan técnico, auditoría de independencia, **seguridad del acceso** (`SECURITY.md`) |
+| `api/` | Funciones serverless: `api/guest` (cookie de invitado firmada), `api/create-org` / `api/delete-org` |
+| `middleware.js` | Gate de acceso en el Edge (sesión Supabase / cookie de invitado / Basic Auth) |
 | `public/` | Dashboard estático + JSONs generados |
 | `legacy/` | Scripts antiguos fuera de uso |
 
@@ -55,12 +56,12 @@ La ETL replica la clasificación Benchmark desde el dato bruto DGT. Reglas princ
 El sitio desplegado está detrás de un gate (Edge middleware): el shell es
 público para mostrar la pantalla de login propia, pero `/data/*`, `/mx/data/*` y
 `/api/*` exigen sesión de Supabase, cookie de invitado firmada o Basic Auth.
-Los `platform_admins` tienen un panel en **`/admin`** para ver todos los usuarios
-(alta, días en uso, último acceso) y dar de alta accesos **temporales** con
-caducidad automática.
 
-- Arquitectura completa: [`docs/SECURITY.md`](docs/SECURITY.md)
-- Panel de administración (setup + uso + modelo de seguridad): [`docs/ADMIN_PANEL.md`](docs/ADMIN_PANEL.md)
+La **gestión de usuarios** (ver/crear/caducar accesos, contraseñas emitidas) vive
+en un proyecto aparte: **`AXON-MOBILITY/axon-user-admin`**. Este repo solo aplica
+la caducidad que aquel marca (`app_metadata.expires_at`).
+
+- Arquitectura del acceso: [`docs/SECURITY.md`](docs/SECURITY.md)
 
 ## Uso
 
