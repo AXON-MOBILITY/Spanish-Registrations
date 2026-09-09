@@ -778,6 +778,18 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
   </div>
 </div>
 
+<!-- Shown when the user's view grants no access to this app (tabs_registrations = ['*none*']) -->
+<div id="noaccess-screen" class="hidden" style="position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:#f8fafc">
+  <div class="login-box" style="text-align:center">
+    <div class="login-logo" style="flex-direction:column;gap:12px;margin-bottom:4px">
+      <img class="login-brand-img" src="/brand/axon-mobility-logo-light.png" alt="Axon Mobility">
+    </div>
+    <div class="login-title">Sin acceso</div>
+    <div style="font-size:.85rem;color:var(--txt2);line-height:1.5">Tu cuenta no tiene acceso a Matriculaciones.<br>Contacta con el administrador si crees que es un error.</div>
+    <button class="login-btn" type="button" onclick="doLogout()" style="background:#475569;margin-top:6px">Cerrar sesión</button>
+  </div>
+</div>
+
 
 <!-- TOPBAR -->
 <div id="topbar">
@@ -1759,11 +1771,22 @@ function applyHighPerfVisibility(){
 }
 
 // Per-view access (set from the axon-user-admin panel via organizations.config):
-//  - config.tabs_registrations: string[]  -> only these tabs; empty/absent = all
-//  - config.can_download: bool            -> false hides the "Download report" button
+//  - config.tabs_registrations: tri-state
+//      []/absent   -> all tabs
+//      ['*none*']  -> no access to this app at all (full-screen block)
+//      [ids...]    -> only those tabs
+//  - config.can_download: bool  -> false hides the "Download report" button
 function applyTabAccess(){
   const cfg=(window.ORG && window.ORG.config) || {};
-  const allowed=Array.isArray(cfg.tabs_registrations) ? cfg.tabs_registrations.filter(Boolean) : [];
+  const raw=Array.isArray(cfg.tabs_registrations) ? cfg.tabs_registrations.filter(Boolean) : [];
+  const noAccess=raw.length===1 && raw[0]==='*none*';
+  const blk=g('noaccess-screen');
+  if(blk) blk.classList.toggle('hidden', !noAccess);
+  const tb=g('topbar'), ct=g('content');
+  if(tb) tb.style.display=noAccess ? 'none' : '';
+  if(ct) ct.style.display=noAccess ? 'none' : '';
+  if(noAccess) return;
+  const allowed=raw;
   const ALL=['overview','ranking','analisis','prov','map','trend','alerts','forecast'];
   ALL.forEach(id=>{
     const b=g('tbtn-'+id);
