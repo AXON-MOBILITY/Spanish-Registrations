@@ -57,6 +57,15 @@ function openPath(p) {
   return p === '/api/guest' || p === '/api/guest/'
 }
 
+// The daily cron hits /api/admin/sweep with the CRON_SECRET bearer; let that
+// one request through (the handler re-checks the secret). Every other
+// /api/admin/* path stays behind the session gate.
+function isCronSweep(request, p) {
+  if (p !== '/api/admin/sweep') return false
+  const secret = process.env.CRON_SECRET
+  return !!secret && request.headers.get('authorization') === `Bearer ${secret}`
+}
+
 // ------------------------------------------------------------------ helpers
 function readCookie(request, name) {
   const jar = request.headers.get('cookie') || ''
@@ -105,6 +114,10 @@ async function hasSupabaseSession(request) {
     if (claims.iss !== SUPABASE_ISSUER) return false
     if (claims.role !== 'authenticated') return false
     if (typeof claims.exp === 'number' && claims.exp * 1000 <= Date.now()) return false
+    // temporary access: the /admin panel stamps app_metadata.expires_at; once
+    // it's past, the session is dead here even before the token's own exp.
+    const grantExp = claims.app_metadata && claims.app_metadata.expires_at
+    if (grantExp && Date.parse(grantExp) <= Date.now()) return false
     return true
   } catch {
     return false
@@ -177,6 +190,7 @@ function unauthorized(isApi) {
 export default async function middleware(request) {
   const path = new URL(request.url).pathname
   if (!gatedPath(path) || openPath(path)) return // shell, assets, /api/guest
+  if (isCronSweep(request, path)) return // cron -> /api/admin/sweep with CRON_SECRET
 
   const basicUser = process.env.SITE_BASIC_AUTH_USER
   const basicPass = process.env.SITE_BASIC_AUTH_PASS
