@@ -562,6 +562,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
         config:{ home_brands:[], focus_brands:[], watch_brands:[], use_calibration:false } };
       if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
       if(typeof applySegmentFilterVisibility==='function') applySegmentFilterVisibility();
+      if(typeof applyTabAccess==='function') applyTabAccess();
       if(typeof renderOrgBadge==='function') renderOrgBadge();
       if(typeof populateSegSelectors==='function') populateSegSelectors();
       document.dispatchEvent(new CustomEvent('org-ready',{detail:window.ORG}));
@@ -572,6 +573,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     if(settingsBtn) settingsBtn.style.display='';
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
     if(typeof applySegmentFilterVisibility==='function') applySegmentFilterVisibility();
+      if(typeof applyTabAccess==='function') applyTabAccess();
     if(typeof renderOrgBadge==='function') renderOrgBadge();
     if(typeof populateSegSelectors==='function') populateSegSelectors();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:data.organizations}));
@@ -716,6 +718,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
     hideLogin();
     if(typeof applyHighPerfVisibility==='function') applyHighPerfVisibility();
     if(typeof applySegmentFilterVisibility==='function') applySegmentFilterVisibility();
+      if(typeof applyTabAccess==='function') applyTabAccess();
     if(typeof renderOrgBadge==='function') renderOrgBadge();
     if(typeof populateSegSelectors==='function') populateSegSelectors();
     document.dispatchEvent(new CustomEvent('org-ready',{detail:window.ORG}));
@@ -1753,6 +1756,22 @@ function brandColor(brand){
 function applyHighPerfVisibility(){
   const grp=g('grp-hp');
   if(grp) grp.style.display=(window.ORG && window.ORG.slug==='bmw') ? '' : 'none';
+}
+
+// Per-view access (set from the axon-user-admin panel via organizations.config):
+//  - config.tabs_registrations: string[]  -> only these tabs; empty/absent = all
+//  - config.can_download: bool            -> false hides the "Download report" button
+function applyTabAccess(){
+  const cfg=(window.ORG && window.ORG.config) || {};
+  const allowed=Array.isArray(cfg.tabs_registrations) ? cfg.tabs_registrations.filter(Boolean) : [];
+  const ALL=['overview','ranking','analisis','prov','map','trend','alerts','forecast'];
+  ALL.forEach(id=>{
+    const b=g('tbtn-'+id);
+    if(b) b.style.display=(!allowed.length || allowed.includes(id)) ? '' : 'none';
+  });
+  if(allowed.length && !allowed.includes(_currentTab)) showTab(allowed[0]);
+  const dl=g('btn-dl-informe');
+  if(dl) dl.style.display=(cfg.can_download===false) ? 'none' : '';
 }
 
 // The Segment sidebar filter (UKL0/UKL1/UKL2/KKL/MKL/SKL/GKL/GKL+) is BMW /
