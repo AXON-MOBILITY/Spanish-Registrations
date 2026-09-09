@@ -18,9 +18,21 @@ A gated request passes with **one** of:
 | **HTTP Basic** | `SITE_BASIC_AUTH_USER` / `_PASS` — for the MX iframe and server-to-server / tooling use. |
 
 Special cases:
-- `POST /api/guest` is open (it's the mint endpoint; password-checked inside).
+- `POST /api/guest` and `POST /api/admin-unlock` are open (mint endpoints;
+  password-checked inside).
 - `/api/admin/sweep` is allowed through **only** with `Authorization: Bearer
   <CRON_SECRET>` (Vercel Cron); the handler re-checks it.
+
+## Extra lock on /admin
+
+`/admin`, `/admin.html` and `/api/admin/*` sit behind a **second, standalone
+credential** (`ADMIN_GATE_USER` / `ADMIN_GATE_PASS`) on top of everything above.
+No `admin-gate` cookie → `/admin` serves a small unlock form; `POST
+/api/admin-unlock` checks the pair and sets the HMAC-signed `admin-gate` cookie
+(HttpOnly, Secure, SameSite=Lax, 8h). So a stolen Supabase session still can't
+open the panel. `ADMIN_GATE_*` unset → layer skipped (the session +
+`platform_admins` checks still apply). The daily cron bypasses this via
+`CRON_SECRET`.
 
 **Kill-switch**: if `SITE_BASIC_AUTH_USER` / `_PASS` are unset the middleware
 fails **open** (everything public) so a bad deploy can't lock the team out.
@@ -61,6 +73,8 @@ service-role-only.
 | `SUPABASE_SERVICE_ROLE_KEY` | `api/create-org`, `api/delete-org`, `api/admin/*` | bypasses RLS; the crown jewel |
 | `ADMIN_ENCRYPTION_KEY` | `lib/admin.js` | AES-256-GCM key for stored temp passwords; back it up |
 | `CRON_SECRET` | `api/admin/sweep`, `middleware.js` | authenticates the daily cron |
+| `ADMIN_GATE_USER` / `ADMIN_GATE_PASS` | `middleware.js`, `api/admin-unlock` | the extra user/password in front of `/admin`; unset = layer off |
+| `ADMIN_GATE_SECRET` | `middleware.js`, `api/admin-unlock` | optional — signs the `admin-gate` cookie (else reuses the guest secret) |
 | `SITE_BASIC_AUTH_USER` / `_PASS` | `middleware.js` | Basic Auth + guest-cookie HMAC fallback secret |
 | `GUEST_COOKIE_SECRET` | `middleware.js`, `api/guest` | optional dedicated HMAC key for `reg-guest` |
 | `SUPABASE_JWK` | `middleware.js` | optional — override the pinned session-signing key without a redeploy |

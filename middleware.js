@@ -23,6 +23,13 @@
 //
 // Fails OPEN only when SITE_BASIC_AUTH_* is unset, so a bad deploy can't lock
 // everyone out — clearing those vars is the kill-switch.
+//
+// EXTRA lock on /admin: /admin, /admin.html and /api/admin/* sit behind a
+// second, independent credential (ADMIN_GATE_USER / ADMIN_GATE_PASS). The
+// browser gets a small unlock form; POST /api/admin-unlock checks the pair and
+// sets the signed `admin-gate` cookie the middleware then requires. This is on
+// TOP of the Supabase session + platform_admins checks the panel already does.
+// Unset ADMIN_GATE_* -> this layer is skipped (still 3 gates underneath).
 
 export const config = {
   matcher: '/((?!_vercel/|favicon\\.ico).*)',
@@ -52,9 +59,15 @@ const PINNED_JWK = (() => {
 function gatedPath(p) {
   return p.startsWith('/data/') || p.startsWith('/mx/data/') || p.startsWith('/api/')
 }
-// the one /api/ route that must stay reachable without a cookie
+// /api/ routes that must stay reachable without a cookie (they mint one)
 function openPath(p) {
-  return p === '/api/guest' || p === '/api/guest/'
+  return p === '/api/guest' || p === '/api/guest/' ||
+    p === '/api/admin-unlock' || p === '/api/admin-unlock/'
+}
+
+// paths behind the extra /admin credential
+function adminPath(p) {
+  return p === '/admin' || p === '/admin.html' || p.startsWith('/api/admin/')
 }
 
 // The daily cron hits /api/admin/sweep with the CRON_SECRET bearer; let that
@@ -138,10 +151,10 @@ function hmacKey(secret) {
   return _hmacKey
 }
 
-async function hasGuestCookie(request) {
-  const secret = guestSecret()
+// verify an HMAC-SHA256 cookie of shape  <b64url(json)>.<b64url(sig)>
+async function verifyHmacCookie(request, name, secret, check) {
   if (!secret) return false
-  const raw = readCookie(request, 'reg-guest')
+  const raw = readCookie(request, name)
   if (!raw) return false
   const dot = raw.lastIndexOf('.')
   if (dot < 1 || dot === raw.length - 1) return false
@@ -153,12 +166,51 @@ async function hasGuestCookie(request) {
     )
     if (!ok) return false
     const claims = jsonFromB64url(payloadB64)
-    if (!claims || claims.g !== 1) return false
+    if (!claims || !check(claims)) return false
     if (typeof claims.exp === 'number' && claims.exp * 1000 <= Date.now()) return false
     return true
   } catch {
     return false
   }
+}
+
+function hasGuestCookie(request) {
+  return verifyHmacCookie(request, 'reg-guest', guestSecret(), (c) => c.g === 1)
+}
+
+function adminGateSecret() {
+  return process.env.ADMIN_GATE_SECRET || guestSecret()
+}
+function hasAdminGateCookie(request) {
+  return verifyHmacCookie(request, 'admin-gate', adminGateSecret(), (c) => c.a === 1)
+}
+
+const ADMIN_UNLOCK_HTML = `<!doctype html><meta charset=utf-8><title>Axon Admin</title>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<style>body{margin:0;background:#F2F4F7;font:14px system-ui,sans-serif;color:#111827;
+display:flex;min-height:100vh;align-items:center;justify-content:center}
+form{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;padding:32px;
+width:300px;display:flex;flex-direction:column;gap:12px}
+h1{font-size:.95rem;margin:0 0 4px}p{margin:0;color:#6b7280;font-size:.8rem}
+input{padding:9px 11px;border:1px solid rgba(0,0,0,.15);border-radius:8px;font:inherit}
+button{padding:9px;border:0;border-radius:8px;background:#2563EB;color:#fff;font-weight:600;cursor:pointer}
+.e{color:#b91c1c;font-size:.8rem;min-height:1em}</style>
+<form onsubmit="return go(event)">
+<h1>Área restringida</h1><p>Acceso de administración</p>
+<input id=u placeholder=Usuario autocomplete=username autofocus>
+<input id=p type=password placeholder="Contraseña" autocomplete=current-password>
+<button>Entrar</button><div class=e id=e></div></form>
+<script>async function go(ev){ev.preventDefault();var e=document.getElementById('e');e.textContent='';
+try{var r=await fetch('/api/admin-unlock',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({user:u.value,password:p.value})});
+if(r.ok){location.reload();return false}e.textContent='Usuario o contraseña incorrectos';}
+catch(x){e.textContent='Error de red';}return false}</script>`
+
+function adminUnlockPage() {
+  return new Response(ADMIN_UNLOCK_HTML, {
+    status: 401,
+    headers: { 'Content-Type': 'text/html;charset=UTF-8', 'Cache-Control': 'no-store' },
+  })
 }
 
 function isValidBasic(request, user, pass) {
@@ -189,8 +241,23 @@ function unauthorized(isApi) {
 // ------------------------------------------------------------------ entry
 export default async function middleware(request) {
   const path = new URL(request.url).pathname
-  if (!gatedPath(path) || openPath(path)) return // shell, assets, /api/guest
-  if (isCronSweep(request, path)) return // cron -> /api/admin/sweep with CRON_SECRET
+
+  // ---- extra credential in front of /admin and /api/admin/* --------------
+  if (isCronSweep(request, path)) return // cron -> /api/admin/sweep, bypasses everything
+  if (adminPath(path)) {
+    const gu = process.env.ADMIN_GATE_USER
+    const gp = process.env.ADMIN_GATE_PASS
+    if (gu && gp) {
+      const ok = isValidBasic(request, gu, gp) || (await hasAdminGateCookie(request))
+      if (!ok) {
+        return path.startsWith('/api/') ? unauthorized(true) : adminUnlockPage()
+      }
+    }
+    // passed (or layer disabled): fall through — /api/admin/* still needs the
+    // Supabase session below, and the handler still checks platform_admins.
+  }
+
+  if (!gatedPath(path) || openPath(path)) return // shell, assets, /api/guest, /api/admin-unlock
 
   const basicUser = process.env.SITE_BASIC_AUTH_USER
   const basicPass = process.env.SITE_BASIC_AUTH_PASS

@@ -49,15 +49,29 @@ Vercel env, never in the repo or the DB).
 
 ## 2. Security model
 
-Three independent gates protect every admin API call. All three must pass.
+Four independent gates protect every admin API call. All must pass.
 
 ```
-browser ──► Edge middleware ──► /api/admin/* handler ──► Supabase (service_role)
-            (1) session cookie   (2) bearer token +      (3) key only exists
-                required for          platform_admins        server-side
-                /api/*                membership
+browser ─► Edge middleware ──────────────► /api/admin/* handler ─► Supabase
+           (0) admin-gate cookie/Basic      (2) bearer token +      (3) service_role
+               (ADMIN_GATE_USER/PASS)           platform_admins         key server-only
+           (1) Supabase session cookie          membership
 ```
 
+**Gate 0 — the extra /admin credential.** `/admin`, `/admin.html` and
+`/api/admin/*` sit behind a second, standalone user/password
+(`ADMIN_GATE_USER` / `ADMIN_GATE_PASS`), separate from any Supabase account.
+Reaching `/admin` with no `admin-gate` cookie serves a small unlock form; `POST
+/api/admin-unlock` checks the pair and sets the HMAC-signed `admin-gate` cookie
+(HttpOnly, Secure, SameSite=Lax, 8h, secret = `ADMIN_GATE_SECRET` → falls back
+to `GUEST_COOKIE_SECRET` → `SITE_BASIC_AUTH_PASS`). `/api/admin/*` also accepts
+`Authorization: Basic ADMIN_GATE_USER:PASS` for curl/tooling. **If
+`ADMIN_GATE_*` is unset this layer is skipped** (the three below still apply) —
+so set it to actually lock the panel down.
+
+0. **The `admin-gate` credential** (see above) — `/admin`, `/admin.html` and
+   `/api/admin/*` need it before anything else. A cracked Supabase session still
+   can't reach the panel without this second password.
 1. **Edge middleware** (`middleware.js`). `/api/admin/*` is under `/api/`, so it
    is unreachable without a valid Supabase **session cookie** (`sb-access-token`,
    ES256-verified against the project's pinned key) or HTTP Basic. See
@@ -118,6 +132,9 @@ Creates `access_grants` (RLS on, no policies). Safe to re-run.
 | `SUPABASE_SERVICE_ROLE_KEY` | Secret | *(already set)* | used by all `/api/admin/*` and the existing `create-org`/`delete-org` |
 | `ADMIN_ENCRYPTION_KEY` | Secret | a long random string (≥32 chars) | encrypts stored passwords. **Back it up.** Lose it → stored passwords unrecoverable (accounts still work; just reset them). |
 | `CRON_SECRET` | Secret | a long random string | Vercel Cron sends it as a bearer to `/api/admin/sweep`; nothing else may call the cron path unauthenticated |
+| `ADMIN_GATE_USER` | Secret | a username | the extra credential in front of `/admin`. **Set this to lock the panel down** — unset = layer skipped. |
+| `ADMIN_GATE_PASS` | Secret | a strong password | pair for `ADMIN_GATE_USER` |
+| `ADMIN_GATE_SECRET` | Secret | *(optional)* long random string | signs the `admin-gate` cookie; falls back to `GUEST_COOKIE_SECRET` then `SITE_BASIC_AUTH_PASS` |
 
 Generate values with e.g. `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`.
 Set for **Production** (and Preview if you test there). Redeploy after adding.
@@ -188,6 +205,7 @@ Permanent accounts have no `expires_at` and are never touched by any of these.
 | Path | Role |
 |---|---|
 | `public/admin.html` | the console (static, no secrets, self-gating) |
+| `api/admin-unlock.js` | `POST`/`DELETE` the `admin-gate` cookie (the extra credential) |
 | `lib/admin.js` | shared server helpers: `requireAdmin`, AES-GCM crypto, password gen |
 | `api/admin/users.js` | `GET` list everything · `POST` create account |
 | `api/admin/user-actions.js` | `POST` reset / extend / make_permanent / revoke / delete |
@@ -200,8 +218,14 @@ Permanent accounts have no `expires_at` and are never touched by any of these.
 
 ## 7. Endpoint reference
 
-All require `Authorization: Bearer <supabase access token of a platform admin>`
-and (via the middleware) the `sb-access-token` cookie.
+All require `Authorization: Bearer <supabase access token of a platform admin>`,
+the `sb-access-token` cookie, **and** the `admin-gate` cookie (or
+`Authorization: Basic ADMIN_GATE_USER:PASS`) once `ADMIN_GATE_*` is set.
+
+### `POST /api/admin-unlock`
+body `{ user, password }` checked against `ADMIN_GATE_USER` / `ADMIN_GATE_PASS`
+→ `Set-Cookie: admin-gate=…` (8h). `DELETE` clears it. Open (no auth needed to
+reach it).
 
 ### `GET /api/admin/users`
 → `{ ok, count, users: [ { user_id, username, email, org, org_slug,
