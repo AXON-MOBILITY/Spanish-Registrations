@@ -17,7 +17,7 @@ comment on column organizations.config is
   'home_brands: string[] (marca(s) resaltada(s)); '
   'focus_brands: string[] (set competitivo propio, define Focus vs Resto); '
   'default_filters: objeto con years/months/segs/subs/hps por defecto; '
-  'use_calibration: bool (si aplica la calibracion SIMMIX o usa dato DGT neutro)';
+  'use_calibration: bool (si aplica la calibracion estadistica de las reglas de negocio o usa el dato DGT en bruto)';
 
 -- ── Vínculo usuario (Supabase Auth) → organización ──────────────────────
 create table if not exists org_members (
@@ -54,7 +54,7 @@ values (
   'BMW',
   '{
     "home_brands": ["BMW", "MINI"],
-    "focus_brands_source": "legacy_simmix",
+    "focus_brands_source": "legacy",
     "use_calibration": true,
     "default_filters": {"years": "latest"}
   }'::jsonb
