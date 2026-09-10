@@ -355,6 +355,8 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 #org-settings-modal.hidden{display:none}
 #seggroup-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:210;display:flex;align-items:center;justify-content:center}
 #seggroup-modal.hidden{display:none}
+#noaccess-screen{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:#f8fafc}
+#noaccess-screen.hidden{display:none}
 .login-box{
   background:var(--card);border:1px solid var(--border);border-radius:12px;
   padding:40px 48px;display:flex;flex-direction:column;align-items:center;gap:20px;
@@ -779,7 +781,7 @@ tbody td:first-child{text-align:left;font-weight:600;color:var(--text)}
 </div>
 
 <!-- Shown when the user's view grants no access to this app (tabs_registrations = ['*none*']) -->
-<div id="noaccess-screen" class="hidden" style="position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;background:#f8fafc">
+<div id="noaccess-screen" class="hidden">
   <div class="login-box" style="text-align:center">
     <div class="login-logo" style="flex-direction:column;gap:12px;margin-bottom:4px">
       <img class="login-brand-img" src="/brand/axon-mobility-logo-light.png" alt="Axon Mobility">
