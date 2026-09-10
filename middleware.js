@@ -175,11 +175,15 @@ function isValidBasic(request, user, pass) {
 }
 
 function unauthorized(isApi) {
+  // No `WWW-Authenticate: Basic` header on purpose: it makes the browser pop
+  // its own native Basic-auth dialog on top of the app's styled #login-screen
+  // (the shell's parse-time fetch('data/*.json') calls 401 before login).
+  // Basic auth still works for callers that send the Authorization header
+  // proactively (MX iframe / server-to-server tooling) — see isValidBasic().
   return new Response(isApi ? '{"error":"Unauthorized"}' : 'Authentication required.', {
     status: 401,
     headers: {
       'Content-Type': isApi ? 'application/json' : 'text/plain;charset=UTF-8',
-      'WWW-Authenticate': 'Basic realm="Axon Registrations", charset="UTF-8"',
       'Cache-Control': 'no-store',
     },
   })
